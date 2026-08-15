@@ -1,736 +1,402 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pediatrics Residencies</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- PapaParse for reading CSV files -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-  
-  <!-- Leaflet CSS & JS for Interactive Map -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pediatrics Residencies Dashboard</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --map-bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-light: #64748b;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --border-color: #e2e8f0;
+            --header-title-color: #94a3b8;
+        }
 
-  <style>
-    :root {
-      --bg-[#FAF9F5];
-      --bg-surface: #FFFFFF;
-      --text-charcoal: #2D3132;
-      --text-gray: #6B7280;
-      --accent-terracotta: #C86D51;
-      --accent-terracotta-soft: #FBF4F1;
-      --border-light: #E5E0D8;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
 
-    body { 
-      background-color: #FAF9F5; 
-      color: #2D3132; 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-    }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-    /* Tooltip */
-    .leaflet-tooltip.custom-map-tooltip {
-      background: #FFFFFF;
-      border: 1px solid #E5E0D8;
-      color: #2D3132;
-      border-radius: 6px;
-      padding: 4px 8px;
-      font-size: 11px;
-      font-weight: 500;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    }
+        header {
+            background-color: #ffffff;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
 
-    /* Custom Leaflet Popup Styling */
-    .leaflet-popup-content-wrapper {
-      background: #FFFFFF;
-      border: 1px solid #E5E0D8;
-      border-radius: 12px;
-      padding: 0;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
-    .leaflet-popup-content {
-      margin: 0 !important;
-      width: 320px !important;
-    }
-    .leaflet-popup-tip {
-      background: #FFFFFF;
-    }
+        header h1 {
+            font-size: 1.85rem;
+            font-weight: 600;
+            color: var(--header-title-color);
+            text-align: center;
+            letter-spacing: -0.025em;
+        }
 
-    /* Custom Map Pins */
-    .custom-desert-pin {
-      background-color: #2D3132;
-      border: 2px solid #FFFFFF;
-      width: 14px !important;
-      height: 14px !important;
-      border-radius: 50%;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      transition: transform 0.15s ease, background-color 0.15s ease;
-      cursor: pointer;
-    }
-    .custom-desert-pin:hover {
-      transform: scale(1.3);
-      background-color: #C86D51;
-    }
+        .main-container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 73px);
+            overflow: hidden;
+        }
 
-    /* Custom Scrollbars */
-    .custom-scroll::-webkit-scrollbar {
-      width: 5px;
-    }
-    .custom-scroll::-webkit-scrollbar-thumb {
-      background-color: #D3CDC4;
-      border-radius: 4px;
-    }
+        /* Sidebar */
+        aside {
+            width: 380px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            z-index: 10;
+        }
 
-    input[type="checkbox"] {
-      accent-color: #C86D51;
-    }
-  </style>
+        .filters-section {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: #fcfcfc;
+        }
+
+        .filter-group {
+            margin-bottom: 14px;
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+
+        .filter-group input, .filter-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #ffffff;
+        }
+
+        .filter-group input:focus, .filter-group select:focus {
+            border-color: var(--primary);
+        }
+
+        .programs-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .program-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .program-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .program-card.active {
+            border-color: var(--primary);
+            background-color: #eff6ff;
+        }
+
+        .program-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .program-card p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 2px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 12px;
+            margin-top: 6px;
+            background-color: #e0f2fe;
+            color: #0369a1;
+        }
+
+        /* Map Container */
+        #map {
+            flex: 1;
+            height: 100%;
+            background-color: var(--map-bg);
+            z-index: 1;
+        }
+
+        /* Leaflet popup customization */
+        .leaflet-popup-content-wrapper {
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .leaflet-popup-content h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #1e293b;
+        }
+
+        .leaflet-popup-content p {
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column-reverse;
+            }
+            aside {
+                width: 100%;
+                height: 50%;
+            }
+            #map {
+                height: 50%;
+            }
+        }
+    </style>
 </head>
-<body class="h-screen w-screen flex flex-col p-4 md:p-6 overflow-hidden gap-4">
+<body>
 
-  <!-- HEADER -->
-  <header class="w-full max-w-7xl mx-auto flex items-center justify-between pb-3 border-b border-[#E5E0D8] shrink-0">
-    <h1 class="text-xl md:text-2xl font-light tracking-tight text-[#2D3132]">Pediatrics Residencies</h1>
-    <span id="programCount" class="text-xs font-medium text-[#C86D51] bg-[#FBF4F1] px-3 py-1 rounded-full border border-[#C86D51]/20">0 Programs Found</span>
-  </header>
+    <header>
+        <h1>Pediatrics Residencies</h1>
+    </header>
 
-  <!-- MAIN WRAPPER (CONTAINED HEIGHT) -->
-  <div class="w-full max-w-7xl mx-auto flex-1 flex flex-col md:flex-row gap-5 overflow-hidden">
-
-    <!-- SIDEBAR (INTERNAL SCROLLING ONLY) -->
-    <aside class="w-full md:w-[280px] lg:w-[300px] bg-white border border-[#E5E0D8] rounded-xl flex flex-col shrink-0 shadow-sm overflow-hidden h-full">
-      
-      <!-- Filters Panel Header -->
-      <div class="px-4 py-2.5 border-b border-[#E5E0D8] bg-[#FAF9F5] shrink-0">
-        <h2 class="text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]">Filters & Search</h2>
-      </div>
-
-      <!-- Scrollable Filters -->
-      <div class="p-3.5 border-b border-[#E5E0D8] space-y-3 custom-scroll max-h-[45%] overflow-y-auto shrink-0 bg-[#FFFFFF]">
-        <div class="space-y-1">
-          <label class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Search</label>
-          <input 
-            type="text" 
-            id="searchInput" 
-            placeholder="Search program or city..." 
-            class="w-full px-2.5 py-1.5 rounded-md border border-[#E5E0D8] placeholder-[#6B7280]/50 focus:outline-none focus:border-[#C86D51] text-xs transition bg-[#FAF9F5] text-[#2D3132]"
-          />
-        </div>
-
-        <div class="space-y-2">
-          <!-- State Filter -->
-          <div class="space-y-1 relative dropdown-container">
-            <div class="flex justify-between items-center">
-              <label class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">State</label>
-              <button type="button" id="resetStateBtn" class="text-[9px] text-[#6B7280] hover:text-[#C86D51] underline hidden">Clear</button>
+    <div class="main-container">
+        <aside>
+            <div class="filters-section">
+                <div class="filter-group">
+                    <label for="search-input">Search Program or City</label>
+                    <input type="text" id="search-input" placeholder="Filter programs...">
+                </div>
+                <div class="filter-group">
+                    <label for="interest-select">Interest Level</label>
+                    <select id="interest-select">
+                        <option value="">All Interest Levels</option>
+                        <option value="High Interest">High Interest</option>
+                        <option value="Considering">Considering</option>
+                        <option value="Interested">Interested</option>
+                        <option value="Lower Interest">Lower Interest</option>
+                    </select>
+                </div>
             </div>
-            <button type="button" data-dropdown="state" class="dropdown-btn w-full px-2.5 py-1.5 rounded-md border border-[#E5E0D8] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-[#FAF9F5] text-[#2D3132]">
-              <span id="stateDropdownLabel" class="truncate">All States</span>
-              <span class="text-[8px] text-[#C86D51]">▼</span>
-            </button>
-            <div id="stateDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-[#E5E0D8] rounded-md shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
-          </div>
-
-          <!-- Setting Filter -->
-          <div class="space-y-1 relative dropdown-container">
-            <div class="flex justify-between items-center">
-              <label class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Setting</label>
-              <button type="button" id="resetSettingBtn" class="text-[9px] text-[#6B7280] hover:text-[#C86D51] underline hidden">Clear</button>
+            <div class="programs-list" id="programs-list-container">
+                <!-- Program cards injected via JS -->
             </div>
-            <button type="button" data-dropdown="setting" class="dropdown-btn w-full px-2.5 py-1.5 rounded-md border border-[#E5E0D8] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-[#FAF9F5] text-[#2D3132]">
-              <span id="settingDropdownLabel" class="truncate">All Settings</span>
-              <span class="text-[8px] text-[#C86D51]">▼</span>
-            </button>
-            <div id="settingDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-[#E5E0D8] rounded-md shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
-          </div>
+        </aside>
 
-          <!-- Competitiveness Filter -->
-          <div class="space-y-1 relative dropdown-container">
-            <div class="flex justify-between items-center">
-              <label class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Tier / Competitiveness</label>
-              <button type="button" id="resetCompetitivenessBtn" class="text-[9px] text-[#6B7280] hover:text-[#C86D51] underline hidden">Clear</button>
-            </div>
-            <button type="button" data-dropdown="competitiveness" class="dropdown-btn w-full px-2.5 py-1.5 rounded-md border border-[#E5E0D8] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-[#FAF9F5] text-[#2D3132]">
-              <span id="competitivenessDropdownLabel" class="truncate">All Tiers</span>
-              <span class="text-[8px] text-[#C86D51]">▼</span>
-            </button>
-            <div id="competitivenessDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-[#E5E0D8] rounded-md shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
-          </div>
-        </div>
+        <div id="map"></div>
+    </div>
 
-        <!-- Class Size Slider -->
-        <div class="pt-1.5 space-y-1">
-          <div class="flex justify-between items-center">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Max Class Size:</span>
-            <span id="classSizeValue" class="text-[10px] font-medium px-1.5 rounded border border-[#C86D51]/30 bg-[#FBF4F1] text-[#C86D51]">50</span>
-          </div>
-          <input 
-            type="range" 
-            id="classSizeFilter" 
-            min="1" 
-            max="50" 
-            value="50" 
-            class="w-full h-1 bg-[#E5E0D8] rounded-lg appearance-none cursor-pointer"
-          />
-        </div>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        // Embedded dataset from programs.csv
+        const programsData = [
+            {"Program":"Phoenix Children’s","City":"Phoenix","State":"AZ","Interest":"Considering","Setting":"CB/University Affiliated","Class size":39,"Competitiveness":"Target/Reach","Step Score Range":"232-264","Hours/Week":50.0,"Longest Shift":12.0,"Days Off/week":2.0,"Sick Days":"N","Vacation Days":20,"Family Leave Paid/Unpaid":"42/42","Salary":"$67,935.00","COL-Adjusted Salary":"$65,765.00","Salary Stretch":79,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"N"},
+            {"Program":"Cedars-Sinai Medical Center Program","City":"Los Angeles","State":"CA","Interest":"Considering","Setting":"CB/University Affiliated","Class size":8,"Competitiveness":"High Reach","Step Score Range":"227-261","Hours/Week":51.0,"Longest Shift":14.0,"Days Off/week":1.5,"Sick Days":"5","Vacation Days":28,"Family Leave Paid/Unpaid":"—/91","Salary":"$94,746.00","COL-Adjusted Salary":"$83,403.00","Salary Stretch":100,"Free Parking":"Y","Housing Stipend":"Y","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"UCSF","City":"San Francisco","State":"CA","Interest":"Considering","Setting":"University","Class size":29,"Competitiveness":"High Reach","Step Score Range":"234-267","Hours/Week":65.0,"Longest Shift":16.0,"Days Off/week":1.0,"Sick Days":"12","Vacation Days":28,"Family Leave Paid/Unpaid":"N x2","Salary":"$92,284.00","COL-Adjusted Salary":"$79,830.00","Salary Stretch":96,"Free Parking":"N","Housing Stipend":"Y","Meal Stipend":"Y","Tech Stipend":"N"},
+            {"Program":"UCSF Benioff Children’s Hospital Oakland Program","City":"Oakland","State":"CA","Interest":"High Interest","Setting":"CB/University Affiliated","Class size":33,"Competitiveness":"Reach","Step Score Range":"230-264","Hours/Week":60.0,"Longest Shift":24.0,"Days Off/week":1.5,"Sick Days":"12","Vacation Days":20,"Family Leave Paid/Unpaid":"40/N","Salary":"$92,284.00","COL-Adjusted Salary":"$79,830.00","Salary Stretch":96,"Free Parking":"Y","Housing Stipend":"Y","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"UCLA David Geffen School of Medicine/UCLA Medical Center Program","City":"Los Angeles","State":"CA","Interest":"Considering","Setting":"University","Class size":29,"Competitiveness":null,"Step Score Range":"233-266","Hours/Week":65.0,"Longest Shift":24.0,"Days Off/week":1.4,"Sick Days":"12","Vacation Days":28,"Family Leave Paid/Unpaid":null,"Salary":"$89,261.00","COL-Adjusted Salary":"$78,575.00","Salary Stretch":94,"Free Parking":"Y","Housing Stipend":"Y","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"Kaiser Permanente Northern California Program","City":"Oakland","State":"CA","Interest":"High Interest","Setting":"CB/University Affiliated","Class size":10,"Competitiveness":null,"Step Score Range":"222-256","Hours/Week":60.0,"Longest Shift":16.0,"Days Off/week":1.2,"Sick Days":"13","Vacation Days":28,"Family Leave Paid/Unpaid":"84/N","Salary":"$90,276.00","COL-Adjusted Salary":"$78,093.00","Salary Stretch":94,"Free Parking":"Y","Housing Stipend":"Y","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"UC Davis","City":"Sacramento","State":"CA","Interest":"Considering","Setting":"University","Class size":15,"Competitiveness":null,"Step Score Range":"231-263","Hours/Week":60.0,"Longest Shift":18.0,"Days Off/week":1.4,"Sick Days":"12","Vacation Days":20,"Family Leave Paid/Unpaid":"N x2","Salary":"$82,826.00","COL-Adjusted Salary":"$77,625.00","Salary Stretch":93,"Free Parking":"N","Housing Stipend":"Y","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"UCSD","City":"San Diego","State":"CA","Interest":"Considering","Setting":"University","Class size":20,"Competitiveness":"Reach/High Reach","Step Score Range":"236-267","Hours/Week":50.0,"Longest Shift":24.0,"Days Off/week":1.5,"Sick Days":"12","Vacation Days":28,"Family Leave Paid/Unpaid":"N x2","Salary":"$85,819.00","COL-Adjusted Salary":"$76,693.00","Salary Stretch":92,"Free Parking":"Y","Housing Stipend":"Y","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"Kaiser LAMC","City":"Los Angeles","State":"CA","Interest":"Considering","Setting":"CB/University Affiliated","Class size":8,"Competitiveness":null,"Step Score Range":"227-261","Hours/Week":60.0,"Longest Shift":16.0,"Days Off/week":1.5,"Sick Days":"12","Vacation Days":20,"Family Leave Paid/Unpaid":"12/60","Salary":"$84,277.00","COL-Adjusted Salary":"$74,188.00","Salary Stretch":89,"Free Parking":"Y","Housing Stipend":"Y","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"Yale","City":"New Haven","State":"CT","Interest":"Considering","Setting":"University","Class size":23,"Competitiveness":"Reach","Step Score Range":"235-268","Hours/Week":65.0,"Longest Shift":24.0,"Days Off/week":1.5,"Sick Days":"N","Vacation Days":21,"Family Leave Paid/Unpaid":"Nx2","Salary":"$86,080.00","COL-Adjusted Salary":"$82,294.00","Salary Stretch":99,"Free Parking":"N","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"Emory/Children’s Healthcare of Atlanta","City":"Atlanta","State":"GA","Interest":"Lower Interest","Setting":"University","Class size":39,"Competitiveness":"Reach","Step Score Range":"233-268","Hours/Week":65.0,"Longest Shift":14.0,"Days Off/week":1.5,"Sick Days":"12","Vacation Days":15,"Family Leave Paid/Unpaid":"42/N","Salary":"$66,530.00","COL-Adjusted Salary":"$66,464.00","Salary Stretch":80,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"University of Chicago Program","City":"Chicago","State":"IL","Interest":"Considering","Setting":"University","Class size":23,"Competitiveness":"Reach","Step Score Range":"230-264","Hours/Week":null,"Longest Shift":null,"Days Off/week":null,"Sick Days":"5","Vacation Days":20,"Family Leave Paid/Unpaid":"30/40","Salary":"$75,205.00","COL-Adjusted Salary":"$72,592.00","Salary Stretch":87,"Free Parking":"N","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"N"},
+            {"Program":"Advocate Health Care/Advocate Children’s Hospital (Oak Lawn) Program","City":"Oak Lawn","State":"IL","Interest":"Considering","Setting":"CB/University Affiliated","Class size":15,"Competitiveness":null,"Step Score Range":"220-257","Hours/Week":60.0,"Longest Shift":24.0,"Days Off/week":1.5,"Sick Days":"N","Vacation Days":28,"Family Leave Paid/Unpaid":"90/90","Salary":"$70,000.00","COL-Adjusted Salary":"$67,568.00","Salary Stretch":81,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"Indiana University","City":"Indianapolis","State":"IN","Interest":"Considering","Setting":"University","Class size":34,"Competitiveness":"Target/Reach","Step Score Range":"232-266","Hours/Week":60.0,"Longest Shift":24.0,"Days Off/week":1.0,"Sick Days":"N","Vacation Days":28,"Family Leave Paid/Unpaid":"42/42","Salary":"$66,500.00","COL-Adjusted Salary":"$69,488.00","Salary Stretch":83,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"LSU Pediatrics/Children’s Hospital New Orleans","City":"New Orleans","State":"LA","Interest":"Considering","Setting":"University","Class size":16,"Competitiveness":null,"Step Score Range":"224-264","Hours/Week":55.0,"Longest Shift":16.0,"Days Off/week":1.5,"Sick Days":"14","Vacation Days":21,"Family Leave Paid/Unpaid":"42/N","Salary":"$60,241.00","COL-Adjusted Salary":"$65,055.00","Salary Stretch":78,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"N"},
+            {"Program":"Tulane","City":"New Orleans","State":"LA","Interest":"Considering","Setting":"University","Class size":9,"Competitiveness":null,"Step Score Range":"219-257","Hours/Week":65.0,"Longest Shift":28.0,"Days Off/week":1.0,"Sick Days":"14","Vacation Days":28,"Family Leave Paid/Unpaid":"42/N","Salary":"$57,707.00","COL-Adjusted Salary":"$62,319.00","Salary Stretch":75,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"N"},
+            {"Program":"Maine Medical Center","City":"Portland","State":"ME","Interest":"Considering","Setting":"CB/University Affiliated","Class size":8,"Competitiveness":null,"Step Score Range":"277-266","Hours/Week":65.0,"Longest Shift":16.0,"Days Off/week":1.5,"Sick Days":"5","Vacation Days":21,"Family Leave Paid/Unpaid":"20 (60)","Salary":"$71,438.00","COL-Adjusted Salary":"$70,106.00","Salary Stretch":84,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"N"},
+            {"Program":"University of Michigan","City":"Ann Arbor","State":"MI","Interest":"Considering","Setting":"University","Class size":25,"Competitiveness":null,"Step Score Range":"231-268","Hours/Week":55.0,"Longest Shift":16.0,"Days Off/week":1.3,"Sick Days":"—","Vacation Days":28,"Family Leave Paid/Unpaid":"98/180","Salary":"$77,049.00","COL-Adjusted Salary":"$76,362.00","Salary Stretch":92,"Free Parking":"N","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"N"},
+            {"Program":"Henry Ford St. John Hospital Program","City":"Detroit","State":"MI","Interest":"Considering","Setting":"CB/University Affiliated","Class size":8,"Competitiveness":"Safer/Target","Step Score Range":"225-257","Hours/Week":60.0,"Longest Shift":16.0,"Days Off/week":1.5,"Sick Days":"7","Vacation Days":21,"Family Leave Paid/Unpaid":"Nx2","Salary":"$66,691.00","COL-Adjusted Salary":"$66,492.00","Salary Stretch":80,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"Children's Hospital of Michigan Program","City":"Detroit","State":"MI","Interest":"Considering","Setting":"University","Class size":30,"Competitiveness":null,"Step Score Range":"226-260","Hours/Week":null,"Longest Shift":null,"Days Off/week":null,"Sick Days":"N","Vacation Days":20,"Family Leave Paid/Unpaid":"90/0","Salary":"$60,184.00","COL-Adjusted Salary":"$60,004.00","Salary Stretch":72,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"Children’s Mercy","City":"Kansas City","State":"MO","Interest":"Considering","Setting":"University","Class size":31,"Competitiveness":"Target/Reach","Step Score Range":"132-265","Hours/Week":50.0,"Longest Shift":13.0,"Days Off/week":1.5,"Sick Days":"12","Vacation Days":20,"Family Leave Paid/Unpaid":"120/ N","Salary":"$71,406.00","COL-Adjusted Salary":"$77,196.00","Salary Stretch":93,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"N"},
+            {"Program":"ECU Health Medical Center/East Carolina University Program","City":"Greenville","State":"NC","Interest":"Lower Interest","Setting":"University","Class size":11,"Competitiveness":"Safer","Step Score Range":"222-262","Hours/Week":55.0,"Longest Shift":24.0,"Days Off/week":1.5,"Sick Days":"10","Vacation Days":18,"Family Leave Paid/Unpaid":"X2","Salary":"$66,840.00","COL-Adjusted Salary":"$75,611.00","Salary Stretch":91,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"N"},
+            {"Program":"Carolinas Medical Center Program","City":"Charlotte","State":"NC","Interest":"High Interest","Setting":"CB/University Affiliated","Class size":16,"Competitiveness":"Target","Step Score Range":"235-267","Hours/Week":56.0,"Longest Shift":20.0,"Days Off/week":1.7,"Sick Days":"90","Vacation Days":20,"Family Leave Paid/Unpaid":"90/N","Salary":"$70,528.00","COL-Adjusted Salary":"$72,485.00","Salary Stretch":87,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"Montefiore Medical Center/Albert Einstein College of Medicine","City":"Bronx","State":"NY","Interest":"Considering","Setting":"University","Class size":30,"Competitiveness":"Target/Reach","Step Score Range":"230-267","Hours/Week":80.0,"Longest Shift":24.0,"Days Off/week":1.5,"Sick Days":"12","Vacation Days":20,"Family Leave Paid/Unpaid":"42/68","Salary":"$84,217.00","COL-Adjusted Salary":"$74,793.00","Salary Stretch":90,"Free Parking":"N","Housing Stipend":"Y","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"Jacobi Medical Center/Albert Einstein College of Medicine Program","City":"Bronx","State":"NY","Interest":"Considering","Setting":"CB/University Affiliated","Class size":15,"Competitiveness":null,"Step Score Range":"225-261","Hours/Week":60.0,"Longest Shift":12.0,"Days Off/week":1.8,"Sick Days":"N","Vacation Days":20,"Family Leave Paid/Unpaid":"49/N","Salary":"$82,481.00","COL-Adjusted Salary":"$73,251.00","Salary Stretch":88,"Free Parking":"N","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"Stony Brook Medicine/Stony Brook Children's Hospital Program","City":"Stony Brook","State":"NY","Interest":"Considering","Setting":"University","Class size":12,"Competitiveness":null,"Step Score Range":"227-263","Hours/Week":50.0,"Longest Shift":13.0,"Days Off/week":1.5,"Sick Days":"15","Vacation Days":15,"Family Leave Paid/Unpaid":"42/N","Salary":"$77,008.00","COL-Adjusted Salary":"$68,391.00","Salary Stretch":82,"Free Parking":"N","Housing Stipend":"Y","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"Case Western/Cleveland Med/Rainbow Babies & Childrens Hospital Program","City":"Cleveland","State":"OH","Interest":"Considering","Setting":"University","Class size":30,"Competitiveness":"Target/Reach","Step Score Range":"234-266","Hours/Week":55.0,"Longest Shift":13.0,"Days Off/week":1.5,"Sick Days":"N","Vacation Days":28,"Family Leave Paid/Unpaid":"x2","Salary":"$67,792.00","COL-Adjusted Salary":"$72,196.00","Salary Stretch":87,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"N"},
+            {"Program":"Oregon Health & Science University (OHSU Health) Program","City":"Portland","State":"OR","Interest":"Considering","Setting":"University","Class size":20,"Competitiveness":"Target/Reach","Step Score Range":"230-265","Hours/Week":65.0,"Longest Shift":16.0,"Days Off/week":1.3,"Sick Days":"21","Vacation Days":28,"Family Leave Paid/Unpaid":"Nx2","Salary":"$77,339.00","COL-Adjusted Salary":"$73,377.00","Salary Stretch":88,"Free Parking":"N","Housing Stipend":"Y","Meal Stipend":"Y","Tech Stipend":"N"},
+            {"Program":"UPMC Medical Education Program","City":"Pittsburgh","State":"PA","Interest":"Considering","Setting":"University","Class size":33,"Competitiveness":"Reach","Step Score Range":"233-267","Hours/Week":60.0,"Longest Shift":13.0,"Days Off/week":1.0,"Sick Days":"N","Vacation Days":20,"Family Leave Paid/Unpaid":"Nx2","Salary":"$70,962.00","COL-Adjusted Salary":"$74,933.00","Salary Stretch":90,"Free Parking":"N","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"Tower Health/St. Christopher's Hospital for Children Program","City":"Philadelphia","State":"PA","Interest":"Considering","Setting":"CB/University Affiliated","Class size":24,"Competitiveness":null,"Step Score Range":"227-265","Hours/Week":55.0,"Longest Shift":24.0,"Days Off/week":1.0,"Sick Days":"5","Vacation Days":20,"Family Leave Paid/Unpaid":"30/N","Salary":"$67,358.00","COL-Adjusted Salary":"$65,651.00","Salary Stretch":79,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"Vanderbilt University Medical Center Program","City":"Nashville","State":"TN","Interest":"Considering","Setting":"University","Class size":33,"Competitiveness":"High Reach","Step Score Range":"235-270","Hours/Week":62.0,"Longest Shift":16.0,"Days Off/week":1.0,"Sick Days":"12","Vacation Days":15,"Family Leave Paid/Unpaid":"Nx2","Salary":"$72,450.00","COL-Adjusted Salary":"$75,234.00","Salary Stretch":90,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"N"},
+            {"Program":"University of Texas at Austin","City":"Austin","State":"TX","Interest":"Considering","Setting":"University","Class size":24,"Competitiveness":"Target/Reach","Step Score Range":"230-266","Hours/Week":60.0,"Longest Shift":12.0,"Days Off/week":1.2,"Sick Days":"10","Vacation Days":15,"Family Leave Paid/Unpaid":"25/N","Salary":"$67,503.00","COL-Adjusted Salary":"$68,810.00","Salary Stretch":83,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"University of Utah/Primary Children’s","City":"Salt Lake City","State":"UT","Interest":"Considering","Setting":"University","Class size":31,"Competitiveness":"Target/Reach","Step Score Range":"234-266","Hours/Week":47.0,"Longest Shift":14.0,"Days Off/week":2.0,"Sick Days":"5","Vacation Days":28,"Family Leave Paid/Unpaid":null,"Salary":"$72,841.00","COL-Adjusted Salary":"$72,191.00","Salary Stretch":87,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"N"},
+            {"Program":"Inova Children’s","City":"Falls Church","State":"VA","Interest":"Considering","Setting":"CB/University Affiliated","Class size":13,"Competitiveness":null,"Step Score Range":"231-266","Hours/Week":60.0,"Longest Shift":24.0,"Days Off/week":1.7,"Sick Days":"42","Vacation Days":28,"Family Leave Paid/Unpaid":"70/N","Salary":"$76,379.00","COL-Adjusted Salary":"$70,137.00","Salary Stretch":84,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"Virginia Commonwealth University Health System Program","City":"Richmond","State":"VA","Interest":"Interested","Setting":"University","Class size":17,"Competitiveness":null,"Step Score Range":"231-265","Hours/Week":51.0,"Longest Shift":16.0,"Days Off/week":1.5,"Sick Days":"30","Vacation Days":21,"Family Leave Paid/Unpaid":"49/84","Salary":"$66,747.00","COL-Adjusted Salary":"$68,179.00","Salary Stretch":82,"Free Parking":"N","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"Y"},
+            {"Program":"Seattle Children’s","City":"Seattle","State":"WA","Interest":"Considering","Setting":"CB/University Affiliated","Class size":43,"Competitiveness":"Reach","Step Score Range":"231-267","Hours/Week":56.0,"Longest Shift":16.0,"Days Off/week":2.0,"Sick Days":"17","Vacation Days":28,"Family Leave Paid/Unpaid":"N x2","Salary":"$76,032.00","COL-Adjusted Salary":"$68,436.00","Salary Stretch":82,"Free Parking":"Y","Housing Stipend":"Y","Meal Stipend":"Y","Tech Stipend":"N"},
+            {"Program":"Medical College of Wisconsin/Children’s Wisconsin","City":"Milwaukee","State":"WI","Interest":"Considering","Setting":"University","Class size":26,"Competitiveness":"Target/Reach","Step Score Range":"232-267","Hours/Week":53.0,"Longest Shift":24.0,"Days Off/week":1.5,"Sick Days":"10","Vacation Days":15,"Family Leave Paid/Unpaid":"45/N","Salary":"$71,790.00","COL-Adjusted Salary":"$74,087.00","Salary Stretch":89,"Free Parking":"Y","Housing Stipend":"N","Meal Stipend":"Y","Tech Stipend":"N"}
+        ];
 
-        <!-- Perks -->
-        <div class="pt-1.5 border-t border-[#E5E0D8]">
-          <label class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280] block mb-1">Benefits</label>
-          <div class="grid grid-cols-2 gap-y-1 text-xs text-[#2D3132]">
-            <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51]">
-              <input type="checkbox" id="parkingFilter" class="rounded border-[#E5E0D8]"> Parking
-            </label>
-            <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51]">
-              <input type="checkbox" id="housingFilter" class="rounded border-[#E5E0D8]"> Housing
-            </label>
-            <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51]">
-              <input type="checkbox" id="mealFilter" class="rounded border-[#E5E0D8]"> Meals
-            </label>
-            <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51]">
-              <input type="checkbox" id="techFilter" class="rounded border-[#E5E0D8]"> Tech
-            </label>
-          </div>
-        </div>
-      </div>
+        // Approximate coordinates for cities to display on map
+        const cityCoordinates = {
+            "Phoenix": [33.4484, -112.0740],
+            "Los Angeles": [34.0522, -118.2437],
+            "San Francisco": [37.7749, -122.4194],
+            "Oakland": [37.8044, -122.2711],
+            "Sacramento": [38.5816, -121.4944],
+            "San Diego": [32.7157, -117.1611],
+            "New Haven": [41.3083, -72.9279],
+            "Atlanta": [33.7490, -84.3880],
+            "Chicago": [41.8781, -87.6298],
+            "Oak Lawn": [41.7161, -87.7525],
+            "Indianapolis": [39.7684, -86.1581],
+            "New Orleans": [29.9511, -90.0715],
+            "Portland": [45.5152, -122.6784],
+            "Ann Arbor": [42.2808, -83.7430],
+            "Detroit": [42.3314, -83.0458],
+            "Kansas City": [39.0997, -94.5786],
+            "Greenville": [35.6127, -77.3664],
+            "Charlotte": [35.2271, -80.8431],
+            "Bronx": [40.8448, -73.8648],
+            "Stony Brook": [40.9134, -73.1340],
+            "Cleveland": [41.4993, -81.6944],
+            "Pittsburgh": [40.4406, -79.9959],
+            "Philadelphia": [39.9526, -75.1652],
+            "Nashville": [36.1627, -86.7816],
+            "Austin": [30.2672, -97.7431],
+            "Salt Lake City": [40.7608, -111.8910],
+            "Falls Church": [38.8823, -77.1711],
+            "Richmond": [37.5407, -77.4360],
+            "Seattle": [47.6062, -122.3321],
+            "Milwaukee": [43.0389, -87.9065]
+        };
 
-      <!-- Program List Panel Header -->
-      <div class="px-4 py-2 border-b border-[#E5E0D8] bg-[#FAF9F5] shrink-0">
-        <h2 class="text-[10px] font-semibold uppercase tracking-wider text-[#6B7280]">Programs</h2>
-      </div>
+        let map = L.map('map').setView([39.8283, -98.5795], 4);
 
-      <!-- Scrollable Program Cards -->
-      <div id="programList" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scroll bg-[#FAF9F5]"></div>
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
 
-    </aside>
+        let markersLayer = L.layerGroup().addTo(map);
+        let activeCard = null;
 
-    <!-- MAP CONTAINER (FRAMED FIT) -->
-    <main class="flex-1 rounded-xl border border-[#E5E0D8] overflow-hidden shadow-sm relative bg-white flex flex-col h-full">
-      <div id="map" class="w-full h-full flex-1"></div>
+        function renderDashboard(filteredData) {
+            const listContainer = document.getElementById('programs-list-container');
+            listContainer.innerHTML = '';
+            markersLayer.clearLayers();
 
-      <!-- COMPACT PROGRAM PREVIEW BAR -->
-      <div id="previewBar" class="hidden absolute bottom-4 left-4 right-4 z-[1000] bg-white border border-[#E5E0D8] rounded-xl p-3 shadow-xl flex items-center justify-between gap-3 transition-all">
-        <div class="truncate">
-          <div class="text-[9px] uppercase font-semibold text-[#C86D51]" id="previewLocation">Location</div>
-          <div class="text-xs font-medium text-[#2D3132] truncate" id="previewTitle">Program Name</div>
-        </div>
-        <div class="flex items-center gap-2 shrink-0">
-          <button id="openFactSheetBtn" class="px-3 py-1.5 rounded-lg bg-[#C86D51] text-white text-xs font-medium hover:bg-[#b05b41] transition shadow-sm">View Full Fact Sheet</button>
-          <button id="closePreviewBtn" class="p-1 text-[#6B7280] hover:text-[#2D3132] text-xs">✕</button>
-        </div>
-      </div>
-    </main>
+            let bounds = [];
 
-  </div>
+            filteredData.forEach((prog, index) => {
+                // Render Card
+                const card = document.createElement('div');
+                card.className = 'program-card';
+                card.innerHTML = `
+                    <h3>${prog.Program}</h3>
+                    <p><strong>Location:</strong> ${prog.City}, ${prog.State}</p>
+                    <p><strong>Setting:</strong> ${prog.Setting}</p>
+                    <p><strong>Class Size:</strong> ${prog['Class size']} | <strong>Salary:</strong> ${prog.Salary}</p>
+                    <span class="tag">${prog.Interest || 'Considering'}</span>
+                `;
 
-  <script>
-    let allPrograms = [];
-    let selectedFilters = { state: new Set(), setting: new Set(), competitiveness: new Set() };
-    let map;
-    let markersMap = new Map();
-    let currentSelectedProgram = null;
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('.program-card').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    
+                    const coords = cityCoordinates[prog.City];
+                    if (coords) {
+                        map.setView(coords, 10, { animate: true });
+                    }
+                });
 
-    // City to Airport Fallback Mapping
-    const airportLookup = {
-      "Phoenix, AZ": "PHX", "Los Angeles, CA": "LAX", "San Francisco, CA": "SFO",
-      "Oakland, CA": "OAK", "Sacramento, CA": "SMF", "San Diego, CA": "SAN",
-      "New Haven, CT": "BDL", "Denver, CO": "DEN", "Washington, DC": "DCA",
-      "Chicago, IL": "ORD", "Boston, MA": "BOS", "Baltimore, MD": "BWI",
-      "Ann Arbor, MI": "DTW", "Minneapolis, MN": "MSP", "St. Louis, MO": "STL",
-      "Chapel Hill, NC": "RDU", "Charlotte, NC": "CLT", "Philadelphia, PA": "PHL",
-      "Pittsburgh, PA": "PIT", "Seattle, WA": "SEA", "New York, NY": "JFK",
-      "Houston, TX": "IAH", "Dallas, TX": "DFW", "Atlanta, GA": "ATL"
-    };
+                listContainer.appendChild(card);
 
-    const cityCoordinates = {
-      "Phoenix, AZ": [33.4484, -112.0740], "Los Angeles, CA": [34.0522, -118.2437],
-      "San Francisco, CA": [37.7749, -122.4194], "Oakland, CA": [37.8044, -122.2712],
-      "Sacramento, CA": [38.5816, -121.4944], "San Diego, CA": [32.7157, -117.1611],
-      "New Haven, CT": [41.3083, -72.9279], "Denver, CO": [39.7392, -104.9903],
-      "Washington, DC": [38.9072, -77.0369], "Chicago, IL": [41.8781, -87.6298],
-      "Boston, MA": [42.3601, -71.0589], "Baltimore, MD": [39.2904, -76.6122],
-      "Ann Arbor, MI": [42.2808, -83.7430], "Minneapolis, MN": [44.9778, -93.2650],
-      "St. Louis, MO": [38.6270, -90.1994], "Chapel Hill, NC": [35.9132, -79.0558],
-      "Charlotte, NC": [35.2271, -80.8431], "Philadelphia, PA": [39.9526, -75.1652],
-      "Pittsburgh, PA": [40.4406, -79.9959], "Seattle, WA": [47.6062, -122.3321]
-    };
+                // Render Map Marker
+                const coords = cityCoordinates[prog.City];
+                if (coords) {
+                    const marker = L.marker(coords);
+                    marker.bindPopup(`
+                        <div>
+                            <h3>${prog.Program}</h3>
+                            <p><strong>Location:</strong> ${prog.City}, ${prog.State}</p>
+                            <p><strong>Setting:</strong> ${prog.Setting}</p>
+                            <p><strong>Class Size:</strong> ${prog['Class size']}</p>
+                            <p><strong>Salary:</strong> ${prog.Salary}</p>
+                            <p><strong>Interest:</strong> ${prog.Interest || 'Considering'}</p>
+                        </div>
+                    `);
+                    
+                    marker.on('click', () => {
+                        document.querySelectorAll('.program-card').forEach(c => c.classList.remove('active'));
+                        card.classList.add('active');
+                        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    });
 
-    // Robust CSV Field Value Extraction Helper
-    function getProp(obj, keys, defaultVal = '') {
-      if (!obj) return defaultVal;
-      for (const key of keys) {
-        if (obj[key] !== undefined && obj[key] !== null && String(obj[key]).trim() !== '') {
-          return String(obj[key]).trim();
-        }
-      }
-      return defaultVal;
-    }
-
-    function isTrueValue(val) {
-      if (!val) return false;
-      const cleanVal = String(val).trim().toLowerCase();
-      return ['yes', 'true', '1', 'x', 'y'].includes(cleanVal);
-    }
-
-    function cleanSettingName(val) {
-      if (!val) return 'N/A';
-      let cleaned = val.trim();
-      if (cleaned === "CB/University Affiliated" || cleaned === "CB / University Affiliated") {
-        return "Community-Based Univ. Affiliated";
-      }
-      return cleaned;
-    }
-
-    function initMap() {
-      map = L.map('map', { zoomControl: false }).setView([39.8283, -98.5795], 4);
-      L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
-        subdomains: 'abcd',
-        attribution: '&copy; OpenStreetMap &copy; CARTO'
-      }).addTo(map);
-    }
-
-    function createInMapFactSheetPopup(prog) {
-      const city = getProp(prog, ['City', 'city', 'Location City']);
-      const state = getProp(prog, ['State', 'state', 'Location State']);
-      const cityStateKey = `${city}, ${state}`;
-
-      const website = getProp(prog, ['Website', 'URL', 'Program Website', 'Website URL', 'Link'], '#');
-      const programName = getProp(prog, ['Program', 'Program Name', 'Hospital', 'Institution'], 'Program Info');
-
-      // Nearest Airport
-      const airport = getProp(prog, ['Nearest Airport', 'Airport', 'Nearest Airport Code', 'Airport Code']) || airportLookup[cityStateKey] || (city ? `${city.substring(0,3).toUpperCase()} Airport` : 'N/A');
-
-      // Perks
-      let perksHTML = '';
-      const perks = [
-        { label: 'Parking', val: getProp(prog, ['Free Parking', 'Parking', 'Parking Stipend']) },
-        { label: 'Housing', val: getProp(prog, ['Housing Stipend', 'Housing', 'Housing Allowance']) },
-        { label: 'Meals', val: getProp(prog, ['Meal Stipend', 'Meals', 'Food Stipend']) },
-        { label: 'Tech', val: getProp(prog, ['Tech Stipend', 'Tech', 'Technology Allowance']) }
-      ];
-
-      perks.forEach(p => {
-        if (isTrueValue(p.val)) {
-          perksHTML += `<span class="text-[9px] bg-[#EBF3ED] text-[#2D3132] border border-[#A8C5B0] px-1.5 py-0.5 rounded">✓ ${p.label}</span> `;
-        }
-      });
-      if (!perksHTML) perksHTML = `<span class="text-[10px] text-[#6B7280] italic">Standard Benefits</span>`;
-
-      // Fields Population with Fallback Keys
-      const classSize = getProp(prog, ['Class size', 'Class Size', 'Class size per year', 'Program Size'], 'N/A');
-      const setting = cleanSettingName(getProp(prog, ['Setting', 'Program Setting', 'Hospital Setting']));
-      const tier = getProp(prog, ['Competitiveness', 'Tier', 'Category', 'Target/Reach'], 'N/A');
-      const stepScore = getProp(prog, ['Step Score Range', 'Step Score', 'USMLE Step 2', 'Step 2 Score'], 'N/A');
-
-      const avgHours = getProp(prog, ['Work Hours', 'Average Hours Worked', 'Average Hours Worked Per Week', 'Hours/Week'], 'N/A');
-      const shiftLength = getProp(prog, ['Longest Shift Length', 'Shift Length', 'Max Shift Length'], 'N/A');
-      const daysOff = getProp(prog, ['Days Off Per Week', 'Average Days Off Per Week', 'Days Off'], 'N/A');
-      const sickDays = getProp(prog, ['Sick Days', 'Sick Leave Days'], 'N/A');
-      const vacationDays = getProp(prog, ['Vacation', 'Vacation Days'], 'N/A');
-      const paidLeave = getProp(prog, ['Paid Family Leave Days', 'Paid Family Leave', 'Paid Leave'], 'N/A');
-      const unpaidLeave = getProp(prog, ['Unpaid Family Leave Days', 'Unpaid Family Leave', 'Unpaid Leave'], 'N/A');
-
-      const baseSalary = getProp(prog, ['Salary', 'Base Salary', 'PGY1 Salary'], 'N/A');
-      const colSalary = getProp(prog, ['COL Adjusted Salary', 'Adjusted Salary', 'Cost of Living Adjusted Salary'], 'N/A');
-      const stretchScore = getProp(prog, ['Salary Stretch Score', 'Stretch Score'], 'N/A');
-
-      return `
-        <div class="p-3.5 space-y-3 font-sans max-h-[400px] overflow-y-auto custom-scroll bg-white">
-          
-          <!-- Header with Direct Web Link -->
-          <div class="border-b border-[#E5E0D8] pb-2">
-            <h3 class="font-medium text-xs text-[#2D3132] leading-snug">
-              ${website !== '#' ? `<a href="${website.startsWith('http') ? website : 'https://' + website}" target="_blank" rel="noopener noreferrer" class="text-[#C86D51] hover:underline flex items-center gap-1 font-semibold">${programName} <span class="text-[9px]">↗</span></a>` : `<span class="font-semibold">${programName}</span>`}
-            </h3>
-            <p class="text-[10px] text-[#6B7280] mt-0.5">${city}${city && state ? ', ' : ''}${state}</p>
-          </div>
-
-          <!-- Section 1: Basics -->
-          <div class="space-y-1">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Basics</span>
-            <div class="grid grid-cols-2 gap-1.5 text-[10px]">
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase">Location</span>
-                <span class="font-medium text-[#2D3132] truncate block">${city}, ${state}</span>
-              </div>
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase">Nearest Airport</span>
-                <span class="font-semibold text-[#C86D51] truncate block">${airport}</span>
-              </div>
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase">Setting</span>
-                <span class="font-medium text-[#2D3132] truncate block">${setting}</span>
-              </div>
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase">Class Size</span>
-                <span class="font-medium text-[#2D3132]">${classSize}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 2: Application -->
-          <div class="space-y-1">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Application</span>
-            <div class="grid grid-cols-2 gap-1.5 text-[10px]">
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase">Tier / Category</span>
-                <span class="font-medium text-[#2D3132]">${tier}</span>
-              </div>
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase">Step Score Target</span>
-                <span class="font-medium text-[#2D3132]">${stepScore}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 3: Work & Leave -->
-          <div class="space-y-1">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Work & Leave</span>
-            <div class="bg-[#FAF9F5] p-2 rounded border border-[#E5E0D8] text-[10px] space-y-1">
-              <div class="flex justify-between">
-                <span class="text-[#6B7280]">Avg Hours / Week:</span>
-                <span class="font-medium text-[#2D3132]">${avgHours}</span>
-              </div>
-              <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-                <span class="text-[#6B7280]">Longest Shift:</span>
-                <span class="font-medium text-[#2D3132]">${shiftLength}</span>
-              </div>
-              <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-                <span class="text-[#6B7280]">Avg Days Off / Wk:</span>
-                <span class="font-medium text-[#2D3132]">${daysOff}</span>
-              </div>
-              <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-                <span class="text-[#6B7280]">Sick Days:</span>
-                <span class="font-medium text-[#2D3132]">${sickDays}</span>
-              </div>
-              <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-                <span class="text-[#6B7280]">Vacation Days:</span>
-                <span class="font-medium text-[#2D3132]">${vacationDays}</span>
-              </div>
-              <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-                <span class="text-[#6B7280]">Family Leave (Paid/Unpaid):</span>
-                <span class="font-medium text-[#2D3132]">${paidLeave} / ${unpaidLeave}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 4: Compensation -->
-          <div class="space-y-1">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Compensation</span>
-            <div class="grid grid-cols-3 gap-1 text-[9px]">
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
-                <span class="text-[#6B7280] block text-[7px] uppercase">Base Salary</span>
-                <span class="font-medium text-[#2D3132]">${baseSalary}</span>
-              </div>
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
-                <span class="text-[#6B7280] block text-[7px] uppercase">COL Adjusted</span>
-                <span class="font-medium text-[#2D3132]">${colSalary}</span>
-              </div>
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
-                <span class="text-[#6B7280] block text-[7px] uppercase">Stretch Score</span>
-                <span class="font-semibold text-[#C86D51]">${stretchScore}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Perks -->
-          <div class="pt-1 border-t border-[#E5E0D8]">
-            <span class="text-[9px] text-[#6B7280] uppercase font-semibold block mb-1">Key Perks</span>
-            <div class="flex flex-wrap gap-1">${perksHTML}</div>
-          </div>
-
-        </div>
-      `;
-    }
-
-    const desertIcon = L.divIcon({
-      className: 'custom-desert-pin',
-      iconSize: [14, 14],
-      iconAnchor: [7, 7]
-    });
-
-    function createMapPins(programs) {
-      programs.forEach(prog => {
-        const programName = getProp(prog, ['Program', 'Program Name'], 'N/A');
-        const city = getProp(prog, ['City', 'city']);
-        const state = getProp(prog, ['State', 'state']);
-        const cityStateKey = `${city}, ${state}`;
-
-        let lat = parseFloat(getProp(prog, ['Latitude', 'lat']));
-        let lng = parseFloat(getProp(prog, ['Longitude', 'lng']));
-
-        if ((isNaN(lat) || isNaN(lng)) && cityCoordinates[cityStateKey]) {
-          [lat, lng] = cityCoordinates[cityStateKey];
+                    markersLayer.addLayer(marker);
+                    bounds.push(coords);
+                }
+            });
         }
 
-        if (!isNaN(lat) && !isNaN(lng)) {
-          const marker = L.marker([lat, lng], { icon: desertIcon }).addTo(map);
-          
-          marker.bindTooltip(`
-            <div class="font-sans">
-              <div class="font-semibold text-[#2D3132]">${programName}</div>
-              <div class="text-[10px] text-[#6B7280]">${city}${city && state ? ', ' : ''}${state}</div>
-            </div>
-          `, { className: 'custom-map-tooltip', direction: 'top', offset: [0, -5] });
+        function filterData() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const interestFilter = document.getElementById('interest-select').value;
 
-          marker.bindPopup(createInMapFactSheetPopup(prog));
-          markersMap.set(programName, marker);
+            const filtered = programsData.filter(prog => {
+                const matchesSearch = prog.Program.toLowerCase().includes(searchTerm) || prog.City.toLowerCase().includes(searchTerm);
+                const matchesInterest = interestFilter === '' || (prog.Interest && prog.Interest.toLowerCase() === interestFilter.toLowerCase());
+                return matchesSearch && matchesInterest;
+            });
+
+            renderDashboard(filtered);
         }
-      });
-    }
 
-    function renderSidebarList(programs) {
-      const listContainer = document.getElementById('programList');
-      listContainer.innerHTML = '';
+        document.getElementById('search-input').addEventListener('input', filterData);
+        document.getElementById('interest-select').addEventListener('change', filterData);
 
-      document.getElementById('programCount').innerText = `${programs.length} Programs Found`;
-
-      if (programs.length === 0) {
-        listContainer.innerHTML = `<p class="text-xs text-[#6B7280] text-center py-6">No matching programs found.</p>`;
-        return;
-      }
-
-      programs.forEach(prog => {
-        const programName = getProp(prog, ['Program', 'Program Name'], 'N/A');
-        const city = getProp(prog, ['City', 'city']);
-        const state = getProp(prog, ['State', 'state']);
-        const setting = cleanSettingName(getProp(prog, ['Setting', 'Program Setting']));
-
-        const card = document.createElement('div');
-        card.className = "p-3 rounded-lg border border-[#E5E0D8] bg-white shadow-xs hover:border-[#C86D51] transition group cursor-pointer";
-        
-        card.innerHTML = `
-          <div class="flex justify-between items-start gap-1">
-            <h3 class="font-medium text-xs leading-snug text-[#2D3132] group-hover:text-[#C86D51] transition-colors">${programName}</h3>
-          </div>
-          <p class="text-[10px] text-[#6B7280] mt-0.5">${city}${city && state ? ', ' : ''}${state}</p>
-          <div class="mt-2 pt-1.5 border-t border-[#FAF9F5] flex justify-between items-center text-[10px] text-[#6B7280]">
-            <span class="truncate text-[9px]">${setting}</span>
-            <span class="text-[#C86D51] font-medium text-[9px]">Select →</span>
-          </div>
-        `;
-
-        card.addEventListener('click', () => {
-          showProgramPreview(prog);
-        });
-
-        listContainer.appendChild(card);
-      });
-    }
-
-    function showProgramPreview(prog) {
-      currentSelectedProgram = prog;
-      const previewBar = document.getElementById('previewBar');
-      const title = document.getElementById('previewTitle');
-      const location = document.getElementById('previewLocation');
-
-      title.innerText = getProp(prog, ['Program', 'Program Name'], 'Program Selected');
-      location.innerText = `${getProp(prog, ['City', 'city'])}, ${getProp(prog, ['State', 'state'])}`;
-      previewBar.classList.remove('hidden');
-    }
-
-    document.getElementById('openFactSheetBtn').addEventListener('click', () => {
-      if (currentSelectedProgram) {
-        const programName = getProp(currentSelectedProgram, ['Program', 'Program Name']);
-        const marker = markersMap.get(programName);
-        if (marker) {
-          marker.openPopup();
-        }
-      }
-    });
-
-    document.getElementById('closePreviewBtn').addEventListener('click', () => {
-      document.getElementById('previewBar').classList.add('hidden');
-    });
-
-    function buildMultiSelectDropdown(type, values, placeholder) {
-      const menu = document.getElementById(`${type}DropdownMenu`);
-      menu.innerHTML = '';
-
-      Array.from(values).sort().forEach(val => {
-        const displayVal = type === 'setting' ? cleanSettingName(val) : val;
-        const label = document.createElement('label');
-        label.className = "flex items-center gap-2 px-1.5 py-1 hover:bg-[#FBF4F1] rounded cursor-pointer text-stone-700 transition";
-        label.innerHTML = `
-          <input type="checkbox" value="${val}" data-type="${type}" class="filter-checkbox rounded border-[#E5E0D8]">
-          <span class="truncate text-xs">${displayVal}</span>
-        `;
-        menu.appendChild(label);
-      });
-
-      menu.querySelectorAll('.filter-checkbox').forEach(cb => {
-        cb.addEventListener('change', (e) => {
-          const filterType = e.target.getAttribute('data-type');
-          if (e.target.checked) {
-            selectedFilters[filterType].add(e.target.value);
-          } else {
-            selectedFilters[filterType].delete(e.target.value);
-          }
-          updateDropdownLabel(filterType, placeholder);
-          applyFilters();
-        });
-      });
-    }
-
-    function updateDropdownLabel(type, placeholder) {
-      const label = document.getElementById(`${type}DropdownLabel`);
-      const resetBtn = document.getElementById(`reset${type.charAt(0).toUpperCase() + type.slice(1)}Btn`);
-      const count = selectedFilters[type].size;
-
-      if (count === 0) {
-        label.innerText = placeholder;
-        resetBtn.classList.add('hidden');
-      } else if (count === 1) {
-        const val = Array.from(selectedFilters[type])[0];
-        label.innerText = type === 'setting' ? cleanSettingName(val) : val;
-        resetBtn.classList.remove('hidden');
-      } else {
-        label.innerText = `${count} Selected`;
-        resetBtn.classList.remove('hidden');
-      }
-    }
-
-    function setupDropdownControls() {
-      document.querySelectorAll('.dropdown-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const targetType = btn.getAttribute('data-dropdown');
-          const targetMenu = document.getElementById(`${targetType}DropdownMenu`);
-          
-          document.querySelectorAll('.dropdown-menu').forEach(m => {
-            if (m !== targetMenu) m.classList.add('hidden');
-          });
-          targetMenu.classList.toggle('hidden');
-        });
-      });
-
-      document.addEventListener('click', () => {
-        document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden'));
-      });
-
-      ['state', 'setting', 'competitiveness'].forEach(type => {
-        const placeholders = { state: 'All States', setting: 'All Settings', competitiveness: 'All Tiers' };
-        const resetBtn = document.getElementById(`reset${type.charAt(0).toUpperCase() + type.slice(1)}Btn`);
-        resetBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          selectedFilters[type].clear();
-          const menu = document.getElementById(`${type}DropdownMenu`);
-          menu.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-          updateDropdownLabel(type, placeholders[type]);
-          applyFilters();
-        });
-      });
-    }
-
-    function populateDropdowns(data) {
-      const sets = { state: new Set(), setting: new Set(), competitiveness: new Set() };
-      let maxClassFound = 0;
-
-      data.forEach(prog => {
-        const st = getProp(prog, ['State', 'state']);
-        const set = getProp(prog, ['Setting', 'Program Setting']);
-        const comp = getProp(prog, ['Competitiveness', 'Tier']);
-        const sizeStr = getProp(prog, ['Class size', 'Class Size', 'Program Size']);
-
-        if (st) sets.state.add(st);
-        if (set) sets.setting.add(set);
-        if (comp) sets.competitiveness.add(comp);
-        
-        const size = parseInt(sizeStr);
-        if (!isNaN(size) && size > maxClassFound) maxClassFound = size;
-      });
-
-      buildMultiSelectDropdown('state', sets.state, 'All States');
-      buildMultiSelectDropdown('setting', sets.setting, 'All Settings');
-      buildMultiSelectDropdown('competitiveness', sets.competitiveness, 'All Tiers');
-
-      if (maxClassFound > 0) {
-        const slider = document.getElementById('classSizeFilter');
-        slider.max = maxClassFound;
-        slider.value = maxClassFound;
-        document.getElementById('classSizeValue').innerText = maxClassFound;
-      }
-    }
-
-    function applyFilters() {
-      const searchVal = document.getElementById('searchInput').value.toLowerCase();
-      const maxClassSize = parseInt(document.getElementById('classSizeFilter').value);
-
-      const requireParking = document.getElementById('parkingFilter').checked;
-      const requireHousing = document.getElementById('housingFilter').checked;
-      const requireMeal = document.getElementById('mealFilter').checked;
-      const requireTech = document.getElementById('techFilter').checked;
-
-      const filtered = allPrograms.filter(prog => {
-        const name = getProp(prog, ['Program', 'Program Name']).toLowerCase();
-        const city = getProp(prog, ['City', 'city']).toLowerCase();
-        const progState = getProp(prog, ['State', 'state']);
-        const progSetting = getProp(prog, ['Setting', 'Program Setting']);
-        const progCompetitiveness = getProp(prog, ['Competitiveness', 'Tier']);
-
-        const matchesSearch = name.includes(searchVal) || city.includes(searchVal);
-        const matchesState = selectedFilters.state.size === 0 || selectedFilters.state.has(progState);
-        const matchesSetting = selectedFilters.setting.size === 0 || selectedFilters.setting.has(progSetting);
-        const matchesCompetitiveness = selectedFilters.competitiveness.size === 0 || selectedFilters.competitiveness.has(progCompetitiveness);
-
-        const classSizeNum = parseInt(getProp(prog, ['Class size', 'Class Size', 'Program Size']));
-        const matchesClassSize = isNaN(classSizeNum) || classSizeNum <= maxClassSize;
-
-        const matchesParking = !requireParking || isTrueValue(getProp(prog, ['Free Parking', 'Parking']));
-        const matchesHousing = !requireHousing || isTrueValue(getProp(prog, ['Housing Stipend', 'Housing']));
-        const matchesMeal = !requireMeal || isTrueValue(getProp(prog, ['Meal Stipend', 'Meals']));
-        const matchesTech = !requireTech || isTrueValue(getProp(prog, ['Tech Stipend', 'Tech']));
-
-        return matchesSearch && matchesState && matchesSetting && 
-               matchesCompetitiveness && matchesClassSize && matchesParking && 
-               matchesHousing && matchesMeal && matchesTech;
-      });
-
-      renderSidebarList(filtered);
-
-      const visibleNames = new Set(filtered.map(p => getProp(p, ['Program', 'Program Name'])));
-      markersMap.forEach((marker, progName) => {
-        if (visibleNames.has(progName)) {
-          if (!map.hasLayer(marker)) map.addLayer(marker);
-        } else {
-          if (map.hasLayer(marker)) map.removeLayer(marker);
-        }
-      });
-    }
-
-    Papa.parse('programs.csv', {
-      download: true,
-      header: true,
-      skipEmptyLines: true,
-      complete: function(results) {
-        allPrograms = results.data;
-        initMap();
-        setupDropdownControls();
-        populateDropdowns(allPrograms);
-        createMapPins(allPrograms);
-        renderSidebarList(allPrograms);
-      }
-    });
-
-    document.getElementById('searchInput').addEventListener('input', applyFilters);
-
-    document.getElementById('classSizeFilter').addEventListener('input', function(e) {
-      document.getElementById('classSizeValue').innerText = e.target.value;
-      applyFilters();
-    });
-
-    document.getElementById('parkingFilter').addEventListener('change', applyFilters);
-    document.getElementById('housingFilter').addEventListener('change', applyFilters);
-    document.getElementById('mealFilter').addEventListener('change', applyFilters);
-    document.getElementById('techFilter').addEventListener('change', applyFilters);
-  </script>
+        // Initial render
+        renderDashboard(programsData);
+    </script>
 </body>
 </html>
