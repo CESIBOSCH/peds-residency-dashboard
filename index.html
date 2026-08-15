@@ -1,267 +1,282 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pediatrics Residencies - Curated Program Explorer</title>
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        cream: '#FBF9F5',
-                        warmbeige: '#F3EFEA',
-                        taupe: '#A39B90',
-                        softdark: '#2D2B29',
-                        accent: '#DD795C'
-                    },
-                    fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        #map { height: 600px; border-radius: 0.75rem; }
-        .leaflet-popup-content-wrapper {
-            background-color: #ffffff;
-            border-radius: 0.75rem;
-            padding: 0.5rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-</head>
-<body class="bg-cream text-softdark font-sans antialiased min-h-screen flex flex-col">
-    <!-- Header -->
-    <header class="bg-white border-b border-warmbeige py-6 px-8 shadow-sm">
-        <div class="max-w-7xl mx-auto flex flex-col items-center justify-center text-center">
-            <h1 class="text-2xl font-bold tracking-widest uppercase text-softdark">Pediatrics Residencies</h1>
-            <p class="text-xs uppercase tracking-widest text-accent mt-1 font-semibold">Curated Program Explorer</p>
-        </div>
-    </header>
+<script>
+  let allPrograms = [];
+  let selectedFilters = { state: new Set(), setting: new Set(), competitiveness: new Set() };
+  let map;
+  let markersMap = new Map();
 
-    <!-- Main Dashboard Layout -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+  // Airport Lookup Table
+  const airportLookup = {
+    "Ann Arbor, MI": "DTW",
+    "Sacramento, CA": "SMF",
+    "Charlotte, NC": "CLT",
+    "Phoenix, AZ": "PHX", 
+    "Los Angeles, CA": "LAX", 
+    "San Francisco, CA": "SFO",
+    "Oakland, CA": "OAK", 
+    "San Diego, CA": "SAN",
+    "New Haven, CT": "BDL", 
+    "Denver, CO": "DEN", 
+    "Washington, DC": "DCA",
+    "Chicago, IL": "ORD", 
+    "Boston, MA": "BOS", 
+    "Baltimore, MD": "BWI",
+    "Minneapolis, MN": "MSP", 
+    "St. Louis, MO": "STL",
+    "Chapel Hill, NC": "RDU", 
+    "Philadelphia, PA": "PHL",
+    "Pittsburgh, PA": "PIT", 
+    "Seattle, WA": "SEA", 
+    "New York, NY": "JFK",
+    "Houston, TX": "IAH", 
+    "Dallas, TX": "DFW", 
+    "Atlanta, GA": "ATL"
+  };
+
+  // Helper: Strip special characters & lowercase for soft key matching
+  function cleanKey(str) {
+    return String(str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  }
+
+  // Enhanced Property Extractor (Handles varied column headers safely)
+  function getProp(obj, possibleKeys, defaultVal = 'N/A') {
+    if (!obj || typeof obj !== 'object') return defaultVal;
+    const objKeys = Object.keys(obj);
+
+    // Exact clean match
+    for (const keyCandidate of possibleKeys) {
+      const targetClean = cleanKey(keyCandidate);
+      const matchedKey = objKeys.find(k => cleanKey(k) === targetClean);
+      if (matchedKey && obj[matchedKey] !== undefined && obj[matchedKey] !== null) {
+        const val = String(obj[matchedKey]).trim();
+        if (val !== '' && val !== '-') return val;
+      }
+    }
+
+    // Partial key match
+    for (const keyCandidate of possibleKeys) {
+      const targetClean = cleanKey(keyCandidate);
+      const matchedKey = objKeys.find(k => cleanKey(k).includes(targetClean));
+      if (matchedKey && obj[matchedKey] !== undefined && obj[matchedKey] !== null) {
+        const val = String(obj[matchedKey]).trim();
+        if (val !== '' && val !== '-') return val;
+      }
+    }
+
+    return defaultVal;
+  }
+
+  function formatCurrency(val) {
+    if (!val || val === 'N/A') return 'N/A';
+    const cleanNum = parseFloat(String(val).replace(/[^0-9.-]+/g, ""));
+    if (isNaN(cleanNum)) return val;
+    return '$' + cleanNum.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function isTrueValue(val) {
+    if (!val || val === 'N/A') return false;
+    const cleanVal = String(val).trim().toLowerCase();
+    return ['yes', 'true', '1', 'x', 'y'].includes(cleanVal);
+  }
+
+  function cleanSettingName(val) {
+    if (!val || val === 'N/A') return 'N/A';
+    let cleaned = val.trim();
+    if (cleaned.toLowerCase().includes("university affiliated") || cleaned.toLowerCase().includes("cb/university")) {
+      return "Community-Based Univ. Affiliated";
+    }
+    return cleaned;
+  }
+
+  // Generate HTML Face Sheet
+  function createFactSheetHTML(prog) {
+    const city = getProp(prog, ['City', 'Location City', 'Town']);
+    const state = getProp(prog, ['State', 'Location State', 'ST']);
+    const cityStateKey = `${city}, ${state}`;
+
+    const rawWebsite = getProp(prog, ['Website', 'URL', 'Program Website', 'Link'], '#');
+    const programName = getProp(prog, ['Program', 'Program Name', 'Hospital', 'Institution', 'Name'], 'Program Info');
+
+    // Airport resolution
+    let airport = getProp(prog, ['Nearest Airport', 'Airport', 'Airport Code']);
+    if (airport === 'N/A') {
+      airport = airportLookup[cityStateKey] || (city !== 'N/A' ? city.substring(0, 3).toUpperCase() : 'N/A');
+    }
+
+    // Extract stats safely
+    const classSize = getProp(prog, ['Class size', 'Class Size', 'Size', 'Program Size']);
+    const setting = cleanSettingName(getProp(prog, ['Setting', 'Program Setting', 'Hospital Setting']));
+    const tier = getProp(prog, ['Competitiveness', 'Tier', 'Category', 'Target/Reach', 'Reach/Target']);
+    const stepScore = getProp(prog, ['Step Score Range', 'Step Score', 'Step 2 Target', 'Target Step']);
+
+    const avgHours = getProp(prog, ['Average Hours Worked', 'Work Hours', 'Average Hours', 'Hours/Week']);
+    const shiftLength = getProp(prog, ['Longest Shift Length', 'Shift Length', 'Max Shift Length', 'Longest Shift']);
+    const daysOff = getProp(prog, ['Days Off Per Week', 'Days Off/Week', 'Days Off']);
+    const sickDays = getProp(prog, ['Sick Days', 'Sick Leave Days', 'Sick Leave']);
+    const vacationDays = getProp(prog, ['Vacation Days', 'Vacation', 'PTO']);
+
+    // Family Leave extraction
+    let paidLeave = getProp(prog, ['Paid Family Leave Days', 'Paid Family Leave', 'Paid Leave']);
+    let unpaidLeave = getProp(prog, ['Unpaid Family Leave Days', 'Unpaid Family Leave', 'Unpaid Leave']);
+
+    const baseSalary = formatCurrency(getProp(prog, ['Salary', 'Base Salary', 'PGY1 Salary', 'PGY-1 Salary']));
+    const colSalary = formatCurrency(getProp(prog, ['COL Adjusted Salary', 'COL-Adjusted Salary', 'Adjusted Salary']));
+    const stretchScore = getProp(prog, ['Salary Stretch Score', 'Stretch Score', 'Salary Score']);
+
+    const formattedWebsite = rawWebsite !== '#' ? (rawWebsite.startsWith('http') ? rawWebsite : 'https://' + rawWebsite) : '#';
+
+    return `
+      <div class="p-3.5 space-y-2.5 font-sans max-h-[420px] overflow-y-auto bg-white">
         
-        <!-- Sidebar Filters & Program List -->
-        <div class="lg:col-span-5 space-y-6">
-            <div class="bg-warmbeige/40 p-6 rounded-xl border border-warmbeige shadow-sm space-y-4">
-                <h2 class="text-xs font-bold uppercase tracking-wider text-taupr">Filters & Search</h2>
-                
-                <!-- Search -->
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-taupe mb-1">Search</label>
-                    <input type="text" id="search-input" placeholder="Search program or city..." oninput="filterPrograms()" class="w-full px-4 py-2 bg-white border border-warmbeige rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-sm">
-                </div>
-
-                <!-- State Filter -->
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-taupe mb-1">State</label>
-                    <select id="filter-state" onchange="filterPrograms()" class="w-full px-4 py-2 bg-white border border-warmbeige rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-sm">
-                        <option value="">All States</option>
-                    </select>
-                </div>
-
-                <!-- Setting Filter -->
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-taupe mb-1">Setting</label>
-                    <select id="filter-setting" onchange="filterPrograms()" class="w-full px-4 py-2 bg-white border border-warmbeige rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-sm">
-                        <option value="">All Settings</option>
-                        <option value="University">University</option>
-                        <option value="CB/University Affiliated">CB/University Affiliated</option>
-                    </select>
-                </div>
-
-                <!-- Tier Filter -->
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-taupe mb-1">Tier / Competitiveness</label>
-                    <select id="filter-tier" onchange="filterPrograms()" class="w-full px-4 py-2 bg-white border border-warmbeige rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-sm">
-                        <option value="">All Tiers</option>
-                        <option value="Target">Target</option>
-                        <option value="Target/Reach">Target/Reach</option>
-                        <option value="Reach">Reach</option>
-                        <option value="High Reach">High Reach</option>
-                        <option value="Safer">Safer</option>
-                    </select>
-                </div>
-
-                <!-- Benefits Checkboxes -->
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-taupe mb-2">Benefits</label>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <label class="flex items-center gap-2"><input type="checkbox" id="check-parking" onchange="filterPrograms()" class="rounded text-accent focus:ring-accent"> Parking</label>
-                        <label class="flex items-center gap-2"><input type="checkbox" id="check-housing" onchange="filterPrograms()" class="rounded text-accent focus:ring-accent"> Housing</label>
-                        <label class="flex items-center gap-2"><input type="checkbox" id="check-meals" onchange="filterPrograms()" class="rounded text-accent focus:ring-accent"> Meals</label>
-                        <label class="flex items-center gap-2"><input type="checkbox" id="check-tech" onchange="filterPrograms()" class="rounded text-accent focus:ring-accent"> Tech</label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Program Cards List -->
-            <div id="program-list" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
-                <!-- Dynamically populated -->
-            </div>
+        <div class="border-b border-[#E5E0D8] pb-1.5">
+          <h3 class="font-semibold text-xs text-[#2D3132] leading-tight">
+            ${formattedWebsite !== '#' ? `<a href="${formattedWebsite}" target="_blank" rel="noopener noreferrer" class="text-[#2D3132] hover:text-[#C86D51] hover:underline flex items-center gap-1">${programName} <span class="text-[9px] text-[#C86D51]">↗</span></a>` : programName}
+          </h3>
         </div>
 
-        <!-- Interactive Map Section -->
-        <div class="lg:col-span-7 bg-white p-6 rounded-xl border border-warmbeige shadow-sm flex flex-col">
-            <div id="map" class="w-full flex-grow"></div>
+        <!-- BASICS -->
+        <div class="space-y-1">
+          <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Basics</span>
+          <div class="grid grid-cols-2 gap-1.5 text-[10px]">
+            <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
+              <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Location</span>
+              <span class="font-medium text-[#2D3132] truncate block">${city}, ${state}</span>
+            </div>
+            <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
+              <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Nearest Airport</span>
+              <span class="font-medium text-[#2D3132] truncate block">${airport}</span>
+            </div>
+          </div>
+          <div class="grid grid-cols-4 gap-1.5 text-[10px]">
+            <div class="col-span-3 bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
+              <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Setting</span>
+              <span class="font-medium text-[#2D3132] block truncate">${setting}</span>
+            </div>
+            <div class="col-span-1 bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
+              <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Class Size</span>
+              <span class="font-medium text-[#2D3132]">${classSize}</span>
+            </div>
+          </div>
         </div>
 
-    </main>
+        <!-- APPLICATION -->
+        <div class="space-y-1">
+          <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Application</span>
+          <div class="grid grid-cols-2 gap-1.5 text-[10px]">
+            <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
+              <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Tier / Category</span>
+              <span class="font-medium text-[#2D3132]">${tier}</span>
+            </div>
+            <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
+              <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Step Score Target</span>
+              <span class="font-medium text-[#2D3132]">${stepScore}</span>
+            </div>
+          </div>
+        </div>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-warmbeige py-6 text-center text-xs text-taupe mt-auto">
-        <p>Pediatric Residency Tracker Dashboard &bull; Designed with minimalist clarity</p>
-    </footer>
+        <!-- WORK & LEAVE -->
+        <div class="space-y-1">
+          <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Work & Leave</span>
+          <div class="bg-[#FAF9F5] p-2 rounded border border-[#E5E0D8] text-[10px] space-y-1">
+            <div class="flex justify-between">
+              <span class="text-[#6B7280]">Average Hours/Week:</span>
+              <span class="font-medium text-[#2D3132]">${avgHours}</span>
+            </div>
+            <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
+              <span class="text-[#6B7280]">Longest Shift Length:</span>
+              <span class="font-medium text-[#2D3132]">${shiftLength}</span>
+            </div>
+            <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
+              <span class="text-[#6B7280]">Days Off/Week:</span>
+              <span class="font-medium text-[#2D3132]">${daysOff}</span>
+            </div>
+            <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
+              <span class="text-[#6B7280]">Sick Days:</span>
+              <span class="font-medium text-[#2D3132]">${sickDays}</span>
+            </div>
+            <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
+              <span class="text-[#6B7280]">Vacation Days:</span>
+              <span class="font-medium text-[#2D3132]">${vacationDays}</span>
+            </div>
+            <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
+              <span class="text-[#6B7280]">Family Leave (Paid / Unpaid):</span>
+              <span class="font-medium text-[#2D3132]">${paidLeave} / ${unpaidLeave}</span>
+            </div>
+          </div>
+        </div>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    
-    <script>
-        const programsData = [
-            { id: 1, name: "Phoenix Children’s", city: "Phoenix", state: "AZ", interest: "Considering", setting: "CB/University Affiliated", classSize: 39, competitiveness: "Target/Reach", stepRange: "232-264", hours: 50, shift: 12, daysOff: 2, sick: "N", vacation: 20, leave: "42/42", salary: "$67,935", colSalary: "$65,765", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 33.4484, lng: -112.0740 },
-            { id: 2, name: "Cedars-Sinai Medical Center Program", city: "Los Angeles", state: "CA", interest: "Considering", setting: "CB/University Affiliated", classSize: 8, competitiveness: "High Reach", stepRange: "227-261", hours: 51, shift: 14, daysOff: 1.5, sick: 5, vacation: 28, leave: "—/91", salary: "$94,746", colSalary: "$83,403", parking: "Y", housing: "Y", meals: "Y", tech: "Y", lat: 34.0736, lng: -118.3835 },
-            { id: 3, name: "UCSF", city: "San Francisco", state: "CA", interest: "Considering", setting: "University", classSize: 29, competitiveness: "High Reach", stepRange: "234-267", hours: 65, shift: 16, daysOff: 1.0, sick: 12, vacation: 28, leave: "N x2", salary: "$92,284", colSalary: "$79,830", parking: "N", housing: "Y", meals: "Y", tech: "N", lat: 37.7631, lng: -122.4586 },
-            { id: 4, name: "UCSF Benioff Children’s Hospital Oakland", city: "Oakland", state: "CA", interest: "High Interest", setting: "CB/University Affiliated", classSize: 33, competitiveness: "Reach", stepRange: "230-264", hours: 60, shift: 24, daysOff: 1.5, sick: 12, vacation: 20, leave: "40/N", salary: "$92,284", colSalary: "$79,830", parking: "Y", housing: "Y", meals: "Y", tech: "Y", lat: 37.8356, lng: -122.2727 },
-            { id: 5, name: "UCLA Medical Center Program", city: "Los Angeles", state: "CA", interest: "Considering", setting: "University", classSize: 29, competitiveness: "Target/Reach", stepRange: "233-266", hours: 65, shift: 24, daysOff: 1.4, sick: 12, vacation: 28, leave: "N/A", salary: "$89,261", colSalary: "$78,575", parking: "Y", housing: "Y", meals: "Y", tech: "Y", lat: 34.0689, lng: -118.4452 },
-            { id: 6, name: "Kaiser Permanente Northern California", city: "Oakland", state: "CA", interest: "Considering", setting: "CB/University Affiliated", classSize: 12, competitiveness: "Target", stepRange: "230-260", hours: 55, shift: 12, daysOff: 2, sick: 10, vacation: 21, leave: "Paid/Unpaid", salary: "$91,000", colSalary: "$79,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 37.8044, lng: -122.2712 },
-            { id: 7, name: "UC Davis", city: "Sacramento", state: "CA", interest: "Considering", setting: "University", classSize: 24, competitiveness: "Target/Reach", stepRange: "228-260", hours: 58, shift: 16, daysOff: 1.5, sick: 12, vacation: 21, leave: "Available", salary: "$84,000", colSalary: "$78,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 38.5816, lng: -121.4944 },
-            { id: 8, name: "UCSD", city: "San Diego", state: "CA", interest: "Considering", setting: "University", classSize: 26, competitiveness: "Reach/High Reach", stepRange: "232-265", hours: 60, shift: 20, daysOff: 1.5, sick: 12, vacation: 20, leave: "Available", salary: "$82,000", colSalary: "$74,000", parking: "Y", housing: "Y", meals: "Y", tech: "Y", lat: 32.8801, lng: -117.2340 },
-            { id: 9, name: "Yale", city: "New Haven", state: "CT", interest: "Considering", setting: "University", classSize: 30, competitiveness: "Reach", stepRange: "235-268", hours: 62, shift: 24, daysOff: 1.5, sick: 12, vacation: 20, leave: "Available", salary: "$78,000", colSalary: "$75,000", parking: "Y", housing: "Y", meals: "Y", tech: "Y", lat: 41.3163, lng: -72.9223 },
-            { id: 10, name: "Emory/Children’s Healthcare of Atlanta", city: "Atlanta", state: "GA", interest: "High Interest", setting: "University", classSize: 42, competitiveness: "Reach", stepRange: "233-266", hours: 60, shift: 24, daysOff: 1.5, sick: 10, vacation: 20, leave: "Available", salary: "$70,500", colSalary: "$71,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 33.7490, lng: -84.3880 },
-            { id: 11, name: "University of Chicago Program", city: "Chicago", state: "IL", interest: "Considering", setting: "University", classSize: 28, competitiveness: "Reach", stepRange: "232-265", hours: 60, shift: 24, daysOff: 1.5, sick: 12, vacation: 20, leave: "Available", salary: "$75,000", colSalary: "$75,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 41.7886, lng: -87.5987 },
-            { id: 12, name: "Indiana University", city: "Indianapolis", state: "IN", interest: "Considering", setting: "University", classSize: 45, competitiveness: "Target/Reach", stepRange: "228-260", hours: 55, shift: 14, daysOff: 2, sick: 10, vacation: 20, leave: "Available", salary: "$66,000", colSalary: "$70,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 39.7684, lng: -86.1581 },
-            { id: 13, name: "Carolinas Medical Center Program", city: "Charlotte", state: "NC", interest: "High Interest", setting: "CB/University Affiliated", classSize: 16, competitiveness: "Target", stepRange: "235-267", hours: 56, shift: "N/A", daysOff: "N/A", sick: 90, vacation: 20, leave: "N/A / N/A", salary: "$70,000", colSalary: "$72,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 35.2087, lng: -80.8307 },
-            { id: 14, name: "Duke University Hospital", city: "Durham", state: "NC", interest: "High Interest", setting: "University", classSize: 32, competitiveness: "Reach", stepRange: "238-270", hours: 60, shift: 24, daysOff: 1.5, sick: 12, vacation: 20, leave: "Available", salary: "$72,000", colSalary: "$75,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 36.0014, lng: -78.9382 },
-            { id: 15, name: "UNC Health Care", city: "Chapel Hill", state: "NC", interest: "High Interest", setting: "University", classSize: 30, competitiveness: "Target/Reach", stepRange: "234-266", hours: 58, shift: 20, daysOff: 1.5, sick: 12, vacation: 20, leave: "Available", salary: "$69,000", colSalary: "$72,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 35.9132, lng: -79.0558 },
-            { id: 16, name: "Seattle Children’s", city: "Seattle", state: "WA", interest: "Considering", setting: "CB/University Affiliated", classSize: 32, competitiveness: "Reach", stepRange: "235-268", hours: 60, shift: 24, daysOff: 1.5, sick: 12, vacation: 20, leave: "Available", salary: "$81,000", colSalary: "$73,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 47.6625, lng: -122.3137 }
-        ];
+        <!-- COMPENSATION -->
+        <div class="space-y-1">
+          <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Compensation</span>
+          <div class="grid grid-cols-3 gap-1 text-[9px]">
+            <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
+              <span class="text-[#6B7280] block text-[7px] uppercase font-medium">Base Salary</span>
+              <span class="font-medium text-[#2D3132]">${baseSalary}</span>
+            </div>
+            <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
+              <span class="text-[#6B7280] block text-[7px] uppercase font-medium truncate">COL-Adjusted Salary</span>
+              <span class="font-medium text-[#2D3132]">${colSalary}</span>
+            </div>
+            <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
+              <span class="text-[#6B7280] block text-[7px] uppercase font-medium truncate">Stretch Score</span>
+              <span class="font-medium text-[#2D3132]">${stretchScore}</span>
+            </div>
+          </div>
+        </div>
 
-        let map;
-        let markers = [];
+      </div>
+    `;
+  }
 
-        function initMap() {
-            map = L.map('map').setView([38.5, -96.0], 4);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-            populateStateDropdown();
-            filterPrograms();
-        }
+  function renderMapMarkers(data) {
+    if (!map) return;
 
-        function populateStateDropdown() {
-            const states = [...new Set(programsData.map(p => p.state))].sort();
-            const select = document.getElementById('filter-state');
-            states.forEach(state => {
-                const opt = document.createElement('option');
-                opt.value = state;
-                opt.innerText = state;
-                select.appendChild(opt);
-            });
-        }
+    // Clear existing markers
+    markersMap.forEach(marker => map.removeLayer(marker));
+    markersMap.clear();
 
-        function updateMapMarkers(data) {
-            markers.forEach(marker => map.removeLayer(marker));
-            markers = [];
+    data.forEach(prog => {
+      const lat = parseFloat(getProp(prog, ['Latitude', 'Lat']));
+      const lng = parseFloat(getProp(prog, ['Longitude', 'Lng', 'Long']));
 
-            data.forEach(prog => {
-                if(prog.lat && prog.lng) {
-                    const popupContent = `
-                        <div class="p-2 space-y-2 text-xs">
-                            <h3 class="font-bold text-sm text-softdark">${prog.name}</h3>
-                            <p class="text-taupe"><strong>Location:</strong> ${prog.city}, ${prog.state}</p>
-                            <p class="text-taupe"><strong>Setting:</strong> ${prog.setting}</p>
-                            <p class="text-taupe"><strong>Class Size:</strong> ${prog.classSize}</p>
-                            <p class="text-taupe"><strong>Tier:</strong> ${prog.competitiveness || 'N/A'}</p>
-                            <hr class="border-warmbeige">
-                            <div class="grid grid-cols-2 gap-1 text-[11px]">
-                                <div><strong>Hours/Wk:</strong> ${prog.hours}</div>
-                                <div><strong>Step Range:</strong> ${prog.stepRange}</div>
-                                <div><strong>Vacation:</strong> ${prog.vacation} days</div>
-                                <div><strong>Salary:</strong> ${prog.salary}</div>
-                            </div>
-                        </div>
-                    `;
-                    const marker = L.marker([prog.lat, prog.lng]).addTo(map)
-                        .bindPopup(popupContent);
-                    markers.push(marker);
-                }
-            });
-        }
+      if (!isNaN(lat) && !isNaN(lng)) {
+        const marker = L.circleMarker([lat, lng], {
+          radius: 7,
+          fillColor: "#C86D51",
+          color: "#FFFFFF",
+          weight: 1.5,
+          opacity: 1,
+          fillOpacity: 0.9
+        }).addTo(map);
 
-        function renderProgramList(data) {
-            const listContainer = document.getElementById('program-list');
-            listContainer.innerHTML = '';
+        const factSheetHTML = createFactSheetHTML(prog);
+        marker.bindPopup(factSheetHTML, { maxWidth: 300, minWidth: 260 });
+        
+        const progId = getProp(prog, ['Program', 'Program Name', 'Name']);
+        markersMap.set(progId, marker);
+      }
+    });
+  }
 
-            if(data.length === 0) {
-                listContainer.innerHTML = `<div class="p-6 bg-white rounded-xl border border-warmbeige text-center text-taupe text-sm">No programs match your filters.</div>`;
-                return;
-            }
+  function initMap() {
+    const mapEl = document.getElementById('map');
+    if (!mapEl) return;
 
-            data.forEach(prog => {
-                const card = document.createElement('div');
-                card.className = "bg-white p-4 rounded-xl border border-warmbeige shadow-sm hover:border-accent transition cursor-pointer";
-                card.onclick = () => {
-                    map.setView([prog.lat, prog.lng], 11);
-                    markers.find(m => m.getLatLng().lat === prog.lat && m.getLatLng().lng === prog.lng)?.openPopup();
-                };
-                card.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-xs text-taupe font-semibold">${prog.city}, ${prog.state}</p>
-                            <h3 class="font-bold text-softdark text-sm mt-0.5">${prog.name}</h3>
-                        </div>
-                        <span class="px-2 py-0.5 bg-warmbeige text-softdark rounded text-[10px] font-semibold">${prog.competitiveness || 'Target'}</span>
-                    </div>
-                    <div class="mt-3 flex justify-between items-center text-xs text-taupe">
-                        <span>${prog.setting}</span>
-                        <span class="text-accent font-semibold hover:underline">View on Map &rarr;</span>
-                    </div>
-                `;
-                listContainer.appendChild(card);
-            });
-        }
+    map = L.map('map', { zoomControl: false }).setView([39.8283, -98.5795], 4);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-        function filterPrograms() {
-            const query = document.getElementById('search-input').value.toLowerCase();
-            const state = document.getElementById('filter-state').value;
-            const setting = document.getElementById('filter-setting').value;
-            const tier = document.getElementById('filter-tier').value;
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      subdomains: 'abcd',
+      attribution: '&copy; OpenStreetMap &copy; CARTO'
+    }).addTo(map);
 
-            const parking = document.getElementById('check-parking').checked;
-            const housing = document.getElementById('check-housing').checked;
-            const meals = document.getElementById('check-meals').checked;
-            const tech = document.getElementById('check-tech').checked;
+    if (allPrograms.length > 0) {
+      renderMapMarkers(allPrograms);
+    }
+  }
 
-            const filtered = programsData.filter(prog => {
-                const matchesQuery = prog.name.toLowerCase().includes(query) || prog.city.toLowerCase().includes(query);
-                const matchesState = state === "" || prog.state === state;
-                const matchesSetting = setting === "" || prog.setting === setting;
-                const matchesTier = tier === "" || (prog.competitiveness && prog.competitiveness.includes(tier));
-
-                const matchesParking = !parking || prog.parking === 'Y';
-                const matchesHousing = !housing || prog.housing === 'Y';
-                const matchesMeals = !meals || prog.meals === 'Y';
-                const matchesTech = !tech || prog.tech === 'Y';
-
-                return matchesQuery && matchesState && matchesSetting && matchesTier && matchesParking && matchesHousing && matchesMeals && matchesTech;
-            });
-
-            renderProgramList(filtered);
-            updateMapMarkers(filtered);
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            initMap();
-        });
-    </script>
-</body>
-</html>
+  // Initialize map when DOM is ready
+  document.addEventListener("DOMContentLoaded", () => {
+    initMap();
+  });
+</script>
