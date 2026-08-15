@@ -34,19 +34,22 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
     }
 
-    /* Map Popups */
-    .leaflet-popup-content-wrapper {
+    /* Minimal Hover Tooltip Styling */
+    .leaflet-tooltip.custom-map-tooltip {
       background: var(--bg-ivory);
-      border-radius: 12px;
-      padding: 6px;
-      box-shadow: 0 10px 25px -5px rgba(52, 58, 59, 0.12);
       border: 1px solid var(--accent-mushroom);
+      color: var(--text-charcoal);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(52, 58, 59, 0.12);
     }
-    .leaflet-popup-tip {
-      background: var(--bg-ivory);
+    .leaflet-tooltip-top:before {
+      border-top-color: var(--accent-mushroom);
     }
 
-    /* Custom Desert Neutral Map Pins with Terracotta Center */
+    /* Custom Desert Neutral Map Pins */
     .custom-desert-pin {
       background-color: #343A3B;
       border: 2px solid #FAF8F3;
@@ -54,7 +57,7 @@
       height: 18px !important;
       border-radius: 50%;
       box-shadow: 0 2px 6px rgba(52, 58, 59, 0.25);
-      transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+      transition: transform 0.2s ease, background-color 0.2s ease;
       cursor: pointer;
     }
     .custom-desert-pin:hover {
@@ -81,13 +84,12 @@
       border-radius: 4px;
     }
 
-    /* Custom Checkbox Styling */
     input[type="checkbox"] {
       accent-color: var(--accent-terracotta);
     }
   </style>
 </head>
-<body class="h-screen w-screen overflow-hidden flex flex-col md:flex-row">
+<body class="h-screen w-screen overflow-hidden flex flex-col md:flex-row relative">
 
   <!-- LEFT SIDEBAR: Controls & Program List -->
   <aside class="w-full md:w-[420px] lg:w-[460px] h-full border-r border-[#D8CDBD]/60 flex flex-col z-20 shadow-sm" style="background-color: #FAF8F3;">
@@ -98,7 +100,6 @@
         <h1 class="text-xl font-light tracking-wide" style="color: #343A3B;">Pediatric Residency Dashboard</h1>
         <p class="text-xs mt-0.5" style="color: #74736E;">Filter programs & explore locations</p>
       </div>
-      <!-- Subtle Terracotta Accent Dot -->
       <span class="w-2.5 h-2.5 rounded-full inline-block shrink-0" style="background-color: #C86D51;" title="Active Session"></span>
     </div>
 
@@ -114,38 +115,62 @@
         style="background-color: #FFFFFF; color: #343A3B;"
       />
 
-      <!-- Dropdown Filters Grid -->
+      <!-- Multi-Select Dropdowns Grid -->
       <div class="grid grid-cols-2 gap-2">
         
-        <!-- Multi-Select States Dropdown Button -->
-        <div class="relative">
-          <button id="stateDropdownBtn" type="button" class="w-full px-3 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none flex justify-between items-center text-left transition hover:border-[#C86D51]" style="background-color: #FFFFFF; color: #343A3B;">
-            <span id="stateDropdownLabel" class="truncate">Select States</span>
-            <span class="text-[10px] ml-1" style="color: #C86D51;">▼</span>
-          </button>
-          
-          <!-- State Checkbox Menu -->
-          <div id="stateDropdownMenu" class="hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll">
-            <!-- States checkboxes dynamically injected here -->
+        <!-- States Multi-Select Dropdown -->
+        <div class="relative dropdown-container">
+          <div class="flex items-center gap-1">
+            <button type="button" data-dropdown="state" class="dropdown-btn w-full px-2.5 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] transition" style="background-color: #FFFFFF; color: #343A3B;">
+              <span id="stateDropdownLabel" class="truncate">Select States</span>
+              <span class="text-[9px] ml-1 text-[#C86D51]">▼</span>
+            </button>
+            <button type="button" id="resetStateBtn" class="text-[10px] text-[#74736E] hover:text-[#C86D51] underline hidden shrink-0">Reset</button>
           </div>
+          <div id="stateDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
         </div>
 
-        <select id="interestFilter" class="w-full px-3 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none hover:border-[#C86D51] transition" style="background-color: #FFFFFF; color: #343A3B;">
-          <option value="">All Interests</option>
-        </select>
+        <!-- Interest Multi-Select Dropdown -->
+        <div class="relative dropdown-container">
+          <div class="flex items-center gap-1">
+            <button type="button" data-dropdown="interest" class="dropdown-btn w-full px-2.5 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] transition" style="background-color: #FFFFFF; color: #343A3B;">
+              <span id="interestDropdownLabel" class="truncate">Select Interest</span>
+              <span class="text-[9px] ml-1 text-[#C86D51]">▼</span>
+            </button>
+            <button type="button" id="resetInterestBtn" class="text-[10px] text-[#74736E] hover:text-[#C86D51] underline hidden shrink-0">Reset</button>
+          </div>
+          <div id="interestDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
+        </div>
 
-        <select id="settingFilter" class="w-full px-3 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none hover:border-[#C86D51] transition" style="background-color: #FFFFFF; color: #343A3B;">
-          <option value="">All Settings</option>
-        </select>
+        <!-- Setting Multi-Select Dropdown -->
+        <div class="relative dropdown-container">
+          <div class="flex items-center gap-1">
+            <button type="button" data-dropdown="setting" class="dropdown-btn w-full px-2.5 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] transition" style="background-color: #FFFFFF; color: #343A3B;">
+              <span id="settingDropdownLabel" class="truncate">Select Setting</span>
+              <span class="text-[9px] ml-1 text-[#C86D51]">▼</span>
+            </button>
+            <button type="button" id="resetSettingBtn" class="text-[10px] text-[#74736E] hover:text-[#C86D51] underline hidden shrink-0">Reset</button>
+          </div>
+          <div id="settingDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
+        </div>
 
-        <select id="competitivenessFilter" class="w-full px-3 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none hover:border-[#C86D51] transition" style="background-color: #FFFFFF; color: #343A3B;">
-          <option value="">All Competitiveness</option>
-        </select>
+        <!-- Competitiveness Multi-Select Dropdown -->
+        <div class="relative dropdown-container">
+          <div class="flex items-center gap-1">
+            <button type="button" data-dropdown="competitiveness" class="dropdown-btn w-full px-2.5 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] transition" style="background-color: #FFFFFF; color: #343A3B;">
+              <span id="competitivenessDropdownLabel" class="truncate">Competitiveness</span>
+              <span class="text-[9px] ml-1 text-[#C86D51]">▼</span>
+            </button>
+            <button type="button" id="resetCompetitivenessBtn" class="text-[10px] text-[#74736E] hover:text-[#C86D51] underline hidden shrink-0">Reset</button>
+          </div>
+          <div id="competitivenessDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
+        </div>
+
       </div>
 
       <!-- Class Size Slider -->
       <div class="pt-1 flex items-center gap-2">
-        <span class="text-[11px] font-semibold uppercase tracking-wider" style="color: #74736E;">Max Class:</span>
+        <span class="text-[11px] font-semibold uppercase tracking-wider" style="color: #74736E;">Class Size:</span>
         <input 
           type="range" 
           id="classSizeFilter" 
@@ -154,7 +179,7 @@
           value="50" 
           class="w-full h-1 bg-[#D8CDBD] rounded-lg appearance-none cursor-pointer"
         />
-        <span id="classSizeValue" class="text-xs font-medium px-2 py-0.5 rounded text-center min-w-[2.5rem] border border-[#C86D51]/30" style="background-color: #F5ECE8; color: #C86D51;">50+</span>
+        <span id="classSizeValue" class="text-xs font-medium px-2 py-0.5 rounded text-center min-w-[2.5rem] border border-[#C86D51]/30" style="background-color: #F5ECE8; color: #C86D51;">50</span>
       </div>
 
       <!-- Perks Checkboxes -->
@@ -190,9 +215,95 @@
     <div id="map" class="w-full h-full"></div>
   </main>
 
+  <!-- PROGRAM FACT-SHEET MODAL -->
+  <div id="factSheetModal" class="fixed inset-0 z-50 bg-[#343A3B]/40 backdrop-blur-sm hidden flex justify-end transition-opacity">
+    <div class="w-full max-w-lg bg-[#FAF8F3] h-full shadow-2xl flex flex-col overflow-hidden border-l border-[#D8CDBD]">
+      
+      <!-- Fact-Sheet Header -->
+      <div class="p-6 border-b border-[#D8CDBD] flex justify-between items-start" style="background-color: #F3EFE5;">
+        <div>
+          <span id="fsInterestTag" class="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-md border border-[#C86D51]/30 bg-[#F5ECE8] text-[#C86D51]">Interest</span>
+          <h2 id="fsProgramName" class="text-xl font-medium mt-2 leading-tight text-[#343A3B]">Program Name</h2>
+          <p id="fsLocation" class="text-xs text-[#74736E] mt-1">City, State</p>
+        </div>
+        <button id="closeFactSheet" class="text-[#74736E] hover:text-[#C86D51] p-1 text-2xl font-light leading-none">&times;</button>
+      </div>
+
+      <!-- Fact-Sheet Content Sections -->
+      <div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scroll">
+        
+        <!-- Section 1: Basic Overview -->
+        <section class="space-y-2">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-[#C86D51] border-b border-[#D8CDBD]/60 pb-1">Basic Overview Information</h3>
+          <div class="grid grid-cols-2 gap-3 text-xs pt-1">
+            <div class="bg-white p-3 rounded-lg border border-[#D8CDBD]/50">
+              <span class="text-[#74736E] block text-[11px]">Setting</span>
+              <span id="fsSetting" class="font-medium text-[#343A3B] mt-0.5 block">-</span>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-[#D8CDBD]/50">
+              <span class="text-[#74736E] block text-[11px]">Class Size</span>
+              <span id="fsClassSize" class="font-medium text-[#343A3B] mt-0.5 block">-</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Application Stats -->
+        <section class="space-y-2">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-[#C86D51] border-b border-[#D8CDBD]/60 pb-1">Application Stats</h3>
+          <div class="grid grid-cols-2 gap-3 text-xs pt-1">
+            <div class="bg-white p-3 rounded-lg border border-[#D8CDBD]/50">
+              <span class="text-[#74736E] block text-[11px]">Competitiveness</span>
+              <span id="fsCompetitiveness" class="font-medium text-[#343A3B] mt-0.5 block">-</span>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-[#D8CDBD]/50">
+              <span class="text-[#74736E] block text-[11px]">Step Score Range</span>
+              <span id="fsStepScore" class="font-medium text-[#343A3B] mt-0.5 block">-</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: Work & Leave -->
+        <section class="space-y-2">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-[#C86D51] border-b border-[#D8CDBD]/60 pb-1">Work & Leave</h3>
+          <div class="bg-white p-3 rounded-lg border border-[#D8CDBD]/50 text-xs space-y-2">
+            <div class="flex justify-between">
+              <span class="text-[#74736E]">Avg Weekly Hours:</span>
+              <span id="fsWorkHours" class="font-medium text-[#343A3B]">-</span>
+            </div>
+            <div class="flex justify-between border-t border-[#F3EFE5] pt-1.5">
+              <span class="text-[#74736E]">Vacation / Leave:</span>
+              <span id="fsLeave" class="font-medium text-[#343A3B]">-</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Compensation & Perks -->
+        <section class="space-y-2">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-[#C86D51] border-b border-[#D8CDBD]/60 pb-1">Compensation & Perks</h3>
+          <div class="bg-white p-3 rounded-lg border border-[#D8CDBD]/50 text-xs space-y-2">
+            <div class="flex justify-between">
+              <span class="text-[#74736E]">Estimated Salary / Stipend:</span>
+              <span id="fsSalary" class="font-medium text-[#343A3B]">-</span>
+            </div>
+            <div class="pt-2 border-t border-[#F3EFE5] flex flex-wrap gap-2" id="fsPerksBadges">
+              <!-- Perks badges injected here -->
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
   <script>
     let allPrograms = [];
-    let selectedStates = new Set();
+    let selectedFilters = {
+      state: new Set(),
+      interest: new Set(),
+      setting: new Set(),
+      competitiveness: new Set()
+    };
+    
     let map;
     let markersMap = new Map();
 
@@ -219,6 +330,15 @@
       "Seattle, WA": [47.6062, -122.3321]
     };
 
+    function cleanSettingName(val) {
+      if (!val) return '';
+      let cleaned = val.trim();
+      if (cleaned === "CB/University Affiliated" || cleaned === "CB / University Affiliated") {
+        return "Community-Based University Affiliated";
+      }
+      return cleaned;
+    }
+
     function initMap() {
       map = L.map('map', { zoomControl: false }).setView([39.8283, -98.5795], 4);
       L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -226,86 +346,127 @@
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         maxZoom: 19,
         subdomains: 'abcd',
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
+        attribution: '&copy; OpenStreetMap &copy; CARTO'
       }).addTo(map);
     }
 
-    function populateDropdowns(data) {
-      const stateMenu = document.getElementById('stateDropdownMenu');
-      const interestSelect = document.getElementById('interestFilter');
-      const settingSelect = document.getElementById('settingFilter');
-      const competitivenessSelect = document.getElementById('competitivenessFilter');
+    function buildMultiSelectDropdown(type, values, placeholder) {
+      const menu = document.getElementById(`${type}DropdownMenu`);
+      menu.innerHTML = '';
 
-      const states = new Set();
-      const interests = new Set();
-      const settings = new Set();
-      const competitivenessSet = new Set();
+      Array.from(values).sort().forEach(val => {
+        const displayVal = type === 'setting' ? cleanSettingName(val) : val;
+        const label = document.createElement('label');
+        label.className = "flex items-center gap-2 px-1.5 py-1 hover:bg-[#F5ECE8] rounded cursor-pointer text-stone-700 transition";
+        label.innerHTML = `
+          <input type="checkbox" value="${val}" data-type="${type}" class="filter-checkbox rounded border-[#D8CDBD]">
+          <span class="truncate">${displayVal}</span>
+        `;
+        menu.appendChild(label);
+      });
+
+      menu.querySelectorAll('.filter-checkbox').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+          const filterType = e.target.getAttribute('data-type');
+          if (e.target.checked) {
+            selectedFilters[filterType].add(e.target.value);
+          } else {
+            selectedFilters[filterType].delete(e.target.value);
+          }
+          updateDropdownLabel(filterType, placeholder);
+          applyFilters();
+        });
+      });
+    }
+
+    function updateDropdownLabel(type, placeholder) {
+      const label = document.getElementById(`${type}DropdownLabel`);
+      const resetBtn = document.getElementById(`reset${type.charAt(0).toUpperCase() + type.slice(1)}Btn`);
+      const count = selectedFilters[type].size;
+
+      if (count === 0) {
+        label.innerText = placeholder;
+        resetBtn.classList.add('hidden');
+      } else if (count === 1) {
+        const val = Array.from(selectedFilters[type])[0];
+        label.innerText = type === 'setting' ? cleanSettingName(val) : val;
+        resetBtn.classList.remove('hidden');
+      } else {
+        label.innerText = `${count} Selected`;
+        resetBtn.classList.remove('hidden');
+      }
+    }
+
+    function setupDropdownControls() {
+      document.querySelectorAll('.dropdown-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const targetType = btn.getAttribute('data-dropdown');
+          const targetMenu = document.getElementById(`${targetType}DropdownMenu`);
+          
+          document.querySelectorAll('.dropdown-menu').forEach(m => {
+            if (m !== targetMenu) m.classList.add('hidden');
+          });
+          targetMenu.classList.toggle('hidden');
+        });
+      });
+
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden'));
+      });
+
+      // Reset Buttons
+      ['state', 'interest', 'setting', 'competitiveness'].forEach(type => {
+        const placeholders = {
+          state: 'Select States',
+          interest: 'Select Interest',
+          setting: 'Select Setting',
+          competitiveness: 'Competitiveness'
+        };
+
+        const resetBtn = document.getElementById(`reset${type.charAt(0).toUpperCase() + type.slice(1)}Btn`);
+        resetBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          selectedFilters[type].clear();
+          const menu = document.getElementById(`${type}DropdownMenu`);
+          menu.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+          updateDropdownLabel(type, placeholders[type]);
+          applyFilters();
+        });
+      });
+    }
+
+    function populateDropdowns(data) {
+      const sets = {
+        state: new Set(),
+        interest: new Set(),
+        setting: new Set(),
+        competitiveness: new Set()
+      };
       let maxClassFound = 0;
 
       data.forEach(prog => {
-        if (prog['State']) states.add(prog['State'].trim());
-        if (prog['Interest']) interests.add(prog['Interest'].trim());
-        if (prog['Setting']) settings.add(prog['Setting'].trim());
-        if (prog['Competitiveness']) competitivenessSet.add(prog['Competitiveness'].trim());
+        if (prog['State']) sets.state.add(prog['State'].trim());
+        if (prog['Interest']) sets.interest.add(prog['Interest'].trim());
+        if (prog['Setting']) sets.setting.add(prog['Setting'].trim());
+        if (prog['Competitiveness']) sets.competitiveness.add(prog['Competitiveness'].trim());
         
         const size = parseInt(prog['Class size']);
         if (!isNaN(size) && size > maxClassFound) maxClassFound = size;
       });
 
-      Array.from(states).sort().forEach(st => {
-        const label = document.createElement('label');
-        label.className = "flex items-center gap-2 px-1 py-1 hover:bg-[#F5ECE8] rounded cursor-pointer text-stone-700 transition";
-        label.innerHTML = `
-          <input type="checkbox" value="${st}" class="state-checkbox rounded border-[#D8CDBD]">
-          <span>${st}</span>
-        `;
-        stateMenu.appendChild(label);
-      });
-
-      document.querySelectorAll('.state-checkbox').forEach(cb => {
-        cb.addEventListener('change', (e) => {
-          if (e.target.checked) {
-            selectedStates.add(e.target.value);
-          } else {
-            selectedStates.delete(e.target.value);
-          }
-          
-          const labelBtn = document.getElementById('stateDropdownLabel');
-          if (selectedStates.size === 0) {
-            labelBtn.innerText = "Select States";
-          } else if (selectedStates.size === 1) {
-            labelBtn.innerText = Array.from(selectedStates)[0];
-          } else {
-            labelBtn.innerText = `${selectedStates.size} States Selected`;
-          }
-
-          applyFilters();
-        });
-      });
-
-      interests.forEach(val => interestSelect.add(new Option(val, val)));
-      settings.forEach(val => settingSelect.add(new Option(val, val)));
-      competitivenessSet.forEach(val => competitivenessSelect.add(new Option(val, val)));
+      buildMultiSelectDropdown('state', sets.state, 'Select States');
+      buildMultiSelectDropdown('interest', sets.interest, 'Select Interest');
+      buildMultiSelectDropdown('setting', sets.setting, 'Select Setting');
+      buildMultiSelectDropdown('competitiveness', sets.competitiveness, 'Competitiveness');
 
       if (maxClassFound > 0) {
         const slider = document.getElementById('classSizeFilter');
         slider.max = maxClassFound;
         slider.value = maxClassFound;
-        document.getElementById('classSizeValue').innerText = maxClassFound + "+";
+        document.getElementById('classSizeValue').innerText = maxClassFound;
       }
     }
-
-    document.getElementById('stateDropdownBtn').addEventListener('click', () => {
-      document.getElementById('stateDropdownMenu').classList.toggle('hidden');
-    });
-
-    document.addEventListener('click', (e) => {
-      const btn = document.getElementById('stateDropdownBtn');
-      const menu = document.getElementById('stateDropdownMenu');
-      if (!btn.contains(e.target) && !menu.contains(e.target)) {
-        menu.classList.add('hidden');
-      }
-    });
 
     Papa.parse('programs.csv', {
       download: true,
@@ -314,6 +475,7 @@
       complete: function(results) {
         allPrograms = results.data;
         initMap();
+        setupDropdownControls();
         populateDropdowns(allPrograms);
         createMapPins(allPrograms);
         renderSidebarList(allPrograms);
@@ -349,24 +511,79 @@
         if (!isNaN(lat) && !isNaN(lng)) {
           const marker = L.marker([lat, lng], { icon: desertIcon }).addTo(map);
           
-          const popupContent = `
-            <div class="p-2 font-sans text-[#343A3B]">
-              <h3 class="font-semibold text-sm mb-1" style="color: #343A3B;">${programName}</h3>
-              <p class="text-xs mb-2" style="color: #C86D51;">${city}${city && state ? ', ' : ''}${state}</p>
-              <div class="text-xs space-y-1 text-[#343A3B]">
-                <p><span class="font-medium text-[#74736E]">Interest:</span> ${prog['Interest'] || '-'}</p>
-                <p><span class="font-medium text-[#74736E]">Setting:</span> ${prog['Setting'] || '-'}</p>
-                <p><span class="font-medium text-[#74736E]">Class Size:</span> ${prog['Class size'] || '-'}</p>
-                <p><span class="font-medium text-[#74736E]">Competitiveness:</span> ${prog['Competitiveness'] || '-'}</p>
-              </div>
+          // Hover Tooltip: Program Name & City, State
+          marker.bindTooltip(`
+            <div class="font-sans">
+              <div class="font-semibold text-[#343A3B]">${programName}</div>
+              <div class="text-[11px] text-[#74736E]">${city}${city && state ? ', ' : ''}${state}</div>
             </div>
-          `;
-          
-          marker.bindPopup(popupContent);
+          `, { className: 'custom-map-tooltip', direction: 'top', offset: [0, -8] });
+
+          // Click Event: Open Fact-Sheet Modal
+          marker.on('click', () => {
+            openFactSheet(prog);
+          });
+
           markersMap.set(programName, marker);
         }
       });
     }
+
+    function openFactSheet(prog) {
+      const city = prog['City'] || '';
+      const state = prog['State'] || '';
+
+      document.getElementById('fsProgramName').innerText = prog['Program'] || 'Program Details';
+      document.getElementById('fsLocation').innerText = `${city}${city && state ? ', ' : ''}${state}`;
+      document.getElementById('fsInterestTag').innerText = prog['Interest'] || 'Standard';
+      
+      document.getElementById('fsSetting').innerText = cleanSettingName(prog['Setting']) || 'N/A';
+      document.getElementById('fsClassSize').innerText = prog['Class size'] || 'N/A';
+      
+      document.getElementById('fsCompetitiveness').innerText = prog['Competitiveness'] || 'N/A';
+      document.getElementById('fsStepScore').innerText = prog['Step Score Range'] || prog['Step Score'] || 'N/A';
+      
+      document.getElementById('fsWorkHours').innerText = prog['Work Hours'] || prog['Avg Hours'] || 'Standard ACGME (Max 80 hrs/wk)';
+      document.getElementById('fsLeave').innerText = prog['Vacation'] || prog['Leave'] || '4 Weeks Annual Paid Leave';
+      
+      document.getElementById('fsSalary').innerText = prog['Salary'] || prog['Stipend'] || 'Standard Regional PGY-1 Rate';
+
+      // Perks Badges
+      const perksContainer = document.getElementById('fsPerksBadges');
+      perksContainer.innerHTML = '';
+      
+      const perksList = [
+        { key: 'Parking', label: 'Free Parking', val: prog['Free Parking'] || prog['Parking'] },
+        { key: 'Housing', label: 'Housing Stipend', val: prog['Housing Stipend'] || prog['Housing'] },
+        { key: 'Meals', label: 'Meal Allowance', val: prog['Meal Stipend'] || prog['Meals'] },
+        { key: 'Tech', label: 'Tech / Book Stipend', val: prog['Tech Stipend'] || prog['Tech'] }
+      ];
+
+      perksList.forEach(perk => {
+        if (isTrueValue(perk.val)) {
+          const badge = document.createElement('span');
+          badge.className = "text-[11px] font-medium px-2.5 py-1 rounded-md border border-[#82988B]/40 bg-[#E2E9E3] text-[#343A3B]";
+          badge.innerText = `✓ ${perk.label}`;
+          perksContainer.appendChild(badge);
+        }
+      });
+
+      if (perksContainer.children.length === 0) {
+        perksContainer.innerHTML = `<span class="text-xs text-[#74736E] italic">Standard Resident Benefits Package</span>`;
+      }
+
+      document.getElementById('factSheetModal').classList.remove('hidden');
+    }
+
+    document.getElementById('closeFactSheet').addEventListener('click', () => {
+      document.getElementById('factSheetModal').classList.add('hidden');
+    });
+
+    document.getElementById('factSheetModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('factSheetModal')) {
+        document.getElementById('factSheetModal').classList.add('hidden');
+      }
+    });
 
     function renderSidebarList(programs) {
       const listContainer = document.getElementById('programList');
@@ -382,9 +599,8 @@
         const city = prog['City'] || '';
         const state = prog['State'] || '';
         const interest = prog['Interest'] || '-';
-        const setting = prog['Setting'] || '-';
+        const setting = cleanSettingName(prog['Setting']) || '-';
 
-        // Dynamic Tag Styling based on Interest
         let tagBg = "#E2E9E3";
         let tagColor = "#343A3B";
         if (interest.toLowerCase().includes('high')) {
@@ -412,7 +628,7 @@
           const marker = markersMap.get(programName);
           if (marker) {
             map.flyTo(marker.getLatLng(), 11, { duration: 1.2 });
-            marker.openPopup();
+            openFactSheet(prog);
           }
         });
 
@@ -422,12 +638,7 @@
 
     function applyFilters() {
       const searchVal = document.getElementById('searchInput').value.toLowerCase();
-      const interestVal = document.getElementById('interestFilter').value;
-      const settingVal = document.getElementById('settingFilter').value;
-      const competitivenessVal = document.getElementById('competitivenessFilter').value;
-      
       const maxClassSize = parseInt(document.getElementById('classSizeFilter').value);
-      const sliderMax = parseInt(document.getElementById('classSizeFilter').max);
 
       const requireParking = document.getElementById('parkingFilter').checked;
       const requireHousing = document.getElementById('housingFilter').checked;
@@ -438,15 +649,18 @@
         const name = (prog['Program'] || '').toLowerCase();
         const city = (prog['City'] || '').toLowerCase();
         const progState = (prog['State'] || '').trim();
+        const progInterest = (prog['Interest'] || '').trim();
+        const progSetting = (prog['Setting'] || '').trim();
+        const progCompetitiveness = (prog['Competitiveness'] || '').trim();
         
         const matchesSearch = name.includes(searchVal) || city.includes(searchVal);
-        const matchesState = selectedStates.size === 0 || selectedStates.has(progState);
-        const matchesInterest = !interestVal || (prog['Interest'] || '').trim() === interestVal;
-        const matchesSetting = !settingVal || (prog['Setting'] || '').trim() === settingVal;
-        const matchesCompetitiveness = !competitivenessVal || (prog['Competitiveness'] || '').trim() === competitivenessVal;
+        const matchesState = selectedFilters.state.size === 0 || selectedFilters.state.has(progState);
+        const matchesInterest = selectedFilters.interest.size === 0 || selectedFilters.interest.has(progInterest);
+        const matchesSetting = selectedFilters.setting.size === 0 || selectedFilters.setting.has(progSetting);
+        const matchesCompetitiveness = selectedFilters.competitiveness.size === 0 || selectedFilters.competitiveness.has(progCompetitiveness);
 
         const classSizeNum = parseInt(prog['Class size']);
-        const matchesClassSize = isNaN(classSizeNum) || maxClassSize === sliderMax || classSizeNum <= maxClassSize;
+        const matchesClassSize = isNaN(classSizeNum) || classSizeNum <= maxClassSize;
 
         const matchesParking = !requireParking || isTrueValue(prog['Free Parking'] || prog['Parking']);
         const matchesHousing = !requireHousing || isTrueValue(prog['Housing Stipend'] || prog['Housing']);
@@ -471,14 +685,9 @@
     }
 
     document.getElementById('searchInput').addEventListener('input', applyFilters);
-    document.getElementById('interestFilter').addEventListener('change', applyFilters);
-    document.getElementById('settingFilter').addEventListener('change', applyFilters);
-    document.getElementById('competitivenessFilter').addEventListener('change', applyFilters);
 
     document.getElementById('classSizeFilter').addEventListener('input', function(e) {
-      const val = e.target.value;
-      const max = e.target.max;
-      document.getElementById('classSizeValue').innerText = val == max ? val + "+" : "≤ " + val;
+      document.getElementById('classSizeValue').innerText = e.target.value;
       applyFilters();
     });
 
@@ -488,3 +697,4 @@
     document.getElementById('techFilter').addEventListener('change', applyFilters);
   </script>
 </body>
+</html>
