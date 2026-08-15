@@ -1,732 +1,345 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pediatrics Residencies</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- PapaParse for reading CSV files -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-  
-  <!-- Leaflet CSS & JS for Interactive Map -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <!-- Google Fonts: Plus Jakarta Sans -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --bg-main: #FDFBF9;
-      --bg-sidebar: #F5F2EC;
-      --bg-surface: #FFFFFF;
-      --text-charcoal: #2B2623;
-      --text-gray: #78716C;
-      --accent-terracotta: #D97757;
-      --accent-desert-gold: #E0A96D;
-      --accent-sand-soft: #EDE6DF;
-      --border-light: #E2DACF;
-    }
-
-    body { 
-      background-color: var(--bg-main); 
-      color: var(--text-charcoal); 
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-    }
-
-    /* Tooltip */
-    .leaflet-tooltip.custom-map-tooltip {
-      background: #FFFFFF;
-      border: 1px solid #E2DACF;
-      color: #2B2623;
-      border-radius: 8px;
-      padding: 6px 10px;
-      font-size: 11px;
-      font-weight: 500;
-      box-shadow: 0 4px 14px rgba(43, 38, 35, 0.06);
-    }
-
-    /* Custom Leaflet Popup Styling */
-    .leaflet-popup-content-wrapper {
-      background: #FFFFFF;
-      border: 1px solid #E2DACF;
-      border-radius: 14px;
-      padding: 0;
-      box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
-    }
-    .leaflet-popup-content {
-      margin: 0 !important;
-      width: 330px !important;
-    }
-    .leaflet-popup-tip {
-      background: #FFFFFF;
-    }
-
-    /* Custom Map Pins */
-    .custom-desert-pin {
-      background-color: #2B2623;
-      border: 2px solid #FFFFFF;
-      width: 14px !important;
-      height: 14px !important;
-      border-radius: 50%;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.18);
-      transition: transform 0.2s ease, background-color 0.2s ease;
-      cursor: pointer;
-    }
-    .custom-desert-pin:hover {
-      transform: scale(1.35);
-      background-color: #D97757;
-    }
-
-    /* Custom Scrollbars */
-    .custom-scroll::-webkit-scrollbar {
-      width: 5px;
-    }
-    .custom-scroll::-webkit-scrollbar-thumb {
-      background-color: #D8D0C5;
-      border-radius: 4px;
-    }
-
-    input[type="checkbox"] {
-      accent-color: #D97757;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pediatric Residency Tracker Dashboard</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- Google Fonts & Tailwind CSS for clean Scandinavian minimalist styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FBF9F5',
+                        warmbeige: '#F3EFEA',
+                        taupe: '#A39B90',
+                        softdark: '#2D2B29',
+                        accent: '#6B705C'
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        #map { height: 420px; border-radius: 0.75rem; }
+    </style>
 </head>
-<body class="h-screen w-screen flex flex-col p-4 md:p-6 overflow-hidden gap-4">
-
-  <!-- HEADER -->
-  <header class="w-full max-w-7xl mx-auto flex flex-col items-center justify-center pt-1 pb-1 shrink-0">
-    <h1 class="text-2xl md:text-3xl font-light tracking-wide text-[#2B2623] text-center uppercase">
-      Pediatrics Residencies
-    </h1>
-    <p class="text-[10px] md:text-[11px] uppercase tracking-[0.25em] font-medium text-[#D97757] mt-1">
-      Curated Program Explorer
-    </p>
-  </header>
-
-  <!-- MAIN WRAPPER -->
-  <div class="w-full max-w-7xl mx-auto flex-1 flex flex-col md:flex-row gap-5 overflow-hidden">
-
-    <!-- SIDEBAR -->
-    <aside class="w-full md:w-[280px] lg:w-[300px] bg-[#F5F2EC] border border-[#E2DACF] rounded-2xl flex flex-col shrink-0 shadow-sm overflow-hidden h-full">
-      
-      <!-- Filters Panel Header -->
-      <div class="px-4 py-3 border-b border-[#E2DACF] bg-[#EBE5DC] shrink-0">
-        <h2 class="text-[10px] font-semibold uppercase tracking-widest text-[#78716C]">Filters & Search</h2>
-      </div>
-
-      <!-- Scrollable Filters -->
-      <div class="p-4 border-b border-[#E2DACF] space-y-3.5 custom-scroll max-h-[50%] overflow-y-auto shrink-0 bg-[#F5F2EC]">
-        <div class="space-y-1">
-          <label class="text-[9px] font-semibold uppercase tracking-wider text-[#78716C]">Search</label>
-          <input 
-            type="text" 
-            id="searchInput" 
-            placeholder="Search program or city..." 
-            class="w-full px-3 py-1.5 rounded-lg border border-[#E2DACF] placeholder-[#78716C]/50 focus:outline-none focus:border-[#D97757] text-xs transition bg-white text-[#2B2623]"
-          />
-        </div>
-
-        <div class="space-y-2">
-          <!-- State Filter -->
-          <div class="space-y-1 relative dropdown-container">
-            <div class="flex justify-between items-center">
-              <label class="text-[9px] font-semibold uppercase tracking-wider text-[#78716C]">State</label>
-              <button type="button" id="resetStateBtn" class="text-[9px] text-[#78716C] hover:text-[#D97757] underline hidden">Clear</button>
+<body class="bg-cream text-softdark font-sans antialiased min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white border-b border-warmbeige py-6 px-8 shadow-sm">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight text-softdark">Pediatric Residency Tracker</h1>
+                <p class="text-sm text-taupe mt-1">Evaluating programs by clinical volume, autonomy, and urban/coastal alignment.</p>
             </div>
-            <button type="button" data-dropdown="state" class="dropdown-btn w-full px-3 py-1.5 rounded-lg border border-[#E2DACF] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#D97757] bg-white text-[#2B2623]">
-              <span id="stateDropdownLabel" class="truncate">All States</span>
-              <span class="text-[8px] text-[#D97757]">▼</span>
-            </button>
-            <div id="stateDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-[#E2DACF] rounded-lg shadow-xl z-50 p-2 space-y-1 text-xs custom-scroll"></div>
-          </div>
-
-          <!-- Setting Filter -->
-          <div class="space-y-1 relative dropdown-container">
-            <div class="flex justify-between items-center">
-              <label class="text-[9px] font-semibold uppercase tracking-wider text-[#78716C]">Setting</label>
-              <button type="button" id="resetSettingBtn" class="text-[9px] text-[#78716C] hover:text-[#D97757] underline hidden">Clear</button>
+            <div class="flex items-center gap-3">
+                <button onclick="exportData()" class="px-4 py-2 bg-warmbeige hover:bg-taupe hover:text-white text-xs font-semibold uppercase tracking-wider rounded-lg transition">Export CSV</button>
+                <button onclick="resetData()" class="px-4 py-2 border border-warmbeige text-xs font-semibold uppercase tracking-wider rounded-lg hover:bg-gray-50 transition">Reset Defaults</button>
             </div>
-            <button type="button" data-dropdown="setting" class="dropdown-btn w-full px-3 py-1.5 rounded-lg border border-[#E2DACF] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#D97757] bg-white text-[#2B2623]">
-              <span id="settingDropdownLabel" class="truncate">All Settings</span>
-              <span class="text-[8px] text-[#D97757]">▼</span>
-            </button>
-            <div id="settingDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-[#E2DACF] rounded-lg shadow-xl z-50 p-2 space-y-1 text-xs custom-scroll"></div>
-          </div>
+        </div>
+    </header>
 
-          <!-- Competitiveness Filter -->
-          <div class="space-y-1 relative dropdown-container">
-            <div class="flex justify-between items-center">
-              <label class="text-[9px] font-semibold uppercase tracking-wider text-[#78716C]">Tier / Competitiveness</label>
-              <button type="button" id="resetCompetitivenessBtn" class="text-[9px] text-[#78716C] hover:text-[#D97757] underline hidden">Clear</button>
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full space-y-8">
+        
+        <!-- Metrics Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-6 rounded-xl border border-warmbeige shadow-sm">
+                <p class="text-xs font-semibold uppercase tracking-wider text-taupe">Total Programs Tracked</p>
+                <p id="stat-total" class="text-3xl font-bold mt-2 text-softdark">0</p>
             </div>
-            <button type="button" data-dropdown="competitiveness" class="dropdown-btn w-full px-3 py-1.5 rounded-lg border border-[#E2DACF] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#D97757] bg-white text-[#2B2623]">
-              <span id="competitivenessDropdownLabel" class="truncate">All Tiers</span>
-              <span class="text-[8px] text-[#D97757]">▼</span>
-            </button>
-            <div id="competitivenessDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-[#E2DACF] rounded-lg shadow-xl z-50 p-2 space-y-1 text-xs custom-scroll"></div>
-          </div>
+            <div class="bg-white p-6 rounded-xl border border-warmbeige shadow-sm">
+                <p class="text-xs font-semibold uppercase tracking-wider text-taupe">High Autonomy / Volume</p>
+                <p id="stat-autonomy" class="text-3xl font-bold mt-2 text-softdark">0</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-warmbeige shadow-sm">
+                <p class="text-xs font-semibold uppercase tracking-wider text-taupe">Signaled Programs</p>
+                <p id="stat-signals" class="text-3xl font-bold mt-2 text-softdark">0</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-warmbeige shadow-sm">
+                <p class="text-xs font-semibold uppercase tracking-wider text-taupe">Coastal / Urban Focus</p>
+                <p id="stat-coastal" class="text-3xl font-bold mt-2 text-softdark">0</p>
+            </div>
         </div>
 
-        <!-- Benefits -->
-        <div class="pt-2 border-t border-[#E2DACF]">
-          <label class="text-[9px] font-semibold uppercase tracking-wider text-[#78716C] block mb-1.5">Benefits</label>
-          <div class="grid grid-cols-2 gap-y-1.5 text-xs text-[#2B2623]">
-            <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#D97757] transition">
-              <input type="checkbox" id="parkingFilter" class="rounded border-[#E2DACF]"> Parking
-            </label>
-            <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#D97757] transition">
-              <input type="checkbox" id="housingFilter" class="rounded border-[#E2DACF]"> Housing
-            </label>
-            <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#D97757] transition">
-              <input type="checkbox" id="mealFilter" class="rounded border-[#E2DACF]"> Meals
-            </label>
-            <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#D97757] transition">
-              <input type="checkbox" id="techFilter" class="rounded border-[#E2DACF]"> Tech
-            </label>
-          </div>
+        <!-- Interactive Map Section -->
+        <div class="bg-white p-6 rounded-xl border border-warmbeige shadow-sm">
+            <h2 class="text-lg font-semibold mb-4">Program Geographic Distribution</h2>
+            <div id="map"></div>
         </div>
-      </div>
 
-      <!-- Program List Panel Header -->
-      <div class="px-4 py-2.5 border-b border-[#E2DACF] bg-[#EBE5DC] shrink-0">
-        <h2 class="text-[10px] font-semibold uppercase tracking-widest text-[#78716C]">Programs</h2>
-      </div>
-
-      <!-- Scrollable Program Cards -->
-      <div id="programList" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scroll bg-[#F5F2EC]"></div>
-
-    </aside>
-
-    <!-- MAP CONTAINER -->
-    <main class="flex-1 rounded-2xl border border-[#E2DACF] overflow-hidden shadow-sm relative bg-white flex flex-col h-full">
-      <div id="map" class="w-full h-full flex-1"></div>
-
-      <!-- COMPACT PROGRAM PREVIEW BAR -->
-      <div id="previewBar" class="hidden absolute bottom-4 left-4 right-4 z-[1000] bg-white border border-[#E2DACF] rounded-xl p-3.5 shadow-2xl flex items-center justify-between gap-3 transition-all">
-        <div class="truncate">
-          <div class="text-[9px] uppercase font-semibold tracking-wider text-[#D97757]" id="previewLocation">Location</div>
-          <div class="text-xs font-medium text-[#2B2623] truncate" id="previewTitle">Program Name</div>
+        <!-- Controls & Filters Section -->
+        <div class="bg-white p-6 rounded-xl border border-warmbeige shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
+            <div class="w-full md:w-1/3">
+                <label for="search-input" class="block text-xs font-semibold uppercase tracking-wider text-taupe mb-1">Search Programs</label>
+                <input type="text" id="search-input" placeholder="Filter by name, city, or state..." oninput="filterTable()" class="w-full px-4 py-2 bg-cream border border-warmbeige rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-sm">
+            </div>
+            <div class="flex flex-wrap gap-4 w-full md:w-auto">
+                <div>
+                    <label for="filter-region" class="block text-xs font-semibold uppercase tracking-wider text-taupe mb-1">Region</label>
+                    <select id="filter-region" onchange="filterTable()" class="px-4 py-2 bg-cream border border-warmbeige rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-sm">
+                        <option value="">All Regions</option>
+                        <option value="Southeast">Southeast</option>
+                        <option value="Mid-Atlantic">Mid-Atlantic</option>
+                        <option value="Northeast">Northeast</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="filter-autonomy" class="block text-xs font-semibold uppercase tracking-wider text-taupe mb-1">Autonomy</label>
+                    <select id="filter-autonomy" onchange="filterTable()" class="px-4 py-2 bg-cream border border-warmbeige rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-sm">
+                        <option value="">All Levels</option>
+                        <option value="High">High</option>
+                        <option value="Moderate">Moderate</option>
+                    </select>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center gap-2 shrink-0">
-          <button id="openFactSheetBtn" class="px-3.5 py-1.5 rounded-lg bg-[#D97757] text-white text-xs font-medium hover:bg-[#c06344] transition shadow-sm">View Full Fact Sheet</button>
-          <button id="closePreviewBtn" class="p-1 text-[#78716C] hover:text-[#2B2623] text-xs">✕</button>
+
+        <!-- Data Table Section -->
+        <div class="bg-white rounded-xl border border-warmbeige shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-warmbeige/50 border-b border-warmbeige text-xs uppercase tracking-wider text-taupe">
+                            <th class="py-4 px-6 font-semibold">Program Name</th>
+                            <th class="py-4 px-6 font-semibold">Location</th>
+                            <th class="py-4 px-6 font-semibold">Region</th>
+                            <th class="py-4 px-6 font-semibold">Clinical Volume</th>
+                            <th class="py-4 px-6 font-semibold">Autonomy</th>
+                            <th class="py-4 px-6 font-semibold">Research Emphasis</th>
+                            <th class="py-4 px-6 font-semibold">Signal Status</th>
+                            <th class="py-4 px-6 font-semibold text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="divide-y divide-warmbeige text-sm">
+                        <!-- Populated dynamically via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
         </div>
-      </div>
+
     </main>
 
-  </div>
+    <!-- Footer -->
+    <footer class="bg-white border-t border-warmbeige py-6 text-center text-xs text-taup">
+        <p>Pediatric Residency Tracker Dashboard &bull; Designed with minimalist clarity</p>
+    </footer>
 
-  <script>
-    let allPrograms = [];
-    let selectedFilters = { state: new Set(), setting: new Set(), competitiveness: new Set() };
-    let map;
-    let markersMap = new Map();
-    let currentSelectedProgram = null;
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <script>
+        // Initial dataset representing target pediatric residency programs
+        const defaultPrograms = [
+            {
+                id: 1,
+                name: "Atrium Health Carolinas Medical Center",
+                city: "Charlotte",
+                state: "NC",
+                region: "Southeast",
+                volume: "High",
+                autonomy: "High",
+                research: "Low-Moderate",
+                signal: "Signaled",
+                lat: 35.2087,
+                lng: -80.8307
+            },
+            {
+                id: 2,
+                name: "Duke University Hospital",
+                city: "Durham",
+                state: "NC",
+                region: "Southeast",
+                volume: "High",
+                autonomy: "Moderate",
+                research: "High",
+                signal: "Signaled",
+                lat: 36.0014,
+                lng: -78.9382
+            },
+            {
+                id: 3,
+                name: "UNC Health Care",
+                city: "Chapel Hill",
+                state: "NC",
+                region: "Southeast",
+                volume: "High",
+                autonomy: "High",
+                research: "Moderate",
+                signal: "Signaled",
+                lat: 35.9132,
+                lng: -79.0558
+            },
+            {
+                id: 4,
+                name: "Medical University of South Carolina (MUSC)",
+                city: "Charleston",
+                state: "SC",
+                region: "Southeast",
+                volume: "High",
+                autonomy: "High",
+                research: "Moderate",
+                signal: "Signaled",
+                lat: 32.7876,
+                lng: -79.9403
+            },
+            {
+                id: 5,
+                name: "Emory University / Children's Healthcare of Atlanta",
+                city: "Atlanta",
+                state: "GA",
+                region: "Southeast",
+                volume: "Very High",
+                autonomy: "Moderate",
+                research: "High",
+                signal: "Signaled",
+                lat: 33.7900,
+                lng: -84.3260
+            },
+            {
+                id: 6,
+                name: "Children's National Hospital",
+                city: "Washington",
+                state: "DC",
+                region: "Mid-Atlantic",
+                volume: "Very High",
+                autonomy: "Moderate",
+                research: "High",
+                signal: "Considered",
+                lat: 38.9270,
+                lng: -77.0250
+            }
+        ];
 
-    const airportLookup = {
-      "Phoenix, AZ": "PHX", "Los Angeles, CA": "LAX", "San Francisco, CA": "SFO",
-      "Oakland, CA": "OAK", "Sacramento, CA": "SMF", "San Diego, CA": "SAN",
-      "New Haven, CT": "BDL", "Denver, CO": "DEN", "Washington, DC": "DCA",
-      "Chicago, IL": "ORD", "Boston, MA": "BOS", "Baltimore, MD": "BWI",
-      "Ann Arbor, MI": "DTW", "Minneapolis, MN": "MSP", "St. Louis, MO": "STL",
-      "Chapel Hill, NC": "RDU", "Charlotte, NC": "CLT", "Philadelphia, PA": "PHL",
-      "Pittsburgh, PA": "PIT", "Seattle, WA": "SEA", "New York, NY": "JFK",
-      "Houston, TX": "IAH", "Dallas, TX": "DFW", "Atlanta, GA": "ATL"
-    };
+        let programs = JSON.parse(localStorage.getItem('residency_programs')) || defaultPrograms;
+        let map;
+        let markers = [];
 
-    const cityCoordinates = {
-      "Phoenix, AZ": [33.4484, -112.0740], "Los Angeles, CA": [34.0522, -118.2437],
-      "San Francisco, CA": [37.7749, -122.4194], "Oakland, CA": [37.8044, -122.2712],
-      "Sacramento, CA": [38.5816, -121.4944], "San Diego, CA": [32.7157, -117.1611],
-      "New Haven, CT": [41.3083, -72.9279], "Denver, CO": [39.7392, -104.9903],
-      "Washington, DC": [38.9072, -77.0369], "Chicago, IL": [41.8781, -87.6298],
-      "Boston, MA": [42.3601, -71.0589], "Baltimore, MD": [39.2904, -76.6122],
-      "Ann Arbor, MI": [42.2808, -83.7430], "Minneapolis, MN": [44.9778, -93.2650],
-      "St. Louis, MO": [38.6270, -90.1994], "Chapel Hill, NC": [35.9132, -79.0558],
-      "Charlotte, NC": [35.2271, -80.8431], "Philadelphia, PA": [39.9526, -75.1652],
-      "Pittsburgh, PA": [40.4406, -79.9959], "Seattle, WA": [47.6062, -122.3321]
-    };
-
-    function getProp(obj, possibleKeys, defaultVal = 'N/A') {
-      if (!obj) return defaultVal;
-      const objKeys = Object.keys(obj);
-      
-      for (const targetKey of possibleKeys) {
-        const foundKey = objKeys.find(k => k.trim().toLowerCase() === targetKey.trim().toLowerCase());
-        if (foundKey && obj[foundKey] !== undefined && obj[foundKey] !== null) {
-          const rawVal = obj[foundKey];
-          if (typeof rawVal === 'number' && isNaN(rawVal)) continue;
-          const val = String(rawVal).trim();
-          if (val !== '' && val !== '-' && val.toLowerCase() !== 'nan' && val.toLowerCase() !== 'undefined') {
-            return val;
-          }
-        }
-      }
-      return defaultVal;
-    }
-
-    function formatLeaveValue(val) {
-      if (!val || val === 'N/A') return 'N/A';
-      const trimmed = val.trim();
-      // If exactly "N" or starts with "N" followed by spaces/qualifiers (e.g., "N x2", "Nx2", "N")
-      if (trimmed.toUpperCase() === 'N' || /^n\b/i.test(trimmed) || /^\bn\b/i.test(trimmed)) {
-        // If there's an extra modifier like "N x2", preserve the modifier alongside Negotiable
-        const cleanedMod = trimmed.replace(/^n/i, '').trim();
-        return cleanedMod ? `Negotiable (${cleanedMod})` : 'Negotiable';
-      }
-      return trimmed;
-    }
-
-    function formatCurrency(val) {
-      if (!val || val === 'N/A') return 'N/A';
-      const cleanNum = parseFloat(String(val).replace(/[^0-9.-]+/g, ""));
-      if (isNaN(cleanNum)) return val;
-      return '$' + cleanNum.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-    }
-
-    function isTrueValue(val) {
-      if (!val || val === 'N/A') return false;
-      const cleanVal = String(val).trim().toLowerCase();
-      return ['yes', 'true', '1', 'x', 'y'].includes(cleanVal);
-    }
-
-    function cleanSettingName(val) {
-      if (!val || val === 'N/A') return 'N/A';
-      let cleaned = val.trim();
-      if (cleaned === "CB/University Affiliated" || cleaned === "CB / University Affiliated" || cleaned.toLowerCase().includes("community")) {
-        return "Community-Based Univ. Affiliated";
-      }
-      return cleaned;
-    }
-
-    function initMap() {
-      map = L.map('map', { zoomControl: false }).setView([39.8283, -98.5795], 4);
-      L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
-        subdomains: 'abcd',
-        attribution: '&copy; OpenStreetMap &copy; CARTO'
-      }).addTo(map);
-    }
-
-    function createInMapFactSheetPopup(prog) {
-      const city = getProp(prog, ['City']);
-      const state = getProp(prog, ['State']);
-      const cityStateKey = `${city}, ${state}`;
-
-      const rawWebsite = getProp(prog, ['Website', 'URL', 'Program Website', 'Link'], '#');
-      const programName = getProp(prog, ['Program', 'Program Name'], 'Program Info');
-
-      const airport = getProp(prog, ['Nearest Airport', 'Airport']) || airportLookup[cityStateKey] || (city !== 'N/A' ? `${city.substring(0,3).toUpperCase()} Airport` : 'N/A');
-
-      let perksHTML = '';
-      const perks = [
-        { label: 'Parking', val: getProp(prog, ['Free Parking', 'Parking']) },
-        { label: 'Housing', val: getProp(prog, ['Housing Stipend', 'Housing']) },
-        { label: 'Meals', val: getProp(prog, ['Meal Stipend', 'Meals']) },
-        { label: 'Tech', val: getProp(prog, ['Tech Stipend', 'Tech']) }
-      ];
-
-      perks.forEach(p => {
-        if (isTrueValue(p.val)) {
-          perksHTML += `<span class="text-[9px] bg-[#EDE6DF] text-[#D97757] border border-[#D97757]/30 px-2 py-0.5 rounded-md font-medium">✓ ${p.label}</span> `;
-        }
-      });
-      if (!perksHTML) perksHTML = `<span class="text-[10px] text-[#78716C] italic">Standard Benefits</span>`;
-
-      const classSize = getProp(prog, ['Class size', 'Class Size']);
-      const setting = cleanSettingName(getProp(prog, ['Setting']));
-      const tier = getProp(prog, ['Competitiveness', 'Tier', 'Category', 'Target/Reach']);
-      const stepScore = getProp(prog, ['Step Score Range', 'Step Score']);
-
-      const avgHours = getProp(prog, ['Hours/Week', 'Average Hours/Week', 'Average Hours Worked Per Week']);
-      const shiftLength = getProp(prog, ['Longest Shift', 'Longest Shift Length', 'Shift Length']);
-      const daysOff = formatLeaveValue(getProp(prog, ['Days Off/week', 'Days Off Per Week', 'Average Days Off Per Week']));
-      const sickDays = formatLeaveValue(getProp(prog, ['Sick Days']));
-      const vacationDays = formatLeaveValue(getProp(prog, ['Vacation Days', 'Vacation']));
-      const familyLeave = formatLeaveValue(getProp(prog, ['Family Leave Paid/Unpaid', 'Family Leave', 'Paid Family Leave']));
-
-      const baseSalary = formatCurrency(getProp(prog, ['Salary', 'Base Salary']));
-      const colSalary = formatCurrency(getProp(prog, ['COL-Adjusted Salary', 'COL-Adjusted']));
-      const stretchScore = getProp(prog, ['Salary Stretch', 'Salary Stretch Score', 'Stretch Score']);
-
-      const formattedWebsite = rawWebsite !== '#' ? (rawWebsite.startsWith('http') ? rawWebsite : 'https://' + rawWebsite) : '#';
-
-      return `
-        <div class="p-4 space-y-3 font-sans max-h-[410px] overflow-y-auto custom-scroll bg-white">
-          <div class="border-b border-[#E2DACF] pb-2">
-            <h3 class="font-medium text-xs text-[#2B2623] leading-tight">
-              ${formattedWebsite !== '#' ? `<a href="${formattedWebsite}" target="_blank" rel="noopener noreferrer" class="text-[#2B2623] hover:text-[#D97757] hover:underline flex items-center gap-1">${programName} <span class="text-[9px] text-[#D97757]">↗</span></a>` : programName}
-            </h3>
-          </div>
-
-          <div class="space-y-1">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#78716C]">Basics</span>
-            <div class="grid grid-cols-2 gap-1.5 text-[10px]">
-              <div class="bg-[#FDFBF9] p-1.5 rounded-lg border border-[#E2DACF]">
-                <span class="text-[#78716C] block text-[8px] uppercase font-medium">Location</span>
-                <span class="font-medium text-[#2B2623] truncate block">${city}, ${state}</span>
-              </div>
-              <div class="bg-[#FDFBF9] p-1.5 rounded-lg border border-[#E2DACF]">
-                <span class="text-[#78716C] block text-[8px] uppercase font-medium">Nearest Airport</span>
-                <span class="font-medium text-[#2B2623] truncate block">${airport}</span>
-              </div>
-            </div>
-            <div class="grid grid-cols-4 gap-1.5 text-[10px]">
-              <div class="col-span-3 bg-[#FDFBF9] p-1.5 rounded-lg border border-[#E2DACF]">
-                <span class="text-[#78716C] block text-[8px] uppercase font-medium">Setting</span>
-                <span class="font-medium text-[#2B2623] block truncate">${setting}</span>
-              </div>
-              <div class="col-span-1 bg-[#FDFBF9] p-1.5 rounded-lg border border-[#E2DACF] text-center">
-                <span class="text-[#78716C] block text-[8px] uppercase font-medium">Class Size</span>
-                <span class="font-medium text-[#2B2623]">${classSize}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="space-y-1">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#78716C]">Application</span>
-            <div class="grid grid-cols-2 gap-1.5 text-[10px]">
-              <div class="bg-[#FDFBF9] p-1.5 rounded-lg border border-[#E2DACF]">
-                <span class="text-[#78716C] block text-[8px] uppercase font-medium">Tier / Category</span>
-                <span class="font-medium text-[#2B2623]">${tier}</span>
-              </div>
-              <div class="bg-[#FDFBF9] p-1.5 rounded-lg border border-[#E2DACF]">
-                <span class="text-[#78716C] block text-[8px] uppercase font-medium">Step Score Target</span>
-                <span class="font-medium text-[#2B2623]">${stepScore}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="space-y-1">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#78716C]">Work & Leave</span>
-            <div class="bg-[#FDFBF9] p-2 rounded-lg border border-[#E2DACF] text-[10px] space-y-1">
-              <div class="flex justify-between">
-                <span class="text-[#78716C]">Average Hours/Week:</span>
-                <span class="font-medium text-[#2B2623]">${avgHours}</span>
-              </div>
-              <div class="flex justify-between border-t border-[#E2DACF]/60 pt-1">
-                <span class="text-[#78716C]">Longest Shift Length:</span>
-                <span class="font-medium text-[#2B2623]">${shiftLength}</span>
-              </div>
-              <div class="flex justify-between border-t border-[#E2DACF]/60 pt-1">
-                <span class="text-[#78716C]">Days Off/Week:</span>
-                <span class="font-medium text-[#2B2623]">${daysOff}</span>
-              </div>
-              <div class="flex justify-between border-t border-[#E2DACF]/60 pt-1">
-                <span class="text-[#78716C]">Sick Days:</span>
-                <span class="font-medium text-[#2B2623]">${sickDays}</span>
-              </div>
-              <div class="flex justify-between border-t border-[#E2DACF]/60 pt-1">
-                <span class="text-[#78716C]">Vacation Days:</span>
-                <span class="font-medium text-[#2B2623]">${vacationDays}</span>
-              </div>
-              <div class="flex justify-between border-t border-[#E2DACF]/60 pt-1">
-                <span class="text-[#78716C]">Family Leave:</span>
-                <span class="font-medium text-[#2B2623]">${familyLeave}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="space-y-1">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#78716C]">Compensation</span>
-            <div class="grid grid-cols-3 gap-1 text-[9px]">
-              <div class="bg-[#FDFBF9] p-1.5 rounded-lg border border-[#E2DACF] text-center">
-                <span class="text-[#78716C] block text-[7px] uppercase font-medium">Base Salary</span>
-                <span class="font-medium text-[#2B2623]">${baseSalary}</span>
-              </div>
-              <div class="bg-[#FDFBF9] p-1.5 rounded-lg border border-[#E2DACF] text-center">
-                <span class="text-[#78716C] block text-[7px] uppercase font-medium truncate">COL-Adjusted</span>
-                <span class="font-medium text-[#2B2623]">${colSalary}</span>
-              </div>
-              <div class="bg-[#FDFBF9] p-1.5 rounded-lg border border-[#E2DACF] text-center">
-                <span class="text-[#78716C] block text-[7px] uppercase font-medium truncate">Stretch Score</span>
-                <span class="font-medium text-[#2B2623]">${stretchScore}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="pt-1.5 border-t border-[#E2DACF]">
-            <span class="text-[9px] text-[#78716C] uppercase font-semibold block mb-1">Key Benefits</span>
-            <div class="flex flex-wrap gap-1">${perksHTML}</div>
-          </div>
-        </div>
-      `;
-    }
-
-    const desertIcon = L.divIcon({
-      className: 'custom-desert-pin',
-      iconSize: [14, 14],
-      iconAnchor: [7, 7]
-    });
-
-    function createMapPins(programs) {
-      markersMap.forEach(m => map.removeLayer(m));
-      markersMap.clear();
-
-      programs.forEach(prog => {
-        const programName = getProp(prog, ['Program', 'Program Name'], 'N/A');
-        const city = getProp(prog, ['City']);
-        const state = getProp(prog, ['State']);
-        const cityStateKey = `${city}, ${state}`;
-
-        let lat = parseFloat(getProp(prog, ['Latitude', 'lat']));
-        let lng = parseFloat(getProp(prog, ['Longitude', 'lng']));
-
-        if ((isNaN(lat) || isNaN(lng)) && cityCoordinates[cityStateKey]) {
-          [lat, lng] = cityCoordinates[cityStateKey];
+        function initMap() {
+            map = L.map('map').setView([35.2, -80.8], 6);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+            updateMapMarkers(programs);
         }
 
-        if (!isNaN(lat) && !isNaN(lng)) {
-          const marker = L.marker([lat, lng], { icon: desertIcon }).addTo(map);
-          
-          marker.bindTooltip(`
-            <div class="font-sans">
-              <div class="font-medium text-[#2B2623]">${programName}</div>
-              <div class="text-[10px] text-[#78716C]">${city}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state}</div>
-            </div>
-          `, { className: 'custom-map-tooltip', direction: 'top', offset: [0, -5] });
+        function updateMapMarkers(data) {
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
 
-          marker.bindPopup(createInMapFactSheetPopup(prog));
-          markersMap.set(programName, marker);
+            data.forEach(prog => {
+                if(prog.lat && prog.lng) {
+                    const marker = L.marker([prog.lat, prog.lng]).addTo(map)
+                        .bindPopup(`<b>${prog.name}</b><br>${prog.city}, ${prog.state}<br>Autonomy: ${prog.autonomy} | Volume: ${prog.volume}`);
+                    markers.push(marker);
+                }
+            });
         }
-      });
-    }
 
-    function renderSidebarList(programs) {
-      const listContainer = document.getElementById('programList');
-      listContainer.innerHTML = '';
+        function renderTable(data) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
 
-      if (programs.length === 0) {
-        listContainer.innerHTML = `<p class="text-xs text-[#78716C] text-center py-6">No matching programs found.</p>`;
-        return;
-      }
+            if(data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="py-6 px-6 text-center text-taupe">No matching residency programs found.</td></tr>`;
+                return;
+            }
 
-      programs.forEach(prog => {
-        const programName = getProp(prog, ['Program', 'Program Name'], 'N/A');
-        const city = getProp(prog, ['City']);
-        const state = getProp(prog, ['State']);
-        const setting = cleanSettingName(getProp(prog, ['Setting']));
+            data.forEach(prog => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-warmbeige/20 transition";
+                tr.innerHTML = `
+                    <td class="py-4 px-6 font-medium text-softdark">${prog.name}</td>
+                    <td class="py-4 px-6 text-taupe">${prog.city}, ${prog.state}</td>
+                    <td class="py-4 px-6 text-taupe">${prog.region}</td>
+                    <td class="py-4 px-6 text-taupe">${prog.volume}</td>
+                    <td class="py-4 px-6">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${prog.autonomy === 'High' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">${prog.autonomy}</span>
+                    </td>
+                    <td class="py-4 px-6 text-taupe">${prog.research}</td>
+                    <td class="py-4 px-6">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${prog.signal === 'Signaled' ? 'bg-indigo-50 text-indigo-700' : 'bg-gray-100 text-gray-600'}">${prog.signal}</span>
+                    </td>
+                    <td class="py-4 px-6 text-right">
+                        <button onclick="toggleSignal(${prog.id})" class="text-xs font-semibold text-accent hover:underline">Toggle Signal</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
 
-        const card = document.createElement('div');
-        card.className = "p-3 rounded-xl border border-[#E2DACF] bg-white shadow-xs hover:border-[#D97757] transition group cursor-pointer";
-        
-        card.innerHTML = `
-          <div class="flex justify-between items-start gap-1">
-            <h3 class="font-medium text-xs leading-snug text-[#2B2623] group-hover:text-[#D97757] transition-colors">${programName}</h3>
-          </div>
-          <p class="text-[10px] text-[#78716C] mt-0.5">${city}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state}</p>
-          <div class="mt-2 pt-1.5 border-t border-[#F5F2EC] flex justify-between items-center text-[10px] text-[#78716C]">
-            <span class="truncate text-[9px]">${setting}</span>
-            <span class="text-[#D97757] font-medium text-[9px]">Select →</span>
-          </div>
-        `;
+        function updateStats(data) {
+            document.getElementById('stat-total').innerText = data.length;
+            document.getElementById('stat-autonomy').innerText = data.filter(p => p.autonomy === 'High').length;
+            document.getElementById('stat-signals').innerText = data.filter(p => p.signal === 'Signaled').length;
+            document.getElementById('stat-coastal').innerText = data.filter(p => p.region === 'Southeast' || p.region === 'Mid-Atlantic').length;
+        }
 
-        card.addEventListener('click', () => {
-          showProgramPreview(prog);
+        function filterTable() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const region = document.getElementById('filter-region').value;
+            const autonomy = document.getElementById('filter-autonomy').value;
+
+            const filtered = programs.filter(prog => {
+                const matchesQuery = prog.name.toLowerCase().includes(query) || prog.city.toLowerCase().includes(query) || prog.state.toLowerCase().includes(query);
+                const matchesRegion = region === "" || prog.region === region;
+                const matchesAutonomy = autonomy === "" || prog.autonomy === autonomy;
+                return matchesQuery && matchesRegion && matchesAutonomy;
+            });
+
+            renderTable(filtered);
+            updateStats(filtered);
+            updateMapMarkers(filtered);
+        }
+
+        function toggleSignal(id) {
+            programs = programs.map(p => {
+                if(p.id === id) {
+                    p.signal = p.signal === 'Signaled' ? 'Considered' : 'Signaled';
+                }
+                return p;
+            });
+            localStorage.setItem('residency_programs', JSON.stringify(programs));
+            filterTable();
+        }
+
+        function resetData() {
+            if(confirm("Reset all programs to default state?")) {
+                programs = JSON.parse(JSON.stringify(defaultPrograms));
+                localStorage.setItem('residency_programs', JSON.stringify(programs));
+                document.getElementById('search-input').value = "";
+                document.getElementById('filter-region').value = "";
+                document.getElementById('filter-autonomy').value = "";
+                filterTable();
+            }
+        }
+
+        function exportData() {
+            let csv = 'Name,City,State,Region,Volume,Autonomy,Research,Signal\n';
+            programs.forEach(p => {
+                csv += `"${p.name}","${p.city}","${p.state}","${p.region}","${p.volume}","${p.autonomy}","${p.research}","${p.signal}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'pediatric_residency_tracker.csv');
+            a.click();
+        }
+
+        // Initialize App on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            initMap();
+            filterTable();
         });
-
-        listContainer.appendChild(card);
-      });
-    }
-
-    function showProgramPreview(prog) {
-      currentSelectedProgram = prog;
-      const previewBar = document.getElementById('previewBar');
-      const title = document.getElementById('previewTitle');
-      const location = document.getElementById('previewLocation');
-
-      const programName = getProp(prog, ['Program', 'Program Name'], 'Program Selected');
-      title.innerText = programName;
-      location.innerText = `${getProp(prog, ['City'])}, ${getProp(prog, ['State'])}`;
-      previewBar.classList.remove('hidden');
-
-      if (markersMap.has(programName)) {
-        const marker = markersMap.get(programName);
-        map.flyTo(marker.getLatLng(), 10, { duration: 1 });
-      }
-    }
-
-    document.getElementById('openFactSheetBtn').addEventListener('click', () => {
-      if (currentSelectedProgram) {
-        const programName = getProp(currentSelectedProgram, ['Program', 'Program Name']);
-        const marker = markersMap.get(programName);
-        if (marker) {
-          marker.openPopup();
-        }
-      }
-    });
-
-    document.getElementById('closePreviewBtn').addEventListener('click', () => {
-      document.getElementById('previewBar').classList.add('hidden');
-    });
-
-    function buildMultiSelectDropdown(type, values, placeholder) {
-      const menu = document.getElementById(`${type}DropdownMenu`);
-      menu.innerHTML = '';
-
-      Array.from(values).sort().forEach(val => {
-        if (!val || val === 'N/A') return;
-        const displayVal = type === 'setting' ? cleanSettingName(val) : val;
-        const label = document.createElement('label');
-        label.className = "flex items-center gap-2 px-2 py-1 hover:bg-[#EDE6DF] rounded-md cursor-pointer text-[#2B2623] transition text-xs";
-        label.innerHTML = `
-          <input type="checkbox" value="${val}" data-type="${type}" class="filter-checkbox rounded border-[#E2DACF]">
-          <span class="truncate">${displayVal}</span>
-        `;
-        menu.appendChild(label);
-      });
-
-      menu.querySelectorAll('.filter-checkbox').forEach(cb => {
-        cb.addEventListener('change', (e) => {
-          const filterType = e.target.getAttribute('data-type');
-          if (e.target.checked) {
-            selectedFilters[filterType].add(e.target.value);
-          } else {
-            selectedFilters[filterType].delete(e.target.value);
-          }
-          updateDropdownLabel(filterType, placeholder);
-          applyFilters();
-        });
-      });
-    }
-
-    function updateDropdownLabel(type, placeholder) {
-      const label = document.getElementById(`${type}DropdownLabel`);
-      const resetBtn = document.getElementById(`reset${type.charAt(0).toUpperCase() + type.slice(1)}Btn`);
-      const count = selectedFilters[type].size;
-
-      if (count === 0) {
-        label.innerText = placeholder;
-        resetBtn.classList.add('hidden');
-      } else if (count === 1) {
-        const val = Array.from(selectedFilters[type])[0];
-        label.innerText = type === 'setting' ? cleanSettingName(val) : val;
-        resetBtn.classList.remove('hidden');
-      } else {
-        label.innerText = `${count} Selected`;
-        resetBtn.classList.remove('hidden');
-      }
-    }
-
-    function setupDropdownControls() {
-      document.querySelectorAll('.dropdown-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const targetType = btn.getAttribute('data-dropdown');
-          const targetMenu = document.getElementById(`${targetType}DropdownMenu`);
-          
-          document.querySelectorAll('.dropdown-menu').forEach(m => {
-            if (m !== targetMenu) m.classList.add('hidden');
-          });
-          targetMenu.classList.toggle('hidden');
-        });
-      });
-
-      document.addEventListener('click', () => {
-        document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden'));
-      });
-
-      ['state', 'setting', 'competitiveness'].forEach(type => {
-        const placeholders = { state: 'All States', setting: 'All Settings', competitiveness: 'All Tiers' };
-        const resetBtn = document.getElementById(`reset${type.charAt(0).toUpperCase() + type.slice(1)}Btn`);
-        resetBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          selectedFilters[type].clear();
-          const menu = document.getElementById(`${type}DropdownMenu`);
-          menu.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-          updateDropdownLabel(type, placeholders[type]);
-          applyFilters();
-        });
-      });
-    }
-
-    function populateDropdowns(data) {
-      const sets = { state: new Set(), setting: new Set(), competitiveness: new Set() };
-
-      data.forEach(prog => {
-        const st = getProp(prog, ['State']);
-        const set = getProp(prog, ['Setting']);
-        const comp = getProp(prog, ['Competitiveness']);
-
-        if (st !== 'N/A') sets.state.add(st);
-        if (set !== 'N/A') sets.setting.add(set);
-        if (comp !== 'N/A') sets.competitiveness.add(comp);
-      });
-
-      buildMultiSelectDropdown('state', sets.state, 'All States');
-      buildMultiSelectDropdown('setting', sets.setting, 'All Settings');
-      buildMultiSelectDropdown('competitiveness', sets.competitiveness, 'All Tiers');
-    }
-
-    function applyFilters() {
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-
-      const parkingReq = document.getElementById('parkingFilter').checked;
-      const housingReq = document.getElementById('housingFilter').checked;
-      const mealReq = document.getElementById('mealFilter').checked;
-      const techReq = document.getElementById('techFilter').checked;
-
-      const filtered = allPrograms.filter(prog => {
-        const progName = getProp(prog, ['Program', 'Program Name']).toLowerCase();
-        const city = getProp(prog, ['City']).toLowerCase();
-        const state = getProp(prog, ['State']);
-        const setting = getProp(prog, ['Setting']);
-        const comp = getProp(prog, ['Competitiveness']);
-
-        const matchesSearch = !searchTerm || progName.includes(searchTerm) || city.includes(searchTerm);
-        const matchesState = selectedFilters.state.size === 0 || selectedFilters.state.has(state);
-        const matchesSetting = selectedFilters.setting.size === 0 || selectedFilters.setting.has(setting);
-        const matchesComp = selectedFilters.competitiveness.size === 0 || selectedFilters.competitiveness.has(comp);
-
-        const matchesParking = !parkingReq || isTrueValue(getProp(prog, ['Free Parking', 'Parking']));
-        const matchesHousing = !housingReq || isTrueValue(getProp(prog, ['Housing Stipend', 'Housing']));
-        const matchesMeal = !mealReq || isTrueValue(getProp(prog, ['Meal Stipend', 'Meals']));
-        const matchesTech = !techReq || isTrueValue(getProp(prog, ['Tech Stipend', 'Tech']));
-
-        return matchesSearch && matchesState && matchesSetting && matchesComp && matchesParking && matchesHousing && matchesMeal && matchesTech;
-      });
-
-      renderSidebarList(filtered);
-      createMapPins(filtered);
-    }
-
-    function initEventListeners() {
-      document.getElementById('searchInput').addEventListener('input', applyFilters);
-      document.getElementById('parkingFilter').addEventListener('change', applyFilters);
-      document.getElementById('housingFilter').addEventListener('change', applyFilters);
-      document.getElementById('mealFilter').addEventListener('change', applyFilters);
-      document.getElementById('techFilter').addEventListener('change', applyFilters);
-      setupDropdownControls();
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      initMap();
-      initEventListeners();
-
-      Papa.parse('programs.csv', {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        complete: function(results) {
-          allPrograms = results.data.filter(row => getProp(row, ['Program', 'Program Name']) !== 'N/A');
-          populateDropdowns(allPrograms);
-          renderSidebarList(allPrograms);
-          createMapPins(allPrograms);
-        },
-        error: function(err) {
-          console.error("Error loading CSV:", err);
-        }
-      });
-    });
-  </script>
+    </script>
 </body>
 </html>
