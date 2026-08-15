@@ -1,282 +1,449 @@
-<script>
-  let allPrograms = [];
-  let selectedFilters = { state: new Set(), setting: new Set(), competitiveness: new Set() };
-  let map;
-  let markersMap = new Map();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pediatric Residency Programs Dashboard</title>
 
-  // Airport Lookup Table
-  const airportLookup = {
-    "Ann Arbor, MI": "DTW",
-    "Sacramento, CA": "SMF",
-    "Charlotte, NC": "CLT",
-    "Phoenix, AZ": "PHX", 
-    "Los Angeles, CA": "LAX", 
-    "San Francisco, CA": "SFO",
-    "Oakland, CA": "OAK", 
-    "San Diego, CA": "SAN",
-    "New Haven, CT": "BDL", 
-    "Denver, CO": "DEN", 
-    "Washington, DC": "DCA",
-    "Chicago, IL": "ORD", 
-    "Boston, MA": "BOS", 
-    "Baltimore, MD": "BWI",
-    "Minneapolis, MN": "MSP", 
-    "St. Louis, MO": "STL",
-    "Chapel Hill, NC": "RDU", 
-    "Philadelphia, PA": "PHL",
-    "Pittsburgh, PA": "PIT", 
-    "Seattle, WA": "SEA", 
-    "New York, NY": "JFK",
-    "Houston, TX": "IAH", 
-    "Dallas, TX": "DFW", 
-    "Atlanta, GA": "ATL"
-  };
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-  // Helper: Strip special characters & lowercase for soft key matching
-  function cleanKey(str) {
-    return String(str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-  }
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  // Enhanced Property Extractor (Handles varied column headers safely)
-  function getProp(obj, possibleKeys, defaultVal = 'N/A') {
-    if (!obj || typeof obj !== 'object') return defaultVal;
-    const objKeys = Object.keys(obj);
+  <!-- PapaParse for CSV parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
-    // Exact clean match
-    for (const keyCandidate of possibleKeys) {
-      const targetClean = cleanKey(keyCandidate);
-      const matchedKey = objKeys.find(k => cleanKey(k) === targetClean);
-      if (matchedKey && obj[matchedKey] !== undefined && obj[matchedKey] !== null) {
-        const val = String(obj[matchedKey]).trim();
-        if (val !== '' && val !== '-') return val;
-      }
+  <style>
+    #map { height: 100vh; width: 100%; }
+    .custom-scroll::-webkit-scrollbar { width: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+    .custom-scroll::-webkit-scrollbar-thumb:hover { background: #aaa; }
+    
+    /* Custom Leaflet Popup Styling */
+    .leaflet-popup-content-wrapper {
+      padding: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
     }
-
-    // Partial key match
-    for (const keyCandidate of possibleKeys) {
-      const targetClean = cleanKey(keyCandidate);
-      const matchedKey = objKeys.find(k => cleanKey(k).includes(targetClean));
-      if (matchedKey && obj[matchedKey] !== undefined && obj[matchedKey] !== null) {
-        const val = String(obj[matchedKey]).trim();
-        if (val !== '' && val !== '-') return val;
-      }
+    .leaflet-popup-content {
+      margin: 0 !important;
+      line-height: 1.4;
     }
+  </style>
+</head>
+<body class="bg-[#FAF9F5] text-[#2D3132] font-sans antialiased flex h-screen overflow-hidden">
 
-    return defaultVal;
-  }
-
-  function formatCurrency(val) {
-    if (!val || val === 'N/A') return 'N/A';
-    const cleanNum = parseFloat(String(val).replace(/[^0-9.-]+/g, ""));
-    if (isNaN(cleanNum)) return val;
-    return '$' + cleanNum.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-  }
-
-  function isTrueValue(val) {
-    if (!val || val === 'N/A') return false;
-    const cleanVal = String(val).trim().toLowerCase();
-    return ['yes', 'true', '1', 'x', 'y'].includes(cleanVal);
-  }
-
-  function cleanSettingName(val) {
-    if (!val || val === 'N/A') return 'N/A';
-    let cleaned = val.trim();
-    if (cleaned.toLowerCase().includes("university affiliated") || cleaned.toLowerCase().includes("cb/university")) {
-      return "Community-Based Univ. Affiliated";
-    }
-    return cleaned;
-  }
-
-  // Generate HTML Face Sheet
-  function createFactSheetHTML(prog) {
-    const city = getProp(prog, ['City', 'Location City', 'Town']);
-    const state = getProp(prog, ['State', 'Location State', 'ST']);
-    const cityStateKey = `${city}, ${state}`;
-
-    const rawWebsite = getProp(prog, ['Website', 'URL', 'Program Website', 'Link'], '#');
-    const programName = getProp(prog, ['Program', 'Program Name', 'Hospital', 'Institution', 'Name'], 'Program Info');
-
-    // Airport resolution
-    let airport = getProp(prog, ['Nearest Airport', 'Airport', 'Airport Code']);
-    if (airport === 'N/A') {
-      airport = airportLookup[cityStateKey] || (city !== 'N/A' ? city.substring(0, 3).toUpperCase() : 'N/A');
-    }
-
-    // Extract stats safely
-    const classSize = getProp(prog, ['Class size', 'Class Size', 'Size', 'Program Size']);
-    const setting = cleanSettingName(getProp(prog, ['Setting', 'Program Setting', 'Hospital Setting']));
-    const tier = getProp(prog, ['Competitiveness', 'Tier', 'Category', 'Target/Reach', 'Reach/Target']);
-    const stepScore = getProp(prog, ['Step Score Range', 'Step Score', 'Step 2 Target', 'Target Step']);
-
-    const avgHours = getProp(prog, ['Average Hours Worked', 'Work Hours', 'Average Hours', 'Hours/Week']);
-    const shiftLength = getProp(prog, ['Longest Shift Length', 'Shift Length', 'Max Shift Length', 'Longest Shift']);
-    const daysOff = getProp(prog, ['Days Off Per Week', 'Days Off/Week', 'Days Off']);
-    const sickDays = getProp(prog, ['Sick Days', 'Sick Leave Days', 'Sick Leave']);
-    const vacationDays = getProp(prog, ['Vacation Days', 'Vacation', 'PTO']);
-
-    // Family Leave extraction
-    let paidLeave = getProp(prog, ['Paid Family Leave Days', 'Paid Family Leave', 'Paid Leave']);
-    let unpaidLeave = getProp(prog, ['Unpaid Family Leave Days', 'Unpaid Family Leave', 'Unpaid Leave']);
-
-    const baseSalary = formatCurrency(getProp(prog, ['Salary', 'Base Salary', 'PGY1 Salary', 'PGY-1 Salary']));
-    const colSalary = formatCurrency(getProp(prog, ['COL Adjusted Salary', 'COL-Adjusted Salary', 'Adjusted Salary']));
-    const stretchScore = getProp(prog, ['Salary Stretch Score', 'Stretch Score', 'Salary Score']);
-
-    const formattedWebsite = rawWebsite !== '#' ? (rawWebsite.startsWith('http') ? rawWebsite : 'https://' + rawWebsite) : '#';
-
-    return `
-      <div class="p-3.5 space-y-2.5 font-sans max-h-[420px] overflow-y-auto bg-white">
-        
-        <div class="border-b border-[#E5E0D8] pb-1.5">
-          <h3 class="font-semibold text-xs text-[#2D3132] leading-tight">
-            ${formattedWebsite !== '#' ? `<a href="${formattedWebsite}" target="_blank" rel="noopener noreferrer" class="text-[#2D3132] hover:text-[#C86D51] hover:underline flex items-center gap-1">${programName} <span class="text-[9px] text-[#C86D51]">↗</span></a>` : programName}
-          </h3>
-        </div>
-
-        <!-- BASICS -->
-        <div class="space-y-1">
-          <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Basics</span>
-          <div class="grid grid-cols-2 gap-1.5 text-[10px]">
-            <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-              <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Location</span>
-              <span class="font-medium text-[#2D3132] truncate block">${city}, ${state}</span>
-            </div>
-            <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-              <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Nearest Airport</span>
-              <span class="font-medium text-[#2D3132] truncate block">${airport}</span>
-            </div>
-          </div>
-          <div class="grid grid-cols-4 gap-1.5 text-[10px]">
-            <div class="col-span-3 bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-              <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Setting</span>
-              <span class="font-medium text-[#2D3132] block truncate">${setting}</span>
-            </div>
-            <div class="col-span-1 bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
-              <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Class Size</span>
-              <span class="font-medium text-[#2D3132]">${classSize}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- APPLICATION -->
-        <div class="space-y-1">
-          <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Application</span>
-          <div class="grid grid-cols-2 gap-1.5 text-[10px]">
-            <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-              <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Tier / Category</span>
-              <span class="font-medium text-[#2D3132]">${tier}</span>
-            </div>
-            <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-              <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Step Score Target</span>
-              <span class="font-medium text-[#2D3132]">${stepScore}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- WORK & LEAVE -->
-        <div class="space-y-1">
-          <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Work & Leave</span>
-          <div class="bg-[#FAF9F5] p-2 rounded border border-[#E5E0D8] text-[10px] space-y-1">
-            <div class="flex justify-between">
-              <span class="text-[#6B7280]">Average Hours/Week:</span>
-              <span class="font-medium text-[#2D3132]">${avgHours}</span>
-            </div>
-            <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-              <span class="text-[#6B7280]">Longest Shift Length:</span>
-              <span class="font-medium text-[#2D3132]">${shiftLength}</span>
-            </div>
-            <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-              <span class="text-[#6B7280]">Days Off/Week:</span>
-              <span class="font-medium text-[#2D3132]">${daysOff}</span>
-            </div>
-            <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-              <span class="text-[#6B7280]">Sick Days:</span>
-              <span class="font-medium text-[#2D3132]">${sickDays}</span>
-            </div>
-            <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-              <span class="text-[#6B7280]">Vacation Days:</span>
-              <span class="font-medium text-[#2D3132]">${vacationDays}</span>
-            </div>
-            <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-              <span class="text-[#6B7280]">Family Leave (Paid / Unpaid):</span>
-              <span class="font-medium text-[#2D3132]">${paidLeave} / ${unpaidLeave}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- COMPENSATION -->
-        <div class="space-y-1">
-          <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Compensation</span>
-          <div class="grid grid-cols-3 gap-1 text-[9px]">
-            <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
-              <span class="text-[#6B7280] block text-[7px] uppercase font-medium">Base Salary</span>
-              <span class="font-medium text-[#2D3132]">${baseSalary}</span>
-            </div>
-            <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
-              <span class="text-[#6B7280] block text-[7px] uppercase font-medium truncate">COL-Adjusted Salary</span>
-              <span class="font-medium text-[#2D3132]">${colSalary}</span>
-            </div>
-            <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
-              <span class="text-[#6B7280] block text-[7px] uppercase font-medium truncate">Stretch Score</span>
-              <span class="font-medium text-[#2D3132]">${stretchScore}</span>
-            </div>
-          </div>
-        </div>
-
+  <!-- Sidebar Filters & Search -->
+  <aside class="w-96 bg-white border-r border-[#E5E0D8] flex flex-col h-full z-10 shadow-lg">
+    <div class="p-4 border-b border-[#E5E0D8] space-y-3">
+      <div class="flex items-center justify-between">
+        <h1 class="font-bold text-lg text-[#2D3132]">Pediatric Residency Tracker</h1>
+        <span id="program-count" class="text-xs bg-[#EBF3ED] text-[#2D3132] px-2 py-1 rounded font-medium">0 Programs</span>
       </div>
-    `;
-  }
+      
+      <!-- Search Input -->
+      <div class="relative">
+        <input 
+          type="text" 
+          id="search-input" 
+          placeholder="Search program, city, or state..." 
+          class="w-full bg-[#FAF9F5] border border-[#E5E0D8] rounded px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#C86D51]"
+        />
+      </div>
+    </div>
 
-  function renderMapMarkers(data) {
-    if (!map) return;
+    <!-- Filter Controls -->
+    <div class="p-4 border-b border-[#E5E0D8] space-y-3 text-xs overflow-y-auto max-h-48 custom-scroll bg-[#FAF9F5]/50">
+      <div>
+        <label class="font-semibold block mb-1 text-[#6B7280]">Setting Filter</label>
+        <div class="flex flex-wrap gap-1.5" id="setting-filters">
+          <button class="filter-btn text-[11px] px-2 py-1 rounded border border-[#E5E0D8] bg-white hover:bg-[#FAF9F5]" data-[#FAF9F5]="setting" data-value="University">University</button>
+          <button class="filter-btn text-[11px] px-2 py-1 rounded border border-[#E5E0D8] bg-white hover:bg-[#FAF9F5]" data-type="setting" data-value="Community-Based Univ. Affiliated">Community/Univ-Affiliated</button>
+        </div>
+      </div>
+    </div>
 
-    // Clear existing markers
-    markersMap.forEach(marker => map.removeLayer(marker));
-    markersMap.clear();
+    <!-- Program List Sidebar View -->
+    <div id="program-list" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scroll divide-y divide-[#E5E0D8]/50">
+      <div class="text-center text-xs text-[#6B7280] py-8">Loading programs dataset...</div>
+    </div>
+  </aside>
 
-    data.forEach(prog => {
-      const lat = parseFloat(getProp(prog, ['Latitude', 'Lat']));
-      const lng = parseFloat(getProp(prog, ['Longitude', 'Lng', 'Long']));
+  <!-- Interactive Map Canvas -->
+  <main class="flex-1 h-full relative">
+    <div id="map"></div>
+  </main>
 
-      if (!isNaN(lat) && !isNaN(lng)) {
-        const marker = L.circleMarker([lat, lng], {
-          radius: 7,
-          fillColor: "#C86D51",
-          color: "#FFFFFF",
-          weight: 1.5,
-          opacity: 1,
-          fillOpacity: 0.9
-        }).addTo(map);
+  <script>
+    let allPrograms = [];
+    let activeFilters = { search: '', setting: new Set() };
+    let map;
+    let markersMap = new Map();
 
-        const factSheetHTML = createFactSheetHTML(prog);
-        marker.bindPopup(factSheetHTML, { maxWidth: 300, minWidth: 260 });
-        
-        const progId = getProp(prog, ['Program', 'Program Name', 'Name']);
-        markersMap.set(progId, marker);
-      }
-    });
-  }
+    // Airport Code Lookup
+    const airportLookup = {
+      "Ann Arbor, MI": "DTW",
+      "Sacramento, CA": "SMF",
+      "Charlotte, NC": "CLT",
+      "Phoenix, AZ": "PHX", 
+      "Los Angeles, CA": "LAX", 
+      "San Francisco, CA": "SFO",
+      "Oakland, CA": "OAK", 
+      "San Diego, CA": "SAN",
+      "New Haven, CT": "BDL", 
+      "Denver, CO": "DEN", 
+      "Washington, DC": "DCA",
+      "Chicago, IL": "ORD", 
+      "Boston, MA": "BOS", 
+      "Baltimore, MD": "BWI",
+      "Minneapolis, MN": "MSP", 
+      "St. Louis, MO": "STL",
+      "Chapel Hill, NC": "RDU", 
+      "Philadelphia, PA": "PHL",
+      "Pittsburgh, PA": "PIT", 
+      "Seattle, WA": "SEA", 
+      "New York, NY": "JFK",
+      "Houston, TX": "IAH", 
+      "Dallas, TX": "DFW", 
+      "Atlanta, GA": "ATL"
+    };
 
-  function initMap() {
-    const mapEl = document.getElementById('map');
-    if (!mapEl) return;
-
-    map = L.map('map', { zoomControl: false }).setView([39.8283, -98.5795], 4);
-    L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      maxZoom: 19,
-      subdomains: 'abcd',
-      attribution: '&copy; OpenStreetMap &copy; CARTO'
-    }).addTo(map);
-
-    if (allPrograms.length > 0) {
-      renderMapMarkers(allPrograms);
+    function cleanKey(str) {
+      return String(str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
     }
-  }
 
-  // Initialize map when DOM is ready
-  document.addEventListener("DOMContentLoaded", () => {
-    initMap();
-  });
-</script>
+    // Flexible Fuzzy CSV Property Selector
+    function getProp(obj, possibleKeys, defaultVal = 'N/A') {
+      if (!obj || typeof obj !== 'object') return defaultVal;
+      const objKeys = Object.keys(obj);
+
+      for (const keyCandidate of possibleKeys) {
+        const targetClean = cleanKey(keyCandidate);
+        const matchedKey = objKeys.find(k => cleanKey(k) === targetClean);
+        if (matchedKey && obj[matchedKey] !== undefined && obj[matchedKey] !== null) {
+          const val = String(obj[matchedKey]).trim();
+          if (val !== '' && val !== '-') return val;
+        }
+      }
+
+      for (const keyCandidate of possibleKeys) {
+        const targetClean = cleanKey(keyCandidate);
+        const matchedKey = objKeys.find(k => cleanKey(k).includes(targetClean));
+        if (matchedKey && obj[matchedKey] !== undefined && obj[matchedKey] !== null) {
+          const val = String(obj[matchedKey]).trim();
+          if (val !== '' && val !== '-') return val;
+        }
+      }
+
+      return defaultVal;
+    }
+
+    function formatCurrency(val) {
+      if (!val || val === 'N/A') return 'N/A';
+      const cleanNum = parseFloat(String(val).replace(/[^0-9.-]+/g, ""));
+      if (isNaN(cleanNum)) return val;
+      return '$' + cleanNum.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    }
+
+    function isTrueValue(val) {
+      if (!val || val === 'N/A') return false;
+      const cleanVal = String(val).trim().toLowerCase();
+      return ['yes', 'true', '1', 'x', 'y'].includes(cleanVal);
+    }
+
+    function cleanSettingName(val) {
+      if (!val || val === 'N/A') return 'N/A';
+      let cleaned = val.trim();
+      if (cleaned.toLowerCase().includes("university affiliated") || cleaned.toLowerCase().includes("cb/university")) {
+        return "Community-Based Univ. Affiliated";
+      }
+      return cleaned;
+    }
+
+    function createFactSheetHTML(prog) {
+      const city = getProp(prog, ['City', 'Location City', 'Town']);
+      const state = getProp(prog, ['State', 'Location State', 'ST']);
+      const cityStateKey = `${city}, ${state}`;
+
+      const rawWebsite = getProp(prog, ['Website', 'URL', 'Program Website', 'Link'], '#');
+      const programName = getProp(prog, ['Program', 'Program Name', 'Hospital', 'Institution', 'Name'], 'Program Info');
+
+      let airport = getProp(prog, ['Nearest Airport', 'Airport', 'Airport Code']);
+      if (airport === 'N/A') {
+        airport = airportLookup[cityStateKey] || (city !== 'N/A' ? city.substring(0, 3).toUpperCase() : 'N/A');
+      }
+
+      const classSize = getProp(prog, ['Class size', 'Class Size', 'Size', 'Program Size']);
+      const setting = cleanSettingName(getProp(prog, ['Setting', 'Program Setting', 'Hospital Setting']));
+      const tier = getProp(prog, ['Competitiveness', 'Tier', 'Category', 'Target/Reach', 'Reach/Target', 'Tier / Category']);
+      const stepScore = getProp(prog, ['Step Score Range', 'Step Score', 'Step 2 Target', 'Target Step', 'Step Score Target']);
+
+      const avgHours = getProp(prog, ['Average Hours Worked', 'Work Hours', 'Average Hours', 'Hours/Week', 'Average Hours/Week']);
+      const shiftLength = getProp(prog, ['Longest Shift Length', 'Shift Length', 'Max Shift Length', 'Longest Shift']);
+      const daysOff = getProp(prog, ['Days Off Per Week', 'Days Off/Week', 'Days Off', 'Days Off/Week:']);
+      const sickDays = getProp(prog, ['Sick Days', 'Sick Leave Days', 'Sick Leave']);
+      const vacationDays = getProp(prog, ['Vacation Days', 'Vacation', 'PTO']);
+
+      let paidLeave = getProp(prog, ['Paid Family Leave Days', 'Paid Family Leave', 'Paid Leave']);
+      let unpaidLeave = getProp(prog, ['Unpaid Family Leave Days', 'Unpaid Family Leave', 'Unpaid Leave']);
+
+      const baseSalary = formatCurrency(getProp(prog, ['Salary', 'Base Salary', 'PGY1 Salary', 'PGY-1 Salary']));
+      const colSalary = formatCurrency(getProp(prog, ['COL Adjusted Salary', 'COL-Adjusted Salary', 'Adjusted Salary']));
+      const stretchScore = getProp(prog, ['Salary Stretch Score', 'Stretch Score', 'Salary Score']);
+
+      const formattedWebsite = rawWebsite !== '#' ? (rawWebsite.startsWith('http') ? rawWebsite : 'https://' + rawWebsite) : '#';
+
+      return `
+        <div class="p-3.5 space-y-2.5 font-sans max-h-[420px] overflow-y-auto custom-scroll bg-white">
+          <div class="border-b border-[#E5E0D8] pb-1.5">
+            <h3 class="font-semibold text-xs text-[#2D3132] leading-tight">
+              ${formattedWebsite !== '#' ? `<a href="${formattedWebsite}" target="_blank" rel="noopener noreferrer" class="text-[#2D3132] hover:text-[#C86D51] hover:underline flex items-center gap-1">${programName} <span class="text-[9px] text-[#C86D51]">↗</span></a>` : programName}
+            </h3>
+          </div>
+
+          <div class="space-y-1">
+            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Basics</span>
+            <div class="grid grid-cols-2 gap-1.5 text-[10px]">
+              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
+                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Location</span>
+                <span class="font-medium text-[#2D3132] truncate block">${city}, ${state}</span>
+              </div>
+              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
+                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Nearest Airport</span>
+                <span class="font-medium text-[#2D3132] truncate block">${airport}</span>
+              </div>
+            </div>
+            <div class="grid grid-cols-4 gap-1.5 text-[10px]">
+              <div class="col-span-3 bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
+                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Setting</span>
+                <span class="font-medium text-[#2D3132] block truncate">${setting}</span>
+              </div>
+              <div class="col-span-1 bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
+                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Class Size</span>
+                <span class="font-medium text-[#2D3132]">${classSize}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Application</span>
+            <div class="grid grid-cols-2 gap-1.5 text-[10px]">
+              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
+                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Tier / Category</span>
+                <span class="font-medium text-[#2D3132]">${tier}</span>
+              </div>
+              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
+                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Step Score Target</span>
+                <span class="font-medium text-[#2D3132]">${stepScore}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Work & Leave</span>
+            <div class="bg-[#FAF9F5] p-2 rounded border border-[#E5E0D8] text-[10px] space-y-1">
+              <div class="flex justify-between">
+                <span class="text-[#6B7280]">Average Hours/Week:</span>
+                <span class="font-medium text-[#2D3132]">${avgHours}</span>
+              </div>
+              <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
+                <span class="text-[#6B7280]">Longest Shift Length:</span>
+                <span class="font-medium text-[#2D3132]">${shiftLength}</span>
+              </div>
+              <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
+                <span class="text-[#6B7280]">Days Off/Week:</span>
+                <span class="font-medium text-[#2D3132]">${daysOff}</span>
+              </div>
+              <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
+                <span class="text-[#6B7280]">Sick Days:</span>
+                <span class="font-medium text-[#2D3132]">${sickDays}</span>
+              </div>
+              <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
+                <span class="text-[#6B7280]">Vacation Days:</span>
+                <span class="font-medium text-[#2D3132]">${vacationDays}</span>
+              </div>
+              <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
+                <span class="text-[#6B7280]">Family Leave (Paid / Unpaid):</span>
+                <span class="font-medium text-[#2D3132]">${paidLeave} / ${unpaidLeave}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Compensation</span>
+            <div class="grid grid-cols-3 gap-1 text-[9px]">
+              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
+                <span class="text-[#6B7280] block text-[7px] uppercase font-medium">Base Salary</span>
+                <span class="font-medium text-[#2D3132]">${baseSalary}</span>
+              </div>
+              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
+                <span class="text-[#6B7280] block text-[7px] uppercase font-medium truncate">COL-Adjusted Salary</span>
+                <span class="font-medium text-[#2D3132]">${colSalary}</span>
+              </div>
+              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
+                <span class="text-[#6B7280] block text-[7px] uppercase font-medium truncate">Stretch Score</span>
+                <span class="font-medium text-[#2D3132]">${stretchScore}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function initMap() {
+      map = L.map('map', { zoomControl: false }).setView([39.8283, -98.5795], 4);
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        subdomains: 'abcd',
+        attribution: '&copy; OpenStreetMap &copy; CARTO'
+      }).addTo(map);
+    }
+
+    function renderPrograms(data) {
+      const listEl = document.getElementById('program-list');
+      const countEl = document.getElementById('program-count');
+      countEl.textContent = `${data.length} Programs`;
+
+      // Clear map markers
+      markersMap.forEach(m => map.removeLayer(m));
+      markersMap.clear();
+
+      if (data.length === 0) {
+        listEl.innerHTML = `<div class="text-center text-xs text-[#6B7280] py-8">No matching programs found.</div>`;
+        return;
+      }
+
+      listEl.innerHTML = '';
+
+      data.forEach(prog => {
+        const name = getProp(prog, ['Program', 'Program Name', 'Hospital', 'Name']);
+        const city = getProp(prog, ['City', 'Location City']);
+        const state = getProp(prog, ['State', 'Location State']);
+        const lat = parseFloat(getProp(prog, ['Latitude', 'Lat']));
+        const lng = parseFloat(getProp(prog, ['Longitude', 'Lng', 'Long']));
+
+        // Append Sidebar Item
+        const item = document.createElement('div');
+        item.className = 'py-2 px-1 hover:bg-[#FAF9F5] cursor-pointer rounded transition-colors';
+        item.innerHTML = `
+          <div class="font-semibold text-xs text-[#2D3132]">${name}</div>
+          <div class="text-[10px] text-[#6B7280]">${city}, ${state}</div>
+        `;
+
+        item.addEventListener('click', () => {
+          if (markersMap.has(name)) {
+            const marker = markersMap.get(name);
+            map.flyTo(marker.getLatLng(), 11, { duration: 1 });
+            marker.openPopup();
+          }
+        });
+
+        listEl.appendChild(item);
+
+        // Map Marker Rendering
+        if (!isNaN(lat) && !isNaN(lng)) {
+          const marker = L.circleMarker([lat, lng], {
+            radius: 7,
+            fillColor: "#C86D51",
+            color: "#FFFFFF",
+            weight: 1.5,
+            opacity: 1,
+            fillOpacity: 0.9
+          }).addTo(map);
+
+          marker.bindPopup(createFactSheetHTML(prog), { maxWidth: 300, minWidth: 260 });
+          markersMap.set(name, marker);
+        }
+      });
+    }
+
+    function applyFilters() {
+      const filtered = allPrograms.filter(prog => {
+        const name = getProp(prog, ['Program', 'Program Name', 'Hospital']).toLowerCase();
+        const city = getProp(prog, ['City', 'Location City']).toLowerCase();
+        const state = getProp(prog, ['State', 'Location State']).toLowerCase();
+        const setting = cleanSettingName(getProp(prog, ['Setting', 'Program Setting'])).toLowerCase();
+
+        const searchMatch = !activeFilters.search || 
+          name.includes(activeFilters.search) || 
+          city.includes(activeFilters.search) || 
+          state.includes(activeFilters.search);
+
+        const settingMatch = activeFilters.setting.size === 0 || activeFilters.setting.has(setting);
+
+        return searchMatch && settingMatch;
+      });
+
+      renderPrograms(filtered);
+    }
+
+    // Load CSV Data
+    function loadData() {
+      const csvUrls = [
+        'data.csv',
+        'programs.csv',
+        'https://raw.githubusercontent.com/cesibosch/peds-residency-dashboard/main/data.csv'
+      ];
+
+      function tryFetch(index) {
+        if (index >= csvUrls.length) {
+          document.getElementById('program-list').innerHTML = `<div class="text-center text-xs text-red-500 py-8">Failed to load program data. Please check data.csv in repository.</div>`;
+          return;
+        }
+
+        Papa.parse(csvUrls[index], {
+          download: true,
+          header: true,
+          skipEmptyLines: true,
+          complete: function(results) {
+            if (results.data && results.data.length > 0) {
+              allPrograms = results.data;
+              renderPrograms(allPrograms);
+            } else {
+              tryFetch(index + 1);
+            }
+          },
+          error: function() {
+            tryFetch(index + 1);
+          }
+        });
+      }
+
+      tryFetch(0);
+    }
+
+    // Event Listeners
+    document.addEventListener("DOMContentLoaded", () => {
+      initMap();
+      loadData();
+
+      document.getElementById('search-input').addEventListener('input', (e) => {
+        activeFilters.search = e.target.value.toLowerCase().trim();
+        applyFilters();
+      });
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const val = btn.dataset.value.toLowerCase();
+          if (activeFilters.setting.has(val)) {
+            activeFilters.setting.delete(val);
+            btn.classList.remove('bg-[#C86D51]', 'text-white');
+            btn.classList.add('bg-white', 'text-[#2D3132]');
+          } else {
+            activeFilters.setting.add(val);
+            btn.classList.add('bg-[#C86D51]', 'text-white');
+            btn.classList.remove('bg-white', 'text-[#2D3132]');
+          }
+          applyFilters();
+        });
+      });
+    });
+  </script>
+</body>
+</html>
