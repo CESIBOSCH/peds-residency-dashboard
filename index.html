@@ -17,7 +17,7 @@
 
   <style>
     :root {
-      --bg-[#FAF9F5];
+      --bg-main: #FAF9F5;
       --bg-surface: #FFFFFF;
       --text-charcoal: #2D3132;
       --text-gray: #6B7280;
@@ -55,7 +55,7 @@
     }
     .leaflet-popup-content {
       margin: 0 !important;
-      width: 320px !important;
+      width: 330px !important;
     }
     .leaflet-popup-tip {
       background: #FFFFFF;
@@ -99,10 +99,10 @@
     <span id="programCount" class="text-xs font-medium text-[#C86D51] bg-[#FBF4F1] px-3 py-1 rounded-full border border-[#C86D51]/20">0 Programs Found</span>
   </header>
 
-  <!-- MAIN WRAPPER (CONTAINED HEIGHT) -->
+  <!-- MAIN WRAPPER -->
   <div class="w-full max-w-7xl mx-auto flex-1 flex flex-col md:flex-row gap-5 overflow-hidden">
 
-    <!-- SIDEBAR (INTERNAL SCROLLING ONLY) -->
+    <!-- SIDEBAR -->
     <aside class="w-full md:w-[280px] lg:w-[300px] bg-white border border-[#E5E0D8] rounded-xl flex flex-col shrink-0 shadow-sm overflow-hidden h-full">
       
       <!-- Filters Panel Header -->
@@ -209,7 +209,7 @@
 
     </aside>
 
-    <!-- MAP CONTAINER (FRAMED FIT) -->
+    <!-- MAP CONTAINER -->
     <main class="flex-1 rounded-xl border border-[#E5E0D8] overflow-hidden shadow-sm relative bg-white flex flex-col h-full">
       <div id="map" class="w-full h-full flex-1"></div>
 
@@ -260,25 +260,38 @@
       "Pittsburgh, PA": [40.4406, -79.9959], "Seattle, WA": [47.6062, -122.3321]
     };
 
-    // Robust CSV Field Value Extraction Helper
-    function getProp(obj, keys, defaultVal = '') {
+    // Advanced CSV Normalizer: Looks up keys case-insensitively & cleans dashes (-) into N/A
+    function getProp(obj, possibleKeys, defaultVal = 'N/A') {
       if (!obj) return defaultVal;
-      for (const key of keys) {
-        if (obj[key] !== undefined && obj[key] !== null && String(obj[key]).trim() !== '') {
-          return String(obj[key]).trim();
+      const objKeys = Object.keys(obj);
+      
+      for (const targetKey of possibleKeys) {
+        const foundKey = objKeys.find(k => k.trim().toLowerCase() === targetKey.trim().toLowerCase());
+        if (foundKey && obj[foundKey] !== undefined && obj[foundKey] !== null) {
+          const val = String(obj[foundKey]).trim();
+          if (val !== '' && val !== '-') {
+            return val;
+          }
         }
       }
       return defaultVal;
     }
 
+    function formatCurrency(val) {
+      if (!val || val === 'N/A') return 'N/A';
+      const cleanNum = parseFloat(String(val).replace(/[^0-9.-]+/g, ""));
+      if (isNaN(cleanNum)) return val;
+      return '$' + cleanNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
     function isTrueValue(val) {
-      if (!val) return false;
+      if (!val || val === 'N/A') return false;
       const cleanVal = String(val).trim().toLowerCase();
       return ['yes', 'true', '1', 'x', 'y'].includes(cleanVal);
     }
 
     function cleanSettingName(val) {
-      if (!val) return 'N/A';
+      if (!val || val === 'N/A') return 'N/A';
       let cleaned = val.trim();
       if (cleaned === "CB/University Affiliated" || cleaned === "CB / University Affiliated") {
         return "Community-Based Univ. Affiliated";
@@ -298,17 +311,17 @@
     }
 
     function createInMapFactSheetPopup(prog) {
-      const city = getProp(prog, ['City', 'city', 'Location City']);
-      const state = getProp(prog, ['State', 'state', 'Location State']);
+      const city = getProp(prog, ['City', 'Location City']);
+      const state = getProp(prog, ['State', 'Location State']);
       const cityStateKey = `${city}, ${state}`;
 
-      const website = getProp(prog, ['Website', 'URL', 'Program Website', 'Website URL', 'Link'], '#');
+      const rawWebsite = getProp(prog, ['Website', 'URL', 'Program Website', 'Website URL', 'Link'], '#');
       const programName = getProp(prog, ['Program', 'Program Name', 'Hospital', 'Institution'], 'Program Info');
 
-      // Nearest Airport
-      const airport = getProp(prog, ['Nearest Airport', 'Airport', 'Nearest Airport Code', 'Airport Code']) || airportLookup[cityStateKey] || (city ? `${city.substring(0,3).toUpperCase()} Airport` : 'N/A');
+      // Airport Code with color consistent styling
+      const airport = getProp(prog, ['Nearest Airport', 'Airport', 'Nearest Airport Code', 'Airport Code']) || airportLookup[cityStateKey] || (city !== 'N/A' ? `${city.substring(0,3).toUpperCase()} Airport` : 'N/A');
 
-      // Perks
+      // Perks Badges
       let perksHTML = '';
       const perks = [
         { label: 'Parking', val: getProp(prog, ['Free Parking', 'Parking', 'Parking Stipend']) },
@@ -324,33 +337,34 @@
       });
       if (!perksHTML) perksHTML = `<span class="text-[10px] text-[#6B7280] italic">Standard Benefits</span>`;
 
-      // Fields Population with Fallback Keys
-      const classSize = getProp(prog, ['Class size', 'Class Size', 'Class size per year', 'Program Size'], 'N/A');
+      // Extract accurate data fields from CSV
+      const classSize = getProp(prog, ['Class size', 'Class Size', 'Class size per year', 'Program Size']);
       const setting = cleanSettingName(getProp(prog, ['Setting', 'Program Setting', 'Hospital Setting']));
-      const tier = getProp(prog, ['Competitiveness', 'Tier', 'Category', 'Target/Reach'], 'N/A');
-      const stepScore = getProp(prog, ['Step Score Range', 'Step Score', 'USMLE Step 2', 'Step 2 Score'], 'N/A');
+      const tier = getProp(prog, ['Competitiveness', 'Tier', 'Category', 'Target/Reach']);
+      const stepScore = getProp(prog, ['Step Score Range', 'Step Score', 'USMLE Step 2', 'Step 2 Score']);
 
-      const avgHours = getProp(prog, ['Work Hours', 'Average Hours Worked', 'Average Hours Worked Per Week', 'Hours/Week'], 'N/A');
-      const shiftLength = getProp(prog, ['Longest Shift Length', 'Shift Length', 'Max Shift Length'], 'N/A');
-      const daysOff = getProp(prog, ['Days Off Per Week', 'Average Days Off Per Week', 'Days Off'], 'N/A');
-      const sickDays = getProp(prog, ['Sick Days', 'Sick Leave Days'], 'N/A');
-      const vacationDays = getProp(prog, ['Vacation', 'Vacation Days'], 'N/A');
-      const paidLeave = getProp(prog, ['Paid Family Leave Days', 'Paid Family Leave', 'Paid Leave'], 'N/A');
-      const unpaidLeave = getProp(prog, ['Unpaid Family Leave Days', 'Unpaid Family Leave', 'Unpaid Leave'], 'N/A');
+      const avgHours = getProp(prog, ['Work Hours', 'Average Hours Worked', 'Average Hours Worked Per Week', 'Hours/Week']);
+      const shiftLength = getProp(prog, ['Longest Shift Length', 'Shift Length', 'Max Shift Length']);
+      const daysOff = getProp(prog, ['Days Off Per Week', 'Average Days Off Per Week', 'Days Off']);
+      const sickDays = getProp(prog, ['Sick Days', 'Sick Leave Days']);
+      const vacationDays = getProp(prog, ['Vacation', 'Vacation Days']);
+      const paidLeave = getProp(prog, ['Paid Family Leave Days', 'Paid Family Leave', 'Paid Leave']);
+      const unpaidLeave = getProp(prog, ['Unpaid Family Leave Days', 'Unpaid Family Leave', 'Unpaid Leave']);
 
-      const baseSalary = getProp(prog, ['Salary', 'Base Salary', 'PGY1 Salary'], 'N/A');
-      const colSalary = getProp(prog, ['COL Adjusted Salary', 'Adjusted Salary', 'Cost of Living Adjusted Salary'], 'N/A');
-      const stretchScore = getProp(prog, ['Salary Stretch Score', 'Stretch Score'], 'N/A');
+      const baseSalary = formatCurrency(getProp(prog, ['Salary', 'Base Salary', 'PGY1 Salary']));
+      const colSalary = formatCurrency(getProp(prog, ['COL Adjusted Salary', 'COL-Adjusted Salary', 'Adjusted Salary', 'Cost of Living Adjusted Salary']));
+      const stretchScore = getProp(prog, ['Salary Stretch Score', 'Stretch Score']);
+
+      const formattedWebsite = rawWebsite !== '#' ? (rawWebsite.startsWith('http') ? rawWebsite : 'https://' + rawWebsite) : '#';
 
       return `
-        <div class="p-3.5 space-y-3 font-sans max-h-[400px] overflow-y-auto custom-scroll bg-white">
+        <div class="p-3.5 space-y-2.5 font-sans max-h-[410px] overflow-y-auto custom-scroll bg-white">
           
-          <!-- Header with Direct Web Link -->
-          <div class="border-b border-[#E5E0D8] pb-2">
-            <h3 class="font-medium text-xs text-[#2D3132] leading-snug">
-              ${website !== '#' ? `<a href="${website.startsWith('http') ? website : 'https://' + website}" target="_blank" rel="noopener noreferrer" class="text-[#C86D51] hover:underline flex items-center gap-1 font-semibold">${programName} <span class="text-[9px]">↗</span></a>` : `<span class="font-semibold">${programName}</span>`}
+          <!-- Header with Hyperlink (No location subtitle underneath) -->
+          <div class="border-b border-[#E5E0D8] pb-1.5">
+            <h3 class="font-semibold text-xs text-[#2D3132] leading-tight">
+              ${formattedWebsite !== '#' ? `<a href="${formattedWebsite}" target="_blank" rel="noopener noreferrer" class="text-[#2D3132] hover:text-[#C86D51] hover:underline flex items-center gap-1">${programName} <span class="text-[9px] text-[#C86D51]">↗</span></a>` : programName}
             </h3>
-            <p class="text-[10px] text-[#6B7280] mt-0.5">${city}${city && state ? ', ' : ''}${state}</p>
           </div>
 
           <!-- Section 1: Basics -->
@@ -358,19 +372,23 @@
             <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Basics</span>
             <div class="grid grid-cols-2 gap-1.5 text-[10px]">
               <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase">Location</span>
+                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Location</span>
                 <span class="font-medium text-[#2D3132] truncate block">${city}, ${state}</span>
               </div>
               <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase">Nearest Airport</span>
-                <span class="font-semibold text-[#C86D51] truncate block">${airport}</span>
+                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Nearest Airport</span>
+                <span class="font-medium text-[#2D3132] truncate block">${airport}</span>
               </div>
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase">Setting</span>
-                <span class="font-medium text-[#2D3132] truncate block">${setting}</span>
+            </div>
+            <div class="grid grid-cols-4 gap-1.5 text-[10px]">
+              <!-- Extended Setting box so text never cuts off -->
+              <div class="col-span-3 bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
+                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Setting</span>
+                <span class="font-medium text-[#2D3132] block truncate">${setting}</span>
               </div>
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase">Class Size</span>
+              <!-- Compact Class Size box -->
+              <div class="col-span-1 bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
+                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Class Size</span>
                 <span class="font-medium text-[#2D3132]">${classSize}</span>
               </div>
             </div>
@@ -381,11 +399,11 @@
             <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Application</span>
             <div class="grid grid-cols-2 gap-1.5 text-[10px]">
               <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase">Tier / Category</span>
+                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Tier / Category</span>
                 <span class="font-medium text-[#2D3132]">${tier}</span>
               </div>
               <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase">Step Score Target</span>
+                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Step Score Target</span>
                 <span class="font-medium text-[#2D3132]">${stepScore}</span>
               </div>
             </div>
@@ -396,15 +414,15 @@
             <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Work & Leave</span>
             <div class="bg-[#FAF9F5] p-2 rounded border border-[#E5E0D8] text-[10px] space-y-1">
               <div class="flex justify-between">
-                <span class="text-[#6B7280]">Avg Hours / Week:</span>
+                <span class="text-[#6B7280]">Average Hours/Week:</span>
                 <span class="font-medium text-[#2D3132]">${avgHours}</span>
               </div>
               <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-                <span class="text-[#6B7280]">Longest Shift:</span>
+                <span class="text-[#6B7280]">Longest Shift Length:</span>
                 <span class="font-medium text-[#2D3132]">${shiftLength}</span>
               </div>
               <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-                <span class="text-[#6B7280]">Avg Days Off / Wk:</span>
+                <span class="text-[#6B7280]">Days Off/Week:</span>
                 <span class="font-medium text-[#2D3132]">${daysOff}</span>
               </div>
               <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
@@ -416,7 +434,7 @@
                 <span class="font-medium text-[#2D3132]">${vacationDays}</span>
               </div>
               <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-                <span class="text-[#6B7280]">Family Leave (Paid/Unpaid):</span>
+                <span class="text-[#6B7280]">Family Leave (Paid / Unpaid):</span>
                 <span class="font-medium text-[#2D3132]">${paidLeave} / ${unpaidLeave}</span>
               </div>
             </div>
@@ -427,23 +445,23 @@
             <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Compensation</span>
             <div class="grid grid-cols-3 gap-1 text-[9px]">
               <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
-                <span class="text-[#6B7280] block text-[7px] uppercase">Base Salary</span>
+                <span class="text-[#6B7280] block text-[7px] uppercase font-medium">Base Salary</span>
                 <span class="font-medium text-[#2D3132]">${baseSalary}</span>
               </div>
               <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
-                <span class="text-[#6B7280] block text-[7px] uppercase">COL Adjusted</span>
+                <span class="text-[#6B7280] block text-[7px] uppercase font-medium truncate">COL-Adjusted Salary</span>
                 <span class="font-medium text-[#2D3132]">${colSalary}</span>
               </div>
               <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
-                <span class="text-[#6B7280] block text-[7px] uppercase">Stretch Score</span>
-                <span class="font-semibold text-[#C86D51]">${stretchScore}</span>
+                <span class="text-[#6B7280] block text-[7px] uppercase font-medium truncate">Salary Stretch Score</span>
+                <span class="font-medium text-[#2D3132]">${stretchScore}</span>
               </div>
             </div>
           </div>
 
           <!-- Perks -->
           <div class="pt-1 border-t border-[#E5E0D8]">
-            <span class="text-[9px] text-[#6B7280] uppercase font-semibold block mb-1">Key Perks</span>
+            <span class="text-[9px] text-[#6B7280] uppercase font-semibold block mb-1">Key Benefits</span>
             <div class="flex flex-wrap gap-1">${perksHTML}</div>
           </div>
 
@@ -477,7 +495,7 @@
           marker.bindTooltip(`
             <div class="font-sans">
               <div class="font-semibold text-[#2D3132]">${programName}</div>
-              <div class="text-[10px] text-[#6B7280]">${city}${city && state ? ', ' : ''}${state}</div>
+              <div class="text-[10px] text-[#6B7280]">${city}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state}</div>
             </div>
           `, { className: 'custom-map-tooltip', direction: 'top', offset: [0, -5] });
 
@@ -511,7 +529,7 @@
           <div class="flex justify-between items-start gap-1">
             <h3 class="font-medium text-xs leading-snug text-[#2D3132] group-hover:text-[#C86D51] transition-colors">${programName}</h3>
           </div>
-          <p class="text-[10px] text-[#6B7280] mt-0.5">${city}${city && state ? ', ' : ''}${state}</p>
+          <p class="text-[10px] text-[#6B7280] mt-0.5">${city}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state}</p>
           <div class="mt-2 pt-1.5 border-t border-[#FAF9F5] flex justify-between items-center text-[10px] text-[#6B7280]">
             <span class="truncate text-[9px]">${setting}</span>
             <span class="text-[#C86D51] font-medium text-[9px]">Select →</span>
@@ -640,9 +658,9 @@
         const comp = getProp(prog, ['Competitiveness', 'Tier']);
         const sizeStr = getProp(prog, ['Class size', 'Class Size', 'Program Size']);
 
-        if (st) sets.state.add(st);
-        if (set) sets.setting.add(set);
-        if (comp) sets.competitiveness.add(comp);
+        if (st && st !== 'N/A') sets.state.add(st);
+        if (set && set !== 'N/A') sets.setting.add(set);
+        if (comp && comp !== 'N/A') sets.competitiveness.add(comp);
         
         const size = parseInt(sizeStr);
         if (!isNaN(size) && size > maxClassFound) maxClassFound = size;
