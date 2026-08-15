@@ -272,6 +272,18 @@
       return defaultVal;
     }
 
+    function formatLeaveValue(val) {
+      if (!val || val === 'N/A') return 'N/A';
+      const trimmed = val.trim();
+      // If exactly "N" or starts with "N" followed by spaces/qualifiers (e.g., "N x2", "Nx2", "N")
+      if (trimmed.toUpperCase() === 'N' || /^n\b/i.test(trimmed) || /^\bn\b/i.test(trimmed)) {
+        // If there's an extra modifier like "N x2", preserve the modifier alongside Negotiable
+        const cleanedMod = trimmed.replace(/^n/i, '').trim();
+        return cleanedMod ? `Negotiable (${cleanedMod})` : 'Negotiable';
+      }
+      return trimmed;
+    }
+
     function formatCurrency(val) {
       if (!val || val === 'N/A') return 'N/A';
       const cleanNum = parseFloat(String(val).replace(/[^0-9.-]+/g, ""));
@@ -337,10 +349,10 @@
 
       const avgHours = getProp(prog, ['Hours/Week', 'Average Hours/Week', 'Average Hours Worked Per Week']);
       const shiftLength = getProp(prog, ['Longest Shift', 'Longest Shift Length', 'Shift Length']);
-      const daysOff = getProp(prog, ['Days Off/week', 'Days Off Per Week', 'Average Days Off Per Week']);
-      const sickDays = getProp(prog, ['Sick Days']);
-      const vacationDays = getProp(prog, ['Vacation Days', 'Vacation']);
-      const familyLeave = getProp(prog, ['Family Leave Paid/Unpaid', 'Family Leave', 'Paid Family Leave']);
+      const daysOff = formatLeaveValue(getProp(prog, ['Days Off/week', 'Days Off Per Week', 'Average Days Off Per Week']));
+      const sickDays = formatLeaveValue(getProp(prog, ['Sick Days']));
+      const vacationDays = formatLeaveValue(getProp(prog, ['Vacation Days', 'Vacation']));
+      const familyLeave = formatLeaveValue(getProp(prog, ['Family Leave Paid/Unpaid', 'Family Leave', 'Paid Family Leave']));
 
       const baseSalary = formatCurrency(getProp(prog, ['Salary', 'Base Salary']));
       const colSalary = formatCurrency(getProp(prog, ['COL-Adjusted Salary', 'COL-Adjusted']));
