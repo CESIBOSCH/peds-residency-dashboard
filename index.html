@@ -281,6 +281,33 @@
       return String(prog[key]).trim();
     }
 
+    function formatFamilyLeave(val) {
+      if (!val || val === 'N/A') return 'N/A';
+      const s = String(val).trim();
+      const lower = s.toLowerCase();
+      
+      if (['n x2', 'nx2', 'x2'].includes(lower)) {
+        return 'Negotiable/Negotiable';
+      }
+      if (lower === 'n') {
+        return 'Negotiable';
+      }
+
+      if (s.includes('/')) {
+        const parts = s.split('/');
+        const formattedParts = parts.map(p => {
+          const pClean = p.trim();
+          if (pClean.toLowerCase() === 'n') return 'Negotiable';
+          if (pClean === '—' || pClean === '-') return '0';
+          if (pClean === '') return 'N/A';
+          return pClean;
+        });
+        return formattedParts.join(' / ');
+      }
+
+      return s;
+    }
+
     function isTrueValue(val) {
       if (!val) return false;
       const cleanVal = String(val).trim().toLowerCase();
@@ -345,7 +372,7 @@
       const daysOff = getVal(prog, 'Days Off/week');
       const sickDays = getVal(prog, 'Sick Days');
       const vacationDays = getVal(prog, 'Vacation Days');
-      const paidLeave = getVal(prog, 'Family Leave Paid/Unpaid');
+      const paidLeave = formatFamilyLeave(getVal(prog, 'Family Leave Paid/Unpaid'));
 
       const baseSalary = getVal(prog, 'Salary');
       const colSalary = getVal(prog, 'COL-Adjusted Salary');
@@ -425,7 +452,7 @@
                 <span class="font-medium text-[#2D3132]">${vacationDays}</span>
               </div>
               <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-                <span class="text-[#6B7280]">Family Leave:</span>
+                <span class="text-[#6B7280]">Family Leave Paid/Unpaid:</span>
                 <span class="font-medium text-[#2D3132]">${paidLeave}</span>
               </div>
             </div>
