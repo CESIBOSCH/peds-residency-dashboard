@@ -39,22 +39,31 @@
       background: var(--bg-ivory);
       border: 1px solid var(--accent-mushroom);
       color: var(--text-charcoal);
-      border-radius: 8px;
-      padding: 6px 10px;
-      font-size: 12px;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
       font-weight: 500;
       box-shadow: 0 4px 12px rgba(52, 58, 59, 0.12);
     }
-    .leaflet-tooltip-top:before {
-      border-top-color: var(--accent-mushroom);
+
+    /* Custom Leaflet Popup Styling */
+    .leaflet-popup-content-wrapper {
+      background: #FAF8F3;
+      border: 1px solid #D8CDBD;
+      border-radius: 12px;
+      padding: 4px;
+      box-shadow: 0 10px 25px -5px rgba(52, 58, 59, 0.15);
+    }
+    .leaflet-popup-tip {
+      background: #FAF8F3;
     }
 
     /* Custom Desert Neutral Map Pins */
     .custom-desert-pin {
       background-color: #343A3B;
       border: 2px solid #FAF8F3;
-      width: 18px !important;
-      height: 18px !important;
+      width: 16px !important;
+      height: 16px !important;
       border-radius: 50%;
       box-shadow: 0 2px 6px rgba(52, 58, 59, 0.25);
       transition: transform 0.2s ease, background-color 0.2s ease;
@@ -77,7 +86,7 @@
     }
     
     .custom-scroll::-webkit-scrollbar {
-      width: 5px;
+      width: 4px;
     }
     .custom-scroll::-webkit-scrollbar-thumb {
       background-color: var(--accent-mushroom);
@@ -89,159 +98,170 @@
     }
   </style>
 </head>
-<body class="h-screen w-screen overflow-hidden flex flex-col md:flex-row relative">
+<body class="h-screen w-screen overflow-hidden flex flex-col p-4 md:p-6 gap-4">
 
-  <!-- LEFT SIDEBAR: Controls & Program List -->
-  <aside class="w-full md:w-[420px] lg:w-[460px] h-full border-r border-[#D8CDBD]/60 flex flex-col z-20 shadow-sm" style="background-color: #FAF8F3;">
-    
-    <!-- Header -->
-    <div class="p-5 border-b border-[#D8CDBD]/50 flex justify-between items-center" style="background-color: #F3EFE5;">
+  <!-- PAGE HEADER -->
+  <header class="w-full bg-[#F3EFE5] border border-[#D8CDBD]/70 rounded-2xl px-6 py-4 flex justify-between items-center shrink-0 shadow-sm">
+    <div class="flex items-center gap-3">
+      <div class="w-3 h-3 rounded-full" style="background-color: #C86D51;"></div>
       <div>
-        <h1 class="text-xl font-light tracking-wide" style="color: #343A3B;">Pediatric Residency Dashboard</h1>
-        <p class="text-xs mt-0.5" style="color: #74736E;">Filter programs & explore locations</p>
+        <h1 class="text-xl font-light tracking-wide text-[#343A3B]">Pediatric Residency Directory</h1>
+        <p class="text-xs text-[#74736E] mt-0.5">Explore program details, geographical distribution, and requirements</p>
       </div>
-      <span class="w-2.5 h-2.5 rounded-full inline-block shrink-0" style="background-color: #C86D51;" title="Active Session"></span>
     </div>
+    <div class="text-xs text-[#74736E] hidden sm:block">
+      Interactive Map & Program Database
+    </div>
+  </header>
 
-    <!-- Filters Container -->
-    <div class="p-4 border-b border-[#D8CDBD]/40 space-y-3" style="background-color: #FAF8F3;">
+  <!-- MAIN CONTENT CANVAS CONTAINER -->
+  <div class="flex-1 w-full flex flex-col md:flex-row gap-4 overflow-hidden min-h-0">
+
+    <!-- NARROWER LEFT SIDEBAR -->
+    <aside class="w-full md:w-[320px] lg:w-[340px] h-full bg-[#FAF8F3] border border-[#D8CDBD]/80 rounded-2xl flex flex-col shrink-0 shadow-sm overflow-hidden z-20">
       
-      <!-- Search Input -->
-      <input 
-        type="text" 
-        id="searchInput" 
-        placeholder="Search program, city..." 
-        class="w-full px-3.5 py-2 rounded-lg border border-[#D8CDBD] placeholder-[#74736E]/60 focus:outline-none focus:border-[#C86D51] text-sm transition"
-        style="background-color: #FFFFFF; color: #343A3B;"
-      />
+      <!-- Filters Header -->
+      <div class="px-4 py-3 border-b border-[#D8CDBD]/60 bg-[#F3EFE5] flex justify-between items-center">
+        <span class="text-xs font-semibold uppercase tracking-wider text-[#343A3B]">Filter Programs</span>
+        <span id="programCount" class="text-[11px] text-[#C86D51] font-medium bg-[#F5ECE8] px-2 py-0.5 rounded-md border border-[#C86D51]/30">0 Programs</span>
+      </div>
 
-      <!-- Multi-Select Dropdowns Grid -->
-      <div class="grid grid-cols-2 gap-2">
+      <!-- Filters Form Container -->
+      <div class="p-3.5 border-b border-[#D8CDBD]/40 space-y-2.5">
         
-        <!-- States Multi-Select Dropdown -->
-        <div class="relative dropdown-container">
-          <div class="flex items-center gap-1">
-            <button type="button" data-dropdown="state" class="dropdown-btn w-full px-2.5 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] transition" style="background-color: #FFFFFF; color: #343A3B;">
-              <span id="stateDropdownLabel" class="truncate">Select States</span>
-              <span class="text-[9px] ml-1 text-[#C86D51]">▼</span>
-            </button>
-            <button type="button" id="resetStateBtn" class="text-[10px] text-[#74736E] hover:text-[#C86D51] underline hidden shrink-0">Reset</button>
-          </div>
-          <div id="stateDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
-        </div>
-
-        <!-- Interest Multi-Select Dropdown -->
-        <div class="relative dropdown-container">
-          <div class="flex items-center gap-1">
-            <button type="button" data-dropdown="interest" class="dropdown-btn w-full px-2.5 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] transition" style="background-color: #FFFFFF; color: #343A3B;">
-              <span id="interestDropdownLabel" class="truncate">Select Interest</span>
-              <span class="text-[9px] ml-1 text-[#C86D51]">▼</span>
-            </button>
-            <button type="button" id="resetInterestBtn" class="text-[10px] text-[#74736E] hover:text-[#C86D51] underline hidden shrink-0">Reset</button>
-          </div>
-          <div id="interestDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
-        </div>
-
-        <!-- Setting Multi-Select Dropdown -->
-        <div class="relative dropdown-container">
-          <div class="flex items-center gap-1">
-            <button type="button" data-dropdown="setting" class="dropdown-btn w-full px-2.5 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] transition" style="background-color: #FFFFFF; color: #343A3B;">
-              <span id="settingDropdownLabel" class="truncate">Select Setting</span>
-              <span class="text-[9px] ml-1 text-[#C86D51]">▼</span>
-            </button>
-            <button type="button" id="resetSettingBtn" class="text-[10px] text-[#74736E] hover:text-[#C86D51] underline hidden shrink-0">Reset</button>
-          </div>
-          <div id="settingDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
-        </div>
-
-        <!-- Competitiveness Multi-Select Dropdown -->
-        <div class="relative dropdown-container">
-          <div class="flex items-center gap-1">
-            <button type="button" data-dropdown="competitiveness" class="dropdown-btn w-full px-2.5 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] transition" style="background-color: #FFFFFF; color: #343A3B;">
-              <span id="competitivenessDropdownLabel" class="truncate">Competitiveness</span>
-              <span class="text-[9px] ml-1 text-[#C86D51]">▼</span>
-            </button>
-            <button type="button" id="resetCompetitivenessBtn" class="text-[10px] text-[#74736E] hover:text-[#C86D51] underline hidden shrink-0">Reset</button>
-          </div>
-          <div id="competitivenessDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
-        </div>
-
-      </div>
-
-      <!-- Class Size Slider -->
-      <div class="pt-1 flex items-center gap-2">
-        <span class="text-[11px] font-semibold uppercase tracking-wider" style="color: #74736E;">Class Size:</span>
+        <!-- Search Input -->
         <input 
-          type="range" 
-          id="classSizeFilter" 
-          min="1" 
-          max="50" 
-          value="50" 
-          class="w-full h-1 bg-[#D8CDBD] rounded-lg appearance-none cursor-pointer"
+          type="text" 
+          id="searchInput" 
+          placeholder="Search program, city..." 
+          class="w-full px-3 py-1.5 rounded-lg border border-[#D8CDBD] placeholder-[#74736E]/60 focus:outline-none focus:border-[#C86D51] text-xs transition bg-white text-[#343A3B]"
         />
-        <span id="classSizeValue" class="text-xs font-medium px-2 py-0.5 rounded text-center min-w-[2.5rem] border border-[#C86D51]/30" style="background-color: #F5ECE8; color: #C86D51;">50</span>
+
+        <!-- Dropdowns Grid -->
+        <div class="grid grid-cols-2 gap-2">
+          
+          <!-- State Dropdown -->
+          <div class="relative dropdown-container">
+            <div class="flex items-center gap-1">
+              <button type="button" data-dropdown="state" class="dropdown-btn w-full px-2 py-1.5 rounded-lg border border-[#D8CDBD] text-[11px] focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-white text-[#343A3B]">
+                <span id="stateDropdownLabel" class="truncate">State</span>
+                <span class="text-[8px] ml-0.5 text-[#C86D51]">▼</span>
+              </button>
+              <button type="button" id="resetStateBtn" class="text-[9px] text-[#74736E] hover:text-[#C86D51] underline hidden shrink-0">Clear</button>
+            </div>
+            <div id="stateDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
+          </div>
+
+          <!-- Interest Dropdown -->
+          <div class="relative dropdown-container">
+            <div class="flex items-center gap-1">
+              <button type="button" data-dropdown="interest" class="dropdown-btn w-full px-2 py-1.5 rounded-lg border border-[#D8CDBD] text-[11px] focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-white text-[#343A3B]">
+                <span id="interestDropdownLabel" class="truncate">Interest</span>
+                <span class="text-[8px] ml-0.5 text-[#C86D51]">▼</span>
+              </button>
+              <button type="button" id="resetInterestBtn" class="text-[9px] text-[#74736E] hover:text-[#C86D51] underline hidden shrink-0">Clear</button>
+            </div>
+            <div id="interestDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
+          </div>
+
+          <!-- Setting Dropdown -->
+          <div class="relative dropdown-container">
+            <div class="flex items-center gap-1">
+              <button type="button" data-dropdown="setting" class="dropdown-btn w-full px-2 py-1.5 rounded-lg border border-[#D8CDBD] text-[11px] focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-white text-[#343A3B]">
+                <span id="settingDropdownLabel" class="truncate">Setting</span>
+                <span class="text-[8px] ml-0.5 text-[#C86D51]">▼</span>
+              </button>
+              <button type="button" id="resetSettingBtn" class="text-[9px] text-[#74736E] hover:text-[#C86D51] underline hidden shrink-0">Clear</button>
+            </div>
+            <div id="settingDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
+          </div>
+
+          <!-- Competitiveness Dropdown -->
+          <div class="relative dropdown-container">
+            <div class="flex items-center gap-1">
+              <button type="button" data-dropdown="competitiveness" class="dropdown-btn w-full px-2 py-1.5 rounded-lg border border-[#D8CDBD] text-[11px] focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-white text-[#343A3B]">
+                <span id="competitivenessDropdownLabel" class="truncate">Competitiveness</span>
+                <span class="text-[8px] ml-0.5 text-[#C86D51]">▼</span>
+              </button>
+              <button type="button" id="resetCompetitivenessBtn" class="text-[9px] text-[#74736E] hover:text-[#C86D51] underline hidden shrink-0">Clear</button>
+            </div>
+            <div id="competitivenessDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
+          </div>
+
+        </div>
+
+        <!-- Class Size Slider -->
+        <div class="pt-1 flex items-center gap-2">
+          <span class="text-[10px] font-semibold uppercase tracking-wider text-[#74736E]">Class Size:</span>
+          <input 
+            type="range" 
+            id="classSizeFilter" 
+            min="1" 
+            max="50" 
+            value="50" 
+            class="w-full h-1 bg-[#D8CDBD] rounded-lg appearance-none cursor-pointer"
+          />
+          <span id="classSizeValue" class="text-[11px] font-medium px-1.5 py-0.5 rounded text-center min-w-[2rem] border border-[#C86D51]/30 bg-[#F5ECE8] text-[#C86D51]">50</span>
+        </div>
+
+        <!-- Perks Checkboxes -->
+        <div class="pt-1 flex flex-wrap gap-x-2.5 gap-y-1 text-[11px] text-[#343A3B]">
+          <label class="inline-flex items-center gap-1 cursor-pointer hover:text-[#C86D51]">
+            <input type="checkbox" id="parkingFilter" class="rounded border-[#D8CDBD]"> Parking
+          </label>
+          <label class="inline-flex items-center gap-1 cursor-pointer hover:text-[#C86D51]">
+            <input type="checkbox" id="housingFilter" class="rounded border-[#D8CDBD]"> Housing
+          </label>
+          <label class="inline-flex items-center gap-1 cursor-pointer hover:text-[#C86D51]">
+            <input type="checkbox" id="mealFilter" class="rounded border-[#D8CDBD]"> Meals
+          </label>
+          <label class="inline-flex items-center gap-1 cursor-pointer hover:text-[#C86D51]">
+            <input type="checkbox" id="techFilter" class="rounded border-[#D8CDBD]"> Tech
+          </label>
+        </div>
       </div>
 
-      <!-- Perks Checkboxes -->
-      <div class="pt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs" style="color: #343A3B;">
-        <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51] transition">
-          <input type="checkbox" id="parkingFilter" class="rounded border-[#D8CDBD]">
-          Parking
-        </label>
-        <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51] transition">
-          <input type="checkbox" id="housingFilter" class="rounded border-[#D8CDBD]">
-          Housing
-        </label>
-        <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51] transition">
-          <input type="checkbox" id="mealFilter" class="rounded border-[#D8CDBD]">
-          Meals
-        </label>
-        <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51] transition">
-          <input type="checkbox" id="techFilter" class="rounded border-[#D8CDBD]">
-          Tech
-        </label>
+      <!-- Scrollable Program List -->
+      <div id="programList" class="flex-1 overflow-y-auto p-3 space-y-2.5 custom-scroll">
+        <!-- Cards injected dynamically -->
       </div>
-    </div>
 
-    <!-- Scrollable Program Cards List -->
-    <div id="programList" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scroll">
-      <!-- Cards dynamically injected here -->
-    </div>
+    </aside>
 
-  </aside>
+    <!-- MAP CONTAINER -->
+    <main class="flex-1 h-full rounded-2xl border border-[#D8CDBD]/80 overflow-hidden shadow-sm relative">
+      <div id="map" class="w-full h-full"></div>
+    </main>
 
-  <!-- RIGHT SIDE: Full Screen Map -->
-  <main class="flex-1 h-full relative">
-    <div id="map" class="w-full h-full"></div>
-  </main>
+  </div>
 
-  <!-- PROGRAM FACT-SHEET MODAL -->
-  <div id="factSheetModal" class="fixed inset-0 z-50 bg-[#343A3B]/40 backdrop-blur-sm hidden flex justify-end transition-opacity">
-    <div class="w-full max-w-lg bg-[#FAF8F3] h-full shadow-2xl flex flex-col overflow-hidden border-l border-[#D8CDBD]">
+  <!-- PROGRAM FACT-SHEET MODAL/SLIDE-OVER -->
+  <div id="factSheetModal" class="fixed inset-0 z-50 bg-[#343A3B]/40 backdrop-blur-sm hidden flex justify-end">
+    <div class="w-full max-w-md bg-[#FAF8F3] h-full shadow-2xl flex flex-col overflow-hidden border-l border-[#D8CDBD]">
       
       <!-- Fact-Sheet Header -->
-      <div class="p-6 border-b border-[#D8CDBD] flex justify-between items-start" style="background-color: #F3EFE5;">
+      <div class="p-5 border-b border-[#D8CDBD] flex justify-between items-start bg-[#F3EFE5]">
         <div>
           <span id="fsInterestTag" class="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-md border border-[#C86D51]/30 bg-[#F5ECE8] text-[#C86D51]">Interest</span>
-          <h2 id="fsProgramName" class="text-xl font-medium mt-2 leading-tight text-[#343A3B]">Program Name</h2>
-          <p id="fsLocation" class="text-xs text-[#74736E] mt-1">City, State</p>
+          <h2 id="fsProgramName" class="text-lg font-medium mt-1.5 leading-snug text-[#343A3B]">Program Name</h2>
+          <p id="fsLocation" class="text-xs text-[#74736E] mt-0.5">City, State</p>
         </div>
-        <button id="closeFactSheet" class="text-[#74736E] hover:text-[#C86D51] p-1 text-2xl font-light leading-none">&times;</button>
+        <button id="closeFactSheet" class="text-[#74736E] hover:text-[#C86D51] text-2xl font-light leading-none p-1">&times;</button>
       </div>
 
       <!-- Fact-Sheet Content Sections -->
-      <div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scroll">
+      <div class="flex-1 overflow-y-auto p-5 space-y-5 custom-scroll">
         
         <!-- Section 1: Basic Overview -->
         <section class="space-y-2">
-          <h3 class="text-xs font-semibold uppercase tracking-wider text-[#C86D51] border-b border-[#D8CDBD]/60 pb-1">Basic Overview Information</h3>
-          <div class="grid grid-cols-2 gap-3 text-xs pt-1">
-            <div class="bg-white p-3 rounded-lg border border-[#D8CDBD]/50">
-              <span class="text-[#74736E] block text-[11px]">Setting</span>
+          <h3 class="text-[11px] font-semibold uppercase tracking-wider text-[#C86D51] border-b border-[#D8CDBD]/60 pb-1">Basic Overview Information</h3>
+          <div class="grid grid-cols-2 gap-2.5 text-xs pt-1">
+            <div class="bg-white p-2.5 rounded-lg border border-[#D8CDBD]/50">
+              <span class="text-[#74736E] block text-[10px]">Setting</span>
               <span id="fsSetting" class="font-medium text-[#343A3B] mt-0.5 block">-</span>
             </div>
-            <div class="bg-white p-3 rounded-lg border border-[#D8CDBD]/50">
-              <span class="text-[#74736E] block text-[11px]">Class Size</span>
+            <div class="bg-white p-2.5 rounded-lg border border-[#D8CDBD]/50">
+              <span class="text-[#74736E] block text-[10px]">Class Size</span>
               <span id="fsClassSize" class="font-medium text-[#343A3B] mt-0.5 block">-</span>
             </div>
           </div>
@@ -249,14 +269,14 @@
 
         <!-- Section 2: Application Stats -->
         <section class="space-y-2">
-          <h3 class="text-xs font-semibold uppercase tracking-wider text-[#C86D51] border-b border-[#D8CDBD]/60 pb-1">Application Stats</h3>
-          <div class="grid grid-cols-2 gap-3 text-xs pt-1">
-            <div class="bg-white p-3 rounded-lg border border-[#D8CDBD]/50">
-              <span class="text-[#74736E] block text-[11px]">Competitiveness</span>
+          <h3 class="text-[11px] font-semibold uppercase tracking-wider text-[#C86D51] border-b border-[#D8CDBD]/60 pb-1">Application Stats</h3>
+          <div class="grid grid-cols-2 gap-2.5 text-xs pt-1">
+            <div class="bg-white p-2.5 rounded-lg border border-[#D8CDBD]/50">
+              <span class="text-[#74736E] block text-[10px]">Competitiveness</span>
               <span id="fsCompetitiveness" class="font-medium text-[#343A3B] mt-0.5 block">-</span>
             </div>
-            <div class="bg-white p-3 rounded-lg border border-[#D8CDBD]/50">
-              <span class="text-[#74736E] block text-[11px]">Step Score Range</span>
+            <div class="bg-white p-2.5 rounded-lg border border-[#D8CDBD]/50">
+              <span class="text-[#74736E] block text-[10px]">Step Score Range</span>
               <span id="fsStepScore" class="font-medium text-[#343A3B] mt-0.5 block">-</span>
             </div>
           </div>
@@ -264,8 +284,8 @@
 
         <!-- Section 3: Work & Leave -->
         <section class="space-y-2">
-          <h3 class="text-xs font-semibold uppercase tracking-wider text-[#C86D51] border-b border-[#D8CDBD]/60 pb-1">Work & Leave</h3>
-          <div class="bg-white p-3 rounded-lg border border-[#D8CDBD]/50 text-xs space-y-2">
+          <h3 class="text-[11px] font-semibold uppercase tracking-wider text-[#C86D51] border-b border-[#D8CDBD]/60 pb-1">Work & Leave</h3>
+          <div class="bg-white p-2.5 rounded-lg border border-[#D8CDBD]/50 text-xs space-y-1.5">
             <div class="flex justify-between">
               <span class="text-[#74736E]">Avg Weekly Hours:</span>
               <span id="fsWorkHours" class="font-medium text-[#343A3B]">-</span>
@@ -279,15 +299,13 @@
 
         <!-- Section 4: Compensation & Perks -->
         <section class="space-y-2">
-          <h3 class="text-xs font-semibold uppercase tracking-wider text-[#C86D51] border-b border-[#D8CDBD]/60 pb-1">Compensation & Perks</h3>
-          <div class="bg-white p-3 rounded-lg border border-[#D8CDBD]/50 text-xs space-y-2">
+          <h3 class="text-[11px] font-semibold uppercase tracking-wider text-[#C86D51] border-b border-[#D8CDBD]/60 pb-1">Compensation & Perks</h3>
+          <div class="bg-white p-2.5 rounded-lg border border-[#D8CDBD]/50 text-xs space-y-2">
             <div class="flex justify-between">
               <span class="text-[#74736E]">Estimated Salary / Stipend:</span>
               <span id="fsSalary" class="font-medium text-[#343A3B]">-</span>
             </div>
-            <div class="pt-2 border-t border-[#F3EFE5] flex flex-wrap gap-2" id="fsPerksBadges">
-              <!-- Perks badges injected here -->
-            </div>
+            <div class="pt-2 border-t border-[#F3EFE5] flex flex-wrap gap-1.5" id="fsPerksBadges"></div>
           </div>
         </section>
 
@@ -306,6 +324,7 @@
     
     let map;
     let markersMap = new Map();
+    let programDataMap = new Map();
 
     const cityCoordinates = {
       "Phoenix, AZ": [33.4484, -112.0740],
@@ -415,15 +434,8 @@
         document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden'));
       });
 
-      // Reset Buttons
       ['state', 'interest', 'setting', 'competitiveness'].forEach(type => {
-        const placeholders = {
-          state: 'Select States',
-          interest: 'Select Interest',
-          setting: 'Select Setting',
-          competitiveness: 'Competitiveness'
-        };
-
+        const placeholders = { state: 'State', interest: 'Interest', setting: 'Setting', competitiveness: 'Competitiveness' };
         const resetBtn = document.getElementById(`reset${type.charAt(0).toUpperCase() + type.slice(1)}Btn`);
         resetBtn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -437,12 +449,7 @@
     }
 
     function populateDropdowns(data) {
-      const sets = {
-        state: new Set(),
-        interest: new Set(),
-        setting: new Set(),
-        competitiveness: new Set()
-      };
+      const sets = { state: new Set(), interest: new Set(), setting: new Set(), competitiveness: new Set() };
       let maxClassFound = 0;
 
       data.forEach(prog => {
@@ -455,9 +462,9 @@
         if (!isNaN(size) && size > maxClassFound) maxClassFound = size;
       });
 
-      buildMultiSelectDropdown('state', sets.state, 'Select States');
-      buildMultiSelectDropdown('interest', sets.interest, 'Select Interest');
-      buildMultiSelectDropdown('setting', sets.setting, 'Select Setting');
+      buildMultiSelectDropdown('state', sets.state, 'State');
+      buildMultiSelectDropdown('interest', sets.interest, 'Interest');
+      buildMultiSelectDropdown('setting', sets.setting, 'Setting');
       buildMultiSelectDropdown('competitiveness', sets.competitiveness, 'Competitiveness');
 
       if (maxClassFound > 0) {
@@ -474,6 +481,9 @@
       skipEmptyLines: true,
       complete: function(results) {
         allPrograms = results.data;
+        allPrograms.forEach(p => {
+          if (p['Program']) programDataMap.set(p['Program'], p);
+        });
         initMap();
         setupDropdownControls();
         populateDropdowns(allPrograms);
@@ -490,8 +500,8 @@
 
     const desertIcon = L.divIcon({
       className: 'custom-desert-pin',
-      iconSize: [18, 18],
-      iconAnchor: [9, 9]
+      iconSize: [16, 16],
+      iconAnchor: [8, 8]
     });
 
     function createMapPins(programs) {
@@ -511,19 +521,30 @@
         if (!isNaN(lat) && !isNaN(lng)) {
           const marker = L.marker([lat, lng], { icon: desertIcon }).addTo(map);
           
-          // Hover Tooltip: Program Name & City, State
+          // Hover Tooltip
           marker.bindTooltip(`
             <div class="font-sans">
               <div class="font-semibold text-[#343A3B]">${programName}</div>
-              <div class="text-[11px] text-[#74736E]">${city}${city && state ? ', ' : ''}${state}</div>
+              <div class="text-[10px] text-[#74736E]">${city}${city && state ? ', ' : ''}${state}</div>
             </div>
-          `, { className: 'custom-map-tooltip', direction: 'top', offset: [0, -8] });
+          `, { className: 'custom-map-tooltip', direction: 'top', offset: [0, -6] });
 
-          // Click Event: Open Fact-Sheet Modal
-          marker.on('click', () => {
+          // Interactive Map Popup Card
+          const popupContent = document.createElement('div');
+          popupContent.className = "p-2 font-sans text-[#343A3B]";
+          popupContent.innerHTML = `
+            <div class="font-semibold text-xs leading-snug text-[#343A3B]">${programName}</div>
+            <div class="text-[11px] text-[#74736E] mt-0.5 mb-2">${city}${city && state ? ', ' : ''}${state}</div>
+            <button class="view-fs-btn w-full text-center text-[11px] font-medium py-1 px-2.5 rounded-md border border-[#C86D51] text-[#C86D51] bg-[#F5ECE8] hover:bg-[#C86D51] hover:text-white transition">
+              View Fact Sheet
+            </button>
+          `;
+
+          popupContent.querySelector('.view-fs-btn').addEventListener('click', () => {
             openFactSheet(prog);
           });
 
+          marker.bindPopup(popupContent);
           markersMap.set(programName, marker);
         }
       });
@@ -556,13 +577,13 @@
         { key: 'Parking', label: 'Free Parking', val: prog['Free Parking'] || prog['Parking'] },
         { key: 'Housing', label: 'Housing Stipend', val: prog['Housing Stipend'] || prog['Housing'] },
         { key: 'Meals', label: 'Meal Allowance', val: prog['Meal Stipend'] || prog['Meals'] },
-        { key: 'Tech', label: 'Tech / Book Stipend', val: prog['Tech Stipend'] || prog['Tech'] }
+        { key: 'Tech', label: 'Tech Stipend', val: prog['Tech Stipend'] || prog['Tech'] }
       ];
 
       perksList.forEach(perk => {
         if (isTrueValue(perk.val)) {
           const badge = document.createElement('span');
-          badge.className = "text-[11px] font-medium px-2.5 py-1 rounded-md border border-[#82988B]/40 bg-[#E2E9E3] text-[#343A3B]";
+          badge.className = "text-[10px] font-medium px-2 py-0.5 rounded-md border border-[#82988B]/40 bg-[#E2E9E3] text-[#343A3B]";
           badge.innerText = `✓ ${perk.label}`;
           perksContainer.appendChild(badge);
         }
@@ -589,6 +610,8 @@
       const listContainer = document.getElementById('programList');
       listContainer.innerHTML = '';
 
+      document.getElementById('programCount').innerText = `${programs.length} Programs`;
+
       if (programs.length === 0) {
         listContainer.innerHTML = `<p class="text-xs text-[#74736E] text-center py-8">No programs match your filters.</p>`;
         return;
@@ -609,26 +632,26 @@
         }
 
         const card = document.createElement('div');
-        card.className = "p-3.5 rounded-xl border border-[#D8CDBD]/70 shadow-sm hover:border-[#C86D51] transition cursor-pointer group";
-        card.style.backgroundColor = "#FFFFFF";
+        card.className = "p-3 rounded-xl border border-[#D8CDBD]/70 bg-white shadow-sm hover:border-[#C86D51] transition cursor-pointer group";
         
         card.innerHTML = `
-          <div class="flex justify-between items-start gap-2">
-            <h3 class="font-medium text-sm leading-snug group-hover:text-[#C86D51] transition-colors" style="color: #343A3B;">${programName}</h3>
-            <span class="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-md border border-[#D8CDBD]/60 shrink-0" style="background-color: ${tagBg}; color: ${tagColor};">${interest}</span>
+          <div class="flex justify-between items-start gap-1.5">
+            <h3 class="font-medium text-xs leading-snug text-[#343A3B] group-hover:text-[#C86D51] transition-colors">${programName}</h3>
+            <span class="text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded border border-[#D8CDBD]/60 shrink-0" style="background-color: ${tagBg}; color: ${tagColor};">${interest}</span>
           </div>
-          <p class="text-xs mt-1" style="color: #74736E;">${city}${city && state ? ', ' : ''}${state}</p>
-          <div class="mt-2.5 pt-2 border-t border-[#F3EFE5] flex justify-between text-[11px]" style="color: #74736E;">
-            <span>Setting: <strong class="font-normal" style="color: #343A3B;">${setting}</strong></span>
-            <span>Class: <strong class="font-normal" style="color: #343A3B;">${prog['Class size'] || '-'}</strong></span>
+          <p class="text-[11px] text-[#74736E] mt-0.5">${city}${city && state ? ', ' : ''}${state}</p>
+          <div class="mt-2 pt-1.5 border-t border-[#F3EFE5] flex justify-between text-[10px] text-[#74736E]">
+            <span class="truncate max-w-[170px]">Setting: <strong class="font-normal text-[#343A3B]">${setting}</strong></span>
+            <span>Class: <strong class="font-normal text-[#343A3B]">${prog['Class size'] || '-'}</strong></span>
           </div>
         `;
 
+        // Click Card: Pan map to program & open map popup
         card.addEventListener('click', () => {
           const marker = markersMap.get(programName);
           if (marker) {
             map.flyTo(marker.getLatLng(), 11, { duration: 1.2 });
-            openFactSheet(prog);
+            marker.openPopup();
           }
         });
 
