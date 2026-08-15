@@ -520,7 +520,10 @@
         card.addEventListener('click', () => {
           const marker = markersMap.get(programName);
           if (marker) {
-            map.setView(marker.getLatLng(), 8, { animate: true });
+map.flyTo(marker.getLatLng(), 6, {
+  animate: true,
+  duration: 1.5
+});
             marker.openPopup();
           }
         });
