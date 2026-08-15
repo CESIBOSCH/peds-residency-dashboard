@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pediatrics Residencies</title>
+  <title>Pediatric Residency Navigator</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -17,157 +17,165 @@
 
   <style>
     :root {
-      --bg-main: #FAF9F5;
-      --bg-surface: #FFFFFF;
-      --text-charcoal: #2D3132;
-      --text-gray: #6B7280;
+      --bg-ivory: #FAF8F3;
+      --bg-cream: #F3EFE5;
+      --text-charcoal: #343A3B;
+      --text-gray: #74736E;
+      --accent-mushroom: #D8CDBD;
       --accent-terracotta: #C86D51;
-      --accent-terracotta-soft: #FBF4F1;
-      --border-light: #E5E0D8;
+      --accent-terracotta-soft: #F5ECE8;
+      --accent-sage: #E2E9E3;
     }
 
     body { 
-      background-color: #FAF9F5; 
-      color: #2D3132; 
+      background-color: var(--bg-ivory); 
+      color: var(--text-charcoal); 
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
     }
 
     /* Tooltip */
     .leaflet-tooltip.custom-map-tooltip {
-      background: #FFFFFF;
-      border: 1px solid #E5E0D8;
-      color: #2D3132;
+      background: var(--bg-ivory);
+      border: 1px solid var(--accent-mushroom);
+      color: var(--text-charcoal);
       border-radius: 6px;
       padding: 4px 8px;
       font-size: 11px;
       font-weight: 500;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 12px rgba(52, 58, 59, 0.12);
     }
 
-    /* Custom Leaflet Popup Styling */
+    /* Custom Expanded Leaflet Popup Styling */
     .leaflet-popup-content-wrapper {
-      background: #FFFFFF;
-      border: 1px solid #E5E0D8;
-      border-radius: 12px;
+      background: #FAF8F3;
+      border: 1px solid #D8CDBD;
+      border-radius: 14px;
       padding: 0;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 12px 30px -5px rgba(52, 58, 59, 0.2);
       overflow: hidden;
     }
     .leaflet-popup-content {
       margin: 0 !important;
-      width: 330px !important;
+      width: 320px !important;
     }
     .leaflet-popup-tip {
-      background: #FFFFFF;
+      background: #FAF8F3;
     }
 
-    /* Custom Map Pins */
+    /* Custom Pins */
     .custom-desert-pin {
-      background-color: #2D3132;
-      border: 2px solid #FFFFFF;
-      width: 14px !important;
-      height: 14px !important;
+      background-color: #343A3B;
+      border: 2px solid #FAF8F3;
+      width: 16px !important;
+      height: 16px !important;
       border-radius: 50%;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      transition: transform 0.15s ease, background-color 0.15s ease;
+      box-shadow: 0 2px 6px rgba(52, 58, 59, 0.25);
+      transition: transform 0.2s ease, background-color 0.2s ease;
       cursor: pointer;
     }
     .custom-desert-pin:hover {
-      transform: scale(1.3);
-      background-color: #C86D51;
+      transform: scale(1.35);
+      background-color: var(--accent-terracotta);
     }
 
     /* Custom Scrollbars */
     .custom-scroll::-webkit-scrollbar {
-      width: 5px;
+      width: 4px;
     }
     .custom-scroll::-webkit-scrollbar-thumb {
-      background-color: #D3CDC4;
+      background-color: var(--accent-mushroom);
       border-radius: 4px;
     }
 
     input[type="checkbox"] {
-      accent-color: #C86D51;
+      accent-color: var(--accent-terracotta);
     }
   </style>
 </head>
-<body class="h-screen w-screen flex flex-col p-4 md:p-6 overflow-hidden gap-4">
+<body class="min-h-screen w-screen flex flex-col p-4 md:p-8 gap-5">
 
   <!-- HEADER -->
-  <header class="w-full max-w-7xl mx-auto flex items-center justify-between pb-3 border-b border-[#E5E0D8] shrink-0">
-    <h1 class="text-xl md:text-2xl font-light tracking-tight text-[#2D3132]">Pediatrics Residencies</h1>
-    <span id="programCount" class="text-xs font-medium text-[#C86D51] bg-[#FBF4F1] px-3 py-1 rounded-full border border-[#C86D51]/20">0 Programs Found</span>
+  <header class="w-full max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#D8CDBD]/80">
+    <div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-medium tracking-widest uppercase text-[#C86D51]">Interactive Directory</span>
+        <span class="text-xs text-[#D8CDBD]">•</span>
+        <span class="text-xs text-[#74736E]">Pediatrics Residency Explorer</span>
+      </div>
+      <h1 class="text-2xl md:text-3xl font-light tracking-tight text-[#343A3B] mt-1">Program Selection Guide</h1>
+    </div>
+    <div class="flex items-center gap-3">
+      <span id="programCount" class="text-xs font-medium text-[#C86D51] bg-[#F5ECE8] px-3 py-1 rounded-full border border-[#C86D51]/30">0 Programs Found</span>
+    </div>
   </header>
 
-  <!-- MAIN WRAPPER -->
-  <div class="w-full max-w-7xl mx-auto flex-1 flex flex-col md:flex-row gap-5 overflow-hidden">
+  <!-- MAIN CANVAS -->
+  <div class="w-full max-w-7xl mx-auto flex-1 flex flex-col md:flex-row gap-6 min-h-[680px]">
 
     <!-- SIDEBAR -->
-    <aside class="w-full md:w-[280px] lg:w-[300px] bg-white border border-[#E5E0D8] rounded-xl flex flex-col shrink-0 shadow-sm overflow-hidden h-full">
+    <aside class="w-full md:w-[260px] lg:w-[280px] bg-[#FAF8F3] border border-[#D8CDBD]/80 rounded-2xl flex flex-col shrink-0 shadow-sm overflow-hidden">
       
-      <!-- Filters Panel Header -->
-      <div class="px-4 py-2.5 border-b border-[#E5E0D8] bg-[#FAF9F5] shrink-0">
-        <h2 class="text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]">Filters & Search</h2>
+      <div class="px-4 py-3 border-b border-[#D8CDBD]/60 bg-[#F3EFE5]">
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-[#343A3B]">Filter Options</h2>
       </div>
 
-      <!-- Scrollable Filters -->
-      <div class="p-3.5 border-b border-[#E5E0D8] space-y-3 custom-scroll max-h-[45%] overflow-y-auto shrink-0 bg-[#FFFFFF]">
+      <div class="p-4 border-b border-[#D8CDBD]/40 space-y-3 custom-scroll max-h-[340px] overflow-y-auto">
         <div class="space-y-1">
-          <label class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Search</label>
+          <label class="text-[10px] font-semibold uppercase tracking-wider text-[#74736E]">Search</label>
           <input 
             type="text" 
             id="searchInput" 
-            placeholder="Search program or city..." 
-            class="w-full px-2.5 py-1.5 rounded-md border border-[#E5E0D8] placeholder-[#6B7280]/50 focus:outline-none focus:border-[#C86D51] text-xs transition bg-[#FAF9F5] text-[#2D3132]"
+            placeholder="Search name, city..." 
+            class="w-full px-2.5 py-1.5 rounded-lg border border-[#D8CDBD] placeholder-[#74736E]/60 focus:outline-none focus:border-[#C86D51] text-xs transition bg-white text-[#343A3B]"
           />
         </div>
 
-        <div class="space-y-2">
+        <div class="space-y-2.5">
           <!-- State Filter -->
           <div class="space-y-1 relative dropdown-container">
             <div class="flex justify-between items-center">
-              <label class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">State</label>
-              <button type="button" id="resetStateBtn" class="text-[9px] text-[#6B7280] hover:text-[#C86D51] underline hidden">Clear</button>
+              <label class="text-[10px] font-semibold uppercase tracking-wider text-[#74736E]">State</label>
+              <button type="button" id="resetStateBtn" class="text-[9px] text-[#74736E] hover:text-[#C86D51] underline hidden">Clear</button>
             </div>
-            <button type="button" data-dropdown="state" class="dropdown-btn w-full px-2.5 py-1.5 rounded-md border border-[#E5E0D8] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-[#FAF9F5] text-[#2D3132]">
+            <button type="button" data-dropdown="state" class="dropdown-btn w-full px-2.5 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-white text-[#343A3B]">
               <span id="stateDropdownLabel" class="truncate">All States</span>
               <span class="text-[8px] text-[#C86D51]">▼</span>
             </button>
-            <div id="stateDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-[#E5E0D8] rounded-md shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
+            <div id="stateDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
           </div>
 
           <!-- Setting Filter -->
           <div class="space-y-1 relative dropdown-container">
             <div class="flex justify-between items-center">
-              <label class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Setting</label>
-              <button type="button" id="resetSettingBtn" class="text-[9px] text-[#6B7280] hover:text-[#C86D51] underline hidden">Clear</button>
+              <label class="text-[10px] font-semibold uppercase tracking-wider text-[#74736E]">Program Setting</label>
+              <button type="button" id="resetSettingBtn" class="text-[9px] text-[#74736E] hover:text-[#C86D51] underline hidden">Clear</button>
             </div>
-            <button type="button" data-dropdown="setting" class="dropdown-btn w-full px-2.5 py-1.5 rounded-md border border-[#E5E0D8] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-[#FAF9F5] text-[#2D3132]">
+            <button type="button" data-dropdown="setting" class="dropdown-btn w-full px-2.5 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-white text-[#343A3B]">
               <span id="settingDropdownLabel" class="truncate">All Settings</span>
               <span class="text-[8px] text-[#C86D51]">▼</span>
             </button>
-            <div id="settingDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-[#E5E0D8] rounded-md shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
+            <div id="settingDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
           </div>
 
           <!-- Competitiveness Filter -->
           <div class="space-y-1 relative dropdown-container">
             <div class="flex justify-between items-center">
-              <label class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Tier / Competitiveness</label>
-              <button type="button" id="resetCompetitivenessBtn" class="text-[9px] text-[#6B7280] hover:text-[#C86D51] underline hidden">Clear</button>
+              <label class="text-[10px] font-semibold uppercase tracking-wider text-[#74736E]">Tier / Competitiveness</label>
+              <button type="button" id="resetCompetitivenessBtn" class="text-[9px] text-[#74736E] hover:text-[#C86D51] underline hidden">Clear</button>
             </div>
-            <button type="button" data-dropdown="competitiveness" class="dropdown-btn w-full px-2.5 py-1.5 rounded-md border border-[#E5E0D8] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-[#FAF9F5] text-[#2D3132]">
+            <button type="button" data-dropdown="competitiveness" class="dropdown-btn w-full px-2.5 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-white text-[#343A3B]">
               <span id="competitivenessDropdownLabel" class="truncate">All Tiers</span>
               <span class="text-[8px] text-[#C86D51]">▼</span>
             </button>
-            <div id="competitivenessDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-[#E5E0D8] rounded-md shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
+            <div id="competitivenessDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
           </div>
         </div>
 
         <!-- Class Size Slider -->
-        <div class="pt-1.5 space-y-1">
+        <div class="pt-2 space-y-1">
           <div class="flex justify-between items-center">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Max Class Size:</span>
-            <span id="classSizeValue" class="text-[10px] font-medium px-1.5 rounded border border-[#C86D51]/30 bg-[#FBF4F1] text-[#C86D51]">50</span>
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-[#74736E]">Max Class Size:</span>
+            <span id="classSizeValue" class="text-[11px] font-medium px-1.5 rounded border border-[#C86D51]/30 bg-[#F5ECE8] text-[#C86D51]">50</span>
           </div>
           <input 
             type="range" 
@@ -175,53 +183,49 @@
             min="1" 
             max="50" 
             value="50" 
-            class="w-full h-1 bg-[#E5E0D8] rounded-lg appearance-none cursor-pointer"
+            class="w-full h-1 bg-[#D8CDBD] rounded-lg appearance-none cursor-pointer"
           />
         </div>
 
         <!-- Perks -->
-        <div class="pt-1.5 border-t border-[#E5E0D8]">
-          <label class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280] block mb-1">Benefits</label>
-          <div class="grid grid-cols-2 gap-y-1 text-xs text-[#2D3132]">
+        <div class="pt-2 border-t border-[#D8CDBD]/40">
+          <label class="text-[10px] font-semibold uppercase tracking-wider text-[#74736E] block mb-1.5">Key Benefits</label>
+          <div class="grid grid-cols-2 gap-y-1.5 text-xs text-[#343A3B]">
             <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51]">
-              <input type="checkbox" id="parkingFilter" class="rounded border-[#E5E0D8]"> Parking
+              <input type="checkbox" id="parkingFilter" class="rounded border-[#D8CDBD]"> Parking
             </label>
             <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51]">
-              <input type="checkbox" id="housingFilter" class="rounded border-[#E5E0D8]"> Housing
+              <input type="checkbox" id="housingFilter" class="rounded border-[#D8CDBD]"> Housing
             </label>
             <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51]">
-              <input type="checkbox" id="mealFilter" class="rounded border-[#E5E0D8]"> Meals
+              <input type="checkbox" id="mealFilter" class="rounded border-[#D8CDBD]"> Meals
             </label>
             <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51]">
-              <input type="checkbox" id="techFilter" class="rounded border-[#E5E0D8]"> Tech
+              <input type="checkbox" id="techFilter" class="rounded border-[#D8CDBD]"> Tech
             </label>
           </div>
         </div>
+
       </div>
 
-      <!-- Program List Panel Header -->
-      <div class="px-4 py-2 border-b border-[#E5E0D8] bg-[#FAF9F5] shrink-0">
-        <h2 class="text-[10px] font-semibold uppercase tracking-wider text-[#6B7280]">Programs</h2>
-      </div>
-
-      <!-- Scrollable Program Cards -->
-      <div id="programList" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scroll bg-[#FAF9F5]"></div>
+      <!-- Program List -->
+      <div id="programList" class="flex-1 overflow-y-auto p-3 space-y-2.5 custom-scroll bg-[#FAF8F3]"></div>
 
     </aside>
 
-    <!-- MAP CONTAINER -->
-    <main class="flex-1 rounded-xl border border-[#E5E0D8] overflow-hidden shadow-sm relative bg-white flex flex-col h-full">
+    <!-- MAP CONTAINER WITH PREVIEW BANNER -->
+    <main class="flex-1 min-h-[500px] rounded-2xl border border-[#D8CDBD]/80 overflow-hidden shadow-sm relative bg-[#F3EFE5] flex flex-col">
       <div id="map" class="w-full h-full flex-1"></div>
 
-      <!-- COMPACT PROGRAM PREVIEW BAR -->
-      <div id="previewBar" class="hidden absolute bottom-4 left-4 right-4 z-[1000] bg-white border border-[#E5E0D8] rounded-xl p-3 shadow-xl flex items-center justify-between gap-3 transition-all">
+      <!-- COMPACT PROGRAM PREVIEW BAR (POPS UP ON SIDEBAR CLICK) -->
+      <div id="previewBar" class="hidden absolute bottom-4 left-4 right-4 z-[1000] bg-[#FAF8F3] border border-[#D8CDBD] rounded-xl p-3 shadow-xl flex items-center justify-between gap-3 transition-all">
         <div class="truncate">
-          <div class="text-[9px] uppercase font-semibold text-[#C86D51]" id="previewLocation">Location</div>
-          <div class="text-xs font-medium text-[#2D3132] truncate" id="previewTitle">Program Name</div>
+          <div class="text-[10px] uppercase font-semibold text-[#C86D51]" id="previewLocation">Location</div>
+          <div class="text-xs font-medium text-[#343A3B] truncate" id="previewTitle">Program Name</div>
         </div>
         <div class="flex items-center gap-2 shrink-0">
-          <button id="openFactSheetBtn" class="px-3 py-1.5 rounded-lg bg-[#C86D51] text-white text-xs font-medium hover:bg-[#b05b41] transition shadow-sm">View Full Fact Sheet</button>
-          <button id="closePreviewBtn" class="p-1 text-[#6B7280] hover:text-[#2D3132] text-xs">✕</button>
+          <button id="openFactSheetBtn" class="px-3 py-1.5 rounded-lg bg-[#C86D51] text-white text-xs font-medium hover:bg-[#b05b41] transition">View Full Fact Sheet</button>
+          <button id="closePreviewBtn" class="p-1 text-[#74736E] hover:text-[#343A3B] text-xs">✕</button>
         </div>
       </div>
     </main>
@@ -235,7 +239,7 @@
     let markersMap = new Map();
     let currentSelectedProgram = null;
 
-    // City to Airport Fallback Mapping
+    // City to Nearest Airport Lookup Mapping
     const airportLookup = {
       "Phoenix, AZ": "PHX", "Los Angeles, CA": "LAX", "San Francisco, CA": "SFO",
       "Oakland, CA": "OAK", "Sacramento, CA": "SMF", "San Diego, CA": "SAN",
@@ -260,43 +264,24 @@
       "Pittsburgh, PA": [40.4406, -79.9959], "Seattle, WA": [47.6062, -122.3321]
     };
 
-    // Advanced CSV Normalizer
-    function getProp(obj, possibleKeys, defaultVal = 'N/A') {
-      if (!obj) return defaultVal;
-      const objKeys = Object.keys(obj);
-      
-      for (const targetKey of possibleKeys) {
-        const foundKey = objKeys.find(k => k.trim().toLowerCase() === targetKey.trim().toLowerCase());
-        if (foundKey && obj[foundKey] !== undefined && obj[foundKey] !== null) {
-          const val = String(obj[foundKey]).trim();
-          if (val !== '' && val !== '-') {
-            return val;
-          }
-        }
+    function cleanSettingName(val) {
+      if (!val) return 'N/A';
+      let cleaned = val.trim();
+      if (cleaned === "CB/University Affiliated" || cleaned === "CB / University Affiliated") {
+        return "Community-Based Univ. Affiliated";
       }
-      return defaultVal;
-    }
-
-    function formatCurrency(val) {
-      if (!val || val === 'N/A') return 'N/A';
-      const cleanNum = parseFloat(String(val).replace(/[^0-9.-]+/g, ""));
-      if (isNaN(cleanNum)) return val;
-      return '$' + cleanNum.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+      return cleaned;
     }
 
     function isTrueValue(val) {
-      if (!val || val === 'N/A') return false;
+      if (!val) return false;
       const cleanVal = String(val).trim().toLowerCase();
       return ['yes', 'true', '1', 'x', 'y'].includes(cleanVal);
     }
 
-    function cleanSettingName(val) {
-      if (!val || val === 'N/A') return 'N/A';
-      let cleaned = val.trim();
-      if (cleaned === "CB/University Affiliated" || cleaned === "CB / University Affiliated" || cleaned.toLowerCase().includes("community")) {
-        return "Community-Based Univ. Affiliated";
-      }
-      return cleaned;
+    function formatVal(val, defaultVal = 'N/A') {
+      if (val === null || val === undefined || val === '') return defaultVal;
+      return val;
     }
 
     function initMap() {
@@ -311,169 +296,160 @@
     }
 
     function createInMapFactSheetPopup(prog) {
-      const city = getProp(prog, ['City', 'Location City', 'city']);
-      const state = getProp(prog, ['State', 'Location State', 'state']);
+      const city = prog['City'] || '';
+      const state = prog['State'] || '';
       const cityStateKey = `${city}, ${state}`;
+      
+      const website = prog['Website'] || prog['URL'] || '#';
+      const programName = prog['Program'] || 'Program Info';
+      
+      // Nearest Airport lookup
+      const airport = prog['Nearest Airport'] || prog['Airport'] || airportLookup[cityStateKey] || (city ? `${city.substring(0,3).toUpperCase()} Airport` : 'N/A');
 
-      const rawWebsite = getProp(prog, ['Website', 'URL', 'Program Website', 'Website URL', 'Link'], '#');
-      const programName = getProp(prog, ['Program', 'Program Name', 'Hospital', 'Institution'], 'Program Info');
-
-      const airport = getProp(prog, ['Nearest Airport', 'Airport', 'Nearest Airport Code', 'Airport Code']) || airportLookup[cityStateKey] || (city !== 'N/A' ? `${city.substring(0,3).toUpperCase()} Airport` : 'N/A');
-
+      // Perks
       let perksHTML = '';
       const perks = [
-        { label: 'Parking', val: getProp(prog, ['Free Parking', 'Parking', 'Parking Stipend']) },
-        { label: 'Housing', val: getProp(prog, ['Housing Stipend', 'Housing', 'Housing Allowance']) },
-        { label: 'Meals', val: getProp(prog, ['Meal Stipend', 'Meals', 'Food Stipend']) },
-        { label: 'Tech', val: getProp(prog, ['Tech Stipend', 'Tech', 'Technology Allowance']) }
+        { label: 'Parking', val: prog['Free Parking'] || prog['Parking'] },
+        { label: 'Housing', val: prog['Housing Stipend'] || prog['Housing'] },
+        { label: 'Meals', val: prog['Meal Stipend'] || prog['Meals'] },
+        { label: 'Tech', val: prog['Tech Stipend'] || prog['Tech'] }
       ];
 
       perks.forEach(p => {
         if (isTrueValue(p.val)) {
-          perksHTML += `<span class="text-[9px] bg-[#EBF3ED] text-[#2D3132] border border-[#A8C5B0] px-1.5 py-0.5 rounded">✓ ${p.label}</span> `;
+          perksHTML += `<span class="text-[9px] bg-[#E2E9E3] text-[#343A3B] border border-[#82988B]/40 px-1.5 py-0.5 rounded">✓ ${p.label}</span> `;
         }
       });
-      if (!perksHTML) perksHTML = `<span class="text-[10px] text-[#6B7280] italic">Standard Benefits</span>`;
+      if (!perksHTML) perksHTML = `<span class="text-[10px] text-[#74736E] italic">Standard Benefits</span>`;
 
-      const classSize = getProp(prog, ['Class size', 'Class Size', 'Class size per year', 'Program Size']);
-      const setting = cleanSettingName(getProp(prog, ['Setting', 'Program Setting', 'Hospital Setting']));
-      const tier = getProp(prog, ['Competitiveness', 'Tier', 'Category', 'Target/Reach']);
-      const stepScore = getProp(prog, ['Step Score Range', 'Step Score', 'USMLE Step 2', 'Step 2 Score']);
-
-      const avgHours = getProp(prog, ['Work Hours', 'Average Hours Worked', 'Average Hours Worked Per Week', 'Hours/Week']);
-      const shiftLength = getProp(prog, ['Longest Shift Length', 'Shift Length', 'Max Shift Length']);
-      const daysOff = getProp(prog, ['Days Off Per Week', 'Average Days Off Per Week', 'Days Off']);
-      const sickDays = getProp(prog, ['Sick Days', 'Sick Leave Days']);
-      const vacationDays = getProp(prog, ['Vacation', 'Vacation Days']);
-      const paidLeave = getProp(prog, ['Paid Family Leave Days', 'Paid Family Leave', 'Paid Leave']);
-      const unpaidLeave = getProp(prog, ['Unpaid Family Leave Days', 'Unpaid Family Leave', 'Unpaid Leave']);
-
-      const baseSalary = formatCurrency(getProp(prog, ['Salary', 'Base Salary', 'PGY1 Salary']));
-      const colSalary = formatCurrency(getProp(prog, ['COL Adjusted Salary', 'COL-Adjusted Salary', 'Adjusted Salary', 'Cost of Living Adjusted Salary']));
-      const stretchScore = getProp(prog, ['Salary Stretch Score', 'Stretch Score']);
-
-      const formattedWebsite = rawWebsite !== '#' ? (rawWebsite.startsWith('http') ? rawWebsite : 'https://' + rawWebsite) : '#';
+      // Family Leave Paid/Unpaid Display
+      const paidLeave = formatVal(prog['Paid Family Leave Days'] || prog['Paid Family Leave'], 'N/A');
+      const unpaidLeave = formatVal(prog['Unpaid Family Leave Days'] || prog['Unpaid Family Leave'], 'N/A');
 
       return `
-        <div class="p-3.5 space-y-2.5 font-sans max-h-[410px] overflow-y-auto custom-scroll bg-white">
-          <div class="border-b border-[#E5E0D8] pb-1.5">
-            <h3 class="font-semibold text-xs text-[#2D3132] leading-tight">
-              ${formattedWebsite !== '#' ? `<a href="${formattedWebsite}" target="_blank" rel="noopener noreferrer" class="text-[#2D3132] hover:text-[#C86D51] hover:underline flex items-center gap-1">${programName} <span class="text-[9px] text-[#C86D51]">↗</span></a>` : programName}
+        <div class="p-3.5 space-y-3 font-sans max-h-[420px] overflow-y-auto custom-scroll">
+          
+          <!-- Header with Direct Website Link -->
+          <div class="border-b border-[#D8CDBD]/60 pb-2">
+            <h3 class="font-medium text-xs text-[#343A3B] leading-snug">
+              ${website !== '#' ? `<a href="${website}" target="_blank" rel="noopener noreferrer" class="text-[#C86D51] hover:underline flex items-center gap-1">${programName} <span class="text-[9px]">↗</span></a>` : programName}
             </h3>
+            <p class="text-[10px] text-[#74736E] mt-0.5">${city}${city && state ? ', ' : ''}${state}</p>
           </div>
 
+          <!-- Section 1: Basics -->
           <div class="space-y-1">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Basics</span>
+            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#74736E]">Basics</span>
             <div class="grid grid-cols-2 gap-1.5 text-[10px]">
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Location</span>
-                <span class="font-medium text-[#2D3132] truncate block">${city}, ${state}</span>
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50">
+                <span class="text-[#74736E] block text-[8px] uppercase">Location</span>
+                <span class="font-medium text-[#343A3B] truncate block">${city}, ${state}</span>
               </div>
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Nearest Airport</span>
-                <span class="font-medium text-[#2D3132] truncate block">${airport}</span>
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50">
+                <span class="text-[#74736E] block text-[8px] uppercase">Nearest Airport</span>
+                <span class="font-medium text-[#C86D51] truncate block">${airport}</span>
               </div>
-            </div>
-            <div class="grid grid-cols-4 gap-1.5 text-[10px]">
-              <div class="col-span-3 bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Setting</span>
-                <span class="font-medium text-[#2D3132] block truncate">${setting}</span>
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50">
+                <span class="text-[#74736E] block text-[8px] uppercase">Setting</span>
+                <span class="font-medium text-[#343A3B] truncate block">${cleanSettingName(prog['Setting'])}</span>
               </div>
-              <div class="col-span-1 bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
-                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Class Size</span>
-                <span class="font-medium text-[#2D3132]">${classSize}</span>
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50">
+                <span class="text-[#74736E] block text-[8px] uppercase">Class Size</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Class size'])}</span>
               </div>
             </div>
           </div>
 
+          <!-- Section 2: Application -->
           <div class="space-y-1">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Application</span>
+            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#74736E]">Application</span>
             <div class="grid grid-cols-2 gap-1.5 text-[10px]">
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Tier / Category</span>
-                <span class="font-medium text-[#2D3132]">${tier}</span>
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50">
+                <span class="text-[#74736E] block text-[8px] uppercase">Tier / Match</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Competitiveness'] || prog['Tier'])}</span>
               </div>
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
-                <span class="text-[#6B7280] block text-[8px] uppercase font-medium">Step Score Target</span>
-                <span class="font-medium text-[#2D3132]">${stepScore}</span>
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50">
+                <span class="text-[#74736E] block text-[8px] uppercase">Step Score Target</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Step Score Range'] || prog['Step Score'])}</span>
               </div>
             </div>
           </div>
 
+          <!-- Section 3: Work & Leave -->
           <div class="space-y-1">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Work & Leave</span>
-            <div class="bg-[#FAF9F5] p-2 rounded border border-[#E5E0D8] text-[10px] space-y-1">
+            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#74736E]">Work & Leave</span>
+            <div class="bg-white p-2 rounded border border-[#D8CDBD]/50 text-[10px] space-y-1">
               <div class="flex justify-between">
-                <span class="text-[#6B7280]">Average Hours/Week:</span>
-                <span class="font-medium text-[#2D3132]">${avgHours}</span>
+                <span class="text-[#74736E]">Avg Hours / Week:</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Work Hours'] || prog['Average Hours Worked'])}</span>
               </div>
-              <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-                <span class="text-[#6B7280]">Longest Shift Length:</span>
-                <span class="font-medium text-[#2D3132]">${shiftLength}</span>
+              <div class="flex justify-between border-t border-[#F3EFE5] pt-1">
+                <span class="text-[#74736E]">Longest Shift:</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Longest Shift Length'] || prog['Shift Length'])}</span>
               </div>
-              <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-                <span class="text-[#6B7280]">Days Off/Week:</span>
-                <span class="font-medium text-[#2D3132]">${daysOff}</span>
+              <div class="flex justify-between border-t border-[#F3EFE5] pt-1">
+                <span class="text-[#74736E]">Avg Days Off / Wk:</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Days Off Per Week'])}</span>
               </div>
-              <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-                <span class="text-[#6B7280]">Sick Days:</span>
-                <span class="font-medium text-[#2D3132]">${sickDays}</span>
+              <div class="flex justify-between border-t border-[#F3EFE5] pt-1">
+                <span class="text-[#74736E]">Sick Days:</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Sick Days'])}</span>
               </div>
-              <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-                <span class="text-[#6B7280]">Vacation Days:</span>
-                <span class="font-medium text-[#2D3132]">${vacationDays}</span>
+              <div class="flex justify-between border-t border-[#F3EFE5] pt-1">
+                <span class="text-[#74736E]">Vacation Days:</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Vacation'] || prog['Vacation Days'])}</span>
               </div>
-              <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-                <span class="text-[#6B7280]">Family Leave (Paid / Unpaid):</span>
-                <span class="font-medium text-[#2D3132]">${paidLeave} / ${unpaidLeave}</span>
+              <div class="flex justify-between border-t border-[#F3EFE5] pt-1">
+                <span class="text-[#74736E]">Family Leave (Paid/Unpaid):</span>
+                <span class="font-medium text-[#343A3B]">${paidLeave} / ${unpaidLeave}</span>
               </div>
             </div>
           </div>
 
+          <!-- Section 4: Compensation -->
           <div class="space-y-1">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Compensation</span>
+            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#74736E]">Compensation</span>
             <div class="grid grid-cols-3 gap-1 text-[9px]">
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
-                <span class="text-[#6B7280] block text-[7px] uppercase font-medium">Base Salary</span>
-                <span class="font-medium text-[#2D3132]">${baseSalary}</span>
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50 text-center">
+                <span class="text-[#74736E] block text-[7px] uppercase">Base Salary</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Salary'])}</span>
               </div>
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
-                <span class="text-[#6B7280] block text-[7px] uppercase font-medium truncate">COL-Adjusted Salary</span>
-                <span class="font-medium text-[#2D3132]">${colSalary}</span>
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50 text-center">
+                <span class="text-[#74736E] block text-[7px] uppercase">COL Adjusted</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['COL Adjusted Salary'])}</span>
               </div>
-              <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
-                <span class="text-[#6B7280] block text-[7px] uppercase font-medium truncate">Salary Stretch Score</span>
-                <span class="font-medium text-[#2D3132]">${stretchScore}</span>
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50 text-center">
+                <span class="text-[#74736E] block text-[7px] uppercase">Stretch Score</span>
+                <span class="font-medium text-[#C86D51]">${formatVal(prog['Salary Stretch Score'])}</span>
               </div>
             </div>
           </div>
 
-          <div class="pt-1 border-t border-[#E5E0D8]">
-            <span class="text-[9px] text-[#6B7280] uppercase font-semibold block mb-1">Key Benefits</span>
+          <!-- Perks -->
+          <div class="pt-1 border-t border-[#D8CDBD]/40">
+            <span class="text-[9px] text-[#74736E] uppercase font-semibold block mb-1">Perks & Key Benefits</span>
             <div class="flex flex-wrap gap-1">${perksHTML}</div>
           </div>
+
         </div>
       `;
     }
 
     const desertIcon = L.divIcon({
       className: 'custom-desert-pin',
-      iconSize: [14, 14],
-      iconAnchor: [7, 7]
+      iconSize: [16, 16],
+      iconAnchor: [8, 8]
     });
 
     function createMapPins(programs) {
-      markersMap.forEach(m => map.removeLayer(m));
-      markersMap.clear();
-
       programs.forEach(prog => {
-        const programName = getProp(prog, ['Program', 'Program Name'], 'N/A');
-        const city = getProp(prog, ['City', 'city']);
-        const state = getProp(prog, ['State', 'state']);
+        const programName = prog['Program'] || 'N/A';
+        const city = (prog['City'] || '').trim();
+        const state = (prog['State'] || '').trim();
         const cityStateKey = `${city}, ${state}`;
 
-        let lat = parseFloat(getProp(prog, ['Latitude', 'lat']));
-        let lng = parseFloat(getProp(prog, ['Longitude', 'lng']));
+        let lat = parseFloat(prog['Latitude'] || prog['lat']);
+        let lng = parseFloat(prog['Longitude'] || prog['lng']);
 
         if ((isNaN(lat) || isNaN(lng)) && cityCoordinates[cityStateKey]) {
           [lat, lng] = cityCoordinates[cityStateKey];
@@ -484,10 +460,10 @@
           
           marker.bindTooltip(`
             <div class="font-sans">
-              <div class="font-semibold text-[#2D3132]">${programName}</div>
-              <div class="text-[10px] text-[#6B7280]">${city}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state}</div>
+              <div class="font-semibold text-[#343A3B]">${programName}</div>
+              <div class="text-[10px] text-[#74736E]">${city}${city && state ? ', ' : ''}${state}</div>
             </div>
-          `, { className: 'custom-map-tooltip', direction: 'top', offset: [0, -5] });
+          `, { className: 'custom-map-tooltip', direction: 'top', offset: [0, -6] });
 
           marker.bindPopup(createInMapFactSheetPopup(prog));
           markersMap.set(programName, marker);
@@ -502,26 +478,26 @@
       document.getElementById('programCount').innerText = `${programs.length} Programs Found`;
 
       if (programs.length === 0) {
-        listContainer.innerHTML = `<p class="text-xs text-[#6B7280] text-center py-6">No matching programs found.</p>`;
+        listContainer.innerHTML = `<p class="text-xs text-[#74736E] text-center py-8">No matching programs found.</p>`;
         return;
       }
 
       programs.forEach(prog => {
-        const programName = getProp(prog, ['Program', 'Program Name'], 'N/A');
-        const city = getProp(prog, ['City', 'city']);
-        const state = getProp(prog, ['State', 'state']);
-        const setting = cleanSettingName(getProp(prog, ['Setting', 'Program Setting']));
+        const programName = prog['Program'] || 'N/A';
+        const city = prog['City'] || '';
+        const state = prog['State'] || '';
+        const setting = cleanSettingName(prog['Setting']);
 
         const card = document.createElement('div');
-        card.className = "p-3 rounded-lg border border-[#E5E0D8] bg-white shadow-xs hover:border-[#C86D51] transition group cursor-pointer";
+        card.className = "p-3 rounded-xl border border-[#D8CDBD]/70 bg-white shadow-sm hover:border-[#C86D51] transition group cursor-pointer";
         
         card.innerHTML = `
           <div class="flex justify-between items-start gap-1">
-            <h3 class="font-medium text-xs leading-snug text-[#2D3132] group-hover:text-[#C86D51] transition-colors">${programName}</h3>
+            <h3 class="font-medium text-xs leading-snug text-[#343A3B] group-hover:text-[#C86D51] transition-colors">${programName}</h3>
           </div>
-          <p class="text-[10px] text-[#6B7280] mt-0.5">${city}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state}</p>
-          <div class="mt-2 pt-1.5 border-t border-[#FAF9F5] flex justify-between items-center text-[10px] text-[#6B7280]">
-            <span class="truncate text-[9px]">${setting}</span>
+          <p class="text-[10px] text-[#74736E] mt-0.5">${city}${city && state ? ', ' : ''}${state}</p>
+          <div class="mt-2 pt-1.5 border-t border-[#F3EFE5] flex justify-between items-center text-[10px] text-[#74736E]">
+            <span class="truncate">${setting}</span>
             <span class="text-[#C86D51] font-medium text-[9px]">Select →</span>
           </div>
         `;
@@ -540,20 +516,14 @@
       const title = document.getElementById('previewTitle');
       const location = document.getElementById('previewLocation');
 
-      const programName = getProp(prog, ['Program', 'Program Name'], 'Program Selected');
-      title.innerText = programName;
-      location.innerText = `${getProp(prog, ['City', 'city'])}, ${getProp(prog, ['State', 'state'])}`;
+      title.innerText = prog['Program'] || 'Program Selected';
+      location.innerText = `${prog['City'] || ''}, ${prog['State'] || ''}`;
       previewBar.classList.remove('hidden');
-
-      if (markersMap.has(programName)) {
-        const marker = markersMap.get(programName);
-        map.flyTo(marker.getLatLng(), 10, { duration: 1 });
-      }
     }
 
     document.getElementById('openFactSheetBtn').addEventListener('click', () => {
       if (currentSelectedProgram) {
-        const programName = getProp(currentSelectedProgram, ['Program', 'Program Name']);
+        const programName = currentSelectedProgram['Program'];
         const marker = markersMap.get(programName);
         if (marker) {
           marker.openPopup();
@@ -570,13 +540,12 @@
       menu.innerHTML = '';
 
       Array.from(values).sort().forEach(val => {
-        if (!val || val === 'N/A') return;
         const displayVal = type === 'setting' ? cleanSettingName(val) : val;
         const label = document.createElement('label');
-        label.className = "flex items-center gap-2 px-1.5 py-1 hover:bg-[#FBF4F1] rounded cursor-pointer text-stone-700 transition";
+        label.className = "flex items-center gap-2 px-1.5 py-1 hover:bg-[#F5ECE8] rounded cursor-pointer text-stone-700 transition";
         label.innerHTML = `
-          <input type="checkbox" value="${val}" data-type="${type}" class="filter-checkbox rounded border-[#E5E0D8]">
-          <span class="truncate text-xs">${displayVal}</span>
+          <input type="checkbox" value="${val}" data-type="${type}" class="filter-checkbox rounded border-[#D8CDBD]">
+          <span class="truncate">${displayVal}</span>
         `;
         menu.appendChild(label);
       });
@@ -650,15 +619,12 @@
       let maxClassFound = 0;
 
       data.forEach(prog => {
-        const st = getProp(prog, ['State', 'state']);
-        const set = getProp(prog, ['Setting', 'Program Setting']);
-        const comp = getProp(prog, ['Competitiveness', 'Tier', 'Category']);
-        const sz = parseInt(getProp(prog, ['Class size', 'Class Size', 'Program Size']));
-
-        if (st !== 'N/A') sets.state.add(st);
-        if (set !== 'N/A') sets.setting.add(set);
-        if (comp !== 'N/A') sets.competitiveness.add(comp);
-        if (!isNaN(sz) && sz > maxClassFound) maxClassFound = sz;
+        if (prog['State']) sets.state.add(prog['State'].trim());
+        if (prog['Setting']) sets.setting.add(prog['Setting'].trim());
+        if (prog['Competitiveness']) sets.competitiveness.add(prog['Competitiveness'].trim());
+        
+        const size = parseInt(prog['Class size']);
+        if (!isNaN(size) && size > maxClassFound) maxClassFound = size;
       });
 
       buildMultiSelectDropdown('state', sets.state, 'All States');
@@ -674,81 +640,76 @@
     }
 
     function applyFilters() {
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const searchVal = document.getElementById('searchInput').value.toLowerCase();
       const maxClassSize = parseInt(document.getElementById('classSizeFilter').value);
-      
-      const reqParking = document.getElementById('parkingFilter').checked;
-      const reqHousing = document.getElementById('housingFilter').checked;
-      const reqMeals = document.getElementById('mealFilter').checked;
-      const reqTech = document.getElementById('techFilter').checked;
+
+      const requireParking = document.getElementById('parkingFilter').checked;
+      const requireHousing = document.getElementById('housingFilter').checked;
+      const requireMeal = document.getElementById('mealFilter').checked;
+      const requireTech = document.getElementById('techFilter').checked;
 
       const filtered = allPrograms.filter(prog => {
-        const name = getProp(prog, ['Program', 'Program Name']).toLowerCase();
-        const city = getProp(prog, ['City', 'city']).toLowerCase();
-        const state = getProp(prog, ['State', 'state']);
-        const setting = getProp(prog, ['Setting', 'Program Setting']);
-        const comp = getProp(prog, ['Competitiveness', 'Tier']);
-        const classSize = parseInt(getProp(prog, ['Class size', 'Class Size'])) || 0;
+        const name = (prog['Program'] || '').toLowerCase();
+        const city = (prog['City'] || '').toLowerCase();
+        const progState = (prog['State'] || '').trim();
+        const progSetting = (prog['Setting'] || '').trim();
+        const progCompetitiveness = (prog['Competitiveness'] || '').trim();
+        
+        const matchesSearch = name.includes(searchVal) || city.includes(searchVal);
+        const matchesState = selectedFilters.state.size === 0 || selectedFilters.state.has(progState);
+        const matchesSetting = selectedFilters.setting.size === 0 || selectedFilters.setting.has(progSetting);
+        const matchesCompetitiveness = selectedFilters.competitiveness.size === 0 || selectedFilters.competitiveness.has(progCompetitiveness);
 
-        const matchesSearch = !searchTerm || name.includes(searchTerm) || city.includes(searchTerm);
-        const matchesState = selectedFilters.state.size === 0 || selectedFilters.state.has(state);
-        const matchesSetting = selectedFilters.setting.size === 0 || selectedFilters.setting.has(setting);
-        const matchesComp = selectedFilters.competitiveness.size === 0 || selectedFilters.competitiveness.has(comp);
-        const matchesSize = classSize <= maxClassSize || classSize === 0;
+        const classSizeNum = parseInt(prog['Class size']);
+        const matchesClassSize = isNaN(classSizeNum) || classSizeNum <= maxClassSize;
 
-        const matchesParking = !reqParking || isTrueValue(getProp(prog, ['Free Parking', 'Parking', 'Parking Stipend']));
-        const matchesHousing = !reqHousing || isTrueValue(getProp(prog, ['Housing Stipend', 'Housing', 'Housing Allowance']));
-        const matchesMeals = !reqMeals || isTrueValue(getProp(prog, ['Meal Stipend', 'Meals', 'Food Stipend']));
-        const matchesTech = !reqTech || isTrueValue(getProp(prog, ['Tech Stipend', 'Tech', 'Technology Allowance']));
+        const matchesParking = !requireParking || isTrueValue(prog['Free Parking'] || prog['Parking']);
+        const matchesHousing = !requireHousing || isTrueValue(prog['Housing Stipend'] || prog['Housing']);
+        const matchesMeal = !requireMeal || isTrueValue(prog['Meal Stipend'] || prog['Meals']);
+        const matchesTech = !requireTech || isTrueValue(prog['Tech Stipend'] || prog['Tech']);
 
-        return matchesSearch && matchesState && matchesSetting && matchesComp && matchesSize &&
-               matchesParking && matchesHousing && matchesMeals && matchesTech;
+        return matchesSearch && matchesState && matchesSetting && 
+               matchesCompetitiveness && matchesClassSize && matchesParking && 
+               matchesHousing && matchesMeal && matchesTech;
       });
 
       renderSidebarList(filtered);
-      createMapPins(filtered);
-    }
 
-    function loadData() {
-      const csvFiles = ['data.csv', 'programs.csv'];
-      let loaded = false;
-
-      csvFiles.forEach(file => {
-        if (loaded) return;
-        Papa.parse(file, {
-          download: true,
-          header: true,
-          skipEmptyLines: true,
-          complete: function(results) {
-            if (results.data && results.data.length > 0 && !loaded) {
-              loaded = true;
-              allPrograms = results.data;
-              populateDropdowns(allPrograms);
-              renderSidebarList(allPrograms);
-              createMapPins(allPrograms);
-            }
-          }
-        });
+      const visibleNames = new Set(filtered.map(p => p['Program']));
+      markersMap.forEach((marker, progName) => {
+        if (visibleNames.has(progName)) {
+          if (!map.hasLayer(marker)) map.addLayer(marker);
+        } else {
+          if (map.hasLayer(marker)) map.removeLayer(marker);
+        }
       });
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      initMap();
-      setupDropdownControls();
-      loadData();
-
-      document.getElementById('searchInput').addEventListener('input', applyFilters);
-      
-      const slider = document.getElementById('classSizeFilter');
-      slider.addEventListener('input', (e) => {
-        document.getElementById('classSizeValue').innerText = e.target.value;
-        applyFilters();
-      });
-
-      ['parkingFilter', 'housingFilter', 'mealFilter', 'techFilter'].forEach(id => {
-        document.getElementById(id).addEventListener('change', applyFilters);
-      });
+    Papa.parse('programs.csv', {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        allPrograms = results.data;
+        initMap();
+        setupDropdownControls();
+        populateDropdowns(allPrograms);
+        createMapPins(allPrograms);
+        renderSidebarList(allPrograms);
+      }
     });
+
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+
+    document.getElementById('classSizeFilter').addEventListener('input', function(e) {
+      document.getElementById('classSizeValue').innerText = e.target.value;
+      applyFilters();
+    });
+
+    document.getElementById('parkingFilter').addEventListener('change', applyFilters);
+    document.getElementById('housingFilter').addEventListener('change', applyFilters);
+    document.getElementById('mealFilter').addEventListener('change', applyFilters);
+    document.getElementById('techFilter').addEventListener('change', applyFilters);
   </script>
 </body>
 </html>
