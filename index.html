@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- Google Fonts: Plus Jakarta Sans for Modern Clean Typography -->
+  <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -100,7 +100,7 @@
 </head>
 <body class="h-screen w-screen flex flex-col p-4 md:p-6 overflow-hidden gap-4">
 
-  <!-- HEADER (Modern clean lines, ultra-light sans-serif font, bright contrast) -->
+  <!-- HEADER -->
   <header class="w-full max-w-7xl mx-auto flex flex-col items-center justify-center pt-1 pb-1 shrink-0">
     <h1 class="text-2xl md:text-3xl font-light tracking-wide text-[#2B2623] text-center uppercase">
       Pediatrics Residencies
@@ -113,7 +113,7 @@
   <!-- MAIN WRAPPER -->
   <div class="w-full max-w-7xl mx-auto flex-1 flex flex-col md:flex-row gap-5 overflow-hidden">
 
-    <!-- SIDEBAR (High contrast sand-taupe background) -->
+    <!-- SIDEBAR -->
     <aside class="w-full md:w-[280px] lg:w-[300px] bg-[#F5F2EC] border border-[#E2DACF] rounded-2xl flex flex-col shrink-0 shadow-sm overflow-hidden h-full">
       
       <!-- Filters Panel Header -->
@@ -655,70 +655,63 @@
     }
 
     function applyFilters() {
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      
-      const reqParking = document.getElementById('parkingFilter').checked;
-      const reqHousing = document.getElementById('housingFilter').checked;
-      const reqMeals = document.getElementById('mealFilter').checked;
-      const reqTech = document.getElementById('techFilter').checked;
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+
+      const parkingReq = document.getElementById('parkingFilter').checked;
+      const housingReq = document.getElementById('housingFilter').checked;
+      const mealReq = document.getElementById('mealFilter').checked;
+      const techReq = document.getElementById('techFilter').checked;
 
       const filtered = allPrograms.filter(prog => {
-        const name = getProp(prog, ['Program', 'Program Name']).toLowerCase();
+        const progName = getProp(prog, ['Program', 'Program Name']).toLowerCase();
         const city = getProp(prog, ['City', 'city']).toLowerCase();
         const state = getProp(prog, ['State', 'state']);
         const setting = getProp(prog, ['Setting', 'Program Setting']);
-        const comp = getProp(prog, ['Competitiveness', 'Tier']);
+        const comp = getProp(prog, ['Competitiveness', 'Tier', 'Category']);
 
-        const matchesSearch = !searchTerm || name.includes(searchTerm) || city.includes(searchTerm);
+        const matchesSearch = !searchTerm || progName.includes(searchTerm) || city.includes(searchTerm);
         const matchesState = selectedFilters.state.size === 0 || selectedFilters.state.has(state);
         const matchesSetting = selectedFilters.setting.size === 0 || selectedFilters.setting.has(setting);
         const matchesComp = selectedFilters.competitiveness.size === 0 || selectedFilters.competitiveness.has(comp);
 
-        const matchesParking = !reqParking || isTrueValue(getProp(prog, ['Free Parking', 'Parking', 'Parking Stipend']));
-        const matchesHousing = !reqHousing || isTrueValue(getProp(prog, ['Housing Stipend', 'Housing', 'Housing Allowance']));
-        const matchesMeals = !reqMeals || isTrueValue(getProp(prog, ['Meal Stipend', 'Meals', 'Food Stipend']));
-        const matchesTech = !reqTech || isTrueValue(getProp(prog, ['Tech Stipend', 'Tech', 'Technology Allowance']));
+        const matchesParking = !parkingReq || isTrueValue(getProp(prog, ['Free Parking', 'Parking']));
+        const matchesHousing = !housingReq || isTrueValue(getProp(prog, ['Housing Stipend', 'Housing']));
+        const matchesMeal = !mealReq || isTrueValue(getProp(prog, ['Meal Stipend', 'Meals']));
+        const matchesTech = !techReq || isTrueValue(getProp(prog, ['Tech Stipend', 'Tech']));
 
-        return matchesSearch && matchesState && matchesSetting && matchesComp &&
-               matchesParking && matchesHousing && matchesMeals && matchesTech;
+        return matchesSearch && matchesState && matchesSetting && matchesComp && matchesParking && matchesHousing && matchesMeal && matchesTech;
       });
 
       renderSidebarList(filtered);
       createMapPins(filtered);
     }
 
-    function loadData() {
-      const csvFiles = ['data.csv', 'programs.csv'];
-      let loaded = false;
-
-      csvFiles.forEach(file => {
-        if (loaded) return;
-        Papa.parse(file, {
-          download: true,
-          header: true,
-          skipEmptyLines: true,
-          complete: function(results) {
-            if (results.data && results.data.length > 0 && !loaded) {
-              loaded = true;
-              allPrograms = results.data;
-              populateDropdowns(allPrograms);
-              renderSidebarList(allPrograms);
-              createMapPins(allPrograms);
-            }
-          }
-        });
-      });
+    function initEventListeners() {
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
+      document.getElementById('parkingFilter').addEventListener('change', applyFilters);
+      document.getElementById('housingFilter').addEventListener('change', applyFilters);
+      document.getElementById('mealFilter').addEventListener('change', applyFilters);
+      document.getElementById('techFilter').addEventListener('change', applyFilters);
+      setupDropdownControls();
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', () => {
       initMap();
-      setupDropdownControls();
-      loadData();
+      initEventListeners();
 
-      document.getElementById('searchInput').addEventListener('input', applyFilters);
-
-      ['parkingFilter', 'housingFilter', 'mealFilter', 'techFilter'].forEach(id => {
-        document.getElementById(id).addEventListener('change', applyFilters);
+      Papa.parse('programs.csv', {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          allPrograms = results.data.filter(row => getProp(row, ['Program', 'Program Name']) !== 'N/A');
+          populateDropdowns(allPrograms);
+          renderSidebarList(allPrograms);
+          createMapPins(allPrograms);
+        },
+        error: function(err) {
+          console.error("Error loading CSV:", err);
+        }
       });
     });
   </script>
