@@ -16,105 +16,163 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
+    :root {
+      --bg-ivory: #FAF8F3;
+      --bg-cream: #F3EFE5;
+      --text-charcoal: #343A3B;
+      --text-gray: #74736E;
+      --accent-mushroom: #D8CDBD;
+      --accent-eucalyptus: #82988B;
+      --accent-sage: #E2E9E3;
+      --accent-terracotta: #C86D51;
+      --accent-terracotta-soft: #F5ECE8;
+    }
+
     body { 
-      background-color: #fcfbf9; 
-      color: #4a4540; 
+      background-color: var(--bg-ivory); 
+      color: var(--text-charcoal); 
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
     }
+
+    /* Map Popups */
     .leaflet-popup-content-wrapper {
-      background: #fafaf9;
+      background: var(--bg-ivory);
       border-radius: 12px;
-      padding: 4px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      border: 1px solid #e7e5e4;
+      padding: 6px;
+      box-shadow: 0 10px 25px -5px rgba(52, 58, 59, 0.12);
+      border: 1px solid var(--accent-mushroom);
     }
     .leaflet-popup-tip {
-      background: #fafaf9;
+      background: var(--bg-ivory);
     }
+
+    /* Custom Desert Neutral Map Pins with Terracotta Center */
+    .custom-desert-pin {
+      background-color: #343A3B;
+      border: 2px solid #FAF8F3;
+      width: 18px !important;
+      height: 18px !important;
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(52, 58, 59, 0.25);
+      transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+      cursor: pointer;
+    }
+    .custom-desert-pin:hover {
+      transform: scale(1.35);
+      background-color: var(--accent-terracotta);
+      border-color: #FAF8F3;
+    }
+
+    /* Terracotta Slider Styling */
     input[type=range]::-webkit-slider-thumb {
-      background: #57534e;
+      background: var(--accent-terracotta);
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      cursor: pointer;
+      -webkit-appearance: none;
     }
-    /* Custom Scrollbar for Sidebar */
+    
     .custom-scroll::-webkit-scrollbar {
-      width: 6px;
+      width: 5px;
     }
     .custom-scroll::-webkit-scrollbar-thumb {
-      background-color: #e7e5e4;
+      background-color: var(--accent-mushroom);
       border-radius: 4px;
+    }
+
+    /* Custom Checkbox Styling */
+    input[type="checkbox"] {
+      accent-color: var(--accent-terracotta);
     }
   </style>
 </head>
 <body class="h-screen w-screen overflow-hidden flex flex-col md:flex-row">
 
   <!-- LEFT SIDEBAR: Controls & Program List -->
-  <aside class="w-full md:w-[420px] lg:w-[480px] h-full bg-stone-50 border-r border-stone-200 flex flex-col z-20 shadow-lg">
+  <aside class="w-full md:w-[420px] lg:w-[460px] h-full border-r border-[#D8CDBD]/60 flex flex-col z-20 shadow-sm" style="background-color: #FAF8F3;">
     
     <!-- Header -->
-    <div class="p-5 border-b border-stone-200 bg-stone-100/60">
-      <h1 class="text-xl font-light tracking-wide text-stone-800">Pediatric Residency Dashboard</h1>
-      <p class="text-xs text-stone-500 mt-0.5">Filter programs & explore locations</p>
+    <div class="p-5 border-b border-[#D8CDBD]/50 flex justify-between items-center" style="background-color: #F3EFE5;">
+      <div>
+        <h1 class="text-xl font-light tracking-wide" style="color: #343A3B;">Pediatric Residency Dashboard</h1>
+        <p class="text-xs mt-0.5" style="color: #74736E;">Filter programs & explore locations</p>
+      </div>
+      <!-- Subtle Terracotta Accent Dot -->
+      <span class="w-2.5 h-2.5 rounded-full inline-block shrink-0" style="background-color: #C86D51;" title="Active Session"></span>
     </div>
 
     <!-- Filters Container -->
-    <div class="p-4 border-b border-stone-200/80 bg-stone-50 space-y-3">
+    <div class="p-4 border-b border-[#D8CDBD]/40 space-y-3" style="background-color: #FAF8F3;">
       
       <!-- Search Input -->
       <input 
         type="text" 
         id="searchInput" 
         placeholder="Search program, city..." 
-        class="w-full px-3.5 py-2 rounded-lg bg-white border border-stone-200 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-300 text-sm transition"
+        class="w-full px-3.5 py-2 rounded-lg border border-[#D8CDBD] placeholder-[#74736E]/60 focus:outline-none focus:border-[#C86D51] text-sm transition"
+        style="background-color: #FFFFFF; color: #343A3B;"
       />
 
       <!-- Dropdown Filters Grid -->
       <div class="grid grid-cols-2 gap-2">
-        <select id="stateFilter" class="w-full px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-800 text-xs focus:outline-none focus:ring-2 focus:ring-stone-300">
-          <option value="">All States</option>
-        </select>
+        
+        <!-- Multi-Select States Dropdown Button -->
+        <div class="relative">
+          <button id="stateDropdownBtn" type="button" class="w-full px-3 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none flex justify-between items-center text-left transition hover:border-[#C86D51]" style="background-color: #FFFFFF; color: #343A3B;">
+            <span id="stateDropdownLabel" class="truncate">Select States</span>
+            <span class="text-[10px] ml-1" style="color: #C86D51;">▼</span>
+          </button>
+          
+          <!-- State Checkbox Menu -->
+          <div id="stateDropdownMenu" class="hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll">
+            <!-- States checkboxes dynamically injected here -->
+          </div>
+        </div>
 
-        <select id="interestFilter" class="w-full px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-800 text-xs focus:outline-none focus:ring-2 focus:ring-stone-300">
+        <select id="interestFilter" class="w-full px-3 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none hover:border-[#C86D51] transition" style="background-color: #FFFFFF; color: #343A3B;">
           <option value="">All Interests</option>
         </select>
 
-        <select id="settingFilter" class="w-full px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-800 text-xs focus:outline-none focus:ring-2 focus:ring-stone-300">
+        <select id="settingFilter" class="w-full px-3 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none hover:border-[#C86D51] transition" style="background-color: #FFFFFF; color: #343A3B;">
           <option value="">All Settings</option>
         </select>
 
-        <select id="competitivenessFilter" class="w-full px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-800 text-xs focus:outline-none focus:ring-2 focus:ring-stone-300">
+        <select id="competitivenessFilter" class="w-full px-3 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none hover:border-[#C86D51] transition" style="background-color: #FFFFFF; color: #343A3B;">
           <option value="">All Competitiveness</option>
         </select>
       </div>
 
       <!-- Class Size Slider -->
       <div class="pt-1 flex items-center gap-2">
-        <span class="text-[11px] font-semibold uppercase text-stone-500 tracking-wider">Max Class:</span>
+        <span class="text-[11px] font-semibold uppercase tracking-wider" style="color: #74736E;">Max Class:</span>
         <input 
           type="range" 
           id="classSizeFilter" 
           min="1" 
           max="50" 
           value="50" 
-          class="w-full h-1 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-stone-700"
+          class="w-full h-1 bg-[#D8CDBD] rounded-lg appearance-none cursor-pointer"
         />
-        <span id="classSizeValue" class="text-xs font-medium bg-stone-200 text-stone-700 px-2 py-0.5 rounded text-center min-w-[2.5rem]">50+</span>
+        <span id="classSizeValue" class="text-xs font-medium px-2 py-0.5 rounded text-center min-w-[2.5rem] border border-[#C86D51]/30" style="background-color: #F5ECE8; color: #C86D51;">50+</span>
       </div>
 
       <!-- Perks Checkboxes -->
-      <div class="pt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-stone-600">
-        <label class="inline-flex items-center gap-1 cursor-pointer">
-          <input type="checkbox" id="parkingFilter" class="rounded border-stone-300 text-stone-700 focus:ring-stone-400">
+      <div class="pt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs" style="color: #343A3B;">
+        <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51] transition">
+          <input type="checkbox" id="parkingFilter" class="rounded border-[#D8CDBD]">
           Parking
         </label>
-        <label class="inline-flex items-center gap-1 cursor-pointer">
-          <input type="checkbox" id="housingFilter" class="rounded border-stone-300 text-stone-700 focus:ring-stone-400">
+        <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51] transition">
+          <input type="checkbox" id="housingFilter" class="rounded border-[#D8CDBD]">
           Housing
         </label>
-        <label class="inline-flex items-center gap-1 cursor-pointer">
-          <input type="checkbox" id="mealFilter" class="rounded border-stone-300 text-stone-700 focus:ring-stone-400">
+        <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51] transition">
+          <input type="checkbox" id="mealFilter" class="rounded border-[#D8CDBD]">
           Meals
         </label>
-        <label class="inline-flex items-center gap-1 cursor-pointer">
-          <input type="checkbox" id="techFilter" class="rounded border-stone-300 text-stone-700 focus:ring-stone-400">
+        <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51] transition">
+          <input type="checkbox" id="techFilter" class="rounded border-[#D8CDBD]">
           Tech
         </label>
       </div>
@@ -134,11 +192,10 @@
 
   <script>
     let allPrograms = [];
+    let selectedStates = new Set();
     let map;
-    let markersMap = new Map(); // Store markers linked to program names
-    const geocodeCache = {};
+    let markersMap = new Map();
 
-    // Approximate US City Coordinates Backup for Instant Pin Placement
     const cityCoordinates = {
       "Phoenix, AZ": [33.4484, -112.0740],
       "Los Angeles, CA": [34.0522, -118.2437],
@@ -163,16 +220,18 @@
     };
 
     function initMap() {
-      map = L.map('map').setView([39.8283, -98.5795], 4);
-      
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      map = L.map('map', { zoomControl: false }).setView([39.8283, -98.5795], 4);
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        subdomains: 'abcd',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
       }).addTo(map);
     }
 
     function populateDropdowns(data) {
-      const stateSelect = document.getElementById('stateFilter');
+      const stateMenu = document.getElementById('stateDropdownMenu');
       const interestSelect = document.getElementById('interestFilter');
       const settingSelect = document.getElementById('settingFilter');
       const competitivenessSelect = document.getElementById('competitivenessFilter');
@@ -193,7 +252,37 @@
         if (!isNaN(size) && size > maxClassFound) maxClassFound = size;
       });
 
-      Array.from(states).sort().forEach(val => stateSelect.add(new Option(val, val)));
+      Array.from(states).sort().forEach(st => {
+        const label = document.createElement('label');
+        label.className = "flex items-center gap-2 px-1 py-1 hover:bg-[#F5ECE8] rounded cursor-pointer text-stone-700 transition";
+        label.innerHTML = `
+          <input type="checkbox" value="${st}" class="state-checkbox rounded border-[#D8CDBD]">
+          <span>${st}</span>
+        `;
+        stateMenu.appendChild(label);
+      });
+
+      document.querySelectorAll('.state-checkbox').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+          if (e.target.checked) {
+            selectedStates.add(e.target.value);
+          } else {
+            selectedStates.delete(e.target.value);
+          }
+          
+          const labelBtn = document.getElementById('stateDropdownLabel');
+          if (selectedStates.size === 0) {
+            labelBtn.innerText = "Select States";
+          } else if (selectedStates.size === 1) {
+            labelBtn.innerText = Array.from(selectedStates)[0];
+          } else {
+            labelBtn.innerText = `${selectedStates.size} States Selected`;
+          }
+
+          applyFilters();
+        });
+      });
+
       interests.forEach(val => interestSelect.add(new Option(val, val)));
       settings.forEach(val => settingSelect.add(new Option(val, val)));
       competitivenessSet.forEach(val => competitivenessSelect.add(new Option(val, val)));
@@ -206,7 +295,18 @@
       }
     }
 
-    // Parse CSV
+    document.getElementById('stateDropdownBtn').addEventListener('click', () => {
+      document.getElementById('stateDropdownMenu').classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      const btn = document.getElementById('stateDropdownBtn');
+      const menu = document.getElementById('stateDropdownMenu');
+      if (!btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+
     Papa.parse('programs.csv', {
       download: true,
       header: true,
@@ -226,7 +326,12 @@
       return ['yes', 'true', '1', 'x', 'y'].includes(cleanVal);
     }
 
-    // Place Map Pins
+    const desertIcon = L.divIcon({
+      className: 'custom-desert-pin',
+      iconSize: [18, 18],
+      iconAnchor: [9, 9]
+    });
+
     function createMapPins(programs) {
       programs.forEach(prog => {
         const programName = prog['Program'] || 'N/A';
@@ -237,23 +342,22 @@
         let lat = parseFloat(prog['Latitude'] || prog['lat']);
         let lng = parseFloat(prog['Longitude'] || prog['lng']);
 
-        // Check Backup Lookup Table if lat/lng not in CSV
         if ((isNaN(lat) || isNaN(lng)) && cityCoordinates[cityStateKey]) {
           [lat, lng] = cityCoordinates[cityStateKey];
         }
 
         if (!isNaN(lat) && !isNaN(lng)) {
-          const marker = L.marker([lat, lng]).addTo(map);
+          const marker = L.marker([lat, lng], { icon: desertIcon }).addTo(map);
           
           const popupContent = `
-            <div class="p-2 font-sans text-stone-800">
-              <h3 class="font-semibold text-sm mb-1">${programName}</h3>
-              <p class="text-xs text-stone-500 mb-2">${city}${city && state ? ', ' : ''}${state}</p>
-              <div class="text-xs space-y-1 text-stone-600">
-                <p><span class="font-medium text-stone-700">Interest:</span> ${prog['Interest'] || '-'}</p>
-                <p><span class="font-medium text-stone-700">Setting:</span> ${prog['Setting'] || '-'}</p>
-                <p><span class="font-medium text-stone-700">Class Size:</span> ${prog['Class size'] || '-'}</p>
-                <p><span class="font-medium text-stone-700">Competitiveness:</span> ${prog['Competitiveness'] || '-'}</p>
+            <div class="p-2 font-sans text-[#343A3B]">
+              <h3 class="font-semibold text-sm mb-1" style="color: #343A3B;">${programName}</h3>
+              <p class="text-xs mb-2" style="color: #C86D51;">${city}${city && state ? ', ' : ''}${state}</p>
+              <div class="text-xs space-y-1 text-[#343A3B]">
+                <p><span class="font-medium text-[#74736E]">Interest:</span> ${prog['Interest'] || '-'}</p>
+                <p><span class="font-medium text-[#74736E]">Setting:</span> ${prog['Setting'] || '-'}</p>
+                <p><span class="font-medium text-[#74736E]">Class Size:</span> ${prog['Class size'] || '-'}</p>
+                <p><span class="font-medium text-[#74736E]">Competitiveness:</span> ${prog['Competitiveness'] || '-'}</p>
               </div>
             </div>
           `;
@@ -264,13 +368,12 @@
       });
     }
 
-    // Render Sidebar Cards
     function renderSidebarList(programs) {
       const listContainer = document.getElementById('programList');
       listContainer.innerHTML = '';
 
       if (programs.length === 0) {
-        listContainer.innerHTML = `<p class="text-xs text-stone-400 text-center py-8">No programs match your filters.</p>`;
+        listContainer.innerHTML = `<p class="text-xs text-[#74736E] text-center py-8">No programs match your filters.</p>`;
         return;
       }
 
@@ -281,22 +384,30 @@
         const interest = prog['Interest'] || '-';
         const setting = prog['Setting'] || '-';
 
+        // Dynamic Tag Styling based on Interest
+        let tagBg = "#E2E9E3";
+        let tagColor = "#343A3B";
+        if (interest.toLowerCase().includes('high')) {
+          tagBg = "#F5ECE8";
+          tagColor = "#C86D51";
+        }
+
         const card = document.createElement('div');
-        card.className = "p-3.5 bg-white rounded-xl border border-stone-200/80 shadow-sm hover:border-stone-300 hover:shadow-md transition cursor-pointer";
+        card.className = "p-3.5 rounded-xl border border-[#D8CDBD]/70 shadow-sm hover:border-[#C86D51] transition cursor-pointer group";
+        card.style.backgroundColor = "#FFFFFF";
         
         card.innerHTML = `
           <div class="flex justify-between items-start gap-2">
-            <h3 class="font-medium text-stone-800 text-sm leading-snug">${programName}</h3>
-            <span class="text-[10px] font-semibold uppercase px-2 py-0.5 bg-stone-100 text-stone-600 rounded-md border border-stone-200/60 shrink-0">${interest}</span>
+            <h3 class="font-medium text-sm leading-snug group-hover:text-[#C86D51] transition-colors" style="color: #343A3B;">${programName}</h3>
+            <span class="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-md border border-[#D8CDBD]/60 shrink-0" style="background-color: ${tagBg}; color: ${tagColor};">${interest}</span>
           </div>
-          <p class="text-xs text-stone-500 mt-1">${city}${city && state ? ', ' : ''}${state}</p>
-          <div class="mt-2.5 pt-2 border-t border-stone-100 flex justify-between text-[11px] text-stone-500">
-            <span>Setting: <strong class="text-stone-700 font-normal">${setting}</strong></span>
-            <span>Class: <strong class="text-stone-700 font-normal">${prog['Class size'] || '-'}</strong></span>
+          <p class="text-xs mt-1" style="color: #74736E;">${city}${city && state ? ', ' : ''}${state}</p>
+          <div class="mt-2.5 pt-2 border-t border-[#F3EFE5] flex justify-between text-[11px]" style="color: #74736E;">
+            <span>Setting: <strong class="font-normal" style="color: #343A3B;">${setting}</strong></span>
+            <span>Class: <strong class="font-normal" style="color: #343A3B;">${prog['Class size'] || '-'}</strong></span>
           </div>
         `;
 
-        // Click card to pan map to program location
         card.addEventListener('click', () => {
           const marker = markersMap.get(programName);
           if (marker) {
@@ -309,10 +420,8 @@
       });
     }
 
-    // Dynamic Multi-Filter Execution
     function applyFilters() {
       const searchVal = document.getElementById('searchInput').value.toLowerCase();
-      const stateVal = document.getElementById('stateFilter').value;
       const interestVal = document.getElementById('interestFilter').value;
       const settingVal = document.getElementById('settingFilter').value;
       const competitivenessVal = document.getElementById('competitivenessFilter').value;
@@ -328,9 +437,10 @@
       const filtered = allPrograms.filter(prog => {
         const name = (prog['Program'] || '').toLowerCase();
         const city = (prog['City'] || '').toLowerCase();
+        const progState = (prog['State'] || '').trim();
         
         const matchesSearch = name.includes(searchVal) || city.includes(searchVal);
-        const matchesState = !stateVal || (prog['State'] || '').trim() === stateVal;
+        const matchesState = selectedStates.size === 0 || selectedStates.has(progState);
         const matchesInterest = !interestVal || (prog['Interest'] || '').trim() === interestVal;
         const matchesSetting = !settingVal || (prog['Setting'] || '').trim() === settingVal;
         const matchesCompetitiveness = !competitivenessVal || (prog['Competitiveness'] || '').trim() === competitivenessVal;
@@ -348,10 +458,8 @@
                matchesHousing && matchesMeal && matchesTech;
       });
 
-      // Update Sidebar Cards
       renderSidebarList(filtered);
 
-      // Show/Hide Map Markers dynamically based on filter
       const visibleNames = new Set(filtered.map(p => p['Program']));
       markersMap.forEach((marker, progName) => {
         if (visibleNames.has(progName)) {
@@ -362,9 +470,7 @@
       });
     }
 
-    // Event Listeners
     document.getElementById('searchInput').addEventListener('input', applyFilters);
-    document.getElementById('stateFilter').addEventListener('change', applyFilters);
     document.getElementById('interestFilter').addEventListener('change', applyFilters);
     document.getElementById('settingFilter').addEventListener('change', applyFilters);
     document.getElementById('competitivenessFilter').addEventListener('change', applyFilters);
@@ -382,4 +488,3 @@
     document.getElementById('techFilter').addEventListener('change', applyFilters);
   </script>
 </body>
-</html>
