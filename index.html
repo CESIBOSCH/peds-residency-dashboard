@@ -3,9 +3,8 @@
   let selectedFilters = { state: new Set(), setting: new Set(), competitiveness: new Set() };
   let map;
   let markersMap = new Map();
-  let currentSelectedProgram = null;
 
-  // City to Airport Fallback Mapping
+  // Airport Lookup Table
   const airportLookup = {
     "Ann Arbor, MI": "DTW",
     "Sacramento, CA": "SMF",
@@ -33,60 +32,33 @@
     "Atlanta, GA": "ATL"
   };
 
-  const cityCoordinates = {
-    "Ann Arbor, MI": [42.2808, -83.7430],
-    "Sacramento, CA": [38.5816, -121.4944],
-    "Charlotte, NC": [35.2271, -80.8431],
-    "Phoenix, AZ": [33.4484, -112.0740], 
-    "Los Angeles, CA": [34.0522, -118.2437],
-    "San Francisco, CA": [37.7749, -122.4194], 
-    "Oakland, CA": [37.8044, -122.2712],
-    "San Diego, CA": [32.7157, -117.1611],
-    "New Haven, CT": [41.3083, -72.9279], 
-    "Denver, CO": [39.7392, -104.9903],
-    "Washington, DC": [38.9072, -77.0369], 
-    "Chicago, IL": [41.8781, -87.6298],
-    "Boston, MA": [42.3601, -71.0589], 
-    "Baltimore, MD": [39.2904, -76.6122],
-    "Minneapolis, MN": [44.9778, -93.2650], 
-    "St. Louis, MO": [38.6270, -90.1994], 
-    "Chapel Hill, NC": [35.9132, -79.0558],
-    "Philadelphia, PA": [39.9526, -75.1652],
-    "Pittsburgh, PA": [40.4406, -79.9959], 
-    "Seattle, WA": [47.6062, -122.3321]
-  };
-
-  // Normalizes string for fuzzy header matching
+  // Helper: Strip special characters & lowercase for soft key matching
   function cleanKey(str) {
     return String(str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   }
 
-  // Enhanced Fuzzy Prop Extractor
+  // Enhanced Property Extractor (Handles varied column headers safely)
   function getProp(obj, possibleKeys, defaultVal = 'N/A') {
-    if (!obj) return defaultVal;
+    if (!obj || typeof obj !== 'object') return defaultVal;
     const objKeys = Object.keys(obj);
-    
-    // First try exact fuzzy match
+
+    // Exact clean match
     for (const keyCandidate of possibleKeys) {
       const targetClean = cleanKey(keyCandidate);
       const matchedKey = objKeys.find(k => cleanKey(k) === targetClean);
       if (matchedKey && obj[matchedKey] !== undefined && obj[matchedKey] !== null) {
         const val = String(obj[matchedKey]).trim();
-        if (val !== '' && val !== '-') {
-          return val;
-        }
+        if (val !== '' && val !== '-') return val;
       }
     }
 
-    // Second try: partial inclusion match
+    // Partial key match
     for (const keyCandidate of possibleKeys) {
       const targetClean = cleanKey(keyCandidate);
       const matchedKey = objKeys.find(k => cleanKey(k).includes(targetClean));
       if (matchedKey && obj[matchedKey] !== undefined && obj[matchedKey] !== null) {
         const val = String(obj[matchedKey]).trim();
-        if (val !== '' && val !== '-') {
-          return val;
-        }
+        if (val !== '' && val !== '-') return val;
       }
     }
 
@@ -97,7 +69,7 @@
     if (!val || val === 'N/A') return 'N/A';
     const cleanNum = parseFloat(String(val).replace(/[^0-9.-]+/g, ""));
     if (isNaN(cleanNum)) return val;
-    return '$' + cleanNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return '$' + cleanNum.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   }
 
   function isTrueValue(val) {
@@ -115,79 +87,53 @@
     return cleaned;
   }
 
-  function initMap() {
-    map = L.map('map', { zoomControl: false }).setView([39.8283, -98.5795], 4);
-    L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      maxZoom: 19,
-      subdomains: 'abcd',
-      attribution: '&copy; OpenStreetMap &copy; CARTO'
-    }).addTo(map);
-  }
-
-  function createInMapFactSheetPopup(prog) {
+  // Generate HTML Face Sheet
+  function createFactSheetHTML(prog) {
     const city = getProp(prog, ['City', 'Location City', 'Town']);
     const state = getProp(prog, ['State', 'Location State', 'ST']);
     const cityStateKey = `${city}, ${state}`;
 
-    const rawWebsite = getProp(prog, ['Website', 'URL', 'Program Website', 'Link', 'Web'], '#');
+    const rawWebsite = getProp(prog, ['Website', 'URL', 'Program Website', 'Link'], '#');
     const programName = getProp(prog, ['Program', 'Program Name', 'Hospital', 'Institution', 'Name'], 'Program Info');
 
-    // Airport Code with automatic lookup fallback
-    let airport = getProp(prog, ['Nearest Airport', 'Airport', 'Airport Code', 'Nearest Airport Code']);
+    // Airport resolution
+    let airport = getProp(prog, ['Nearest Airport', 'Airport', 'Airport Code']);
     if (airport === 'N/A') {
-      airport = airportLookup[cityStateKey] || (city !== 'N/A' ? `${city.substring(0,3).toUpperCase()}` : 'N/A');
+      airport = airportLookup[cityStateKey] || (city !== 'N/A' ? city.substring(0, 3).toUpperCase() : 'N/A');
     }
 
-    // Benefits Badges
-    let perksHTML = '';
-    const perks = [
-      { label: 'Parking', val: getProp(prog, ['Free Parking', 'Parking', 'Parking Stipend']) },
-      { label: 'Housing', val: getProp(prog, ['Housing Stipend', 'Housing', 'Housing Allowance']) },
-      { label: 'Meals', val: getProp(prog, ['Meal Stipend', 'Meals', 'Food Stipend']) },
-      { label: 'Tech', val: getProp(prog, ['Tech Stipend', 'Tech', 'Technology Allowance']) }
-    ];
+    // Extract stats safely
+    const classSize = getProp(prog, ['Class size', 'Class Size', 'Size', 'Program Size']);
+    const setting = cleanSettingName(getProp(prog, ['Setting', 'Program Setting', 'Hospital Setting']));
+    const tier = getProp(prog, ['Competitiveness', 'Tier', 'Category', 'Target/Reach', 'Reach/Target']);
+    const stepScore = getProp(prog, ['Step Score Range', 'Step Score', 'Step 2 Target', 'Target Step']);
 
-    perks.forEach(p => {
-      if (isTrueValue(p.val)) {
-        perksHTML += `<span class="text-[9px] bg-[#EBF3ED] text-[#2D3132] border border-[#A8C5B0] px-1.5 py-0.5 rounded">✓ ${p.label}</span> `;
-      }
-    });
-    if (!perksHTML) perksHTML = `<span class="text-[10px] text-[#6B7280] italic">Standard Benefits</span>`;
-
-    // Extract values using comprehensive CSV field keys
-    const classSize = getProp(prog, ['Class size', 'Class Size', 'Class size per year', 'Size', 'Program Size']);
-    const setting = cleanSettingName(getProp(prog, ['Setting', 'Program Setting', 'Hospital Setting', 'Environment']));
-    const tier = getProp(prog, ['Competitiveness', 'Tier', 'Category', 'Target/Reach', 'Reach/Target', 'Tier / Category']);
-    const stepScore = getProp(prog, ['Step Score Range', 'Step Score', 'USMLE Step 2', 'Step 2 Range', 'Target Step']);
-
-    const avgHours = getProp(prog, ['Work Hours', 'Average Hours Worked', 'Average Hours', 'Hours/Week', 'Avg Hours']);
-    const shiftLength = getProp(prog, ['Longest Shift Length', 'Shift Length', 'Max Shift Length', 'Longest Shift', 'Max Shift']);
-    const daysOff = getProp(prog, ['Days Off Per Week', 'Average Days Off Per Week', 'Days Off', 'Days Off/Week']);
+    const avgHours = getProp(prog, ['Average Hours Worked', 'Work Hours', 'Average Hours', 'Hours/Week']);
+    const shiftLength = getProp(prog, ['Longest Shift Length', 'Shift Length', 'Max Shift Length', 'Longest Shift']);
+    const daysOff = getProp(prog, ['Days Off Per Week', 'Days Off/Week', 'Days Off']);
     const sickDays = getProp(prog, ['Sick Days', 'Sick Leave Days', 'Sick Leave']);
-    const vacationDays = getProp(prog, ['Vacation', 'Vacation Days', 'PTO']);
-    
-    const paidLeave = getProp(prog, ['Paid Family Leave Days', 'Paid Family Leave', 'Paid Leave', 'Paid Family Leave (days)']);
-    const unpaidLeave = getProp(prog, ['Unpaid Family Leave Days', 'Unpaid Family Leave', 'Unpaid Leave', 'Unpaid Family Leave (days)']);
+    const vacationDays = getProp(prog, ['Vacation Days', 'Vacation', 'PTO']);
+
+    // Family Leave extraction
+    let paidLeave = getProp(prog, ['Paid Family Leave Days', 'Paid Family Leave', 'Paid Leave']);
+    let unpaidLeave = getProp(prog, ['Unpaid Family Leave Days', 'Unpaid Family Leave', 'Unpaid Leave']);
 
     const baseSalary = formatCurrency(getProp(prog, ['Salary', 'Base Salary', 'PGY1 Salary', 'PGY-1 Salary']));
-    const colSalary = formatCurrency(getProp(prog, ['COL Adjusted Salary', 'COL-Adjusted Salary', 'Adjusted Salary', 'Cost of Living Adjusted Salary']));
+    const colSalary = formatCurrency(getProp(prog, ['COL Adjusted Salary', 'COL-Adjusted Salary', 'Adjusted Salary']));
     const stretchScore = getProp(prog, ['Salary Stretch Score', 'Stretch Score', 'Salary Score']);
 
     const formattedWebsite = rawWebsite !== '#' ? (rawWebsite.startsWith('http') ? rawWebsite : 'https://' + rawWebsite) : '#';
 
     return `
-      <div class="p-3.5 space-y-2.5 font-sans max-h-[410px] overflow-y-auto custom-scroll bg-white">
+      <div class="p-3.5 space-y-2.5 font-sans max-h-[420px] overflow-y-auto bg-white">
         
-        <!-- Header with Hyperlink -->
         <div class="border-b border-[#E5E0D8] pb-1.5">
           <h3 class="font-semibold text-xs text-[#2D3132] leading-tight">
             ${formattedWebsite !== '#' ? `<a href="${formattedWebsite}" target="_blank" rel="noopener noreferrer" class="text-[#2D3132] hover:text-[#C86D51] hover:underline flex items-center gap-1">${programName} <span class="text-[9px] text-[#C86D51]">↗</span></a>` : programName}
           </h3>
         </div>
 
-        <!-- Section 1: Basics -->
+        <!-- BASICS -->
         <div class="space-y-1">
           <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Basics</span>
           <div class="grid grid-cols-2 gap-1.5 text-[10px]">
@@ -212,7 +158,7 @@
           </div>
         </div>
 
-        <!-- Section 2: Application -->
+        <!-- APPLICATION -->
         <div class="space-y-1">
           <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Application</span>
           <div class="grid grid-cols-2 gap-1.5 text-[10px]">
@@ -227,7 +173,7 @@
           </div>
         </div>
 
-        <!-- Section 3: Work & Leave -->
+        <!-- WORK & LEAVE -->
         <div class="space-y-1">
           <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Work & Leave</span>
           <div class="bg-[#FAF9F5] p-2 rounded border border-[#E5E0D8] text-[10px] space-y-1">
@@ -258,7 +204,7 @@
           </div>
         </div>
 
-        <!-- Section 4: Compensation -->
+        <!-- COMPENSATION -->
         <div class="space-y-1">
           <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Compensation</span>
           <div class="grid grid-cols-3 gap-1 text-[9px]">
@@ -271,19 +217,66 @@
               <span class="font-medium text-[#2D3132]">${colSalary}</span>
             </div>
             <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
-              <span class="text-[#6B7280] block text-[7px] uppercase font-medium truncate">Salary Stretch Score</span>
+              <span class="text-[#6B7280] block text-[7px] uppercase font-medium truncate">Stretch Score</span>
               <span class="font-medium text-[#2D3132]">${stretchScore}</span>
             </div>
           </div>
         </div>
 
-        <!-- Perks -->
-        <div class="pt-1 border-t border-[#E5E0D8]">
-          <span class="text-[9px] text-[#6B7280] uppercase font-semibold block mb-1">Key Benefits</span>
-          <div class="flex flex-wrap gap-1">${perksHTML}</div>
-        </div>
-
       </div>
     `;
   }
+
+  function renderMapMarkers(data) {
+    if (!map) return;
+
+    // Clear existing markers
+    markersMap.forEach(marker => map.removeLayer(marker));
+    markersMap.clear();
+
+    data.forEach(prog => {
+      const lat = parseFloat(getProp(prog, ['Latitude', 'Lat']));
+      const lng = parseFloat(getProp(prog, ['Longitude', 'Lng', 'Long']));
+
+      if (!isNaN(lat) && !isNaN(lng)) {
+        const marker = L.circleMarker([lat, lng], {
+          radius: 7,
+          fillColor: "#C86D51",
+          color: "#FFFFFF",
+          weight: 1.5,
+          opacity: 1,
+          fillOpacity: 0.9
+        }).addTo(map);
+
+        const factSheetHTML = createFactSheetHTML(prog);
+        marker.bindPopup(factSheetHTML, { maxWidth: 300, minWidth: 260 });
+        
+        const progId = getProp(prog, ['Program', 'Program Name', 'Name']);
+        markersMap.set(progId, marker);
+      }
+    });
+  }
+
+  function initMap() {
+    const mapEl = document.getElementById('map');
+    if (!mapEl) return;
+
+    map = L.map('map', { zoomControl: false }).setView([39.8283, -98.5795], 4);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      subdomains: 'abcd',
+      attribution: '&copy; OpenStreetMap &copy; CARTO'
+    }).addTo(map);
+
+    if (allPrograms.length > 0) {
+      renderMapMarkers(allPrograms);
+    }
+  }
+
+  // Initialize map when DOM is ready
+  document.addEventListener("DOMContentLoaded", () => {
+    initMap();
+  });
 </script>
