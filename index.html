@@ -274,11 +274,15 @@
       "Richmond, VA": [37.5407, -77.4360], "Milwaukee, WI": [43.0389, -87.9065]
     };
 
-    function getVal(prog, key) {
-      if (!prog || prog[key] === undefined || prog[key] === null || String(prog[key]).trim() === '') {
-        return 'N/A';
+    function getVal(prog, keys) {
+      if (!prog) return 'N/A';
+      const keyList = Array.isArray(keys) ? keys : [keys];
+      for (let k of keyList) {
+        if (prog[k] !== undefined && prog[k] !== null && String(prog[k]).trim() !== '') {
+          return String(prog[k]).trim();
+        }
       }
-      return String(prog[key]).trim();
+      return 'N/A';
     }
 
     function isTrueValue(val) {
@@ -308,23 +312,21 @@
     }
 
     function createInMapFactSheetPopup(prog) {
-      const city = getVal(prog, 'City');
-      const state = getVal(prog, 'State');
+      const city = getVal(prog, ['City', 'city']);
+      const state = getVal(prog, ['State', 'state']);
       const cityStateKey = `${city}, ${state}`;
 
-      const website = getVal(prog, 'Website') !== 'N/A' ? getVal(prog, 'Website') : '#';
-      const programName = getVal(prog, 'Program');
+      const website = getVal(prog, ['Website', 'website', 'URL', 'url']);
+      const programName = getVal(prog, ['Program', 'program', 'Name', 'name']);
 
-      // Nearest Airport
       const airport = airportLookup[cityStateKey] || (city !== 'N/A' ? `${city.substring(0,3).toUpperCase()} Airport` : 'N/A');
 
-      // Perks using exact CSV headers
       let perksHTML = '';
       const perks = [
-        { label: 'Parking', val: getVal(prog, 'Free Parking') },
-        { label: 'Housing', val: getVal(prog, 'Housing Stipend') },
-        { label: 'Meals', val: getVal(prog, 'Meal Stipend') },
-        { label: 'Tech', val: getVal(prog, 'Tech Stipend') }
+        { label: 'Parking', val: getVal(prog, ['Free Parking', 'Parking', 'parking']) },
+        { label: 'Housing', val: getVal(prog, ['Housing Stipend', 'Housing', 'housing']) },
+        { label: 'Meals', val: getVal(prog, ['Meal Stipend', 'Meals', 'meals']) },
+        { label: 'Tech', val: getVal(prog, ['Tech Stipend', 'Tech', 'tech']) }
       ];
 
       perks.forEach(p => {
@@ -334,22 +336,21 @@
       });
       if (!perksHTML) perksHTML = `<span class="text-[10px] text-[#6B7280] italic">Standard Benefits</span>`;
 
-      // Direct mapping to exact CSV columns
-      const classSize = getVal(prog, 'Class size');
-      const setting = cleanSettingName(getVal(prog, 'Setting'));
-      const tier = getVal(prog, 'Competitiveness');
-      const stepScore = getVal(prog, 'Step Score Range');
+      const classSize = getVal(prog, ['Class size', 'Class Size', 'class_size']);
+      const setting = cleanSettingName(getVal(prog, ['Setting', 'setting']));
+      const tier = getVal(prog, ['Competitiveness', 'Competitiveness Tier', 'Tier', 'tier']);
+      const stepScore = getVal(prog, ['Step Score Range', 'Step Score', 'step_score']);
 
-      const avgHours = getVal(prog, 'Hours/Week');
-      const shiftLength = getVal(prog, 'Longest Shift');
-      const daysOff = getVal(prog, 'Days Off/week');
-      const sickDays = getVal(prog, 'Sick Days');
-      const vacationDays = getVal(prog, 'Vacation Days');
-      const paidLeave = getVal(prog, 'Family Leave Paid/Unpaid');
+      const avgHours = getVal(prog, ['Hours/Week', 'Hours/week', 'Work Hours']);
+      const shiftLength = getVal(prog, ['Longest Shift', 'Shift Length']);
+      const daysOff = getVal(prog, ['Days Off/week', 'Days Off']);
+      const sickDays = getVal(prog, ['Sick Days']);
+      const vacationDays = getVal(prog, ['Vacation Days']);
+      const paidLeave = getVal(prog, ['Family Leave Paid/Unpaid', 'Family Leave']);
 
-      const baseSalary = getVal(prog, 'Salary');
-      const colSalary = getVal(prog, 'COL-Adjusted Salary');
-      const stretchScore = getVal(prog, 'Salary Stretch');
+      const baseSalary = getVal(prog, ['Salary', 'Base Salary']);
+      const colSalary = getVal(prog, ['COL-Adjusted Salary', 'COL Salary']);
+      const stretchScore = getVal(prog, ['Salary Stretch', 'Stretch']);
 
       return `
         <div class="p-3.5 space-y-3 font-sans max-h-[400px] overflow-y-auto custom-scroll bg-white">
@@ -357,7 +358,7 @@
           <!-- Header with Direct Web Link -->
           <div class="border-b border-[#E5E0D8] pb-2">
             <h3 class="font-medium text-xs text-[#2D3132] leading-snug">
-              ${website !== '#' ? `<a href="${website.startsWith('http') ? website : 'https://' + website}" target="_blank" rel="noopener noreferrer" class="text-[#C86D51] hover:underline flex items-center gap-1 font-semibold">${programName} <span class="text-[9px]">↗</span></a>` : `<span class="font-semibold">${programName}</span>`}
+              ${website !== '#' && website !== 'N/A' ? `<a href="${website.startsWith('http') ? website : 'https://' + website}" target="_blank" rel="noopener noreferrer" class="text-[#C86D51] hover:underline flex items-center gap-1 font-semibold">${programName} <span class="text-[9px]">↗</span></a>` : `<span class="font-semibold">${programName}</span>`}
             </h3>
             <p class="text-[10px] text-[#6B7280] mt-0.5">${city !== 'N/A' ? city : ''}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state !== 'N/A' ? state : ''}</p>
           </div>
@@ -471,13 +472,13 @@
       markersMap.clear();
 
       programs.forEach(prog => {
-        const programName = getVal(prog, 'Program');
-        const city = getVal(prog, 'City');
-        const state = getVal(prog, 'State');
+        const programName = getVal(prog, ['Program', 'program', 'Name', 'name']);
+        const city = getVal(prog, ['City', 'city']);
+        const state = getVal(prog, ['State', 'state']);
         const cityStateKey = `${city}, ${state}`;
 
-        let lat = parseFloat(prog['Latitude'] || prog['lat']);
-        let lng = parseFloat(prog['Longitude'] || prog['lng']);
+        let lat = parseFloat(prog['Latitude'] || prog['lat'] || prog['LAT']);
+        let lng = parseFloat(prog['Longitude'] || prog['lng'] || prog['LNG']);
 
         if ((isNaN(lat) || isNaN(lng)) && cityCoordinates[cityStateKey]) {
           [lat, lng] = cityCoordinates[cityStateKey];
@@ -511,10 +512,10 @@
       }
 
       programs.forEach(prog => {
-        const programName = getVal(prog, 'Program');
-        const city = getVal(prog, 'City');
-        const state = getVal(prog, 'State');
-        const setting = cleanSettingName(getVal(prog, 'Setting'));
+        const programName = getVal(prog, ['Program', 'program', 'Name', 'name']);
+        const city = getVal(prog, ['City', 'city']);
+        const state = getVal(prog, ['State', 'state']);
+        const setting = cleanSettingName(getVal(prog, ['Setting', 'setting']));
 
         const card = document.createElement('div');
         card.className = "p-3 rounded-lg border border-[#E5E0D8] bg-white shadow-xs hover:border-[#C86D51] transition group cursor-pointer";
@@ -549,14 +550,14 @@
       const title = document.getElementById('previewTitle');
       const location = document.getElementById('previewLocation');
 
-      title.innerText = getVal(prog, 'Program');
-      location.innerText = `${getVal(prog, 'City')}, ${getVal(prog, 'State')}`;
+      title.innerText = getVal(prog, ['Program', 'program', 'Name', 'name']);
+      location.innerText = `${getVal(prog, ['City', 'city'])}, ${getVal(prog, ['State', 'state'])}`;
       previewBar.classList.remove('hidden');
     }
 
     document.getElementById('openFactSheetBtn').addEventListener('click', () => {
       if (currentSelectedProgram) {
-        const programName = getVal(currentSelectedProgram, 'Program');
+        const programName = getVal(currentSelectedProgram, ['Program', 'program', 'Name', 'name']);
         const marker = markersMap.get(programName);
         if (marker) {
           map.setView(marker.getLatLng(), 8, { animate: true });
@@ -653,10 +654,10 @@
       let maxClassFound = 0;
 
       data.forEach(prog => {
-        const st = prog['State'];
-        const set = prog['Setting'];
-        const comp = prog['Competitiveness'];
-        const sizeStr = prog['Class size'];
+        const st = prog['State'] || prog['state'];
+        const set = prog['Setting'] || prog['setting'];
+        const comp = prog['Competitiveness'] || prog['Tier'] || prog['tier'];
+        const sizeStr = prog['Class size'] || prog['Class Size'];
 
         if (st && String(st).trim() !== '') sets.state.add(String(st).trim());
         if (set && String(set).trim() !== '') sets.setting.add(String(set).trim());
@@ -679,52 +680,46 @@
     }
 
     function applyFilters() {
-      const searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
-      const maxClassSize = parseInt(document.getElementById('classSizeFilter').value) || 50;
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+      const maxClassSize = parseInt(document.getElementById('classSizeFilter').value);
 
-      const parkingReq = document.getElementById('parkingFilter').checked;
-      const housingReq = document.getElementById('housingFilter').checked;
-      const mealReq = document.getElementById('mealFilter').checked;
-      const techReq = document.getElementById('techFilter').checked;
+      const requireParking = document.getElementById('parkingFilter').checked;
+      const requireHousing = document.getElementById('housingFilter').checked;
+      const requireMeals = document.getElementById('mealFilter').checked;
+      const requireTech = document.getElementById('techFilter').checked;
 
       const filtered = allPrograms.filter(prog => {
-        const name = getVal(prog, 'Program').toLowerCase();
-        const city = getVal(prog, 'City').toLowerCase();
-        const state = getVal(prog, 'State');
-        const setting = getVal(prog, 'Setting');
-        const comp = getVal(prog, 'Competitiveness');
-        const size = parseInt(getVal(prog, 'Class size')) || 0;
+        const programName = getVal(prog, ['Program', 'program', 'Name', 'name']).toLowerCase();
+        const city = getVal(prog, ['City', 'city']).toLowerCase();
+        const state = getVal(prog, ['State', 'state']);
+        const setting = getVal(prog, ['Setting', 'setting']);
+        const comp = getVal(prog, ['Competitiveness', 'Tier', 'tier']);
+        const classSize = parseInt(getVal(prog, ['Class size', 'Class Size'])) || 0;
 
-        // Search Match
-        if (searchQuery && !name.includes(searchQuery) && !city.includes(searchQuery) && !state.toLowerCase().includes(searchQuery)) {
+        if (searchTerm && !programName.includes(searchTerm) && !city.includes(searchTerm) && !state.toLowerCase().includes(searchTerm)) {
           return false;
         }
 
-        // Multi-select State
         if (selectedFilters.state.size > 0 && !selectedFilters.state.has(state)) {
           return false;
         }
 
-        // Multi-select Setting
         if (selectedFilters.setting.size > 0 && !selectedFilters.setting.has(setting)) {
           return false;
         }
 
-        // Multi-select Competitiveness
         if (selectedFilters.competitiveness.size > 0 && !selectedFilters.competitiveness.has(comp)) {
           return false;
         }
 
-        // Class Size Slider
-        if (size > maxClassSize) {
+        if (classSize > maxClassSize) {
           return false;
         }
 
-        // Perks Check
-        if (parkingReq && !isTrueValue(getVal(prog, 'Free Parking'))) return false;
-        if (housingReq && !isTrueValue(getVal(prog, 'Housing Stipend'))) return false;
-        if (mealReq && !isTrueValue(getVal(prog, 'Meal Stipend'))) return false;
-        if (techReq && !isTrueValue(getVal(prog, 'Tech Stipend'))) return false;
+        if (requireParking && !isTrueValue(getVal(prog, ['Free Parking', 'Parking']))) return false;
+        if (requireHousing && !isTrueValue(getVal(prog, ['Housing Stipend', 'Housing']))) return false;
+        if (requireMeals && !isTrueValue(getVal(prog, ['Meal Stipend', 'Meals']))) return false;
+        if (requireTech && !isTrueValue(getVal(prog, ['Tech Stipend', 'Tech']))) return false;
 
         return true;
       });
@@ -733,33 +728,36 @@
       createMapPins(filtered);
     }
 
-    function loadCSVData() {
-      Papa.parse("programs.csv", {
+    function initEventListeners() {
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
+      document.getElementById('classSizeFilter').addEventListener('input', (e) => {
+        document.getElementById('classSizeValue').innerText = e.target.value;
+        applyFilters();
+      });
+
+      ['parkingFilter', 'housingFilter', 'mealFilter', 'techFilter'].forEach(id => {
+        document.getElementById(id).addEventListener('change', applyFilters);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      setupDropdownControls();
+      initEventListeners();
+
+      Papa.parse('programs.csv', {
         download: true,
         header: true,
         skipEmptyLines: true,
         complete: function(results) {
-          allPrograms = results.data.filter(p => getVal(p, 'Program') !== 'N/A');
+          allPrograms = results.data;
           populateDropdowns(allPrograms);
-          setupDropdownControls();
           applyFilters();
+        },
+        error: function(err) {
+          console.warn("Could not load programs.csv automatically. Please ensure CSV is present or use local server.", err);
         }
       });
-    }
-
-    document.getElementById('searchInput').addEventListener('input', applyFilters);
-    document.getElementById('classSizeFilter').addEventListener('input', (e) => {
-      document.getElementById('classSizeValue').innerText = e.target.value;
-      applyFilters();
-    });
-
-    ['parkingFilter', 'housingFilter', 'mealFilter', 'techFilter'].forEach(id => {
-      document.getElementById(id).addEventListener('change', applyFilters);
-    });
-
-    window.addEventListener('DOMContentLoaded', () => {
-      initMap();
-      loadCSVData();
     });
   </script>
 </body>
