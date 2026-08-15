@@ -329,9 +329,16 @@
       const avgHours = getVal(prog, ['Hours/Week', 'Hours/week', 'Work Hours']);
       const shiftLength = getVal(prog, ['Longest Shift', 'Shift Length']);
       const daysOff = getVal(prog, ['Days Off/week', 'Days Off']);
-      const sickDays = getVal(prog, ['Sick Days']);
-      const vacationDays = getVal(prog, ['Vacation Days']);
-      const paidLeave = getVal(prog, ['Family Leave Paid/Unpaid', 'Family Leave']);
+      const formatNegotiable = (value) => {
+  return String(value).trim().toUpperCase() === 'N' ? 'Negotiable' : value;
+};
+
+const sickDays = formatNegotiable(getVal(prog, ['Sick Days']));
+const vacationDays = formatNegotiable(getVal(prog, ['Vacation Days']));
+
+const rawFamilyLeave = getVal(prog, ['Family Leave Paid/Unpaid', 'Family Leave']);
+const familyLeaveParts = String(rawFamilyLeave).split('/').map(part => formatNegotiable(part.trim()));
+const paidLeave = familyLeaveParts.join(' / ');
 
       const baseSalary = getVal(prog, ['Salary', 'Base Salary']);
       const colSalary = getVal(prog, ['COL-Adjusted Salary', 'COL Salary']);
@@ -411,7 +418,7 @@
                 <span class="font-medium text-[#2D3132]">${vacationDays}</span>
               </div>
               <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-                <span class="text-[#6B7280]">Family Leave:</span>
+                <span class="text-[#6B7280]">Family Leave (Paid / Unpaid):</span>
                 <span class="font-medium text-[#2D3132]">${paidLeave}</span>
               </div>
             </div>
