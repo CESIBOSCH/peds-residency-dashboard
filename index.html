@@ -189,7 +189,7 @@
       </div>
 
       <!-- Program Cards Container -->
-      <div id="programList" class="p-3 space-y-2 bg-[#FAF9F5] shrink-0 transition-all"></div>
+      <div id="programList" class="p-3 space-y-2 bg-[#FFFFFF] shrink-0 transition-all"></div>
 
     </aside>
 
@@ -566,7 +566,7 @@
         label.className = "flex items-center gap-2 px-1.5 py-1 hover:bg-[#FBF4F1] rounded cursor-pointer text-stone-700 transition";
         label.innerHTML = `
           <input type="checkbox" value="${val}" data-type="${type}" class="filter-checkbox rounded border-[#E5E0D8]">
-          <span class="truncate text-xs">${displayVal}</span>
+          <span class="text-xs">${displayVal}</span>
         `;
         menu.appendChild(label);
       });
@@ -706,15 +706,18 @@
       const programsHeader = document.getElementById('programsHeader');
       const programList = document.getElementById('programList');
       const toggleIcon = document.getElementById('programsToggleIcon');
+      const sidebar = document.getElementById('sidebar');
 
       programsHeader.addEventListener('click', () => {
         isProgramsCollapsed = !isProgramsCollapsed;
         if (isProgramsCollapsed) {
           programList.style.display = 'none';
           toggleIcon.style.transform = 'rotate(-90deg)';
+          sidebar.style.backgroundColor = '#FFFFFF';
         } else {
           programList.style.display = 'block';
           toggleIcon.style.transform = 'rotate(0deg)';
+          sidebar.style.backgroundColor = '';
         }
       });
     }
