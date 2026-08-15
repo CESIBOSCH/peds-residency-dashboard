@@ -56,7 +56,7 @@
     }
     .leaflet-popup-content {
       margin: 0 !important;
-      width: 300px !important;
+      width: 320px !important;
     }
     .leaflet-popup-tip {
       background: #FAF8F3;
@@ -78,16 +78,7 @@
       background-color: var(--accent-terracotta);
     }
 
-    /* Sliders & Scrollbars */
-    input[type=range]::-webkit-slider-thumb {
-      background: var(--accent-terracotta);
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      cursor: pointer;
-      -webkit-appearance: none;
-    }
-    
+    /* Custom Scrollbars */
     .custom-scroll::-webkit-scrollbar {
       width: 4px;
     }
@@ -128,7 +119,7 @@
         <h2 class="text-xs font-semibold uppercase tracking-wider text-[#343A3B]">Filter Options</h2>
       </div>
 
-      <div class="p-4 border-b border-[#D8CDBD]/40 space-y-3 custom-scroll max-h-[360px] overflow-y-auto">
+      <div class="p-4 border-b border-[#D8CDBD]/40 space-y-3 custom-scroll max-h-[340px] overflow-y-auto">
         <div class="space-y-1">
           <label class="text-[10px] font-semibold uppercase tracking-wider text-[#74736E]">Search</label>
           <input 
@@ -153,19 +144,6 @@
             <div id="stateDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
           </div>
 
-          <!-- Interest Filter -->
-          <div class="space-y-1 relative dropdown-container">
-            <div class="flex justify-between items-center">
-              <label class="text-[10px] font-semibold uppercase tracking-wider text-[#74736E]">Interest Level</label>
-              <button type="button" id="resetInterestBtn" class="text-[9px] text-[#74736E] hover:text-[#C86D51] underline hidden">Clear</button>
-            </div>
-            <button type="button" data-dropdown="interest" class="dropdown-btn w-full px-2.5 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-white text-[#343A3B]">
-              <span id="interestDropdownLabel" class="truncate">All Levels</span>
-              <span class="text-[8px] text-[#C86D51]">▼</span>
-            </button>
-            <div id="interestDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#D8CDBD] rounded-lg shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
-          </div>
-
           <!-- Setting Filter -->
           <div class="space-y-1 relative dropdown-container">
             <div class="flex justify-between items-center">
@@ -182,7 +160,7 @@
           <!-- Competitiveness Filter -->
           <div class="space-y-1 relative dropdown-container">
             <div class="flex justify-between items-center">
-              <label class="text-[10px] font-semibold uppercase tracking-wider text-[#74736E]">Competitiveness</label>
+              <label class="text-[10px] font-semibold uppercase tracking-wider text-[#74736E]">Tier / Competitiveness</label>
               <button type="button" id="resetCompetitivenessBtn" class="text-[9px] text-[#74736E] hover:text-[#C86D51] underline hidden">Clear</button>
             </div>
             <button type="button" data-dropdown="competitiveness" class="dropdown-btn w-full px-2.5 py-1.5 rounded-lg border border-[#D8CDBD] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-white text-[#343A3B]">
@@ -235,41 +213,55 @@
 
     </aside>
 
-    <!-- MAP -->
-    <main class="flex-1 min-h-[500px] rounded-2xl border border-[#D8CDBD]/80 overflow-hidden shadow-sm relative bg-[#F3EFE5]">
-      <div id="map" class="w-full h-full"></div>
+    <!-- MAP CONTAINER WITH PREVIEW BANNER -->
+    <main class="flex-1 min-h-[500px] rounded-2xl border border-[#D8CDBD]/80 overflow-hidden shadow-sm relative bg-[#F3EFE5] flex flex-col">
+      <div id="map" class="w-full h-full flex-1"></div>
+
+      <!-- COMPACT PROGRAM PREVIEW BAR (POPS UP ON SIDEBAR CLICK) -->
+      <div id="previewBar" class="hidden absolute bottom-4 left-4 right-4 z-[1000] bg-[#FAF8F3] border border-[#D8CDBD] rounded-xl p-3 shadow-xl flex items-center justify-between gap-3 transition-all">
+        <div class="truncate">
+          <div class="text-[10px] uppercase font-semibold text-[#C86D51]" id="previewLocation">Location</div>
+          <div class="text-xs font-medium text-[#343A3B] truncate" id="previewTitle">Program Name</div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button id="openFactSheetBtn" class="px-3 py-1.5 rounded-lg bg-[#C86D51] text-white text-xs font-medium hover:bg-[#b05b41] transition">View Full Fact Sheet</button>
+          <button id="closePreviewBtn" class="p-1 text-[#74736E] hover:text-[#343A3B] text-xs">✕</button>
+        </div>
+      </div>
     </main>
 
   </div>
 
   <script>
     let allPrograms = [];
-    let selectedFilters = { state: new Set(), interest: new Set(), setting: new Set(), competitiveness: new Set() };
+    let selectedFilters = { state: new Set(), setting: new Set(), competitiveness: new Set() };
     let map;
     let markersMap = new Map();
-    let airportCache = new Map();
+    let currentSelectedProgram = null;
+
+    // City to Nearest Airport Lookup Mapping
+    const airportLookup = {
+      "Phoenix, AZ": "PHX", "Los Angeles, CA": "LAX", "San Francisco, CA": "SFO",
+      "Oakland, CA": "OAK", "Sacramento, CA": "SMF", "San Diego, CA": "SAN",
+      "New Haven, CT": "BDL", "Denver, CO": "DEN", "Washington, DC": "DCA",
+      "Chicago, IL": "ORD", "Boston, MA": "BOS", "Baltimore, MD": "BWI",
+      "Ann Arbor, MI": "DTW", "Minneapolis, MN": "MSP", "St. Louis, MO": "STL",
+      "Chapel Hill, NC": "RDU", "Charlotte, NC": "CLT", "Philadelphia, PA": "PHL",
+      "Pittsburgh, PA": "PIT", "Seattle, WA": "SEA", "New York, NY": "JFK",
+      "Houston, TX": "IAH", "Dallas, TX": "DFW", "Atlanta, GA": "ATL"
+    };
 
     const cityCoordinates = {
-      "Phoenix, AZ": [33.4484, -112.0740],
-      "Los Angeles, CA": [34.0522, -118.2437],
-      "San Francisco, CA": [37.7749, -122.4194],
-      "Oakland, CA": [37.8044, -122.2712],
-      "Sacramento, CA": [38.5816, -121.4944],
-      "San Diego, CA": [32.7157, -117.1611],
-      "New Haven, CT": [41.3083, -72.9279],
-      "Denver, CO": [39.7392, -104.9903],
-      "Washington, DC": [38.9072, -77.0369],
-      "Chicago, IL": [41.8781, -87.6298],
-      "Boston, MA": [42.3601, -71.0589],
-      "Baltimore, MD": [39.2904, -76.6122],
-      "Ann Arbor, MI": [42.2808, -83.7430],
-      "Minneapolis, MN": [44.9778, -93.2650],
-      "St. Louis, MO": [38.6270, -90.1994],
-      "Chapel Hill, NC": [35.9132, -79.0558],
-      "Charlotte, NC": [35.2271, -80.8431],
-      "Philadelphia, PA": [39.9526, -75.1652],
-      "Pittsburgh, PA": [40.4406, -79.9959],
-      "Seattle, WA": [47.6062, -122.3321]
+      "Phoenix, AZ": [33.4484, -112.0740], "Los Angeles, CA": [34.0522, -118.2437],
+      "San Francisco, CA": [37.7749, -122.4194], "Oakland, CA": [37.8044, -122.2712],
+      "Sacramento, CA": [38.5816, -121.4944], "San Diego, CA": [32.7157, -117.1611],
+      "New Haven, CT": [41.3083, -72.9279], "Denver, CO": [39.7392, -104.9903],
+      "Washington, DC": [38.9072, -77.0369], "Chicago, IL": [41.8781, -87.6298],
+      "Boston, MA": [42.3601, -71.0589], "Baltimore, MD": [39.2904, -76.6122],
+      "Ann Arbor, MI": [42.2808, -83.7430], "Minneapolis, MN": [44.9778, -93.2650],
+      "St. Louis, MO": [38.6270, -90.1994], "Chapel Hill, NC": [35.9132, -79.0558],
+      "Charlotte, NC": [35.2271, -80.8431], "Philadelphia, PA": [39.9526, -75.1652],
+      "Pittsburgh, PA": [40.4406, -79.9959], "Seattle, WA": [47.6062, -122.3321]
     };
 
     function cleanSettingName(val) {
@@ -287,6 +279,11 @@
       return ['yes', 'true', '1', 'x', 'y'].includes(cleanVal);
     }
 
+    function formatVal(val, defaultVal = 'N/A') {
+      if (val === null || val === undefined || val === '') return defaultVal;
+      return val;
+    }
+
     function initMap() {
       map = L.map('map', { zoomControl: false }).setView([39.8283, -98.5795], 4);
       L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -298,38 +295,18 @@
       }).addTo(map);
     }
 
-    // Dynamic Airport Lookup using OpenStreetMap Nominatim API
-    async function getNearestAirport(city, state, lat, lng) {
-      const cacheKey = `${city}_${state}`;
-      if (airportCache.has(cacheKey)) return airportCache.get(cacheKey);
-
-      try {
-        const query = encodeURIComponent(`international airport near ${city} ${state}`);
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`);
-        const data = await response.json();
-
-        if (data && data.length > 0) {
-          const airportName = data[0].display_name.split(',')[0];
-          airportCache.set(cacheKey, airportName);
-          return airportName;
-        }
-      } catch (err) {
-        console.warn("Could not auto-fetch airport:", err);
-      }
-
-      const fallback = `${city} Regional Airport`;
-      airportCache.set(cacheKey, fallback);
-      return fallback;
-    }
-
     function createInMapFactSheetPopup(prog) {
       const city = prog['City'] || '';
       const state = prog['State'] || '';
-      const interest = prog['Interest'] || 'Standard';
+      const cityStateKey = `${city}, ${state}`;
+      
+      const website = prog['Website'] || prog['URL'] || '#';
+      const programName = prog['Program'] || 'Program Info';
+      
+      // Nearest Airport lookup
+      const airport = prog['Nearest Airport'] || prog['Airport'] || airportLookup[cityStateKey] || (city ? `${city.substring(0,3).toUpperCase()} Airport` : 'N/A');
 
-      // Reads 'Nearest Airport' or 'Airport' from CSV if present
-      const airportFromCSV = prog['Nearest Airport'] || prog['Airport'] || null;
-
+      // Perks
       let perksHTML = '';
       const perks = [
         { label: 'Parking', val: prog['Free Parking'] || prog['Parking'] },
@@ -343,74 +320,117 @@
           perksHTML += `<span class="text-[9px] bg-[#E2E9E3] text-[#343A3B] border border-[#82988B]/40 px-1.5 py-0.5 rounded">✓ ${p.label}</span> `;
         }
       });
-
       if (!perksHTML) perksHTML = `<span class="text-[10px] text-[#74736E] italic">Standard Benefits</span>`;
 
-      // Unique container ID for dynamic airport loading
-      const airportContainerId = `airport-${(prog['Program'] || 'prog').replace(/[^a-zA-Z0-0]/g, '')}`;
-
-      // Auto-trigger dynamic airport lookup if not in CSV
-      if (!airportFromCSV) {
-        getNearestAirport(city, state, prog['Latitude'], prog['Longitude']).then(airportName => {
-          const el = document.getElementById(airportContainerId);
-          if (el) el.innerText = airportName;
-        });
-      }
+      // Family Leave Paid/Unpaid Display
+      const paidLeave = formatVal(prog['Paid Family Leave Days'] || prog['Paid Family Leave'], 'N/A');
+      const unpaidLeave = formatVal(prog['Unpaid Family Leave Days'] || prog['Unpaid Family Leave'], 'N/A');
 
       return `
-        <div class="p-3.5 space-y-2.5 font-sans">
-          <!-- Header -->
+        <div class="p-3.5 space-y-3 font-sans max-h-[420px] overflow-y-auto custom-scroll">
+          
+          <!-- Header with Direct Website Link -->
           <div class="border-b border-[#D8CDBD]/60 pb-2">
-            <span class="text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded border border-[#C86D51]/30 bg-[#F5ECE8] text-[#C86D51] inline-block mb-1">${interest}</span>
-            <h3 class="font-medium text-xs text-[#343A3B] leading-snug">${prog['Program'] || 'Program Info'}</h3>
+            <h3 class="font-medium text-xs text-[#343A3B] leading-snug">
+              ${website !== '#' ? `<a href="${website}" target="_blank" rel="noopener noreferrer" class="text-[#C86D51] hover:underline flex items-center gap-1">${programName} <span class="text-[9px]">↗</span></a>` : programName}
+            </h3>
             <p class="text-[10px] text-[#74736E] mt-0.5">${city}${city && state ? ', ' : ''}${state}</p>
           </div>
 
-          <!-- Airport Field -->
-          <div class="bg-[#F3EFE5] p-2 rounded-lg border border-[#D8CDBD]/60 text-[10px] flex justify-between items-center">
-            <span class="font-semibold text-[#343A3B] flex items-center gap-1">✈️ Nearest Airport:</span>
-            <span id="${airportContainerId}" class="font-medium text-[#C86D51] text-right truncate max-w-[160px]">
-              ${airportFromCSV || 'Searching airport...'}
-            </span>
-          </div>
-
-          <!-- Stats Grid -->
-          <div class="grid grid-cols-2 gap-1.5 text-[10px]">
-            <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50">
-              <span class="text-[#74736E] block text-[8px] uppercase">Setting</span>
-              <span class="font-medium text-[#343A3B] truncate block">${cleanSettingName(prog['Setting'])}</span>
-            </div>
-            <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50">
-              <span class="text-[#74736E] block text-[8px] uppercase">Class Size</span>
-              <span class="font-medium text-[#343A3B]">${prog['Class size'] || 'N/A'}</span>
-            </div>
-            <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50">
-              <span class="text-[#74736E] block text-[8px] uppercase">Competitiveness</span>
-              <span class="font-medium text-[#343A3B]">${prog['Competitiveness'] || 'N/A'}</span>
-            </div>
-            <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50">
-              <span class="text-[#74736E] block text-[8px] uppercase">Step Score</span>
-              <span class="font-medium text-[#343A3B]">${prog['Step Score Range'] || prog['Step Score'] || 'N/A'}</span>
+          <!-- Section 1: Basics -->
+          <div class="space-y-1">
+            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#74736E]">Basics</span>
+            <div class="grid grid-cols-2 gap-1.5 text-[10px]">
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50">
+                <span class="text-[#74736E] block text-[8px] uppercase">Location</span>
+                <span class="font-medium text-[#343A3B] truncate block">${city}, ${state}</span>
+              </div>
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50">
+                <span class="text-[#74736E] block text-[8px] uppercase">Nearest Airport</span>
+                <span class="font-medium text-[#C86D51] truncate block">${airport}</span>
+              </div>
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50">
+                <span class="text-[#74736E] block text-[8px] uppercase">Setting</span>
+                <span class="font-medium text-[#343A3B] truncate block">${cleanSettingName(prog['Setting'])}</span>
+              </div>
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50">
+                <span class="text-[#74736E] block text-[8px] uppercase">Class Size</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Class size'])}</span>
+              </div>
             </div>
           </div>
 
-          <!-- Work & Leave -->
-          <div class="bg-white p-2 rounded border border-[#D8CDBD]/50 text-[10px] space-y-1">
-            <div class="flex justify-between">
-              <span class="text-[#74736E]">Avg Hours:</span>
-              <span class="font-medium text-[#343A3B]">${prog['Work Hours'] || 'Standard ACGME'}</span>
+          <!-- Section 2: Application -->
+          <div class="space-y-1">
+            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#74736E]">Application</span>
+            <div class="grid grid-cols-2 gap-1.5 text-[10px]">
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50">
+                <span class="text-[#74736E] block text-[8px] uppercase">Tier / Match</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Competitiveness'] || prog['Tier'])}</span>
+              </div>
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50">
+                <span class="text-[#74736E] block text-[8px] uppercase">Step Score Target</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Step Score Range'] || prog['Step Score'])}</span>
+              </div>
             </div>
-            <div class="flex justify-between border-t border-[#F3EFE5] pt-1">
-              <span class="text-[#74736E]">Leave:</span>
-              <span class="font-medium text-[#343A3B]">${prog['Vacation'] || '4 Weeks Paid'}</span>
+          </div>
+
+          <!-- Section 3: Work & Leave -->
+          <div class="space-y-1">
+            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#74736E]">Work & Leave</span>
+            <div class="bg-white p-2 rounded border border-[#D8CDBD]/50 text-[10px] space-y-1">
+              <div class="flex justify-between">
+                <span class="text-[#74736E]">Avg Hours / Week:</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Work Hours'] || prog['Average Hours Worked'])}</span>
+              </div>
+              <div class="flex justify-between border-t border-[#F3EFE5] pt-1">
+                <span class="text-[#74736E]">Longest Shift:</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Longest Shift Length'] || prog['Shift Length'])}</span>
+              </div>
+              <div class="flex justify-between border-t border-[#F3EFE5] pt-1">
+                <span class="text-[#74736E]">Avg Days Off / Wk:</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Days Off Per Week'])}</span>
+              </div>
+              <div class="flex justify-between border-t border-[#F3EFE5] pt-1">
+                <span class="text-[#74736E]">Sick Days:</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Sick Days'])}</span>
+              </div>
+              <div class="flex justify-between border-t border-[#F3EFE5] pt-1">
+                <span class="text-[#74736E]">Vacation Days:</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Vacation'] || prog['Vacation Days'])}</span>
+              </div>
+              <div class="flex justify-between border-t border-[#F3EFE5] pt-1">
+                <span class="text-[#74736E]">Family Leave (Paid/Unpaid):</span>
+                <span class="font-medium text-[#343A3B]">${paidLeave} / ${unpaidLeave}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: Compensation -->
+          <div class="space-y-1">
+            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#74736E]">Compensation</span>
+            <div class="grid grid-cols-3 gap-1 text-[9px]">
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50 text-center">
+                <span class="text-[#74736E] block text-[7px] uppercase">Base Salary</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['Salary'])}</span>
+              </div>
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50 text-center">
+                <span class="text-[#74736E] block text-[7px] uppercase">COL Adjusted</span>
+                <span class="font-medium text-[#343A3B]">${formatVal(prog['COL Adjusted Salary'])}</span>
+              </div>
+              <div class="bg-white p-1.5 rounded border border-[#D8CDBD]/50 text-center">
+                <span class="text-[#74736E] block text-[7px] uppercase">Stretch Score</span>
+                <span class="font-medium text-[#C86D51]">${formatVal(prog['Salary Stretch Score'])}</span>
+              </div>
             </div>
           </div>
 
           <!-- Perks -->
           <div class="pt-1 border-t border-[#D8CDBD]/40">
-            <span class="text-[9px] text-[#74736E] uppercase font-semibold block mb-1">Perks & Benefits:</span>
+            <span class="text-[9px] text-[#74736E] uppercase font-semibold block mb-1">Perks & Key Benefits</span>
             <div class="flex flex-wrap gap-1">${perksHTML}</div>
           </div>
+
         </div>
       `;
     }
@@ -466,7 +486,6 @@
         const programName = prog['Program'] || 'N/A';
         const city = prog['City'] || '';
         const state = prog['State'] || '';
-        const interest = prog['Interest'] || '-';
         const setting = cleanSettingName(prog['Setting']);
 
         const card = document.createElement('div');
@@ -478,34 +497,43 @@
           </div>
           <p class="text-[10px] text-[#74736E] mt-0.5">${city}${city && state ? ', ' : ''}${state}</p>
           <div class="mt-2 pt-1.5 border-t border-[#F3EFE5] flex justify-between items-center text-[10px] text-[#74736E]">
-            <span class="truncate max-w-[120px]">${setting}</span>
-            <span class="font-medium text-[#C86D51] bg-[#F5ECE8] px-1.5 py-0.5 rounded">${interest}</span>
-          </div>
-          <div class="mt-2 pt-1.5 border-t border-[#F3EFE5] flex gap-2 text-[10px]">
-            <button class="locate-btn flex-1 py-1 rounded bg-[#F3EFE5] hover:bg-[#C86D51] hover:text-white transition text-[#343A3B] font-medium text-center">Locate & View Details</button>
+            <span class="truncate">${setting}</span>
+            <span class="text-[#C86D51] font-medium text-[9px]">Select →</span>
           </div>
         `;
 
-        card.querySelector('.locate-btn').addEventListener('click', (e) => {
-          e.stopPropagation();
-          triggerProgramFocus(programName);
-        });
-
         card.addEventListener('click', () => {
-          triggerProgramFocus(programName);
+          showProgramPreview(prog);
         });
 
         listContainer.appendChild(card);
       });
     }
 
-    function triggerProgramFocus(programName) {
-      const marker = markersMap.get(programName);
-      if (marker) {
-        map.flyTo(marker.getLatLng(), 11, { duration: 1.2 });
-        marker.openPopup();
-      }
+    function showProgramPreview(prog) {
+      currentSelectedProgram = prog;
+      const previewBar = document.getElementById('previewBar');
+      const title = document.getElementById('previewTitle');
+      const location = document.getElementById('previewLocation');
+
+      title.innerText = prog['Program'] || 'Program Selected';
+      location.innerText = `${prog['City'] || ''}, ${prog['State'] || ''}`;
+      previewBar.classList.remove('hidden');
     }
+
+    document.getElementById('openFactSheetBtn').addEventListener('click', () => {
+      if (currentSelectedProgram) {
+        const programName = currentSelectedProgram['Program'];
+        const marker = markersMap.get(programName);
+        if (marker) {
+          marker.openPopup();
+        }
+      }
+    });
+
+    document.getElementById('closePreviewBtn').addEventListener('click', () => {
+      document.getElementById('previewBar').classList.add('hidden');
+    });
 
     function buildMultiSelectDropdown(type, values, placeholder) {
       const menu = document.getElementById(`${type}DropdownMenu`);
@@ -572,8 +600,8 @@
         document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden'));
       });
 
-      ['state', 'interest', 'setting', 'competitiveness'].forEach(type => {
-        const placeholders = { state: 'All States', interest: 'All Levels', setting: 'All Settings', competitiveness: 'All Tiers' };
+      ['state', 'setting', 'competitiveness'].forEach(type => {
+        const placeholders = { state: 'All States', setting: 'All Settings', competitiveness: 'All Tiers' };
         const resetBtn = document.getElementById(`reset${type.charAt(0).toUpperCase() + type.slice(1)}Btn`);
         resetBtn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -587,12 +615,11 @@
     }
 
     function populateDropdowns(data) {
-      const sets = { state: new Set(), interest: new Set(), setting: new Set(), competitiveness: new Set() };
+      const sets = { state: new Set(), setting: new Set(), competitiveness: new Set() };
       let maxClassFound = 0;
 
       data.forEach(prog => {
         if (prog['State']) sets.state.add(prog['State'].trim());
-        if (prog['Interest']) sets.interest.add(prog['Interest'].trim());
         if (prog['Setting']) sets.setting.add(prog['Setting'].trim());
         if (prog['Competitiveness']) sets.competitiveness.add(prog['Competitiveness'].trim());
         
@@ -601,7 +628,6 @@
       });
 
       buildMultiSelectDropdown('state', sets.state, 'All States');
-      buildMultiSelectDropdown('interest', sets.interest, 'All Levels');
       buildMultiSelectDropdown('setting', sets.setting, 'All Settings');
       buildMultiSelectDropdown('competitiveness', sets.competitiveness, 'All Tiers');
 
@@ -626,13 +652,11 @@
         const name = (prog['Program'] || '').toLowerCase();
         const city = (prog['City'] || '').toLowerCase();
         const progState = (prog['State'] || '').trim();
-        const progInterest = (prog['Interest'] || '').trim();
         const progSetting = (prog['Setting'] || '').trim();
         const progCompetitiveness = (prog['Competitiveness'] || '').trim();
         
         const matchesSearch = name.includes(searchVal) || city.includes(searchVal);
         const matchesState = selectedFilters.state.size === 0 || selectedFilters.state.has(progState);
-        const matchesInterest = selectedFilters.interest.size === 0 || selectedFilters.interest.has(progInterest);
         const matchesSetting = selectedFilters.setting.size === 0 || selectedFilters.setting.has(progSetting);
         const matchesCompetitiveness = selectedFilters.competitiveness.size === 0 || selectedFilters.competitiveness.has(progCompetitiveness);
 
@@ -644,7 +668,7 @@
         const matchesMeal = !requireMeal || isTrueValue(prog['Meal Stipend'] || prog['Meals']);
         const matchesTech = !requireTech || isTrueValue(prog['Tech Stipend'] || prog['Tech']);
 
-        return matchesSearch && matchesState && matchesInterest && matchesSetting && 
+        return matchesSearch && matchesState && matchesSetting && 
                matchesCompetitiveness && matchesClassSize && matchesParking && 
                matchesHousing && matchesMeal && matchesTech;
       });
