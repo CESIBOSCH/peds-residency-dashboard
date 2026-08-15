@@ -96,7 +96,6 @@
   <!-- HEADER -->
   <header class="w-full max-w-7xl mx-auto flex items-center justify-between pb-3 border-b border-[#E5E0D8] shrink-0">
     <h1 class="text-xl md:text-2xl font-light tracking-tight text-[#2D3132]">Pediatrics Residencies</h1>
-    <span id="programCount" class="text-xs font-medium text-[#C86D51] bg-[#FBF4F1] px-3 py-1 rounded-full border border-[#C86D51]/20">0 Programs Found</span>
   </header>
 
   <!-- MAIN WRAPPER (CONTAINED HEIGHT) -->
@@ -503,8 +502,6 @@
     function renderSidebarList(programs) {
       const listContainer = document.getElementById('programList');
       listContainer.innerHTML = '';
-
-      document.getElementById('programCount').innerText = `${programs.length} Programs Found`;
 
       if (programs.length === 0) {
         listContainer.innerHTML = `<p class="text-xs text-[#6B7280] text-center py-6">No matching programs found.</p>`;
