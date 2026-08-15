@@ -479,11 +479,9 @@
             </div>
           `, { className: 'custom-map-tooltip', direction: 'top', offset: [0, -5] });
 
-          marker.bindPopup(createInMapFactSheetPopup(prog), {
-  offset: [0, 180],
-  autoPan: true,
-  autoPanPaddingTopLeft: [20, 220],
-  autoPanPaddingBottomRight: [20, 20]
+         marker.bindPopup(createInMapFactSheetPopup(prog), {
+  autoPan: false,
+  keepInView: false
 });
           markersMap.set(programName, marker);
         }
@@ -526,15 +524,21 @@
   const marker = markersMap.get(programName);
 
   if (marker) {
-    map.flyTo(marker.getLatLng(), 5, {
-      animate: true,
-      duration: 1.5
-    });
+  const pin = marker.getLatLng();
 
-    setTimeout(() => {
-      marker.openPopup();
-    }, 1600);
-  }
+  const targetPoint = map.project(pin, 5);
+  targetPoint.y -= 140;
+  const targetLatLng = map.unproject(targetPoint, 5);
+
+  map.flyTo(targetLatLng, 5, {
+    animate: true,
+    duration: 1.5
+  });
+
+  setTimeout(() => {
+    marker.openPopup();
+  }, 1600);
+}
 });
 
         listContainer.appendChild(card);
