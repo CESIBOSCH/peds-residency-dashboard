@@ -55,13 +55,6 @@
       return 'N/A';
     }
 
-    function formatNegotiable(val) {
-      if (!val || val === 'N/A' || val.toUpperCase() === 'N') {
-        return 'Negotiable';
-      }
-      return val;
-    }
-
     function isTrueValue(val) {
       if (!val) return false;
       const cleanVal = String(val).trim().toLowerCase();
@@ -120,12 +113,12 @@
 
       const stepScore = getVal(prog, ['Step Score Range', 'Step Score', 'step_score']);
 
-      const avgHours = formatNegotiable(getVal(prog, ['Hours/Week', 'Hours/week', 'Work Hours']));
-      const shiftLength = formatNegotiable(getVal(prog, ['Longest Shift', 'Shift Length']));
-      const daysOff = formatNegotiable(getVal(prog, ['Days Off/week', 'Days Off']));
-      const sickDays = formatNegotiable(getVal(prog, ['Sick Days']));
-      const vacationDays = formatNegotiable(getVal(prog, ['Vacation Days']));
-      const paidLeave = formatNegotiable(getVal(prog, ['Family Leave Paid/Unpaid', 'Family Leave']));
+      const avgHours = getVal(prog, ['Hours/Week', 'Hours/week', 'Work Hours']);
+      const shiftLength = getVal(prog, ['Longest Shift', 'Shift Length']);
+      const daysOff = getVal(prog, ['Days Off/week', 'Days Off']);
+      const sickDays = getVal(prog, ['Sick Days']);
+      const vacationDays = getVal(prog, ['Vacation Days']);
+      const paidLeave = getVal(prog, ['Family Leave Paid/Unpaid', 'Family Leave']);
 
       const baseSalary = getVal(prog, ['Salary', 'Base Salary']);
       const colSalary = getVal(prog, ['COL-Adjusted Salary', 'COL Salary']);
