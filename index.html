@@ -518,7 +518,6 @@
         `;
 
         card.addEventListener('click', () => {
-          showProgramPreview(prog);
           const marker = markersMap.get(programName);
           if (marker) {
             map.setView(marker.getLatLng(), 8, { animate: true });
