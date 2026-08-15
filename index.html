@@ -15,218 +15,231 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- Google Fonts: Plus Jakarta Sans for Modern Clean Typography -->
+  <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #f8fafc;
-      color: #0f172a;
+      background-color: #fcfbf9;
+      color: #2d3748;
     }
+
     #map {
       height: 100%;
       min-height: 400px;
       width: 100%;
-      border-radius: 0.75rem;
+      border-radius: 1rem;
       z-index: 1;
     }
+
     .custom-scrollbar::-webkit-scrollbar {
       width: 6px;
     }
     .custom-scrollbar::-webkit-scrollbar-track {
-      background: #f1f5f9;
+      background: #f7f7f7;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
+      background: #e2e8f0;
       border-radius: 3px;
     }
+
+    /* Soft Modal Overlay */
     .modal-backdrop {
-      background-color: rgba(15, 23, 42, 0.4);
+      background-color: rgba(15, 23, 42, 0.25);
       backdrop-filter: blur(4px);
+    }
+
+    /* Soft Card Styling matching original design */
+    .face-card {
+      background-color: #faf9f5;
+      border: 1 border-solid #eeeade;
+      border-radius: 1rem;
+    }
+
+    /* Benefit Badges matching original warm pill style */
+    .pill-active {
+      background-color: #fcebe6;
+      color: #d96b52;
+      border: 1px solid #f8d5cb;
+    }
+    .pill-inactive {
+      background-color: #f3f4f6;
+      color: #9ca3af;
+      border: 1px solid #e5e7eb;
+      text-decoration: line-through;
     }
   </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden">
+<body class="h-screen flex flex-col overflow-hidden bg-[#faf9f6]">
 
   <!-- Header -->
-  <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shrink-0">
-    <div class="flex items-center space-x-3">
-      <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-lg">
-        P
-      </div>
-      <div>
-        <h1 class="text-xl font-bold text-slate-900 leading-none">Pediatrics Residencies</h1>
-        <p class="text-xs text-slate-500 font-medium mt-1">Curated Program Explorer</p>
-      </div>
+  <header class="bg-white border-b border-stone-200/70 px-8 py-5 flex items-center justify-between shrink-0 shadow-sm">
+    <div>
+      <h1 class="text-2xl font-bold text-stone-900 tracking-tight">Pediatrics Residencies</h1>
+      <p class="text-xs text-stone-500 font-medium mt-0.5">Curated Program Explorer</p>
     </div>
-    <div class="text-xs font-semibold px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100">
+    <div class="text-xs font-semibold px-3 py-1.5 bg-stone-100 text-stone-700 rounded-full border border-stone-200">
       <span id="program-count">0</span> Programs Loaded
     </div>
   </header>
 
-  <!-- Main Container -->
+  <!-- Main View -->
   <div class="flex-1 flex overflow-hidden">
     
-    <!-- Sidebar: Search & Filters + List -->
-    <aside class="w-96 bg-white border-r border-slate-200 flex flex-col shrink-0">
-      
-      <!-- Controls Header -->
-      <div class="p-4 border-b border-slate-100 space-y-3">
+    <!-- Sidebar -->
+    <aside class="w-96 bg-white border-r border-stone-200/70 flex flex-col shrink-0">
+      <div class="p-5 border-b border-stone-100 space-y-4">
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Search</label>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1.5">Filters & Search</label>
           <input type="text" id="search-input" placeholder="Search program, city, or state..." 
-            class="w-full text-sm px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+            class="w-full text-sm px-3.5 py-2.5 bg-[#faf9f5] border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-400 transition" />
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-2 gap-2.5">
           <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">State</label>
-            <select id="state-filter" class="w-full text-sm px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">State</label>
+            <select id="state-filter" class="w-full text-xs px-2.5 py-2 bg-[#faf9f5] border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-400">
               <option value="">All States</option>
             </select>
           </div>
           <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Setting</label>
-            <select id="setting-filter" class="w-full text-sm px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Setting</label>
+            <select id="setting-filter" class="w-full text-xs px-2.5 py-2 bg-[#faf9f5] border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-400">
               <option value="">All Settings</option>
             </select>
           </div>
         </div>
       </div>
 
-      <!-- Programs Count Header -->
-      <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
-        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Programs List</span>
-        <button id="reset-filters" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition">Reset Filters</button>
+      <div class="px-5 py-3 bg-[#faf9f6] border-b border-stone-100 flex justify-between items-center">
+        <span class="text-xs font-bold uppercase tracking-wider text-stone-500">Programs</span>
+        <button id="reset-filters" class="text-xs font-semibold text-stone-600 hover:text-stone-900 transition">Reset</button>
       </div>
 
-      <!-- Program List -->
-      <div id="program-list" class="flex-1 overflow-y-auto custom-scrollbar divide-y divide-slate-100">
+      <div id="program-list" class="flex-1 overflow-y-auto custom-scrollbar divide-y divide-stone-100">
       </div>
     </aside>
 
-    <!-- Map Area -->
-    <main class="flex-1 p-4 bg-slate-100 flex flex-col">
-      <div id="map" class="shadow-sm border border-slate-200"></div>
+    <!-- Map Canvas -->
+    <main class="flex-1 p-5 bg-[#f5f3ef] flex flex-col">
+      <div id="map" class="shadow-sm border border-stone-200"></div>
     </main>
   </div>
 
-  <!-- Facesheet Modal Popup -->
+  <!-- Facesheet Modal (Exact Match to Screenshot Design) -->
   <div id="facesheet-modal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto custom-scrollbar p-6 relative border border-slate-100">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[92vh] overflow-y-auto custom-scrollbar p-7 relative border border-stone-100">
       
       <!-- Close Button -->
-      <button id="close-modal" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      <button id="close-modal" class="absolute top-6 right-6 text-stone-400 hover:text-stone-700 p-1 rounded-full hover:bg-stone-100 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
         </svg>
       </button>
 
-      <!-- Program Header -->
-      <h2 id="modal-title" class="text-2xl font-bold text-slate-900 pr-8"></h2>
-      <div id="modal-subtitle" class="text-sm font-semibold text-indigo-600 mb-4 mt-0.5"></div>
+      <!-- Title -->
+      <h2 id="modal-title" class="text-2xl font-extrabold text-stone-900 pr-8 tracking-tight"></h2>
+      
+      <hr class="border-stone-100 my-5">
 
-      <hr class="border-slate-100 my-4">
-
-      <!-- Modal Body Sections -->
       <div class="space-y-6">
         
         <!-- BASICS -->
         <div>
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">BASICS</h3>
+          <h3 class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2.5">BASICS</h3>
           <div class="grid grid-cols-2 gap-3 mb-3">
-            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-              <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">LOCATION</div>
-              <div id="modal-location" class="text-sm font-semibold text-slate-800 mt-0.5"></div>
+            <div class="bg-[#faf9f5] p-3.5 rounded-2xl border border-stone-200/60">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-stone-400">LOCATION</div>
+              <div id="modal-location" class="text-sm font-bold text-stone-900 mt-1"></div>
             </div>
-            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-              <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">NEAREST AIRPORT</div>
-              <div id="modal-airport" class="text-sm font-semibold text-slate-800 mt-0.5"></div>
+            <div class="bg-[#faf9f5] p-3.5 rounded-2xl border border-stone-200/60">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-stone-400">NEAREST AIRPORT</div>
+              <div id="modal-airport" class="text-sm font-bold text-stone-900 mt-1"></div>
             </div>
           </div>
           <div class="grid grid-cols-3 gap-3">
-            <div class="col-span-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
-              <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">SETTING</div>
-              <div id="modal-setting" class="text-sm font-semibold text-slate-800 mt-0.5"></div>
+            <div class="col-span-2 bg-[#faf9f5] p-3.5 rounded-2xl border border-stone-200/60">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-stone-400">SETTING</div>
+              <div id="modal-setting" class="text-sm font-bold text-stone-900 mt-1"></div>
             </div>
-            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
-              <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">CLASS SIZE</div>
-              <div id="modal-class-size" class="text-base font-bold text-slate-800 mt-0.5"></div>
+            <div class="bg-[#faf9f5] p-3.5 rounded-2xl border border-stone-200/60 text-center">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-stone-400">CLASS SIZE</div>
+              <div id="modal-class-size" class="text-base font-extrabold text-stone-900 mt-0.5"></div>
             </div>
           </div>
         </div>
 
         <!-- APPLICATION -->
         <div>
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">APPLICATION</h3>
+          <h3 class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2.5">APPLICATION</h3>
           <div class="grid grid-cols-2 gap-3">
-            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-              <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">TIER / CATEGORY</div>
-              <div id="modal-tier" class="text-sm font-semibold text-slate-800 mt-0.5"></div>
+            <div class="bg-[#faf9f5] p-3.5 rounded-2xl border border-stone-200/60">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-stone-400">TIER / CATEGORY</div>
+              <div id="modal-tier" class="text-sm font-bold text-stone-900 mt-1"></div>
             </div>
-            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-              <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">STEP SCORE TARGET</div>
-              <div id="modal-step" class="text-sm font-semibold text-slate-800 mt-0.5"></div>
+            <div class="bg-[#faf9f5] p-3.5 rounded-2xl border border-stone-200/60">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-stone-400">STEP SCORE TARGET</div>
+              <div id="modal-step" class="text-sm font-bold text-stone-900 mt-1"></div>
             </div>
           </div>
         </div>
 
         <!-- WORK & LEAVE -->
         <div>
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">WORK & LEAVE</h3>
-          <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 space-y-2 text-sm">
-            <div class="flex justify-between items-center py-1 border-b border-slate-200/60">
-              <span class="text-slate-500 font-medium">Average Hours/Week:</span>
-              <span id="modal-hours" class="font-bold text-slate-800"></span>
+          <h3 class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2.5">WORK & LEAVE</h3>
+          <div class="bg-[#faf9f5] rounded-2xl p-4 border border-stone-200/60 space-y-2.5 text-sm">
+            <div class="flex justify-between items-center py-1 border-b border-stone-200/50">
+              <span class="text-stone-500 font-medium">Average Hours/Week:</span>
+              <span id="modal-hours" class="font-bold text-stone-900"></span>
             </div>
-            <div class="flex justify-between items-center py-1 border-b border-slate-200/60">
-              <span class="text-slate-500 font-medium">Longest Shift Length:</span>
-              <span id="modal-shift" class="font-bold text-slate-800"></span>
+            <div class="flex justify-between items-center py-1 border-b border-stone-200/50">
+              <span class="text-stone-500 font-medium">Longest Shift Length:</span>
+              <span id="modal-shift" class="font-bold text-stone-900"></span>
             </div>
-            <div class="flex justify-between items-center py-1 border-b border-slate-200/60">
-              <span class="text-slate-500 font-medium">Days Off/Week:</span>
-              <span id="modal-daysoff" class="font-bold text-slate-800"></span>
+            <div class="flex justify-between items-center py-1 border-b border-stone-200/50">
+              <span class="text-stone-500 font-medium">Days Off/Week:</span>
+              <span id="modal-daysoff" class="font-bold text-stone-900"></span>
             </div>
-            <div class="flex justify-between items-center py-1 border-b border-slate-200/60">
-              <span class="text-slate-500 font-medium">Sick Days:</span>
-              <span id="modal-sick" class="font-bold text-slate-800"></span>
+            <div class="flex justify-between items-center py-1 border-b border-stone-200/50">
+              <span class="text-stone-500 font-medium">Sick Days:</span>
+              <span id="modal-sick" class="font-bold text-stone-900"></span>
             </div>
-            <div class="flex justify-between items-center py-1 border-b border-slate-200/60">
-              <span class="text-slate-500 font-medium">Vacation Days:</span>
-              <span id="modal-vacation" class="font-bold text-slate-800"></span>
+            <div class="flex justify-between items-center py-1 border-b border-stone-200/50">
+              <span class="text-stone-500 font-medium">Vacation Days:</span>
+              <span id="modal-vacation" class="font-bold text-stone-900"></span>
             </div>
             <div class="flex justify-between items-center py-1">
-              <span class="text-slate-500 font-medium">Family Leave (Paid / Unpaid):</span>
-              <span id="modal-family" class="font-bold text-slate-800"></span>
+              <span class="text-stone-500 font-medium">Family Leave (Paid / Unpaid):</span>
+              <span id="modal-family" class="font-bold text-stone-900"></span>
             </div>
           </div>
         </div>
 
         <!-- COMPENSATION -->
         <div>
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">COMPENSATION</h3>
-          <div class="grid grid-cols-3 gap-2">
-            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-center">
-              <div class="text-[9px] font-bold uppercase tracking-wider text-slate-400">BASE SALARY</div>
-              <div id="modal-salary" class="text-xs font-bold text-slate-800 mt-1"></div>
+          <h3 class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2.5">COMPENSATION</h3>
+          <div class="grid grid-cols-3 gap-2.5">
+            <div class="bg-[#faf9f5] p-3 rounded-2xl border border-stone-200/60 text-center">
+              <div class="text-[9px] font-bold uppercase tracking-wider text-stone-400">BASE SALARY</div>
+              <div id="modal-salary" class="text-xs font-extrabold text-stone-900 mt-1"></div>
             </div>
-            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-center">
-              <div class="text-[9px] font-bold uppercase tracking-wider text-slate-400">COL-ADJUSTED</div>
-              <div id="modal-col-salary" class="text-xs font-bold text-slate-800 mt-1"></div>
+            <div class="bg-[#faf9f5] p-3 rounded-2xl border border-stone-200/60 text-center">
+              <div class="text-[9px] font-bold uppercase tracking-wider text-stone-400">COL-ADJUSTED</div>
+              <div id="modal-col-salary" class="text-xs font-extrabold text-stone-900 mt-1"></div>
             </div>
-            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-center">
-              <div class="text-[9px] font-bold uppercase tracking-wider text-slate-400">STRETCH SCORE</div>
-              <div id="modal-stretch" class="text-xs font-bold text-slate-800 mt-1"></div>
+            <div class="bg-[#faf9f5] p-3 rounded-2xl border border-stone-200/60 text-center">
+              <div class="text-[9px] font-bold uppercase tracking-wider text-stone-400">STRETCH SCORE</div>
+              <div id="modal-stretch" class="text-xs font-extrabold text-stone-900 mt-1"></div>
             </div>
           </div>
         </div>
 
         <!-- KEY BENEFITS -->
         <div>
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">KEY BENEFITS</h3>
+          <h3 class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2.5">KEY BENEFITS</h3>
           <div class="flex flex-wrap gap-2" id="modal-benefits">
           </div>
         </div>
@@ -305,7 +318,6 @@
         state: state,
         location: (city !== 'N/A' && state !== 'N/A') ? locKey : getVal(p, ['Location', 'location']),
         airport: getVal(p, ['Airport', 'Nearest Airport', 'nearest_airport']),
-        interest: getVal(p, ['Interest', 'interest']),
         setting: getVal(p, ['Setting', 'setting']),
         classSize: getVal(p, ['Class size', 'Class Size', 'class_size']),
         competitiveness: getVal(p, ['Competitiveness', 'Tier / Category', 'tier']),
@@ -332,25 +344,25 @@
       container.innerHTML = '';
 
       if (programs.length === 0) {
-        container.innerHTML = `<div class="p-6 text-center text-slate-400 text-sm font-medium">No programs found matching filters.</div>`;
+        container.innerHTML = `<div class="p-6 text-center text-stone-400 text-xs font-medium">No programs found matching filters.</div>`;
         return;
       }
 
       programs.forEach((p) => {
         const card = document.createElement('div');
-        card.className = "p-4 hover:bg-slate-50 cursor-pointer transition border-b border-slate-100 flex flex-col justify-between";
+        card.className = "p-4 hover:bg-[#faf9f5] cursor-pointer transition border-b border-stone-100 flex flex-col justify-between";
         card.innerHTML = `
           <div>
             <div class="flex justify-between items-start mb-1">
-              <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">${p.state}</span>
-              <span class="text-xs text-slate-400 font-medium">${p.setting !== 'N/A' ? p.setting : ''}</span>
+              <span class="text-[10px] font-extrabold text-stone-700 bg-stone-100 px-2 py-0.5 rounded-md">${p.state}</span>
+              <span class="text-[11px] text-stone-400 font-medium">${p.setting !== 'N/A' ? p.setting : ''}</span>
             </div>
-            <h4 class="font-bold text-slate-900 text-sm leading-snug">${p.name}</h4>
-            <p class="text-xs text-slate-500 mt-0.5">${p.location}</p>
+            <h4 class="font-bold text-stone-900 text-sm leading-snug">${p.name}</h4>
+            <p class="text-xs text-stone-500 mt-0.5">${p.location}</p>
           </div>
-          <div class="mt-3 flex justify-between items-center text-xs text-slate-500">
-            <span>Class Size: <strong class="text-slate-700">${p.classSize}</strong></span>
-            <span class="text-indigo-600 font-semibold hover:underline">View Details &rarr;</span>
+          <div class="mt-3 flex justify-between items-center text-xs text-stone-500">
+            <span>Class Size: <strong class="text-stone-800">${p.classSize}</strong></span>
+            <span class="text-stone-700 font-semibold hover:underline">View Facesheet &rarr;</span>
           </div>
         `;
         card.onclick = () => openModal(p);
@@ -367,10 +379,10 @@
           const marker = L.marker(p.coords)
             .bindPopup(`
               <div style="font-family: 'Plus Jakarta Sans', sans-serif;">
-                <strong style="font-size:14px; color:#0f172a;">${p.name}</strong><br>
-                <span style="font-size:12px; color:#64748b;">${p.location}</span><br>
+                <strong style="font-size:14px; color:#1c1917;">${p.name}</strong><br>
+                <span style="font-size:12px; color:#78716c;">${p.location}</span><br>
                 <button onclick="window.openModalFromMap('${p.name.replace(/'/g, "\\'")}')" 
-                        style="margin-top:6px; background:#4f46e5; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer;">
+                        style="margin-top:6px; background:#44403c; color:white; border:none; padding:5px 10px; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer;">
                   View Facesheet
                 </button>
               </div>
@@ -441,7 +453,6 @@
 
     function openModal(p) {
       document.getElementById('modal-title').textContent = p.name;
-      document.getElementById('modal-subtitle').textContent = p.interest !== 'N/A' ? `Interest Level: ${p.interest}` : '';
       
       document.getElementById('modal-location').textContent = p.location;
       document.getElementById('modal-airport').textContent = p.airport;
@@ -452,7 +463,7 @@
       document.getElementById('modal-step').textContent = p.stepScore;
 
       document.getElementById('modal-hours').textContent = p.hoursPerWeek;
-      document.getElementById('modal-shift').textContent = p.longestShift !== 'N/A' ? `${p.longestShift} hrs` : 'N/A';
+      document.getElementById('modal-shift').textContent = p.longestShift !== 'N/A' ? `${p.longestShift}` : 'N/A';
       document.getElementById('modal-daysoff').textContent = p.daysOff;
       document.getElementById('modal-sick').textContent = p.sickDays;
       document.getElementById('modal-vacation').textContent = p.vacationDays;
@@ -462,12 +473,13 @@
       document.getElementById('modal-col-salary').textContent = p.colSalary;
       document.getElementById('modal-stretch').textContent = p.stretchScore;
 
+      // Exact Pill styling from screenshot
       const benefitsContainer = document.getElementById('modal-benefits');
       benefitsContainer.innerHTML = `
-        <span class="px-3 py-1.5 rounded-lg text-xs font-semibold border ${p.freeParking ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-50 text-slate-400 border-slate-200 line-through'}">✓ Parking</span>
-        <span class="px-3 py-1.5 rounded-lg text-xs font-semibold border ${p.housingStipend ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-50 text-slate-400 border-slate-200 line-through'}">✓ Housing</span>
-        <span class="px-3 py-1.5 rounded-lg text-xs font-semibold border ${p.mealStipend ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-50 text-slate-400 border-slate-200 line-through'}">✓ Meals</span>
-        <span class="px-3 py-1.5 rounded-lg text-xs font-semibold border ${p.techStipend ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-50 text-slate-400 border-slate-200 line-through'}">✓ Tech</span>
+        <span class="px-4 py-2 rounded-xl text-xs font-semibold ${p.freeParking ? 'pill-active' : 'pill-inactive'}">✓ Parking</span>
+        <span class="px-4 py-2 rounded-xl text-xs font-semibold ${p.housingStipend ? 'pill-active' : 'pill-inactive'}">✓ Housing</span>
+        <span class="px-4 py-2 rounded-xl text-xs font-semibold ${p.mealStipend ? 'pill-active' : 'pill-inactive'}">✓ Meals</span>
+        <span class="px-4 py-2 rounded-xl text-xs font-semibold ${p.techStipend ? 'pill-active' : 'pill-inactive'}">✓ Tech</span>
       `;
 
       document.getElementById('facesheet-modal').classList.remove('hidden');
