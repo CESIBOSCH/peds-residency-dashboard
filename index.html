@@ -31,127 +31,137 @@
     .leaflet-popup-tip {
       background: #fafaf9;
     }
-    /* Style slider thumb to match stone theme */
     input[type=range]::-webkit-slider-thumb {
       background: #57534e;
     }
+    /* Custom Scrollbar for Sidebar */
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background-color: #e7e5e4;
+      border-radius: 4px;
+    }
   </style>
 </head>
-<body class="p-6 md:p-12 max-w-7xl mx-auto">
+<body class="h-screen w-screen overflow-hidden flex flex-col md:flex-row">
 
-  <!-- Header Section -->
-  <header class="mb-8 pb-6 border-b border-stone-200">
-    <h1 class="text-3xl font-light tracking-wide text-stone-800">Pediatric Residency Dashboard</h1>
-    <p class="text-sm text-stone-500 mt-1">Master tracking & decision matrix for residency programs</p>
-  </header>
-
-  <!-- Controls / Filter Section -->
-  <div class="bg-stone-100/70 p-5 rounded-xl border border-stone-200 mb-8 space-y-4">
+  <!-- LEFT SIDEBAR: Controls & Program List -->
+  <aside class="w-full md:w-[420px] lg:w-[480px] h-full bg-stone-50 border-r border-stone-200 flex flex-col z-20 shadow-lg">
     
-    <!-- Top Row: Search & Dropdown Filters -->
-    <div class="flex flex-wrap gap-3">
-      <!-- Search Bar -->
+    <!-- Header -->
+    <div class="p-5 border-b border-stone-200 bg-stone-100/60">
+      <h1 class="text-xl font-light tracking-wide text-stone-800">Pediatric Residency Dashboard</h1>
+      <p class="text-xs text-stone-500 mt-0.5">Filter programs & explore locations</p>
+    </div>
+
+    <!-- Filters Container -->
+    <div class="p-4 border-b border-stone-200/80 bg-stone-50 space-y-3">
+      
+      <!-- Search Input -->
       <input 
         type="text" 
         id="searchInput" 
-        placeholder="Search program or city..." 
-        class="w-full sm:w-64 px-3.5 py-2 rounded-lg bg-white border border-stone-200 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-300 text-sm transition"
+        placeholder="Search program, city..." 
+        class="w-full px-3.5 py-2 rounded-lg bg-white border border-stone-200 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-300 text-sm transition"
       />
 
-      <!-- Filter by State -->
-      <select id="stateFilter" class="px-3.5 py-2 rounded-lg bg-white border border-stone-200 text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300 transition">
-        <option value="">All States</option>
-      </select>
+      <!-- Dropdown Filters Grid -->
+      <div class="grid grid-cols-2 gap-2">
+        <select id="stateFilter" class="w-full px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-800 text-xs focus:outline-none focus:ring-2 focus:ring-stone-300">
+          <option value="">All States</option>
+        </select>
 
-      <!-- Filter by Interest -->
-      <select id="interestFilter" class="px-3.5 py-2 rounded-lg bg-white border border-stone-200 text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300 transition">
-        <option value="">All Interest Levels</option>
-      </select>
+        <select id="interestFilter" class="w-full px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-800 text-xs focus:outline-none focus:ring-2 focus:ring-stone-300">
+          <option value="">All Interests</option>
+        </select>
 
-      <!-- Filter by Setting -->
-      <select id="settingFilter" class="px-3.5 py-2 rounded-lg bg-white border border-stone-200 text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300 transition">
-        <option value="">All Settings</option>
-      </select>
+        <select id="settingFilter" class="w-full px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-800 text-xs focus:outline-none focus:ring-2 focus:ring-stone-300">
+          <option value="">All Settings</option>
+        </select>
 
-      <!-- Filter by Competitiveness -->
-      <select id="competitivenessFilter" class="px-3.5 py-2 rounded-lg bg-white border border-stone-200 text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300 transition">
-        <option value="">All Competitiveness</option>
-      </select>
-    </div>
+        <select id="competitivenessFilter" class="w-full px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-stone-800 text-xs focus:outline-none focus:ring-2 focus:ring-stone-300">
+          <option value="">All Competitiveness</option>
+        </select>
+      </div>
 
-    <!-- Middle Row: Class Size Range Slider -->
-    <div class="pt-2 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-      <label class="text-xs font-semibold uppercase text-stone-500 tracking-wider">Max Class Size:</label>
-      <div class="flex items-center gap-3 w-full sm:w-72">
+      <!-- Class Size Slider -->
+      <div class="pt-1 flex items-center gap-2">
+        <span class="text-[11px] font-semibold uppercase text-stone-500 tracking-wider">Max Class:</span>
         <input 
           type="range" 
           id="classSizeFilter" 
           min="1" 
           max="50" 
           value="50" 
-          class="w-full h-1.5 bg-stone-300 rounded-lg appearance-none cursor-pointer accent-stone-700"
+          class="w-full h-1 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-stone-700"
         />
-        <span id="classSizeValue" class="text-xs font-medium bg-stone-200 text-stone-700 px-2 py-1 rounded-md min-w-[3rem] text-center">50+</span>
+        <span id="classSizeValue" class="text-xs font-medium bg-stone-200 text-stone-700 px-2 py-0.5 rounded text-center min-w-[2.5rem]">50+</span>
+      </div>
+
+      <!-- Perks Checkboxes -->
+      <div class="pt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-stone-600">
+        <label class="inline-flex items-center gap-1 cursor-pointer">
+          <input type="checkbox" id="parkingFilter" class="rounded border-stone-300 text-stone-700 focus:ring-stone-400">
+          Parking
+        </label>
+        <label class="inline-flex items-center gap-1 cursor-pointer">
+          <input type="checkbox" id="housingFilter" class="rounded border-stone-300 text-stone-700 focus:ring-stone-400">
+          Housing
+        </label>
+        <label class="inline-flex items-center gap-1 cursor-pointer">
+          <input type="checkbox" id="mealFilter" class="rounded border-stone-300 text-stone-700 focus:ring-stone-400">
+          Meals
+        </label>
+        <label class="inline-flex items-center gap-1 cursor-pointer">
+          <input type="checkbox" id="techFilter" class="rounded border-stone-300 text-stone-700 focus:ring-stone-400">
+          Tech
+        </label>
       </div>
     </div>
 
-    <!-- Bottom Row: Perks & Benefits Checkboxes -->
-    <div class="pt-2 border-t border-stone-200/80 flex flex-wrap gap-4 items-center">
-      <span class="text-xs font-semibold uppercase text-stone-500 tracking-wider">Perks:</span>
-      
-      <label class="inline-flex items-center gap-1.5 text-xs text-stone-700 cursor-pointer">
-        <input type="checkbox" id="parkingFilter" class="rounded border-stone-300 text-stone-700 focus:ring-stone-400">
-        Free Parking
-      </label>
-
-      <label class="inline-flex items-center gap-1.5 text-xs text-stone-700 cursor-pointer">
-        <input type="checkbox" id="housingFilter" class="rounded border-stone-300 text-stone-700 focus:ring-stone-400">
-        Housing Stipend
-      </label>
-
-      <label class="inline-flex items-center gap-1.5 text-xs text-stone-700 cursor-pointer">
-        <input type="checkbox" id="mealFilter" class="rounded border-stone-300 text-stone-700 focus:ring-stone-400">
-        Meal Stipend
-      </label>
-
-      <label class="inline-flex items-center gap-1.5 text-xs text-stone-700 cursor-pointer">
-        <input type="checkbox" id="techFilter" class="rounded border-stone-300 text-stone-700 focus:ring-stone-400">
-        Tech Stipend
-      </label>
+    <!-- Scrollable Program Cards List -->
+    <div id="programList" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scroll">
+      <!-- Cards dynamically injected here -->
     </div>
 
-  </div>
+  </aside>
 
-  <!-- Interactive Map Section -->
-  <div class="mb-10">
-    <div id="map" class="w-full h-96 rounded-xl border border-stone-200 shadow-sm z-10"></div>
-  </div>
-
-  <!-- Program Table Section -->
-  <div class="overflow-x-auto bg-stone-50 rounded-xl border border-stone-200 shadow-sm">
-    <table class="w-full text-left text-sm text-stone-700">
-      <thead class="bg-stone-100/80 border-b border-stone-200 text-stone-500 text-xs uppercase tracking-wider">
-        <tr>
-          <th class="px-6 py-4 font-medium">Program</th>
-          <th class="px-6 py-4 font-medium">Location</th>
-          <th class="px-6 py-4 font-medium">Interest</th>
-          <th class="px-6 py-4 font-medium">Setting</th>
-          <th class="px-6 py-4 font-medium">Class Size</th>
-          <th class="px-6 py-4 font-medium">Competitiveness</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody" class="divide-y divide-stone-200/60">
-        <!-- Rows dynamically injected here -->
-      </tbody>
-    </table>
-  </div>
+  <!-- RIGHT SIDE: Full Screen Map -->
+  <main class="flex-1 h-full relative">
+    <div id="map" class="w-full h-full"></div>
+  </main>
 
   <script>
     let allPrograms = [];
     let map;
-    let markers = [];
+    let markersMap = new Map(); // Store markers linked to program names
+    const geocodeCache = {};
 
-    // Initialize Leaflet Map
+    // Approximate US City Coordinates Backup for Instant Pin Placement
+    const cityCoordinates = {
+      "Phoenix, AZ": [33.4484, -112.0740],
+      "Los Angeles, CA": [34.0522, -118.2437],
+      "San Francisco, CA": [37.7749, -122.4194],
+      "Oakland, CA": [37.8044, -122.2712],
+      "Sacramento, CA": [38.5816, -121.4944],
+      "San Diego, CA": [32.7157, -117.1611],
+      "New Haven, CT": [41.3083, -72.9279],
+      "Denver, CO": [39.7392, -104.9903],
+      "Washington, DC": [38.9072, -77.0369],
+      "Chicago, IL": [41.8781, -87.6298],
+      "Boston, MA": [42.3601, -71.0589],
+      "Baltimore, MD": [39.2904, -76.6122],
+      "Ann Arbor, MI": [42.2808, -83.7430],
+      "Minneapolis, MN": [44.9778, -93.2650],
+      "St. Louis, MO": [38.6270, -90.1994],
+      "Chapel Hill, NC": [35.9132, -79.0558],
+      "Charlotte, NC": [35.2271, -80.8431],
+      "Philadelphia, PA": [39.9526, -75.1652],
+      "Pittsburgh, PA": [40.4406, -79.9959],
+      "Seattle, WA": [47.6062, -122.3321]
+    };
+
     function initMap() {
       map = L.map('map').setView([39.8283, -98.5795], 4);
       
@@ -161,7 +171,6 @@
       }).addTo(map);
     }
 
-    // Dynamic Options Populator
     function populateDropdowns(data) {
       const stateSelect = document.getElementById('stateFilter');
       const interestSelect = document.getElementById('interestFilter');
@@ -189,7 +198,6 @@
       settings.forEach(val => settingSelect.add(new Option(val, val)));
       competitivenessSet.forEach(val => competitivenessSelect.add(new Option(val, val)));
 
-      // Adjust Slider Max if CSV has larger class sizes
       if (maxClassFound > 0) {
         const slider = document.getElementById('classSizeFilter');
         slider.max = maxClassFound;
@@ -198,7 +206,7 @@
       }
     }
 
-    // Load CSV Data
+    // Parse CSV
     Papa.parse('programs.csv', {
       download: true,
       header: true,
@@ -207,50 +215,32 @@
         allPrograms = results.data;
         initMap();
         populateDropdowns(allPrograms);
-        renderDashboard(allPrograms);
+        createMapPins(allPrograms);
+        renderSidebarList(allPrograms);
       }
     });
 
-    // Helper function to check boolean columns (e.g., "Yes", "TRUE", 1, "x")
     function isTrueValue(val) {
       if (!val) return false;
       const cleanVal = String(val).trim().toLowerCase();
       return ['yes', 'true', '1', 'x', 'y'].includes(cleanVal);
     }
 
-    // Render Table and Map Markers
-    function renderDashboard(data) {
-      const tableBody = document.getElementById('tableBody');
-      tableBody.innerHTML = '';
-      
-      markers.forEach(m => map.removeLayer(m));
-      markers = [];
-
-      data.forEach(prog => {
+    // Place Map Pins
+    function createMapPins(programs) {
+      programs.forEach(prog => {
         const programName = prog['Program'] || 'N/A';
-        const city = prog['City'] || '';
-        const state = prog['State'] || '';
-        const interest = prog['Interest'] || '-';
-        const setting = prog['Setting'] || '-';
-        const classSize = prog['Class size'] || '-';
-        const competitiveness = prog['Competitiveness'] || '-';
+        const city = (prog['City'] || '').trim();
+        const state = (prog['State'] || '').trim();
+        const cityStateKey = `${city}, ${state}`;
 
-        // 1. Table Row
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-stone-100/50 transition-colors";
-        tr.innerHTML = `
-          <td class="px-6 py-4 font-medium text-stone-800">${programName}</td>
-          <td class="px-6 py-4 text-stone-600">${city}${city && state ? ', ' : ''}${state}</td>
-          <td class="px-6 py-4 text-stone-600">${interest}</td>
-          <td class="px-6 py-4 text-stone-600">${setting}</td>
-          <td class="px-6 py-4 text-stone-600">${classSize}</td>
-          <td class="px-6 py-4 text-stone-600">${competitiveness}</td>
-        `;
-        tableBody.appendChild(tr);
+        let lat = parseFloat(prog['Latitude'] || prog['lat']);
+        let lng = parseFloat(prog['Longitude'] || prog['lng']);
 
-        // 2. Map Marker
-        const lat = parseFloat(prog['Latitude'] || prog['lat']);
-        const lng = parseFloat(prog['Longitude'] || prog['lng']);
+        // Check Backup Lookup Table if lat/lng not in CSV
+        if ((isNaN(lat) || isNaN(lng)) && cityCoordinates[cityStateKey]) {
+          [lat, lng] = cityCoordinates[cityStateKey];
+        }
 
         if (!isNaN(lat) && !isNaN(lng)) {
           const marker = L.marker([lat, lng]).addTo(map);
@@ -258,23 +248,68 @@
           const popupContent = `
             <div class="p-2 font-sans text-stone-800">
               <h3 class="font-semibold text-sm mb-1">${programName}</h3>
-              <p class="text-xs text-stone-500 mb-2">${city}, ${state}</p>
+              <p class="text-xs text-stone-500 mb-2">${city}${city && state ? ', ' : ''}${state}</p>
               <div class="text-xs space-y-1 text-stone-600">
-                <p><span class="font-medium text-stone-700">Interest:</span> ${interest}</p>
-                <p><span class="font-medium text-stone-700">Setting:</span> ${setting}</p>
-                <p><span class="font-medium text-stone-700">Class Size:</span> ${classSize}</p>
-                <p><span class="font-medium text-stone-700">Competitiveness:</span> ${competitiveness}</p>
+                <p><span class="font-medium text-stone-700">Interest:</span> ${prog['Interest'] || '-'}</p>
+                <p><span class="font-medium text-stone-700">Setting:</span> ${prog['Setting'] || '-'}</p>
+                <p><span class="font-medium text-stone-700">Class Size:</span> ${prog['Class size'] || '-'}</p>
+                <p><span class="font-medium text-stone-700">Competitiveness:</span> ${prog['Competitiveness'] || '-'}</p>
               </div>
             </div>
           `;
           
           marker.bindPopup(popupContent);
-          markers.push({ instance: marker, data: prog });
+          markersMap.set(programName, marker);
         }
       });
     }
 
-    // Unified Filter Execution
+    // Render Sidebar Cards
+    function renderSidebarList(programs) {
+      const listContainer = document.getElementById('programList');
+      listContainer.innerHTML = '';
+
+      if (programs.length === 0) {
+        listContainer.innerHTML = `<p class="text-xs text-stone-400 text-center py-8">No programs match your filters.</p>`;
+        return;
+      }
+
+      programs.forEach(prog => {
+        const programName = prog['Program'] || 'N/A';
+        const city = prog['City'] || '';
+        const state = prog['State'] || '';
+        const interest = prog['Interest'] || '-';
+        const setting = prog['Setting'] || '-';
+
+        const card = document.createElement('div');
+        card.className = "p-3.5 bg-white rounded-xl border border-stone-200/80 shadow-sm hover:border-stone-300 hover:shadow-md transition cursor-pointer";
+        
+        card.innerHTML = `
+          <div class="flex justify-between items-start gap-2">
+            <h3 class="font-medium text-stone-800 text-sm leading-snug">${programName}</h3>
+            <span class="text-[10px] font-semibold uppercase px-2 py-0.5 bg-stone-100 text-stone-600 rounded-md border border-stone-200/60 shrink-0">${interest}</span>
+          </div>
+          <p class="text-xs text-stone-500 mt-1">${city}${city && state ? ', ' : ''}${state}</p>
+          <div class="mt-2.5 pt-2 border-t border-stone-100 flex justify-between text-[11px] text-stone-500">
+            <span>Setting: <strong class="text-stone-700 font-normal">${setting}</strong></span>
+            <span>Class: <strong class="text-stone-700 font-normal">${prog['Class size'] || '-'}</strong></span>
+          </div>
+        `;
+
+        // Click card to pan map to program location
+        card.addEventListener('click', () => {
+          const marker = markersMap.get(programName);
+          if (marker) {
+            map.flyTo(marker.getLatLng(), 11, { duration: 1.2 });
+            marker.openPopup();
+          }
+        });
+
+        listContainer.appendChild(card);
+      });
+    }
+
+    // Dynamic Multi-Filter Execution
     function applyFilters() {
       const searchVal = document.getElementById('searchInput').value.toLowerCase();
       const stateVal = document.getElementById('stateFilter').value;
@@ -285,7 +320,6 @@
       const maxClassSize = parseInt(document.getElementById('classSizeFilter').value);
       const sliderMax = parseInt(document.getElementById('classSizeFilter').max);
 
-      // Perks
       const requireParking = document.getElementById('parkingFilter').checked;
       const requireHousing = document.getElementById('housingFilter').checked;
       const requireMeal = document.getElementById('mealFilter').checked;
@@ -295,18 +329,15 @@
         const name = (prog['Program'] || '').toLowerCase();
         const city = (prog['City'] || '').toLowerCase();
         
-        // Basic Filters
         const matchesSearch = name.includes(searchVal) || city.includes(searchVal);
         const matchesState = !stateVal || (prog['State'] || '').trim() === stateVal;
         const matchesInterest = !interestVal || (prog['Interest'] || '').trim() === interestVal;
         const matchesSetting = !settingVal || (prog['Setting'] || '').trim() === settingVal;
         const matchesCompetitiveness = !competitivenessVal || (prog['Competitiveness'] || '').trim() === competitivenessVal;
 
-        // Class Size Filter
         const classSizeNum = parseInt(prog['Class size']);
         const matchesClassSize = isNaN(classSizeNum) || maxClassSize === sliderMax || classSizeNum <= maxClassSize;
 
-        // Perk Filters (Checks headers like "Free Parking", "Housing Stipend", "Meal Stipend", "Tech Stipend")
         const matchesParking = !requireParking || isTrueValue(prog['Free Parking'] || prog['Parking']);
         const matchesHousing = !requireHousing || isTrueValue(prog['Housing Stipend'] || prog['Housing']);
         const matchesMeal = !requireMeal || isTrueValue(prog['Meal Stipend'] || prog['Meals']);
@@ -317,7 +348,18 @@
                matchesHousing && matchesMeal && matchesTech;
       });
 
-      renderDashboard(filtered);
+      // Update Sidebar Cards
+      renderSidebarList(filtered);
+
+      // Show/Hide Map Markers dynamically based on filter
+      const visibleNames = new Set(filtered.map(p => p['Program']));
+      markersMap.forEach((marker, progName) => {
+        if (visibleNames.has(progName)) {
+          if (!map.hasLayer(marker)) map.addLayer(marker);
+        } else {
+          if (map.hasLayer(marker)) map.removeLayer(marker);
+        }
+      });
     }
 
     // Event Listeners
