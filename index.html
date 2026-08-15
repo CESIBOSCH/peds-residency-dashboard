@@ -8,9 +8,6 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- PapaParse for reading CSV files -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-  
   <!-- Leaflet CSS & JS for Interactive Map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -201,7 +198,159 @@
   </div>
 
   <script>
-    let allPrograms = [];
+    let allPrograms = [
+      {
+        "Program": "UCSF",
+        "City": "San Francisco",
+        "State": "CA",
+        "Setting": "University",
+        "Competitiveness": "Target",
+        "Step Score Range": "240-260",
+        "Website": "#",
+        "Latitude": "37.7749",
+        "Longitude": "-122.4194",
+        "Class Size": "30",
+        "Hours/Week": "65",
+        "Longest Shift": "24",
+        "Days Off/week": "1.4",
+        "Sick Days": "12",
+        "Vacation Days": "20",
+        "Family Leave Paid/Unpaid": "6 weeks",
+        "Salary": "$72,000",
+        "COL-Adjusted Salary": "$65,000",
+        "Salary Stretch": "Medium",
+        "Free Parking": "Yes",
+        "Housing Stipend": "No",
+        "Meal Stipend": "Yes",
+        "Tech Stipend": "Yes"
+      },
+      {
+        "Program": "UCSF Benioff Children's Hospital Oakland Program",
+        "City": "Oakland",
+        "State": "CA",
+        "Setting": "Community-Based Univ. Affiliated",
+        "Competitiveness": "Target",
+        "Step Score Range": "235-255",
+        "Website": "#",
+        "Latitude": "37.8044",
+        "Longitude": "-122.2712",
+        "Class Size": "20",
+        "Hours/Week": "63",
+        "Longest Shift": "24",
+        "Days Off/week": "1.5",
+        "Sick Days": "10",
+        "Vacation Days": "20",
+        "Family Leave Paid/Unpaid": "6 weeks",
+        "Salary": "$70,000",
+        "COL-Adjusted Salary": "$64,000",
+        "Salary Stretch": "Medium",
+        "Free Parking": "Yes",
+        "Housing Stipend": "No",
+        "Meal Stipend": "Yes",
+        "Tech Stipend": "No"
+      },
+      {
+        "Program": "UCLA David Geffen School of Medicine/UCLA Medical Center Program",
+        "City": "Los Angeles",
+        "State": "CA",
+        "Setting": "University",
+        "Competitiveness": "Target",
+        "Step Score Range": "233-266",
+        "Website": "#",
+        "Latitude": "34.0522",
+        "Longitude": "-118.2437",
+        "Class Size": "29",
+        "Hours/Week": "65",
+        "Longest Shift": "24",
+        "Days Off/week": "1.4",
+        "Sick Days": "12",
+        "Vacation Days": "20",
+        "Family Leave Paid/Unpaid": "6 weeks",
+        "Salary": "$71,000",
+        "COL-Adjusted Salary": "$63,000",
+        "Salary Stretch": "Medium",
+        "Free Parking": "Yes",
+        "Housing Stipend": "No",
+        "Meal Stipend": "Yes",
+        "Tech Stipend": "Yes"
+      },
+      {
+        "Program": "Kaiser Permanente Northern California Program",
+        "City": "Oakland",
+        "State": "CA",
+        "Setting": "Community-Based Univ. Affiliated",
+        "Competitiveness": "Target",
+        "Step Score Range": "230-250",
+        "Website": "#",
+        "Latitude": "37.8100",
+        "Longitude": "-122.2650",
+        "Class Size": "15",
+        "Hours/Week": "60",
+        "Longest Shift": "24",
+        "Days Off/week": "1.5",
+        "Sick Days": "12",
+        "Vacation Days": "21",
+        "Family Leave Paid/Unpaid": "8 weeks",
+        "Salary": "$74,000",
+        "COL-Adjusted Salary": "$67,000",
+        "Salary Stretch": "High",
+        "Free Parking": "Yes",
+        "Housing Stipend": "Yes",
+        "Meal Stipend": "Yes",
+        "Tech Stipend": "Yes"
+      },
+      {
+        "Program": "UC Davis",
+        "City": "Sacramento",
+        "State": "CA",
+        "Setting": "University",
+        "Competitiveness": "Target",
+        "Step Score Range": "230-250",
+        "Website": "#",
+        "Latitude": "38.5816",
+        "Longitude": "-121.4944",
+        "Class Size": "18",
+        "Hours/Week": "62",
+        "Longest Shift": "24",
+        "Days Off/week": "1.5",
+        "Sick Days": "14",
+        "Vacation Days": "20",
+        "Family Leave Paid/Unpaid": "6 weeks",
+        "Salary": "$68,000",
+        "COL-Adjusted Salary": "$67,000",
+        "Salary Stretch": "High",
+        "Free Parking": "Yes",
+        "Housing Stipend": "No",
+        "Meal Stipend": "Yes",
+        "Tech Stipend": "No"
+      },
+      {
+        "Program": "UCSD",
+        "City": "San Diego",
+        "State": "CA",
+        "Setting": "University",
+        "Competitiveness": "Target",
+        "Step Score Range": "235-255",
+        "Website": "#",
+        "Latitude": "32.7157",
+        "Longitude": "-117.1611",
+        "Class Size": "22",
+        "Hours/Week": "64",
+        "Longest Shift": "24",
+        "Days Off/week": "1.4",
+        "Sick Days": "12",
+        "Vacation Days": "20",
+        "Family Leave Paid/Unpaid": "6 weeks",
+        "Salary": "$69,000",
+        "COL-Adjusted Salary": "$62,000",
+        "Salary Stretch": "Medium",
+        "Free Parking": "No",
+        "Housing Stipend": "No",
+        "Meal Stipend": "Yes",
+        "Tech Stipend": "Yes"
+      }
+    ];
+
     let selectedFilters = { state: new Set(), setting: new Set(), competitiveness: new Set() };
     let map;
     let markersMap = new Map();
@@ -214,13 +363,7 @@
       "Ann Arbor, MI": "DTW", "Minneapolis, MN": "MSP", "St. Louis, MO": "STL",
       "Chapel Hill, NC": "RDU", "Charlotte, NC": "CLT", "Philadelphia, PA": "PHL",
       "Pittsburgh, PA": "PIT", "Seattle, WA": "SEA", "New York, NY": "JFK",
-      "Houston, TX": "IAH", "Dallas, TX": "DFW", "Atlanta, GA": "ATL",
-      "Oak Lawn, IL": "ORD", "Indianapolis, IN": "IND", "New Orleans, LA": "MSY",
-      "Portland, ME": "PWM", "Detroit, MI": "DTW", "Kansas City, MO": "MCI",
-      "Greenville, NC": "PGV", "Bronx, NY": "LGA", "Stony Brook, NY": "ISP",
-      "Cleveland, OH": "CLE", "Portland, OR": "PDX", "Nashville, TN": "BNA",
-      "Austin, TX": "AUS", "Salt Lake City, UT": "SLC", "Falls Church, VA": "DCA",
-      "Richmond, VA": "RIC", "Milwaukee, WI": "MKE"
+      "Houston, TX": "IAH", "Dallas, TX": "DFW", "Atlanta, GA": "ATL"
     };
 
     const cityCoordinates = {
@@ -234,15 +377,7 @@
       "St. Louis, MO": [38.6270, -90.1994], "Chapel Hill, NC": [35.9132, -79.0558],
       "Charlotte, NC": [35.2271, -80.8431], "Philadelphia, PA": [39.9526, -75.1652],
       "Pittsburgh, PA": [40.4406, -79.9959], "Seattle, WA": [47.6062, -122.3321],
-      "Atlanta, GA": [33.7490, -84.3880], "Oak Lawn, IL": [41.7167, -87.7534],
-      "Indianapolis, IN": [39.7684, -86.1581], "New Orleans, LA": [29.9511, -90.0715],
-      "Portland, ME": [43.6591, -70.2568], "Detroit, MI": [42.3314, -83.0458],
-      "Kansas City, MO": [39.0997, -94.5786], "Greenville, NC": [35.6127, -77.3664],
-      "Bronx, NY": [40.8448, -73.8648], "Stony Brook, NY": [40.9135, -73.1287],
-      "Cleveland, OH": [41.4993, -81.6944], "Portland, OR": [45.5152, -122.6784],
-      "Nashville, TN": [36.1627, -86.7816], "Austin, TX": [30.2672, -97.7431],
-      "Salt Lake City, UT": [40.7608, -111.8910], "Falls Church, VA": [38.8823, -77.1711],
-      "Richmond, VA": [37.5407, -77.4360], "Milwaukee, WI": [43.0389, -87.9065]
+      "Atlanta, GA": [33.7490, -84.3880]
     };
 
     function getVal(prog, keys) {
@@ -664,60 +799,13 @@
       });
     }
 
-    async function loadProgramsData() {
-      try {
-        const response = await fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vT5K7i3Qp30oBqjMv4w2uR-g2_c0I5T3u3R3i3u3u3u3u3u3u3u3u3u3u3u3u3u3u3u/pub?output=csv');
-        const csvText = await response.text();
-        
-        Papa.parse(csvText, {
-          header: true,
-          skipEmptyLines: true,
-          complete: function(results) {
-            allPrograms = results.data.filter(p => getVal(p, ['Program', 'program', 'Name', 'name']) !== 'N/A');
-            populateDropdowns(allPrograms);
-            renderSidebarList(allPrograms);
-            createMapPins(allPrograms);
-          }
-        });
-      } catch (err) {
-        allPrograms = [
-          {
-            "Program": "Atrium Health Carolinas Medical Center",
-            "City": "Charlotte",
-            "State": "NC",
-            "Setting": "Children's Hospital within Medical Center",
-            "Competitiveness": "Target",
-            "Step Score Range": "230-250",
-            "Website": "https://www.atriumhealth.org",
-            "Latitude": "35.2271",
-            "Longitude": "-80.8431",
-            "Class Size": "24",
-            "Hours/Week": "60",
-            "Shift Length": "12 hrs",
-            "Days Off/week": "4",
-            "Sick Days": "5",
-            "Vacation Days": "20",
-            "Family Leave Paid/Unpaid": "6 weeks paid",
-            "Salary": "$65,000",
-            "COL-Adjusted Salary": "$68,000",
-            "Salary Stretch": "High",
-            "Free Parking": "Yes",
-            "Housing Stipend": "No",
-            "Meal Stipend": "Yes",
-            "Tech Stipend": "Yes"
-          }
-        ];
-        populateDropdowns(allPrograms);
-        renderSidebarList(allPrograms);
-        createMapPins(allPrograms);
-      }
-    }
-
     window.addEventListener('DOMContentLoaded', () => {
       initMap();
       setupDropdownControls();
       setupEventListeners();
-      loadProgramsData();
+      populateDropdowns(allPrograms);
+      renderSidebarList(allPrograms);
+      createMapPins(allPrograms);
     });
   </script>
 </body>
