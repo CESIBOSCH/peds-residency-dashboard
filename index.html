@@ -281,6 +281,33 @@
       return String(prog[key]).trim();
     }
 
+    function formatFamilyLeave(val) {
+      if (!val || val === 'N/A') return 'N/A';
+      const s = String(val).trim();
+      const lower = s.toLowerCase();
+      
+      if (['n x2', 'nx2', 'x2'].includes(lower)) {
+        return 'Negotiable/Negotiable';
+      }
+      if (lower === 'n') {
+        return 'Negotiable';
+      }
+
+      if (s.includes('/')) {
+        const parts = s.split('/');
+        const formattedParts = parts.map(p => {
+          const pClean = p.trim();
+          if (pClean.toLowerCase() === 'n') return 'Negotiable';
+          if (pClean === '—' || pClean === '-') return '0';
+          if (pClean === '') return 'N/A';
+          return pClean;
+        });
+        return formattedParts.join(' / ');
+      }
+
+      return s;
+    }
+
     function isTrueValue(val) {
       if (!val) return false;
       const cleanVal = String(val).trim().toLowerCase();
@@ -315,10 +342,8 @@
       const website = getVal(prog, 'Website') !== 'N/A' ? getVal(prog, 'Website') : '#';
       const programName = getVal(prog, 'Program');
 
-      // Nearest Airport
       const airport = airportLookup[cityStateKey] || (city !== 'N/A' ? `${city.substring(0,3).toUpperCase()} Airport` : 'N/A');
 
-      // Perks using exact CSV headers
       let perksHTML = '';
       const perks = [
         { label: 'Parking', val: getVal(prog, 'Free Parking') },
@@ -334,7 +359,6 @@
       });
       if (!perksHTML) perksHTML = `<span class="text-[10px] text-[#6B7280] italic">Standard Benefits</span>`;
 
-      // Direct mapping to exact CSV columns
       const classSize = getVal(prog, 'Class size');
       const setting = cleanSettingName(getVal(prog, 'Setting'));
       const tier = getVal(prog, 'Competitiveness');
@@ -345,7 +369,7 @@
       const daysOff = getVal(prog, 'Days Off/week');
       const sickDays = getVal(prog, 'Sick Days');
       const vacationDays = getVal(prog, 'Vacation Days');
-      const paidLeave = getVal(prog, 'Family Leave Paid/Unpaid');
+      const paidLeave = formatFamilyLeave(getVal(prog, 'Family Leave Paid/Unpaid'));
 
       const baseSalary = getVal(prog, 'Salary');
       const colSalary = getVal(prog, 'COL-Adjusted Salary');
@@ -354,7 +378,6 @@
       return `
         <div class="p-3.5 space-y-3 font-sans max-h-[400px] overflow-y-auto custom-scroll bg-white">
           
-          <!-- Header with Direct Web Link -->
           <div class="border-b border-[#E5E0D8] pb-2">
             <h3 class="font-medium text-xs text-[#2D3132] leading-snug">
               ${website !== '#' ? `<a href="${website.startsWith('http') ? website : 'https://' + website}" target="_blank" rel="noopener noreferrer" class="text-[#C86D51] hover:underline flex items-center gap-1 font-semibold">${programName} <span class="text-[9px]">↗</span></a>` : `<span class="font-semibold">${programName}</span>`}
@@ -362,7 +385,6 @@
             <p class="text-[10px] text-[#6B7280] mt-0.5">${city !== 'N/A' ? city : ''}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state !== 'N/A' ? state : ''}</p>
           </div>
 
-          <!-- Section 1: Basics -->
           <div class="space-y-1">
             <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Basics</span>
             <div class="grid grid-cols-2 gap-1.5 text-[10px]">
@@ -385,7 +407,6 @@
             </div>
           </div>
 
-          <!-- Section 2: Application -->
           <div class="space-y-1">
             <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Application</span>
             <div class="grid grid-cols-2 gap-1.5 text-[10px]">
@@ -400,7 +421,6 @@
             </div>
           </div>
 
-          <!-- Section 3: Work & Leave -->
           <div class="space-y-1">
             <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Work & Leave</span>
             <div class="bg-[#FAF9F5] p-2 rounded border border-[#E5E0D8] text-[10px] space-y-1">
@@ -425,13 +445,12 @@
                 <span class="font-medium text-[#2D3132]">${vacationDays}</span>
               </div>
               <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
-                <span class="text-[#6B7280]">Family Leave:</span>
+                <span class="text-[#6B7280]">Family Leave Paid/Unpaid:</span>
                 <span class="font-medium text-[#2D3132]">${paidLeave}</span>
               </div>
             </div>
           </div>
 
-          <!-- Section 4: Compensation -->
           <div class="space-y-1">
             <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Compensation</span>
             <div class="grid grid-cols-3 gap-1 text-[9px]">
@@ -450,7 +469,6 @@
             </div>
           </div>
 
-          <!-- Perks -->
           <div class="pt-1 border-t border-[#E5E0D8]">
             <span class="text-[9px] text-[#6B7280] uppercase font-semibold block mb-1">Key Perks</span>
             <div class="flex flex-wrap gap-1">${perksHTML}</div>
@@ -658,12 +676,14 @@
         const comp = prog['Competitiveness'];
         const sizeStr = prog['Class size'];
 
-        if (st && String(st).trim() !== '') sets.state.add(String(st).trim());
-        if (set && String(set).trim() !== '') sets.setting.add(String(set).trim());
-        if (comp && String(comp).trim() !== '') sets.competitiveness.add(String(comp).trim());
-        
-        const size = parseInt(sizeStr);
-        if (!isNaN(size) && size > maxClassFound) maxClassFound = size;
+        if (st && st.trim()) sets.state.add(st.trim());
+        if (set && set.trim()) sets.setting.add(set.trim());
+        if (comp && comp.trim()) sets.competitiveness.add(comp.trim());
+
+        const sizeNum = parseInt(sizeStr);
+        if (!isNaN(sizeNum) && sizeNum > maxClassFound) {
+          maxClassFound = sizeNum;
+        }
       });
 
       buildMultiSelectDropdown('state', sets.state, 'All States');
@@ -679,8 +699,8 @@
     }
 
     function applyFilters() {
-      const searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
-      const maxClassSize = parseInt(document.getElementById('classSizeFilter').value) || 50;
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+      const maxClassSize = parseInt(document.getElementById('classSizeFilter').value);
 
       const parkingReq = document.getElementById('parkingFilter').checked;
       const housingReq = document.getElementById('housingFilter').checked;
@@ -688,43 +708,43 @@
       const techReq = document.getElementById('techFilter').checked;
 
       const filtered = allPrograms.filter(prog => {
-        const name = getVal(prog, 'Program').toLowerCase();
+        const programName = getVal(prog, 'Program').toLowerCase();
         const city = getVal(prog, 'City').toLowerCase();
         const state = getVal(prog, 'State');
         const setting = getVal(prog, 'Setting');
         const comp = getVal(prog, 'Competitiveness');
-        const size = parseInt(getVal(prog, 'Class size')) || 0;
+        const classSize = parseInt(prog['Class size']) || 0;
 
-        // Search Match
-        if (searchQuery && !name.includes(searchQuery) && !city.includes(searchQuery) && !state.toLowerCase().includes(searchQuery)) {
+        // Search match
+        if (searchTerm && !programName.includes(searchTerm) && !city.includes(searchTerm) && !state.toLowerCase().includes(searchTerm)) {
           return false;
         }
 
-        // Multi-select State
+        // Multi-select state
         if (selectedFilters.state.size > 0 && !selectedFilters.state.has(state)) {
           return false;
         }
 
-        // Multi-select Setting
+        // Multi-select setting
         if (selectedFilters.setting.size > 0 && !selectedFilters.setting.has(setting)) {
           return false;
         }
 
-        // Multi-select Competitiveness
+        // Multi-select competitiveness
         if (selectedFilters.competitiveness.size > 0 && !selectedFilters.competitiveness.has(comp)) {
           return false;
         }
 
-        // Class Size Slider
-        if (size > maxClassSize) {
+        // Class size
+        if (classSize > maxClassSize) {
           return false;
         }
 
-        // Perks Check
-        if (parkingReq && !isTrueValue(getVal(prog, 'Free Parking'))) return false;
-        if (housingReq && !isTrueValue(getVal(prog, 'Housing Stipend'))) return false;
-        if (mealReq && !isTrueValue(getVal(prog, 'Meal Stipend'))) return false;
-        if (techReq && !isTrueValue(getVal(prog, 'Tech Stipend'))) return false;
+        // Perks
+        if (parkingReq && !isTrueValue(prog['Free Parking'])) return false;
+        if (housingReq && !isTrueValue(prog['Housing Stipend'])) return false;
+        if (mealReq && !isTrueValue(prog['Meal Stipend'])) return false;
+        if (techReq && !isTrueValue(prog['Tech Stipend'])) return false;
 
         return true;
       });
@@ -733,33 +753,41 @@
       createMapPins(filtered);
     }
 
-    function loadCSVData() {
-      Papa.parse("programs.csv", {
+    function initEventListeners() {
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
+      
+      const classSizeSlider = document.getElementById('classSizeFilter');
+      classSizeSlider.addEventListener('input', (e) => {
+        document.getElementById('classSizeValue').innerText = e.target.value;
+        applyFilters();
+      });
+
+      ['parkingFilter', 'housingFilter', 'mealFilter', 'techFilter'].forEach(id => {
+        document.getElementById(id).addEventListener('change', applyFilters);
+      });
+    }
+
+    // Load CSV Data
+    window.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      setupDropdownControls();
+      initEventListeners();
+
+      // Fetching your dataset CSV
+      Papa.parse('pediatric_residency_data.csv', {
         download: true,
         header: true,
         skipEmptyLines: true,
         complete: function(results) {
           allPrograms = results.data.filter(p => getVal(p, 'Program') !== 'N/A');
           populateDropdowns(allPrograms);
-          setupDropdownControls();
           applyFilters();
+        },
+        error: function(err) {
+          console.error('Error loading CSV:', err);
+          document.getElementById('programList').innerHTML = `<p class="text-xs text-[#6B7280] text-center py-6">Error loading residency data CSV.</p>`;
         }
       });
-    }
-
-    document.getElementById('searchInput').addEventListener('input', applyFilters);
-    document.getElementById('classSizeFilter').addEventListener('input', (e) => {
-      document.getElementById('classSizeValue').innerText = e.target.value;
-      applyFilters();
-    });
-
-    ['parkingFilter', 'housingFilter', 'mealFilter', 'techFilter'].forEach(id => {
-      document.getElementById(id).addEventListener('change', applyFilters);
-    });
-
-    window.addEventListener('DOMContentLoaded', () => {
-      initMap();
-      loadCSVData();
     });
   </script>
 </body>
