@@ -658,21 +658,21 @@
 
       const requireParking = document.getElementById('parkingFilter').checked;
       const requireHousing = document.getElementById('housingFilter').checked;
-      const requireMeals = document.getElementById('mealFilter').checked;
+      const requireMeal = document.getElementById('mealFilter').checked;
       const requireTech = document.getElementById('techFilter').checked;
 
       const filtered = allPrograms.filter(prog => {
         const programName = getVal(prog, ['Program', 'program', 'Name', 'name']).toLowerCase();
         const city = getVal(prog, ['City', 'city']).toLowerCase();
-        const state = getVal(prog, ['State', 'state']);
+        const state = getVal(prog, ['State', 'state']).toLowerCase();
         const setting = getVal(prog, ['Setting', 'setting']);
-        const comp = getVal(prog, ['Competitiveness', 'Tier', 'tier']);
+        const competitiveness = getVal(prog, ['Competitiveness', 'Competitiveness Tier', 'Tier', 'tier']);
 
-        if (searchTerm && !programName.includes(searchTerm) && !city.includes(searchTerm) && !state.toLowerCase().includes(searchTerm)) {
+        if (searchTerm && !programName.includes(searchTerm) && !city.includes(searchTerm) && !state.includes(searchTerm)) {
           return false;
         }
 
-        if (selectedFilters.state.size > 0 && !selectedFilters.state.has(state)) {
+        if (selectedFilters.state.size > 0 && !selectedFilters.state.has(getVal(prog, ['State', 'state']))) {
           return false;
         }
 
@@ -680,14 +680,14 @@
           return false;
         }
 
-        if (selectedFilters.competitiveness.size > 0 && !selectedFilters.competitiveness.has(comp)) {
+        if (selectedFilters.competitiveness.size > 0 && !selectedFilters.competitiveness.has(competitiveness)) {
           return false;
         }
 
-        if (requireParking && !isTrueValue(getVal(prog, ['Free Parking', 'Parking']))) return false;
-        if (requireHousing && !isTrueValue(getVal(prog, ['Housing Stipend', 'Housing']))) return false;
-        if (requireMeals && !isTrueValue(getVal(prog, ['Meal Stipend', 'Meals']))) return false;
-        if (requireTech && !isTrueValue(getVal(prog, ['Tech Stipend', 'Tech']))) return false;
+        if (requireParking && !isTrueValue(getVal(prog, ['Free Parking', 'Parking', 'parking']))) return false;
+        if (requireHousing && !isTrueValue(getVal(prog, ['Housing Stipend', 'Housing', 'housing']))) return false;
+        if (requireMeal && !isTrueValue(getVal(prog, ['Meal Stipend', 'Meals', 'meals']))) return false;
+        if (requireTech && !isTrueValue(getVal(prog, ['Tech Stipend', 'Tech', 'tech']))) return false;
 
         return true;
       });
@@ -696,9 +696,12 @@
       createMapPins(filtered);
     }
 
-    function initEventListeners() {
-      document.getElementById('searchInput').addEventListener('input', applyFilters);
+    // Initialize application
+    window.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      setupDropdownControls();
 
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
       ['parkingFilter', 'housingFilter', 'mealFilter', 'techFilter'].forEach(id => {
         document.getElementById(id).addEventListener('change', applyFilters);
       });
@@ -706,40 +709,74 @@
       const programsHeader = document.getElementById('programsHeader');
       const programList = document.getElementById('programList');
       const toggleIcon = document.getElementById('programsToggleIcon');
-      const sidebar = document.getElementById('sidebar');
 
       programsHeader.addEventListener('click', () => {
         isProgramsCollapsed = !isProgramsCollapsed;
         if (isProgramsCollapsed) {
-          programList.style.display = 'none';
+          programList.classList.add('hidden');
           toggleIcon.style.transform = 'rotate(-90deg)';
-          sidebar.style.backgroundColor = '#FFFFFF';
         } else {
-          programList.style.display = 'block';
+          programList.classList.remove('hidden');
           toggleIcon.style.transform = 'rotate(0deg)';
-          sidebar.style.backgroundColor = '';
         }
       });
-    }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      initMap();
-      setupDropdownControls();
-      initEventListeners();
-
-      Papa.parse('programs.csv', {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        complete: function(results) {
-          allPrograms = results.data;
-          populateDropdowns(allPrograms);
-          applyFilters();
+      // Sample mock data initialization for fallback/demonstration
+      allPrograms = [
+        {
+          "Program": "Atrium Health Carolinas Medical Center",
+          "City": "Charlotte",
+          "State": "NC",
+          "Setting": "CB/University Affiliated",
+          "Competitiveness": "Target",
+          "Website": "https://www.atriumhealth.org",
+          "Class size": "12",
+          "Step Score Range": "230-250",
+          "Hours/Week": "65",
+          "Longest Shift": "28 hrs",
+          "Days Off/week": "4",
+          "Sick Days": "5",
+          "Vacation Days": "20",
+          "Family Leave Paid/Unpaid": "6 weeks paid",
+          "Salary": "$65,000",
+          "COL-Adjusted Salary": "$68,000",
+          "Salary Stretch": "8.5/10",
+          "Free Parking": "Yes",
+          "Housing Stipend": "No",
+          "Meal Stipend": "Yes",
+          "Tech Stipend": "Yes",
+          "Latitude": 35.2271,
+          "Longitude": -80.8431
         },
-        error: function(err) {
-          console.warn("Could not load programs.csv automatically. Please ensure CSV is present or use local server.", err);
+        {
+          "Program": "Duke University Hospital",
+          "City": "Durham",
+          "State": "NC",
+          "Setting": "University",
+          "Competitiveness": "Reach",
+          "Website": "https://www.dukehealth.org",
+          "Class size": "20",
+          "Step Score Range": "245-265",
+          "Hours/Week": "70",
+          "Longest Shift": "28 hrs",
+          "Days Off/week": "4",
+          "Sick Days": "5",
+          "Vacation Days": "21",
+          "Family Leave Paid/Unpaid": "8 weeks paid",
+          "Salary": "$67,000",
+          "COL-Adjusted Salary": "$69,000",
+          "Salary Stretch": "8.0/10",
+          "Free Parking": "Yes",
+          "Housing Stipend": "No",
+          "Meal Stipend": "Yes",
+          "Tech Stipend": "Yes",
+          "Latitude": 36.0014,
+          "Longitude": -78.9382
         }
-      });
+      ];
+
+      populateDropdowns(allPrograms);
+      applyFilters();
     });
   </script>
 </body>
