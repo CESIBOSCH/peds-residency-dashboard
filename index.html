@@ -524,13 +524,11 @@
 
         card.addEventListener('click', () => {
           const marker = markersMap.get(programName);
-          if (marker) {
-map.flyTo(marker.getLatLng(), 5, {
-  animate: true,
-  duration: 1.5
+          marker.bindPopup(createInMapFactSheetPopup(prog), {
+  autoPan: true,
+  keepInView: true,
+  autoPanPadding: [30, 30]
 });
-            marker.openPopup();
-          }
         });
 
         listContainer.appendChild(card);
