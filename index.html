@@ -1,291 +1,690 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pediatrics Residencies - Curated Program Explorer</title>
+
+    <title>Pediatric Residency Tracker Dashboard</title>
+
     <!-- Leaflet CSS -->
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <!-- Tailwind CSS -->
+
+    <!-- Google Fonts & Tailwind CSS for clean Scandinavian minimalist styling -->
+
     <script src="https://cdn.tailwindcss.com"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <script>
+
         tailwind.config = {
+
             theme: {
+
                 extend: {
+
                     colors: {
-                        cream: '#FDFCF7',
-                        warmbeige: '#F4EFE6',
-                        taupe: '#8C857B',
-                        softdark: '#22201E',
-                        accent: '#C86D51'
+
+                        cream: '#FBF9F5',
+
+                        warmbeige: '#F3EFEA',
+
+                        taupe: '#A39B90',
+
+                        softdark: '#2D2B29',
+
+                        accent: '#6B705C'
+
                     },
+
                     fontFamily: {
+
                         sans: ['"Plus Jakarta Sans"', 'sans-serif']
+
                     }
+
                 }
+
             }
+
         }
+
     </script>
+
     <style>
-        #map { height: 100%; min-height: 550px; border-radius: 0.5rem; }
-        .leaflet-popup-content-wrapper {
-            background-color: #FDFCF7;
-            border: 1px solid #F4EFE6;
-            border-radius: 0.5rem;
-            padding: 0.25rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
+
+        #map { height: 420px; border-radius: 0.75rem; }
+
     </style>
+
 </head>
+
 <body class="bg-cream text-softdark font-sans antialiased min-h-screen flex flex-col">
+
     <!-- Header -->
-    <header class="bg-cream border-b border-warmbeige py-8 px-6">
-        <div class="max-w-7xl mx-auto flex flex-col items-center justify-center text-center">
-            <h1 class="text-xl font-bold tracking-[0.2em] uppercase text-softdark">Pediatrics Residencies</h1>
-            <p class="text-[11px] uppercase tracking-[0.25em] text-taupe mt-1.5 font-medium">Curated Program Explorer</p>
+
+    <header class="bg-white border-b border-warmbeige py-6 px-8 shadow-sm">
+
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+
+            <div>
+
+                <h1 class="text-2xl font-bold tracking-tight text-softdark">Pediatric Residency Tracker</h1>
+
+                <p class="text-sm text-taupe mt-1">Evaluating programs by clinical volume, autonomy, and urban/coastal alignment.</p>
+
+            </div>
+
+            <div class="flex items-center gap-3">
+
+                <button onclick="exportData()" class="px-4 py-2 bg-warmbeige hover:bg-taupe hover:text-white text-xs font-semibold uppercase tracking-wider rounded-lg transition">Export CSV</button>
+
+                <button onclick="resetData()" class="px-4 py-2 border border-warmbeige text-xs font-semibold uppercase tracking-wider rounded-lg hover:bg-gray-50 transition">Reset Defaults</button>
+
+            </div>
+
         </div>
+
     </header>
 
-    <!-- Main Dashboard Layout -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+
+    <!-- Main Content -->
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full space-y-8">
+
         
-        <!-- Sidebar Filters & Program List -->
-        <div class="lg:col-span-5 space-y-6">
-            <div class="bg-white p-6 rounded-xl border border-warmbeige/80 shadow-sm space-y-4">
-                <h2 class="text-[11px] font-bold uppercase tracking-[0.15em] text-taupx text-taupe">Filters & Search</h2>
-                
-                <!-- Search -->
-                <div>
-                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-taupe mb-1">Search</label>
-                    <input type="text" id="search-input" placeholder="Search program or city..." oninput="filterPrograms()" class="w-full px-3.5 py-2 bg-cream border border-warmbeige rounded-md focus:outline-none focus:ring-1 focus:ring-accent text-xs">
-                </div>
 
-                <!-- State & Setting Filters -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-taupe mb-1">State</label>
-                        <select id="filter-state" onchange="filterPrograms()" class="w-full px-3 py-2 bg-cream border border-warmbeige rounded-md focus:outline-none focus:ring-1 focus:ring-accent text-xs">
-                            <option value="">All States</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-taupe mb-1">Setting</label>
-                        <select id="filter-setting" onchange="filterPrograms()" class="w-full px-3 py-2 bg-cream border border-warmbeige rounded-md focus:outline-none focus:ring-1 focus:ring-accent text-xs">
-                            <option value="">All Settings</option>
-                            <option value="University">University</option>
-                            <option value="CB/University Affiliated">CB/University Affiliated</option>
-                        </select>
-                    </div>
-                </div>
+        <!-- Metrics Summary Cards -->
 
-                <!-- Tier Filter -->
-                <div>
-                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-taupe mb-1">Tier / Competitiveness</label>
-                    <select id="filter-tier" onchange="filterPrograms()" class="w-full px-3 py-2 bg-cream border border-warmbeige rounded-md focus:outline-none focus:ring-1 focus:ring-accent text-xs">
-                        <option value="">All Tiers</option>
-                        <option value="Target">Target</option>
-                        <option value="Target/Reach">Target/Reach</option>
-                        <option value="Reach">Reach</option>
-                        <option value="High Reach">High Reach</option>
-                        <option value="Safer">Safer</option>
-                    </select>
-                </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
-                <!-- Benefits Checkboxes -->
-                <div>
-                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-taupe mb-2">Benefits</label>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <label class="flex items-center gap-2 text-taupe cursor-pointer"><input type="checkbox" id="check-parking" onchange="filterPrograms()" class="rounded border-warmbeige text-accent focus:ring-accent"> Parking</label>
-                        <label class="flex items-center gap-2 text-taupe cursor-pointer"><input type="checkbox" id="check-housing" onchange="filterPrograms()" class="rounded border-warmbeige text-accent focus:ring-accent"> Housing</label>
-                        <label class="flex items-center gap-2 text-taupe cursor-pointer"><input type="checkbox" id="check-meals" onchange="filterPrograms()" class="rounded border-warmbeige text-accent focus:ring-accent"> Meals</label>
-                        <label class="flex items-center gap-2 text-taupe cursor-pointer"><input type="checkbox" id="check-tech" onchange="filterPrograms()" class="rounded border-warmbeige text-accent focus:ring-accent"> Tech</label>
-                    </div>
-                </div>
+            <div class="bg-white p-6 rounded-xl border border-warmbeige shadow-sm">
+
+                <p class="text-xs font-semibold uppercase tracking-wider text-taupe">Total Programs Tracked</p>
+
+                <p id="stat-total" class="text-3xl font-bold mt-2 text-softdark">0</p>
+
             </div>
 
-            <!-- Program Cards List -->
-            <div id="program-list" class="space-y-3 max-h-[520px] overflow-y-auto pr-1">
-                <!-- Dynamically populated -->
+            <div class="bg-white p-6 rounded-xl border border-warmbeige shadow-sm">
+
+                <p class="text-xs font-semibold uppercase tracking-wider text-taupe">High Autonomy / Volume</p>
+
+                <p id="stat-autonomy" class="text-3xl font-bold mt-2 text-softdark">0</p>
+
             </div>
+
+            <div class="bg-white p-6 rounded-xl border border-warmbeige shadow-sm">
+
+                <p class="text-xs font-semibold uppercase tracking-wider text-taupe">Signaled Programs</p>
+
+                <p id="stat-signals" class="text-3xl font-bold mt-2 text-softdark">0</p>
+
+            </div>
+
+            <div class="bg-white p-6 rounded-xl border border-warmbeige shadow-sm">
+
+                <p class="text-xs font-semibold uppercase tracking-wider text-taupe">Coastal / Urban Focus</p>
+
+                <p id="stat-coastal" class="text-3xl font-bold mt-2 text-softdark">0</p>
+
+            </div>
+
         </div>
+
+
 
         <!-- Interactive Map Section -->
-        <div class="lg:col-span-7 bg-white p-4 rounded-xl border border-warmbeige/80 shadow-sm flex flex-col">
-            <div id="map" class="w-full flex-grow"></div>
+
+        <div class="bg-white p-6 rounded-xl border border-warmbeige shadow-sm">
+
+            <h2 class="text-lg font-semibold mb-4">Program Geographic Distribution</h2>
+
+            <div id="map"></div>
+
         </div>
+
+
+
+        <!-- Controls & Filters Section -->
+
+        <div class="bg-white p-6 rounded-xl border border-warmbeige shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
+
+            <div class="w-full md:w-1/3">
+
+                <label for="search-input" class="block text-xs font-semibold uppercase tracking-wider text-taupe mb-1">Search Programs</label>
+
+                <input type="text" id="search-input" placeholder="Filter by name, city, or state..." oninput="filterTable()" class="w-full px-4 py-2 bg-cream border border-warmbeige rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-sm">
+
+            </div>
+
+            <div class="flex flex-wrap gap-4 w-full md:w-auto">
+
+                <div>
+
+                    <label for="filter-region" class="block text-xs font-semibold uppercase tracking-wider text-taupe mb-1">Region</label>
+
+                    <select id="filter-region" onchange="filterTable()" class="px-4 py-2 bg-cream border border-warmbeige rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-sm">
+
+                        <option value="">All Regions</option>
+
+                        <option value="Southeast">Southeast</option>
+
+                        <option value="Mid-Atlantic">Mid-Atlantic</option>
+
+                        <option value="Northeast">Northeast</option>
+
+                    </select>
+
+                </div>
+
+                <div>
+
+                    <label for="filter-autonomy" class="block text-xs font-semibold uppercase tracking-wider text-taupe mb-1">Autonomy</label>
+
+                    <select id="filter-autonomy" onchange="filterTable()" class="px-4 py-2 bg-cream border border-warmbeige rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-sm">
+
+                        <option value="">All Levels</option>
+
+                        <option value="High">High</option>
+
+                        <option value="Moderate">Moderate</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Data Table Section -->
+
+        <div class="bg-white rounded-xl border border-warmbeige shadow-sm overflow-hidden">
+
+            <div class="overflow-x-auto">
+
+                <table class="w-full text-left border-collapse">
+
+                    <thead>
+
+                        <tr class="bg-warmbeige/50 border-b border-warmbeige text-xs uppercase tracking-wider text-taupe">
+
+                            <th class="py-4 px-6 font-semibold">Program Name</th>
+
+                            <th class="py-4 px-6 font-semibold">Location</th>
+
+                            <th class="py-4 px-6 font-semibold">Region</th>
+
+                            <th class="py-4 px-6 font-semibold">Clinical Volume</th>
+
+                            <th class="py-4 px-6 font-semibold">Autonomy</th>
+
+                            <th class="py-4 px-6 font-semibold">Research Emphasis</th>
+
+                            <th class="py-4 px-6 font-semibold">Signal Status</th>
+
+                            <th class="py-4 px-6 font-semibold text-right">Actions</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="table-body" class="divide-y divide-warmbeige text-sm">
+
+                        <!-- Populated dynamically via JavaScript -->
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
 
     </main>
 
+
+
     <!-- Footer -->
-    <footer class="bg-cream border-t border-warmbeige py-6 text-center text-xs text-taupe mt-auto">
-        <p>Pediatric Residency Tracker Dashboard &bull; Minimalist Aesthetic</p>
+
+    <footer class="bg-white border-t border-warmbeige py-6 text-center text-xs text-taup">
+
+        <p>Pediatric Residency Tracker Dashboard &bull; Designed with minimalist clarity</p>
+
     </footer>
 
+
+
     <!-- Leaflet JS -->
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
     
+
     <script>
-        const programsData = [
-            { id: 0, name: "Phoenix Children’s", city: "Phoenix", state: "AZ", setting: "CB/University Affiliated", classSize: 39, competitiveness: "Target/Reach", stepRange: "232-264", hours: 50, shift: 12, daysOff: 2, sick: "N", vacation: 20, leave: "42/42", salary: "$67,935", colSalary: "$65,765", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 33.4484, lng: -112.0740, url: "https://www.phoenixchildrens.org/gme/pediatric-residency" },
-            { id: 1, name: "Cedars-Sinai Medical Center Program", city: "Los Angeles", state: "CA", setting: "CB/University Affiliated", classSize: 8, competitiveness: "High Reach", stepRange: "227-261", hours: 51, shift: 14, daysOff: 1.5, sick: 5, vacation: 28, leave: "—/91", salary: "$94,746", colSalary: "$83,403", parking: "Y", housing: "Y", meals: "Y", tech: "Y", lat: 34.0736, lng: -118.3835, url: "https://www.cedars-sinai.org/education/gme/pediatrics-residency.html" },
-            { id: 2, name: "UCSF", city: "San Francisco", state: "CA", setting: "University", classSize: 29, competitiveness: "High Reach", stepRange: "234-267", hours: 65, shift: 16, daysOff: 1.0, sick: 12, vacation: 28, leave: "N x2", salary: "$92,284", colSalary: "$79,830", parking: "N", housing: "Y", meals: "Y", tech: "N", lat: 37.7631, lng: -122.4586, url: "https://pediatrics.ucsf.edu/residency" },
-            { id: 3, name: "UCSF Benioff Children’s Hospital Oakland Program", city: "Oakland", state: "CA", setting: "CB/University Affiliated", classSize: 33, competitiveness: "Reach", stepRange: "230-264", hours: 60, shift: 24, daysOff: 1.5, sick: 12, vacation: 20, leave: "40/N", salary: "$92,284", colSalary: "$79,830", parking: "Y", housing: "Y", meals: "Y", tech: "Y", lat: 37.8356, lng: -122.2727, url: "https://www.ucsfbenioffchildrens.org/education/pediatric-residency-program" },
-            { id: 4, name: "UCLA David Geffen School of Medicine/UCLA Medical Center Program", city: "Los Angeles", state: "CA", setting: "University", classSize: 29, competitiveness: "Target/Reach", stepRange: "233-266", hours: 65, shift: 24, daysOff: 1.4, sick: 12, vacation: 28, leave: "NaN", salary: "$89,261", colSalary: "$78,575", parking: "Y", housing: "Y", meals: "Y", tech: "Y", lat: 34.0689, lng: -118.4452, url: "https://www.uclahealth.org/education/gme/pediatrics" },
-            { id: 5, name: "Kaiser Permanente Northern California Program", city: "Oakland", state: "CA", setting: "CB/University Affiliated", classSize: 12, competitiveness: "Target", stepRange: "230-260", hours: 55, shift: 12, daysOff: 2, sick: 10, vacation: 21, leave: "Paid/Unpaid", salary: "$91,000", colSalary: "$79,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 37.8044, lng: -122.2712, url: "https://residencynorcal.kaiserpermanente.org/pediatrics/" },
-            { id: 6, name: "UC Davis", city: "Sacramento", state: "CA", setting: "University", classSize: 24, competitiveness: "Target/Reach", stepRange: "228-260", hours: 58, shift: 16, daysOff: 1.5, sick: 12, vacation: 21, leave: "Available", salary: "$84,000", colSalary: "$78,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 38.5816, lng: -121.4944, url: "https://health.ucdavis.edu/pediatrics/education/residency" },
-            { id: 7, name: "UCSD", city: "San Diego", state: "CA", setting: "University", classSize: 26, competitiveness: "Reach/High Reach", stepRange: "232-265", hours: 60, shift: 20, daysOff: 1.5, sick: 12, vacation: 20, leave: "Available", salary: "$82,000", colSalary: "$74,000", parking: "Y", housing: "Y", meals: "Y", tech: "Y", lat: 32.8801, lng: -117.2340, url: "https://medschool.ucsd.edu/som/pediatrics/education/residency" },
-            { id: 8, name: "Kaiser LAMC", city: "Los Angeles", state: "CA", setting: "CB/University Affiliated", classSize: 10, competitiveness: "Target", stepRange: "230-260", hours: 55, shift: 12, daysOff: 2, sick: 10, vacation: 21, leave: "Available", salary: "$90,000", colSalary: "$80,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 34.0983, lng: -118.3045, url: "https://lamc-residency.kaiserpermanente.org/pediatrics/" },
-            { id: 9, name: "Yale", city: "New Haven", state: "CT", setting: "University", classSize: 30, competitiveness: "Reach", stepRange: "235-268", hours: 62, shift: 24, daysOff: 1.5, sick: 12, vacation: 20, leave: "Available", salary: "$78,000", colSalary: "$75,000", parking: "Y", housing: "Y", meals: "Y", tech: "Y", lat: 41.3163, lng: -72.9223, url: "https://medicine.yale.edu/pediatrics/residency/" },
-            { id: 10, name: "Emory/Children’s Healthcare of Atlanta", city: "Atlanta", state: "GA", setting: "University", classSize: 42, competitiveness: "Reach", stepRange: "233-266", hours: 60, shift: 24, daysOff: 1.5, sick: 10, vacation: 20, leave: "Available", salary: "$70,500", colSalary: "$71,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 33.7490, lng: -84.3880, url: "https://www.peds.emory.edu/education/residency/" },
-            { id: 11, name: "University of Chicago Program", city: "Chicago", state: "IL", setting: "University", classSize: 28, competitiveness: "Reach", stepRange: "232-265", hours: 60, shift: 24, daysOff: 1.5, sick: 12, vacation: 20, leave: "Available", salary: "$75,000", colSalary: "$75,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 41.7886, lng: -87.5987, url: "https://pediatrics.uchicago.edu/residency" },
-            { id: 12, name: "Advocate Health Care/Advocate Children’s Hospital (Oak Lawn) Program", city: "Oak Lawn", state: "IL", setting: "CB/University Affiliated", classSize: 18, competitiveness: "Target", stepRange: "228-260", hours: 55, shift: 12, daysOff: 2, sick: 10, vacation: 20, leave: "Available", salary: "$72,000", colSalary: "$72,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 41.7164, lng: -87.7520, url: "https://www.advocatehealth.com/education/residencies-fellowships/pediatrics-residency-oak-lawn" },
-            { id: 13, name: "Indiana University", city: "Indianapolis", state: "IN", setting: "University", classSize: 45, competitiveness: "Target/Reach", stepRange: "228-260", hours: 55, shift: 14, daysOff: 2, sick: 10, vacation: 20, leave: "Available", salary: "$66,000", colSalary: "$70,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 39.7684, lng: -86.1581, url: "https://pediatrics.medicine.iu.edu/residency" },
-            { id: 14, name: "LSU Pediatrics/Children’s Hospital New Orleans", city: "New Orleans", state: "LA", setting: "University", classSize: 22, competitiveness: "Target", stepRange: "225-255", hours: 58, shift: 16, daysOff: 1.5, sick: 10, vacation: 20, leave: "Available", salary: "$63,000", colSalary: "$65,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 29.9234, lng: -90.0843, url: "https://www.chnola.org/education/pediatric-residency-program/" },
-            { id: 15, name: "Tulane", city: "New Orleans", state: "LA", setting: "University", classSize: 20, competitiveness: "Target/Reach", stepRange: "228-258", hours: 60, shift: 24, daysOff: 1.5, sick: 10, vacation: 20, leave: "Available", salary: "$64,000", colSalary: "$66,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 29.9457, lng: -90.1136, url: "https://medicine.tulane.edu/departments/pediatrics/residency-program" },
-            { id: 16, name: "Maine Medical Center", city: "Portland", state: "ME", setting: "CB/University Affiliated", classSize: 14, competitiveness: "Target", stepRange: "230-260", hours: 52, shift: 12, daysOff: 2, sick: 10, vacation: 20, leave: "Available", salary: "$68,000", colSalary: "$67,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 43.6591, lng: -70.2917, url: "https://www.mainehealth.org/maine-medical-center/education-research/residencies-fellowships/pediatrics" },
-            { id: 17, name: "University of Michigan", city: "Ann Arbor", state: "MI", setting: "University", classSize: 30, competitiveness: "Reach", stepRange: "236-268", hours: 60, shift: 24, daysOff: 1.5, sick: 12, vacation: 20, leave: "Available", salary: "$74,000", colSalary: "$74,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 42.2808, lng: -83.7430, url: "https://medicine.umich.edu/dept/pediatrics/education/residency-program" },
-            { id: 18, name: "Henry Ford St. John Hospital Program", city: "Detroit", state: "MI", setting: "CB/University Affiliated", classSize: 12, competitiveness: "Safer/Target", stepRange: "220-250", hours: 50, shift: 12, daysOff: 2, sick: 10, vacation: 20, leave: "Available", salary: "$67,000", colSalary: "$72,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 42.4285, lng: -82.9157, url: "https://www.henryford.com/hcp/edu/residency-fellowships/st-john-pediatrics" },
-            { id: 19, name: "Children's Hospital of Michigan Program", city: "Detroit", state: "MI", setting: "University", classSize: 35, competitiveness: "Target/Reach", stepRange: "225-258", hours: 58, shift: 16, daysOff: 1.5, sick: 10, vacation: 20, leave: "Available", salary: "$66,000", colSalary: "$71,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 42.3551, lng: -83.0645, url: "https://www.chmresidency.org/" },
-            { id: 20, name: "Children’s Mercy", city: "Kansas City", state: "MO", setting: "University", classSize: 40, competitiveness: "Target/Reach", stepRange: "230-262", hours: 55, shift: 14, daysOff: 2, sick: 10, vacation: 20, leave: "Available", salary: "$68,000", colSalary: "$73,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 39.0805, lng: -94.5812, url: "https://www.childrensmercy.org/health-care-providers/education/gme/pediatric-residency/" },
-            { id: 21, name: "ECU Health Medical Center/East Carolina University Program", city: "Greenville", state: "NC", setting: "University", classSize: 12, competitiveness: "Safer", stepRange: "220-250", hours: 50, shift: 12, daysOff: 2, sick: 10, vacation: 20, leave: "Available", salary: "$62,000", colSalary: "$68,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 35.6127, lng: -77.3664, url: "https://default.ecu.edu/pediatrics/residency/" },
-            { id: 22, name: "Carolinas Medical Center Program", city: "Charlotte", state: "NC", setting: "CB/University Affiliated", classSize: 16, competitiveness: "Target", stepRange: "235-267", hours: 56, shift: "N/A", daysOff: "N/A", sick: 90, vacation: 20, leave: "N/A / N/A", salary: "$70,000", colSalary: "$72,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 35.2087, lng: -80.8307, url: "https://www.atriumhealth.org/medical-services/childrens-services/levine-childrens-hospital" },
-            { id: 23, name: "Montefiore Medical Center/Albert Einstein College of Medicine", city: "Bronx", state: "NY", setting: "University", classSize: 45, competitiveness: "Target/Reach", stepRange: "230-262", hours: 60, shift: 24, daysOff: 1.5, sick: 12, vacation: 20, leave: "Available", salary: "$80,000", colSalary: "$72,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 40.8712, lng: -73.8767, url: "https://www.montefiore.org/pediatric-residency" },
-            { id: 24, name: "Jacobi Medical Center/Albert Einstein College of Medicine Program", city: "Bronx", state: "NY", setting: "CB/University Affiliated", classSize: 20, competitiveness: "Target", stepRange: "225-258", hours: 58, shift: 16, daysOff: 1.5, sick: 10, vacation: 20, leave: "Available", salary: "$79,000", colSalary: "$71,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 40.8554, lng: -73.8459, url: "https://www.einsteinmed.edu/departments/pediatrics/" },
-            { id: 25, name: "Stony Brook Medicine/Stony Brook Children's Hospital Program", city: "Stony Brook", state: "NY", setting: "University", classSize: 18, competitiveness: "Target/Reach", stepRange: "230-260", hours: 56, shift: 16, daysOff: 1.5, sick: 10, vacation: 20, leave: "Available", salary: "$78,000", colSalary: "$70,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 40.9135, lng: -73.1258, url: "https://www.stonybrookmedicine.edu/patientcare/pediatrics/education/residency" },
-            { id: 26, name: "Case Western/Cleveland Med/Rainbow Babies & Childrens Hospital Program", city: "Cleveland", state: "OH", setting: "University", classSize: 38, competitiveness: "Target/Reach", stepRange: "232-264", hours: 58, shift: 20, daysOff: 1.5, sick: 10, vacation: 20, leave: "Available", salary: "$67,000", colSalary: "$71,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 41.5061, lng: -81.6091, url: "https://www.rainbowbabies.org/education/pediatric-residency/" },
-            { id: 27, name: "Oregon Health & Science University (OHSU Health) Program", city: "Portland", state: "OR", setting: "University", classSize: 24, competitiveness: "Target/Reach", stepRange: "232-264", hours: 58, shift: 16, daysOff: 1.5, sick: 12, vacation: 20, leave: "Available", salary: "$76,000", colSalary: "$70,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 45.4994, lng: -122.6856, url: "https://www.ohsu.edu/school-of-medicine/pediatrics/pediatric-residency-program" },
-            { id: 28, name: "UPMC Medical Education Program", city: "Pittsburgh", state: "PA", setting: "University", classSize: 42, competitiveness: "Reach", stepRange: "234-266", hours: 60, shift: 24, daysOff: 1.5, sick: 12, vacation: 20, leave: "Available", salary: "$68,000", colSalary: "$72,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 40.4443, lng: -79.9608, url: "https://www.upmc.com/medical-education/residencies/pediatrics" },
-            { id: 29, name: "Tower Health/St. Christopher's Hospital for Children Program", city: "Philadelphia", state: "PA", setting: "CB/University Affiliated", classSize: 26, competitiveness: "Target", stepRange: "225-258", hours: 56, shift: 16, daysOff: 1.5, sick: 10, vacation: 20, leave: "Available", salary: "$69,000", colSalary: "$68,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 39.9982, lng: -75.1235, url: "https://www.stchristophershospital.com/gme/pediatric-residency" },
-            { id: 30, name: "Vanderbilt University Medical Center Program", city: "Nashville", state: "TN", setting: "University", classSize: 36, competitiveness: "High Reach", stepRange: "236-268", hours: 62, shift: 24, daysOff: 1.5, sick: 12, vacation: 20, leave: "Available", salary: "$71,000", colSalary: "$72,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 36.1421, lng: -86.8000, url: "https://www.vumc.org/pediatrics/residency" },
-            { id: 31, name: "University of Texas at Austin", city: "Austin", state: "TX", setting: "University", classSize: 18, competitiveness: "Target/Reach", stepRange: "230-262", hours: 55, shift: 14, daysOff: 2, sick: 10, vacation: 20, leave: "Available", salary: "$69,000", colSalary: "$66,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 30.2849, lng: -97.7341, url: "https://dellmed.utexas.edu/education/graduate-medical-education/pediatrics-residency" },
-            { id: 32, name: "University of Utah/Primary Children’s", city: "Salt Lake City", state: "UT", setting: "University", classSize: 28, competitiveness: "Target/Reach", stepRange: "232-264", hours: 56, shift: 16, daysOff: 1.5, sick: 10, vacation: 20, leave: "Available", salary: "$67,000", colSalary: "$68,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 40.7683, lng: -111.8447, url: "https://healthcare.utah.edu/pediatrics/residency" },
-            { id: 33, name: "Inova Children’s", city: "Falls Church", state: "VA", setting: "CB/University Affiliated", classSize: 12, competitiveness: "Target", stepRange: "228-260", hours: 54, shift: 14, daysOff: 2, sick: 10, vacation: 20, leave: "Available", salary: "$73,000", colSalary: "$68,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 38.8774, lng: -77.1856, url: "https://www.inova.org/education-and-research/gme/residencies/pediatric-residency" },
-            { id: 34, name: "Virginia Commonwealth University Health System Program", city: "Richmond", state: "VA", setting: "University", classSize: 20, competitiveness: "Target", stepRange: "225-258", hours: 56, shift: 16, daysOff: 1.5, sick: 10, vacation: 20, leave: "Available", salary: "$67,000", colSalary: "$70,000", parking: "Y", housing: "N", meals: "Y", tech: "N", lat: 37.5407, lng: -77.4360, url: "https://vcuhealth.org/education/residency-fellowship-programs/pediatrics" },
-            { id: 35, name: "Seattle Children’s", city: "Seattle", state: "WA", setting: "CB/University Affiliated", classSize: 32, competitiveness: "Reach", stepRange: "235-268", hours: 60, shift: 24, daysOff: 1.5, sick: 12, vacation: 20, leave: "Available", salary: "$81,000", colSalary: "$73,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 47.6625, lng: -122.3137, url: "https://www.seattlechildrens.org/healthcare-professionals/education/gme/pediatric-residency/" },
-            { id: 36, name: "Medical College of Wisconsin/Children’s Wisconsin", city: "Milwaukee", state: "WI", setting: "University", classSize: 32, competitiveness: "Target/Reach", stepRange: "230-262", hours: 56, shift: 16, daysOff: 1.5, sick: 10, vacation: 20, leave: "Available", salary: "$68,000", colSalary: "$73,000", parking: "Y", housing: "N", meals: "Y", tech: "Y", lat: 43.0389, lng: -88.0289, url: "https://www.mcw.edu/departments/pediatrics/gme/residency-program" }
-        ];
 
-        let map;
-        let markers = [];
+        // Initial dataset representing target pediatric residency programs
 
-        function initMap() {
-            map = L.map('map', { zoomControl: false }).setView([38.5, -96.0], 4);
-            L.control.zoom({ position: 'bottomright' }).addTo(map);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; OpenStreetMap'
-            }).addTo(map);
-            populateStateDropdown();
-            filterPrograms();
-        }
+        const defaultPrograms = [
 
-        function populateStateDropdown() {
-            const states = [...new Set(programsData.map(p => p.state))].sort();
-            const select = document.getElementById('filter-state');
-            states.forEach(state => {
-                const opt = document.createElement('option');
-                opt.value = state;
-                opt.innerText = state;
-                select.appendChild(opt);
-            });
-        }
+            {
 
-        function updateMapMarkers(data) {
-            markers.forEach(marker => map.removeLayer(marker));
-            markers = [];
+                id: 1,
 
-            data.forEach(prog => {
-                if(prog.lat && prog.lng) {
-                    const popupContent = `
-                        <div class="p-2 space-y-1.5 text-xs max-w-[240px]">
-                            <h3 class="font-bold text-softdark text-sm leading-snug">
-                                <a href="${prog.url}" target="_blank" class="text-accent hover:underline flex items-center gap-1">
-                                    ${prog.name}
-                                    <svg class="w-3 h-3 inline opacity-70" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                </a>
-                            </h3>
-                            <p class="text-taupe">${prog.city}, ${prog.state} &bull; ${prog.setting}</p>
-                            <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px] pt-1 border-t border-warmbeige text-taupe">
-                                <div><strong>Tier:</strong> ${prog.competitiveness || 'N/A'}</div>
-                                <div><strong>Class:</strong> ${prog.classSize}</div>
-                                <div><strong>Hours:</strong> ${prog.hours}/wk</div>
-                                <div><strong>Salary:</strong> ${prog.salary}</div>
-                            </div>
-                        </div>
-                    `;
-                    const marker = L.marker([prog.lat, prog.lng]).addTo(map)
-                        .bindPopup(popupContent);
-                    markers.push(marker);
-                }
-            });
-        }
+                name: "Atrium Health Carolinas Medical Center",
 
-        function renderProgramList(data) {
-            const listContainer = document.getElementById('program-list');
-            listContainer.innerHTML = '';
+                city: "Charlotte",
 
-            if(data.length === 0) {
-                listContainer.innerHTML = `<div class="p-6 bg-white rounded-xl border border-warmbeige text-center text-taupe text-xs">No programs match your filters.</div>`;
-                return;
+                state: "NC",
+
+                region: "Southeast",
+
+                volume: "High",
+
+                autonomy: "High",
+
+                research: "Low-Moderate",
+
+                signal: "Signaled",
+
+                lat: 35.2087,
+
+                lng: -80.8307
+
+            },
+
+            {
+
+                id: 2,
+
+                name: "Duke University Hospital",
+
+                city: "Durham",
+
+                state: "NC",
+
+                region: "Southeast",
+
+                volume: "High",
+
+                autonomy: "Moderate",
+
+                research: "High",
+
+                signal: "Signaled",
+
+                lat: 36.0014,
+
+                lng: -78.9382
+
+            },
+
+            {
+
+                id: 3,
+
+                name: "UNC Health Care",
+
+                city: "Chapel Hill",
+
+                state: "NC",
+
+                region: "Southeast",
+
+                volume: "High",
+
+                autonomy: "High",
+
+                research: "Moderate",
+
+                signal: "Signaled",
+
+                lat: 35.9132,
+
+                lng: -79.0558
+
+            },
+
+            {
+
+                id: 4,
+
+                name: "Medical University of South Carolina (MUSC)",
+
+                city: "Charleston",
+
+                state: "SC",
+
+                region: "Southeast",
+
+                volume: "High",
+
+                autonomy: "High",
+
+                research: "Moderate",
+
+                signal: "Signaled",
+
+                lat: 32.7876,
+
+                lng: -79.9403
+
+            },
+
+            {
+
+                id: 5,
+
+                name: "Emory University / Children's Healthcare of Atlanta",
+
+                city: "Atlanta",
+
+                state: "GA",
+
+                region: "Southeast",
+
+                volume: "Very High",
+
+                autonomy: "Moderate",
+
+                research: "High",
+
+                signal: "Signaled",
+
+                lat: 33.7900,
+
+                lng: -84.3260
+
+            },
+
+            {
+
+                id: 6,
+
+                name: "Children's National Hospital",
+
+                city: "Washington",
+
+                state: "DC",
+
+                region: "Mid-Atlantic",
+
+                volume: "Very High",
+
+                autonomy: "Moderate",
+
+                research: "High",
+
+                signal: "Considered",
+
+                lat: 38.9270,
+
+                lng: -77.0250
+
             }
 
+        ];
+
+
+
+        let programs = JSON.parse(localStorage.getItem('residency_programs')) || defaultPrograms;
+
+        let map;
+
+        let markers = [];
+
+
+
+        function initMap() {
+
+            map = L.map('map').setView([35.2, -80.8], 6);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+
+                maxZoom: 19,
+
+                attribution: '&copy; OpenStreetMap contributors'
+
+            }).addTo(map);
+
+            updateMapMarkers(programs);
+
+        }
+
+
+
+        function updateMapMarkers(data) {
+
+            markers.forEach(marker => map.removeLayer(marker));
+
+            markers = [];
+
+
+
             data.forEach(prog => {
-                const card = document.createElement('div');
-                card.className = "bg-white p-3.5 rounded-lg border border-warmbeige/80 shadow-2xs hover:border-accent transition cursor-pointer";
-                card.onclick = () => {
-                    map.setView([prog.lat, prog.lng], 11);
-                    markers.find(m => m.getLatLng().lat === prog.lat && m.getLatLng().lng === prog.lng)?.openPopup();
-                };
-                card.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="text-[10px] tracking-wide uppercase text-taupe font-semibold">${prog.city}, ${prog.state}</span>
-                            <h3 class="font-bold text-softdark text-xs mt-0.5 leading-snug">${prog.name}</h3>
-                        </div>
-                        <span class="px-2 py-0.5 bg-cream text-softdark border border-warmbeige rounded text-[10px] font-medium shrink-0 ml-2">${prog.competitiveness || 'Target'}</span>
-                    </div>
-                    <div class="mt-2.5 flex justify-between items-center text-[11px] text-taupe pt-2 border-t border-warmbeige/50">
-                        <span>${prog.setting}</span>
-                        <span class="text-accent font-medium hover:underline">View on Map &rarr;</span>
-                    </div>
+
+                if(prog.lat && prog.lng) {
+
+                    const marker = L.marker([prog.lat, prog.lng]).addTo(map)
+
+                        .bindPopup(`<b>${prog.name}</b><br>${prog.city}, ${prog.state}<br>Autonomy: ${prog.autonomy} | Volume: ${prog.volume}`);
+
+                    markers.push(marker);
+
+                }
+
+            });
+
+        }
+
+
+
+        function renderTable(data) {
+
+            const tbody = document.getElementById('table-body');
+
+            tbody.innerHTML = '';
+
+
+
+            if(data.length === 0) {
+
+                tbody.innerHTML = `<tr><td colspan="8" class="py-6 px-6 text-center text-taupe">No matching residency programs found.</td></tr>`;
+
+                return;
+
+            }
+
+
+
+            data.forEach(prog => {
+
+                const tr = document.createElement('tr');
+
+                tr.className = "hover:bg-warmbeige/20 transition";
+
+                tr.innerHTML = `
+
+                    <td class="py-4 px-6 font-medium text-softdark">${prog.name}</td>
+
+                    <td class="py-4 px-6 text-taupe">${prog.city}, ${prog.state}</td>
+
+                    <td class="py-4 px-6 text-taupe">${prog.region}</td>
+
+                    <td class="py-4 px-6 text-taupe">${prog.volume}</td>
+
+                    <td class="py-4 px-6">
+
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${prog.autonomy === 'High' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">${prog.autonomy}</span>
+
+                    </td>
+
+                    <td class="py-4 px-6 text-taupe">${prog.research}</td>
+
+                    <td class="py-4 px-6">
+
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${prog.signal === 'Signaled' ? 'bg-indigo-50 text-indigo-700' : 'bg-gray-100 text-gray-600'}">${prog.signal}</span>
+
+                    </td>
+
+                    <td class="py-4 px-6 text-right">
+
+                        <button onclick="toggleSignal(${prog.id})" class="text-xs font-semibold text-accent hover:underline">Toggle Signal</button>
+
+                    </td>
+
                 `;
-                listContainer.appendChild(card);
+
+                tbody.appendChild(tr);
+
             });
+
         }
 
-        function filterPrograms() {
+
+
+        function updateStats(data) {
+
+            document.getElementById('stat-total').innerText = data.length;
+
+            document.getElementById('stat-autonomy').innerText = data.filter(p => p.autonomy === 'High').length;
+
+            document.getElementById('stat-signals').innerText = data.filter(p => p.signal === 'Signaled').length;
+
+            document.getElementById('stat-coastal').innerText = data.filter(p => p.region === 'Southeast' || p.region === 'Mid-Atlantic').length;
+
+        }
+
+
+
+        function filterTable() {
+
             const query = document.getElementById('search-input').value.toLowerCase();
-            const state = document.getElementById('filter-state').value;
-            const setting = document.getElementById('filter-setting').value;
-            const tier = document.getElementById('filter-tier').value;
 
-            const parking = document.getElementById('check-parking').checked;
-            const housing = document.getElementById('check-housing').checked;
-            const meals = document.getElementById('check-meals').checked;
-            const tech = document.getElementById('check-tech').checked;
+            const region = document.getElementById('filter-region').value;
 
-            const filtered = programsData.filter(prog => {
-                const matchesQuery = prog.name.toLowerCase().includes(query) || prog.city.toLowerCase().includes(query);
-                const matchesState = state === "" || prog.state === state;
-                const matchesSetting = setting === "" || prog.setting === setting;
-                const matchesTier = tier === "" || (prog.competitiveness && prog.competitiveness.includes(tier));
+            const autonomy = document.getElementById('filter-autonomy').value;
 
-                const matchesParking = !parking || prog.parking === 'Y';
-                const matchesHousing = !housing || prog.housing === 'Y';
-                const matchesMeals = !meals || prog.meals === 'Y';
-                const matchesTech = !tech || prog.tech === 'Y';
 
-                return matchesQuery && matchesState && matchesSetting && matchesTier && matchesParking && matchesHousing && matchesMeals && matchesTech;
+
+            const filtered = programs.filter(prog => {
+
+                const matchesQuery = prog.name.toLowerCase().includes(query) || prog.city.toLowerCase().includes(query) || prog.state.toLowerCase().includes(query);
+
+                const matchesRegion = region === "" || prog.region === region;
+
+                const matchesAutonomy = autonomy === "" || prog.autonomy === autonomy;
+
+                return matchesQuery && matchesRegion && matchesAutonomy;
+
             });
 
-            renderProgramList(filtered);
+
+
+            renderTable(filtered);
+
+            updateStats(filtered);
+
             updateMapMarkers(filtered);
+
         }
+
+
+
+        function toggleSignal(id) {
+
+            programs = programs.map(p => {
+
+                if(p.id === id) {
+
+                    p.signal = p.signal === 'Signaled' ? 'Considered' : 'Signaled';
+
+                }
+
+                return p;
+
+            });
+
+            localStorage.setItem('residency_programs', JSON.stringify(programs));
+
+            filterTable();
+
+        }
+
+
+
+        function resetData() {
+
+            if(confirm("Reset all programs to default state?")) {
+
+                programs = JSON.parse(JSON.stringify(defaultPrograms));
+
+                localStorage.setItem('residency_programs', JSON.stringify(programs));
+
+                document.getElementById('search-input').value = "";
+
+                document.getElementById('filter-region').value = "";
+
+                document.getElementById('filter-autonomy').value = "";
+
+                filterTable();
+
+            }
+
+        }
+
+
+
+        function exportData() {
+
+            let csv = 'Name,City,State,Region,Volume,Autonomy,Research,Signal\n';
+
+            programs.forEach(p => {
+
+                csv += `"${p.name}","${p.city}","${p.state}","${p.region}","${p.volume}","${p.autonomy}","${p.research}","${p.signal}"\n`;
+
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+
+            a.setAttribute('href', url);
+
+            a.setAttribute('download', 'pediatric_residency_tracker.csv');
+
+            a.click();
+
+        }
+
+
+
+        // Initialize App on Load
 
         window.addEventListener('DOMContentLoaded', () => {
+
             initMap();
+
+            filterTable();
+
         });
+
     </script>
+
 </body>
-</html>
+
+</html> 
+
