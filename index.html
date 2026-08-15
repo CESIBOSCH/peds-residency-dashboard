@@ -698,13 +698,43 @@
           header: true,
           skipEmptyLines: true,
           complete: function(results) {
-            if (results.data && results.data.length > 0 && !loaded) {
-              loaded = true;
-              allPrograms = results.data;
-              populateDropdowns(allPrograms);
-              renderSidebarList(allPrograms);
-              createMapPins(allPrograms);
-            }
+    if (results.data && results.data.length > 0 && !loaded) {
+        loaded = true;
+        
+        // Clean & standardize CSV data
+        allPrograms = results.data.map(row => {
+            const rawSalary = row['Salary'] || row['salary'] || '';
+            const rawColSalary = row['COL-Adjusted Salary'] || row['colSalary'] || '';
+            const isYes = (val) => String(val || '').trim().toUpperCase() === 'Y';
+
+            return {
+                ...row,
+                // Make sure facesheet popup properties match CSV column names
+                hoursPerWeek: row['Hours/Week'] || row['hoursPerWeek'] || 'N/A',
+                longestShift: row['Longest Shift'] || row['longestShift'] || 'N/A',
+                daysOffPerWeek: row['Days Off/week'] || row['daysOffPerWeek'] || 'N/A',
+                sickDays: row['Sick Days'] || row['sickDays'] || 'N/A',
+                vacationDays: row['Vacation Days'] || row['vacationDays'] || 'N/A',
+                familyLeave: row['Family Leave Paid/Unpaid'] || row['familyLeave'] || 'N/A',
+
+                // Compensation
+                salary: rawSalary || 'N/A',
+                colSalary: rawColSalary || 'N/A',
+                stretchScore: row['Salary Stretch'] || row['stretchScore'] || 'N/A',
+
+                // Key Perks
+                parking: isYes(row['Free Parking']),
+                housing: isYes(row['Housing Stipend']),
+                meals: isYes(row['Meal Stipend']),
+                tech: isYes(row['Tech Stipend'])
+            };
+        });
+
+        populateDropdowns(allPrograms);
+        renderSidebarList(allPrograms);
+        createMapPins(allPrograms);
+    }
+}
           }
         });
       });
