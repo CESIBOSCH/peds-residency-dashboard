@@ -3,520 +3,293 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pediatrics Residencies</title>
+    <title>Pediatric Residency Program Tracker</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <style>
-        :root {
-            --bg-color: #faf8f5;
-            --panel-bg: #ffffff;
-            --border-color: #e6dfd5;
-            --text-main: #2c2a29;
-            --text-muted: #736b65;
-            --accent-green: #606c38;
-            --accent-green-hover: #4d582c;
-            --accent-orange: #bc6c25;
-            --input-bg: #fffcf9;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-            padding: 20px;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 0 10px;
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 400;
-            letter-spacing: 2px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .counter-badge {
-            background-color: #fef0ed;
-            color: var(--accent-orange);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            border: 1px solid #f9dedc;
-        }
-
-        .main-container {
-            display: flex;
-            gap: 20px;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        /* Sidebar Filters & Programs */
-        .sidebar {
-            width: 340px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            flex-shrink: 0;
-        }
-
-        .filter-card {
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.01);
-        }
-
-        .section-title {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .filter-group {
-            margin-bottom: 12px;
-        }
-
-        .filter-group:last-child {
-            margin-bottom: 0;
-        }
-
-        label {
-            display: block;
-            font-size: 0.8rem;
-            color: var(--text-main);
-            margin-bottom: 4px;
-        }
-
-        select, input[type="text"] {
-            width: 100%;
-            padding: 8px 12px;
-            background-color: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 0.85rem;
-            color: var(--text-main);
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        select:focus {
-            border-color: var(--accent-green);
-        }
-
-        .range-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 6px;
-        }
-
-        .range-value {
-            font-size: 0.85rem;
-            color: var(--accent-orange);
-            font-weight: 600;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            accent-color: var(--accent-orange);
-            margin-top: 5px;
-        }
-
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 6px;
-        }
-
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.8rem;
-            color: var(--text-main);
-            cursor: pointer;
-        }
-
-        /* Programs List */
-        .programs-container {
-            flex: 1;
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .programs-header {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .programs-list {
-            overflow-y: auto;
-            flex: 1;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .program-item {
-            background-color: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
-            transition: transform 0.1s, border-color 0.2s;
-        }
-
-        .program-item:hover {
-            border-color: var(--accent-green);
-        }
-
-        .program-name {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--text-main);
-            margin-bottom: 2px;
-        }
-
-        .program-loc {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .program-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid rgba(0,0,0,0.04);
-            padding-top: 8px;
-        }
-
-        .program-type {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .select-btn {
-            background: none;
-            border: none;
-            color: var(--accent-orange);
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 2px;
-        }
-
-        .select-btn:hover {
-            text-decoration: underline;
-        }
-
-        /* Map Area */
-        .map-wrapper {
-            flex: 1;
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        #map {
-            width: 100%;
-            height: 100%;
-            background-color: #f4f1ea;
-        }
-
-        /* Custom Leaflet Pin Styling */
-        .custom-pin {
-            background-color: #606c38;
-            width: 18px;
-            height: 18px;
-            border-radius: 50% 50% 50% 0;
-            transform: rotate(-45deg);
-            left: -9px;
-            top: -18px;
-            position: absolute;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            border: 2px solid #ffffff;
-        }
-
-        .custom-pin::after {
-            content: '';
-            width: 6px;
-            height: 6px;
-            background: white;
-            position: absolute;
-            border-radius: 50%;
-            top: 4px;
-            left: 4px;
-        }
-
-        /* Pin Style Ideas Footer bar */
-        .pin-ideas-bar {
-            padding: 8px 16px;
-            background-color: var(--panel-bg);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .pin-swatches {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .swatch {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            display: inline-block;
-            border: 1px solid rgba(0,0,0,0.1);
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <h1>Pediatrics Residencies</h1>
-        <div class="counter-badge" id="program-count">37 Programs Found</div>
-    </header>
-
-    <div class="main-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="filter-card">
-                <div class="section-title">Filters & Search</div>
-                
-                <div class="filter-group">
-                    <label for="state-select">State</label>
-                    <select id="state-select">
-                        <option value="">All States</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label for="setting-select">Setting</label>
-                    <select id="setting-select">
-                        <option value="">All Settings</option>
-                        <option value="University">University</option>
-                        <option value="Community-Based">Community-Based</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label for="tier-select">Tier / Competitiveness</label>
-                    <select id="tier-select">
-                        <option value="">All Tiers</option>
-                        <option value="High">High</option>
-                        <option value="Moderate">Moderate</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <label for="class-size-range">Max Class Size</label>
-                        <span class="range-value" id="class-size-val">43</span>
-                    </div>
-                    <input type="range" id="class-size-range" min="5" max="43" value="43">
-                </div>
-
-                <div class="filter-group" style="margin-top: 12px;">
-                    <label>Benefits</label>
-                    <div class="checkbox-grid">
-                        <label class="checkbox-label"><input type="checkbox" value="parking"> Parking</label>
-                        <label class="checkbox-label"><input type="checkbox" value="housing"> Housing</label>
-                        <label class="checkbox-label"><input type="checkbox" value="meals"> Meals</label>
-                        <label class="checkbox-label"><input type="checkbox" value="tech"> Tech</label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Programs List View -->
-            <div class="programs-container">
-                <div class="programs-header">Programs</div>
-                <div class="programs-list" id="programs-list-container">
-                    <!-- Dynamic Items -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Map & Pin Bar -->
-        <div class="map-wrapper">
-            <div id="map"></div>
-            <div class="pin-ideas-bar">
-                <span>Pin Style Ideas</span>
-                <div class="pin-swatches">
-                    <span class="swatch" style="background-color: #606c38;"></span>
-                    <span class="swatch" style="background-color: #bc6c25;"></span>
-                    <span class="swatch" style="background-color: #dda15e;"></span>
-                    <span class="swatch" style="background-color: #283618;"></span>
-                    <span class="swatch" style="background-color: #386641;"></span>
-                    <span class="swatch" style="background-color: #a3b18a;"></span>
-                    <span class="swatch" style="background-color: #d8f3dc;"></span>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        #map { height: 450px; width: 100%; border-radius: 0.75rem; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 text-white p-2 rounded-lg font-bold text-lg">Peds</div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900 tracking-tight">Residency Program Tracker</h1>
+                    <p class="text-xs text-slate-500">Evaluating clinical volume, autonomy, and urban/coastal fit</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="resetFilters()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-md font-medium transition-colors">Reset Filters</button>
+                <span id="programCount" class="text-xs bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-md font-semibold">0 Programs</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full space-y-8">
+
+        <!-- Map & Filters Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Map View (2 Cols) -->
+            <div class="lg:col-span-2 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+                <h2 class="text-sm font-semibold text-slate-900 mb-3 flex items-center justify-between">
+                    <span>Program Geographies</span>
+                    <span class="text-xs text-slate-400 font-normal">Interactive Map</span>
+                </h2>
+                <div id="map" class="flex-grow"></div>
+            </div>
+
+            <!-- Controls & Quick Filters (1 Col) -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
+                <div>
+                    <h2 class="text-sm font-semibold text-slate-900 mb-4">Search & Filters</h2>
+                    
+                    <!-- Search Bar -->
+                    <div class="mb-4">
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Search Program / City</label>
+                        <input type="text" id="searchInput" oninput="filterPrograms()" placeholder="e.g. Children's, Boston..." class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <!-- Region Filter -->
+                    <div class="mb-4">
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Region / Location Type</label>
+                        <select id="regionFilter" onchange="filterPrograms()" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">All Regions</option>
+                            <option value="Northeast">Northeast</option>
+                            <option value="Southeast">Southeast</option>
+                            <option value="Midwest">Midwest</option>
+                            <option value="West">West</option>
+                        </select>
+                    </div>
+
+                    <!-- Focus Filter -->
+                    <div class="mb-4">
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Research / Clinical Focus</label>
+                        <select id="focusFilter" onchange="filterPrograms()" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">All Profiles</option>
+                            <option value="High Autonomy">High Resident Autonomy</option>
+                            <option value="Heavy Clinical">Heavy Clinical Volume</option>
+                            <option value="Balanced">Balanced / Community Feel</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-100 text-xs text-slate-500 space-y-1">
+                    <p class="font-medium text-slate-700">Evaluation Criteria:</p>
+                    <p>• High clinical volume & hands-on autonomy</p>
+                    <p>• Urban & coastal settings</p>
+                    <p>• Manageable research expectations</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Programs Data Table / Cards -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
+                <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Matched Programs</h3>
+                <span class="text-xs text-slate-500">Click any card or pin for details</span>
+            </div>
+            <div id="programTable" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+                <!-- Dynamic cards injected via JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-400">
+        Pediatric Residency Program Dashboard • Built for Residency Application Cycle
+    </footer>
+
+    <!-- Script Data & Logic -->
     <script>
-        // Sample program dataset matching coordinates & details
-        const programsData = [
-            { name: "Phoenix Children's", city: "Phoenix", state: "AZ", lat: 33.4484, lng: -112.0740, setting: "Community-Based", classSize: 30, type: "Community-Based Univ. Affiliated" },
-            { name: "Cedars-Sinai Medical Center Program", city: "Los Angeles", state: "CA", lat: 34.0522, lng: -118.2437, setting: "University", classSize: 25, type: "Community-Based Univ. Affiliated" },
-            { name: "UCSF", city: "San Francisco", state: "CA", lat: 37.7749, lng: -122.4194, setting: "University", classSize: 35, type: "University" },
-            { name: "Stanford University", city: "Stanford", state: "CA", lat: 37.4419, lng: -122.1430, setting: "University", classSize: 28, type: "University" },
-            { name: "UCLA Medical Center", city: "Los Angeles", state: "CA", lat: 34.0689, lng: -118.4452, setting: "University", classSize: 32, type: "University" },
-            { name: "Rady Children's Hospital", city: "San Diego", state: "CA", lat: 32.7157, lng: -117.1611, setting: "Community-Based", classSize: 30, type: "Community-Based Univ. Affiliated" },
-            { name: "Valley Children's Healthcare", city: "Madera", state: "CA", lat: 36.9613, lng: -120.0607, setting: "Community-Based", classSize: 24, type: "Community-Based Univ. Affiliated" },
-            { name: "University of Washington", city: "Seattle", state: "WA", lat: 47.6062, lng: -122.3321, setting: "University", classSize: 40, type: "University" },
-            { name: "Ann & Robert H. Lurie Children's Hospital", city: "Chicago", state: "IL", lat: 41.8781, lng: -87.6298, setting: "University", classSize: 43, type: "University" },
-            { name: "Indiana University", city: "Indianapolis", state: "IN", lat: 39.7684, lng: -86.1581, setting: "University", classSize: 38, type: "University" },
-            { name: "Cincinnati Children's Hospital", city: "Cincinnati", state: "OH", lat: 39.1031, lng: -84.5120, setting: "University", classSize: 42, type: "University" },
-            { name: "Duke University Hospital", city: "Durham", state: "NC", lat: 36.0014, lng: -78.9382, setting: "University", classSize: 26, type: "University" },
-            { name: "Atrium Health Carolinas Medical Center", city: "Charlotte", state: "NC", lat: 35.2271, lng: -80.8431, setting: "Community-Based", classSize: 22, type: "Community-Based Univ. Affiliated" },
-            { name: "Emory University", city: "Atlanta", state: "GA", lat: 33.7490, lng: -84.3880, setting: "University", classSize: 36, type: "University" }
+        // Program Dataset
+        const programs = [
+            {
+                id: 1,
+                name: "Boston Children's Hospital / Harvard",
+                location: "Boston, MA",
+                region: "Northeast",
+                lat: 42.3378,
+                lng: -71.1054,
+                volume: "Very High",
+                autonomy: "Moderate",
+                focus: "Heavy Clinical",
+                notes: "World-class pediatric training with extensive subspecialty exposure.",
+                interviewRate: "Competitive"
+            },
+            {
+                id: 2,
+                name: "Children's Hospital of Philadelphia (CHOP)",
+                location: "Philadelphia, PA",
+                region: "Northeast",
+                lat: 39.9484,
+                lng: -75.1920,
+                volume: "Very High",
+                autonomy: "Moderate",
+                focus: "Heavy Clinical",
+                notes: "Premier academic center, massive patient volume and complex care.",
+                interviewRate: "Competitive"
+            },
+            {
+                id: 3,
+                name: "Atrium Health Carolinas Medical Center",
+                location: "Charlotte, NC",
+                region: "Southeast",
+                lat: 35.2144,
+                lng: -80.8385,
+                volume: "High",
+                autonomy: "High",
+                focus: "Balanced",
+                notes: "Excellent autonomy, balanced lifestyle, strong community and tertiary care mix.",
+                interviewRate: "Target"
+            },
+            {
+                id: 4,
+                name: "Seattle Children's Hospital / University of Washington",
+                location: "Seattle, WA",
+                region: "West",
+                lat: 47.6663,
+                lng: -122.3054,
+                volume: "High",
+                autonomy: "High",
+                focus: "High Autonomy",
+                notes: "Fantastic coastal location, strong advocacy, excellent resident culture.",
+                interviewRate: "Competitive"
+            },
+            {
+                id: 5,
+                name: "Lucile Packard Children's Hospital / Stanford",
+                location: "Palo Alto, CA",
+                region: "West",
+                lat: 37.4341,
+                lng: -122.1764,
+                volume: "High",
+                autonomy: "Moderate",
+                focus: "Heavy Clinical",
+                notes: "Innovative environment, gorgeous Bay Area setting.",
+                interviewRate: "Competitive"
+            },
+            {
+                id: 6,
+                name: "Vandy Children's Hospital / Vanderbilt",
+                location: "Nashville, TN",
+                region: "Southeast",
+                lat: 36.1447,
+                lng: -86.8027,
+                volume: "High",
+                autonomy: "High",
+                focus: "Balanced",
+                notes: "Fantastic clinical training with strong southeast referral base.",
+                interviewRate: "Target"
+            }
         ];
 
         // Initialize Map
-        const map = L.map('map', {
-            zoomControl: false
-        }).setView([38.0, -96.0], 4);
-
-        // Add custom zoom control to bottom right
-        L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-        // Add CartoDB Positron tiles for clean minimalist look
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-            subdomains: 'abcd',
-            maxZoom: 19
+        const map = L.map('map').setView([38.5, -92.5], 4);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        let markersLayer = L.layerGroup().addTo(map);
+        let markers = [];
 
-        const greenPinIcon = L.divIcon({
-            className: 'custom-pin',
-            iconSize: [18, 18],
-            iconAnchor: [9, 18],
-            popupAnchor: [0, -15]
-        });
+        function renderMapMarkers(data) {
+            // Clear existing markers
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
 
-        function updateUI(data) {
-            const listContainer = document.getElementById('programs-list-container');
-            listContainer.innerHTML = '';
-            markersLayer.clearLayers();
-
-            data.forEach(prog => {
-                // Add Marker to Map
-                const marker = L.marker([prog.lat, prog.lng], { icon: greenPinIcon });
-                marker.bindPopup(`<b>${prog.name}</b><br>${prog.city}, ${prog.state}<br>Class Size: ${prog.classSize}`);
-                markersLayer.addLayer(marker);
-
-                // Add Item to Sidebar List
-                const item = document.createElement('div');
-                item.className = 'program-item';
-                item.innerHTML = `
-                    <div class="program-name">${prog.name}</div>
-                    <div class="program-loc">${prog.city}, ${prog.state}</div>
-                    <div class="program-footer">
-                        <span class="program-type">${prog.type}</span>
-                        <button class="select-btn" onclick="zoomToProgram(${prog.lat}, ${prog.lng})">Select &rarr;</button>
+            data.forEach(p => {
+                const marker = L.marker([p.lat, p.lng]).addTo(map);
+                marker.bindPopup(`
+                    <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px;">
+                        <strong>${p.name}</strong><br>
+                        <span style="color: #64748b;">${p.location}</span><br>
+                        <hr style="margin: 4px 0; border: none; border-top: 1px solid #e2e8f0;">
+                        <b>Autonomy:</b> ${p.autonomy}<br>
+                        <b>Volume:</b> ${p.volume}
                     </div>
-                `;
-                listContainer.appendChild(item);
+                `);
+                markers.push(marker);
             });
-
-            document.getElementById('program-count').innerText = `${data.length} Programs Found`;
         }
 
-        function zoomToProgram(lat, lng) {
-            map.setView([lat, lng], 10, { animate: true });
+        // Render Cards
+        function renderTable(data) {
+            const container = document.getElementById('programTable');
+            document.getElementById('programCount').innerText = `${data.length} Programs`;
+            
+            if (data.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">No programs match the selected filters.</div>`;
+                return;
+            }
+
+            container.innerHTML = data.map(p => `
+                <div class="bg-white border border-slate-200 rounded-xl p-5 hover:border-indigo-300 transition-all shadow-sm flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <h4 class="font-bold text-slate-900 text-sm leading-snug">${p.name}</h4>
+                            <span class="text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full whitespace-nowrap">${p.region}</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-3">${p.location}</p>
+                        <p class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100">${p.notes}</p>
+                    </div>
+                    
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                        <div>
+                            <span class="text-slate-400 block text-[10px]">Autonomy</span>
+                            <span class="font-semibold text-slate-700">${p.autonomy}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block text-[10px]">Volume</span>
+                            <span class="font-semibold text-slate-700">${p.volume}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block text-[10px]">Fit</span>
+                            <span class="font-semibold text-indigo-600">${p.interviewRate}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        // Filter Controls Logic
-        const classSizeRange = document.getElementById('class-size-range');
-        const classSizeVal = document.getElementById('class-size-val');
-        const settingSelect = document.getElementById('setting-select');
-        const stateSelect = document.getElementById('state-select');
-
-        // Populate States
-        const states = [...new Set(programsData.map(p => p.state))].sort();
-        states.forEach(st => {
-            const opt = document.createElement('option');
-            opt.value = st;
-            opt.innerText = st;
-            stateSelect.appendChild(opt);
-        });
-
+        // Filter Logic
         function filterPrograms() {
-            const maxSz = parseInt(classSizeRange.value);
-            const setting = settingSelect.value;
-            const state = stateSelect.value;
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const region = document.getElementById('regionFilter').value;
+            const focus = document.getElementById('focusFilter').value;
 
-            const filtered = programsData.filter(p => {
-                return p.classSize <= maxSz &&
-                       (setting === "" || p.setting === setting) &&
-                       (state === "" || p.state === state);
+            const filtered = programs.filter(p => {
+                const matchesQuery = p.name.toLowerCase().includes(query) || p.location.toLowerCase().includes(query);
+                const matchesRegion = !region || p.region === region;
+                const matchesFocus = !focus || p.focus === focus;
+                return matchesQuery && matchesRegion && matchesFocus;
             });
 
-            updateUI(filtered);
+            renderTable(filtered);
+            renderMapMarkers(filtered);
         }
 
-        classSizeRange.addEventListener('input', (e) => {
-            classSizeVal.innerText = e.target.value;
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('regionFilter').value = '';
+            document.getElementById('focusFilter').value = '';
             filterPrograms();
-        });
-
-        settingSelect.addEventListener('change', filterPrograms);
-        stateSelect.addEventListener('change', filterPrograms);
+        }
 
         // Initial Load
-        updateUI(programsData);
+        renderTable(programs);
+        renderMapMarkers(programs);
     </script>
 </body>
 </html>
