@@ -523,13 +523,19 @@
         `;
 
         card.addEventListener('click', () => {
-          const marker = markersMap.get(programName);
-          marker.bindPopup(createInMapFactSheetPopup(prog), {
-  autoPan: true,
-  keepInView: true,
-  autoPanPadding: [30, 30]
+  const marker = markersMap.get(programName);
+
+  if (marker) {
+    map.flyTo(marker.getLatLng(), 5, {
+      animate: true,
+      duration: 1.5
+    });
+
+    setTimeout(() => {
+      marker.openPopup();
+    }, 1600);
+  }
 });
-        });
 
         listContainer.appendChild(card);
       });
