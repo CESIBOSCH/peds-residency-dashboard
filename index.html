@@ -479,7 +479,12 @@
             </div>
           `, { className: 'custom-map-tooltip', direction: 'top', offset: [0, -5] });
 
-          marker.bindPopup(createInMapFactSheetPopup(prog));
+          marker.bindPopup(createInMapFactSheetPopup(prog), {
+  offset: [0, 180],
+  autoPan: true,
+  autoPanPaddingTopLeft: [20, 220],
+  autoPanPaddingBottomRight: [20, 20]
+});
           markersMap.set(programName, marker);
         }
       });
