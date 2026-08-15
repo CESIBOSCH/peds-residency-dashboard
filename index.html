@@ -22,8 +22,8 @@
 
   <style>
     :root {
-      --bg-main: #FDFBF9; /* Ultra-light warm bright white */
-      --bg-sidebar: #F5F2EC; /* Warm contrast sand-taupe for sidebar */
+      --bg-main: #FDFBF9;
+      --bg-sidebar: #F5F2EC;
       --bg-surface: #FFFFFF;
       --text-charcoal: #2B2623;
       --text-gray: #78716C;
@@ -261,8 +261,10 @@
       for (const targetKey of possibleKeys) {
         const foundKey = objKeys.find(k => k.trim().toLowerCase() === targetKey.trim().toLowerCase());
         if (foundKey && obj[foundKey] !== undefined && obj[foundKey] !== null) {
-          const val = String(obj[foundKey]).trim();
-          if (val !== '' && val !== '-') {
+          const rawVal = obj[foundKey];
+          if (typeof rawVal === 'number' && isNaN(rawVal)) continue;
+          const val = String(rawVal).trim();
+          if (val !== '' && val !== '-' && val.toLowerCase() !== 'nan' && val.toLowerCase() !== 'undefined') {
             return val;
           }
         }
@@ -304,21 +306,21 @@
     }
 
     function createInMapFactSheetPopup(prog) {
-      const city = getProp(prog, ['City', 'Location City', 'city']);
-      const state = getProp(prog, ['State', 'Location State', 'state']);
+      const city = getProp(prog, ['City']);
+      const state = getProp(prog, ['State']);
       const cityStateKey = `${city}, ${state}`;
 
-      const rawWebsite = getProp(prog, ['Website', 'URL', 'Program Website', 'Website URL', 'Link'], '#');
-      const programName = getProp(prog, ['Program', 'Program Name', 'Hospital', 'Institution'], 'Program Info');
+      const rawWebsite = getProp(prog, ['Website', 'URL', 'Program Website', 'Link'], '#');
+      const programName = getProp(prog, ['Program', 'Program Name'], 'Program Info');
 
-      const airport = getProp(prog, ['Nearest Airport', 'Airport', 'Nearest Airport Code', 'Airport Code']) || airportLookup[cityStateKey] || (city !== 'N/A' ? `${city.substring(0,3).toUpperCase()} Airport` : 'N/A');
+      const airport = getProp(prog, ['Nearest Airport', 'Airport']) || airportLookup[cityStateKey] || (city !== 'N/A' ? `${city.substring(0,3).toUpperCase()} Airport` : 'N/A');
 
       let perksHTML = '';
       const perks = [
-        { label: 'Parking', val: getProp(prog, ['Free Parking', 'Parking', 'Parking Stipend']) },
-        { label: 'Housing', val: getProp(prog, ['Housing Stipend', 'Housing', 'Housing Allowance']) },
-        { label: 'Meals', val: getProp(prog, ['Meal Stipend', 'Meals', 'Food Stipend']) },
-        { label: 'Tech', val: getProp(prog, ['Tech Stipend', 'Tech', 'Technology Allowance']) }
+        { label: 'Parking', val: getProp(prog, ['Free Parking', 'Parking']) },
+        { label: 'Housing', val: getProp(prog, ['Housing Stipend', 'Housing']) },
+        { label: 'Meals', val: getProp(prog, ['Meal Stipend', 'Meals']) },
+        { label: 'Tech', val: getProp(prog, ['Tech Stipend', 'Tech']) }
       ];
 
       perks.forEach(p => {
@@ -328,22 +330,21 @@
       });
       if (!perksHTML) perksHTML = `<span class="text-[10px] text-[#78716C] italic">Standard Benefits</span>`;
 
-      const classSize = getProp(prog, ['Class size', 'Class Size', 'Class size per year', 'Program Size']);
-      const setting = cleanSettingName(getProp(prog, ['Setting', 'Program Setting', 'Hospital Setting']));
+      const classSize = getProp(prog, ['Class size', 'Class Size']);
+      const setting = cleanSettingName(getProp(prog, ['Setting']));
       const tier = getProp(prog, ['Competitiveness', 'Tier', 'Category', 'Target/Reach']);
-      const stepScore = getProp(prog, ['Step Score Range', 'Step Score', 'USMLE Step 2', 'Step 2 Score']);
+      const stepScore = getProp(prog, ['Step Score Range', 'Step Score']);
 
-      const avgHours = getProp(prog, ['Work Hours', 'Average Hours Worked', 'Average Hours Worked Per Week', 'Hours/Week']);
-      const shiftLength = getProp(prog, ['Longest Shift Length', 'Shift Length', 'Max Shift Length']);
-      const daysOff = getProp(prog, ['Days Off Per Week', 'Average Days Off Per Week', 'Days Off']);
-      const sickDays = getProp(prog, ['Sick Days', 'Sick Leave Days']);
-      const vacationDays = getProp(prog, ['Vacation', 'Vacation Days']);
-      const paidLeave = getProp(prog, ['Paid Family Leave Days', 'Paid Family Leave', 'Paid Leave']);
-      const unpaidLeave = getProp(prog, ['Unpaid Family Leave Days', 'Unpaid Family Leave', 'Unpaid Leave']);
+      const avgHours = getProp(prog, ['Hours/Week', 'Average Hours/Week', 'Average Hours Worked Per Week']);
+      const shiftLength = getProp(prog, ['Longest Shift', 'Longest Shift Length', 'Shift Length']);
+      const daysOff = getProp(prog, ['Days Off/week', 'Days Off Per Week', 'Average Days Off Per Week']);
+      const sickDays = getProp(prog, ['Sick Days']);
+      const vacationDays = getProp(prog, ['Vacation Days', 'Vacation']);
+      const familyLeave = getProp(prog, ['Family Leave Paid/Unpaid', 'Family Leave', 'Paid Family Leave']);
 
-      const baseSalary = formatCurrency(getProp(prog, ['Salary', 'Base Salary', 'PGY1 Salary']));
-      const colSalary = formatCurrency(getProp(prog, ['COL Adjusted Salary', 'COL-Adjusted Salary', 'Adjusted Salary', 'Cost of Living Adjusted Salary']));
-      const stretchScore = getProp(prog, ['Salary Stretch Score', 'Stretch Score']);
+      const baseSalary = formatCurrency(getProp(prog, ['Salary', 'Base Salary']));
+      const colSalary = formatCurrency(getProp(prog, ['COL-Adjusted Salary', 'COL-Adjusted']));
+      const stretchScore = getProp(prog, ['Salary Stretch', 'Salary Stretch Score', 'Stretch Score']);
 
       const formattedWebsite = rawWebsite !== '#' ? (rawWebsite.startsWith('http') ? rawWebsite : 'https://' + rawWebsite) : '#';
 
@@ -417,8 +418,8 @@
                 <span class="font-medium text-[#2B2623]">${vacationDays}</span>
               </div>
               <div class="flex justify-between border-t border-[#E2DACF]/60 pt-1">
-                <span class="text-[#78716C]">Family Leave (Paid / Unpaid):</span>
-                <span class="font-medium text-[#2B2623]">${paidLeave} / ${unpaidLeave}</span>
+                <span class="text-[#78716C]">Family Leave:</span>
+                <span class="font-medium text-[#2B2623]">${familyLeave}</span>
               </div>
             </div>
           </div>
@@ -461,8 +462,8 @@
 
       programs.forEach(prog => {
         const programName = getProp(prog, ['Program', 'Program Name'], 'N/A');
-        const city = getProp(prog, ['City', 'city']);
-        const state = getProp(prog, ['State', 'state']);
+        const city = getProp(prog, ['City']);
+        const state = getProp(prog, ['State']);
         const cityStateKey = `${city}, ${state}`;
 
         let lat = parseFloat(getProp(prog, ['Latitude', 'lat']));
@@ -499,9 +500,9 @@
 
       programs.forEach(prog => {
         const programName = getProp(prog, ['Program', 'Program Name'], 'N/A');
-        const city = getProp(prog, ['City', 'city']);
-        const state = getProp(prog, ['State', 'state']);
-        const setting = cleanSettingName(getProp(prog, ['Setting', 'Program Setting']));
+        const city = getProp(prog, ['City']);
+        const state = getProp(prog, ['State']);
+        const setting = cleanSettingName(getProp(prog, ['Setting']));
 
         const card = document.createElement('div');
         card.className = "p-3 rounded-xl border border-[#E2DACF] bg-white shadow-xs hover:border-[#D97757] transition group cursor-pointer";
@@ -533,7 +534,7 @@
 
       const programName = getProp(prog, ['Program', 'Program Name'], 'Program Selected');
       title.innerText = programName;
-      location.innerText = `${getProp(prog, ['City', 'city'])}, ${getProp(prog, ['State', 'state'])}`;
+      location.innerText = `${getProp(prog, ['City'])}, ${getProp(prog, ['State'])}`;
       previewBar.classList.remove('hidden');
 
       if (markersMap.has(programName)) {
@@ -640,9 +641,9 @@
       const sets = { state: new Set(), setting: new Set(), competitiveness: new Set() };
 
       data.forEach(prog => {
-        const st = getProp(prog, ['State', 'state']);
-        const set = getProp(prog, ['Setting', 'Program Setting']);
-        const comp = getProp(prog, ['Competitiveness', 'Tier', 'Category']);
+        const st = getProp(prog, ['State']);
+        const set = getProp(prog, ['Setting']);
+        const comp = getProp(prog, ['Competitiveness']);
 
         if (st !== 'N/A') sets.state.add(st);
         if (set !== 'N/A') sets.setting.add(set);
@@ -664,10 +665,10 @@
 
       const filtered = allPrograms.filter(prog => {
         const progName = getProp(prog, ['Program', 'Program Name']).toLowerCase();
-        const city = getProp(prog, ['City', 'city']).toLowerCase();
-        const state = getProp(prog, ['State', 'state']);
-        const setting = getProp(prog, ['Setting', 'Program Setting']);
-        const comp = getProp(prog, ['Competitiveness', 'Tier', 'Category']);
+        const city = getProp(prog, ['City']).toLowerCase();
+        const state = getProp(prog, ['State']);
+        const setting = getProp(prog, ['Setting']);
+        const comp = getProp(prog, ['Competitiveness']);
 
         const matchesSearch = !searchTerm || progName.includes(searchTerm) || city.includes(searchTerm);
         const matchesState = selectedFilters.state.size === 0 || selectedFilters.state.has(state);
