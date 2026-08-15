@@ -330,7 +330,10 @@
       const shiftLength = getVal(prog, ['Longest Shift', 'Shift Length']);
       const daysOff = getVal(prog, ['Days Off/week', 'Days Off']);
       const formatNegotiable = (value) => {
-  return String(value).trim().toUpperCase() === 'N' ? 'Negotiable' : value;
+  const cleaned = String(value).trim().toUpperCase();
+  if (cleaned === 'N') return 'Negotiable';
+  if (cleaned === 'NEGOTIABLEX2') return 'Negotiable / Negotiable';
+  return value;
 };
 
 const sickDays = formatNegotiable(getVal(prog, ['Sick Days']));
