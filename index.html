@@ -31,6 +31,10 @@
     .leaflet-popup-tip {
       background: #fafaf9;
     }
+    /* Style slider thumb to match stone theme */
+    input[type=range]::-webkit-slider-thumb {
+      background: #57534e;
+    }
   </style>
 </head>
 <body class="p-6 md:p-12 max-w-7xl mx-auto">
@@ -41,14 +45,81 @@
     <p class="text-sm text-stone-500 mt-1">Master tracking & decision matrix for residency programs</p>
   </header>
 
-  <!-- Controls / Search Section -->
-  <div class="flex flex-col sm:flex-row gap-4 mb-6">
-    <input 
-      type="text" 
-      id="searchInput" 
-      placeholder="Search program, city, state, interest, setting, competitiveness..." 
-      class="w-full sm:w-96 px-4 py-2.5 rounded-lg bg-stone-100 border border-stone-200 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-300 text-sm transition"
-    />
+  <!-- Controls / Filter Section -->
+  <div class="bg-stone-100/70 p-5 rounded-xl border border-stone-200 mb-8 space-y-4">
+    
+    <!-- Top Row: Search & Dropdown Filters -->
+    <div class="flex flex-wrap gap-3">
+      <!-- Search Bar -->
+      <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Search program or city..." 
+        class="w-full sm:w-64 px-3.5 py-2 rounded-lg bg-white border border-stone-200 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-300 text-sm transition"
+      />
+
+      <!-- Filter by State -->
+      <select id="stateFilter" class="px-3.5 py-2 rounded-lg bg-white border border-stone-200 text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300 transition">
+        <option value="">All States</option>
+      </select>
+
+      <!-- Filter by Interest -->
+      <select id="interestFilter" class="px-3.5 py-2 rounded-lg bg-white border border-stone-200 text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300 transition">
+        <option value="">All Interest Levels</option>
+      </select>
+
+      <!-- Filter by Setting -->
+      <select id="settingFilter" class="px-3.5 py-2 rounded-lg bg-white border border-stone-200 text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300 transition">
+        <option value="">All Settings</option>
+      </select>
+
+      <!-- Filter by Competitiveness -->
+      <select id="competitivenessFilter" class="px-3.5 py-2 rounded-lg bg-white border border-stone-200 text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300 transition">
+        <option value="">All Competitiveness</option>
+      </select>
+    </div>
+
+    <!-- Middle Row: Class Size Range Slider -->
+    <div class="pt-2 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+      <label class="text-xs font-semibold uppercase text-stone-500 tracking-wider">Max Class Size:</label>
+      <div class="flex items-center gap-3 w-full sm:w-72">
+        <input 
+          type="range" 
+          id="classSizeFilter" 
+          min="1" 
+          max="50" 
+          value="50" 
+          class="w-full h-1.5 bg-stone-300 rounded-lg appearance-none cursor-pointer accent-stone-700"
+        />
+        <span id="classSizeValue" class="text-xs font-medium bg-stone-200 text-stone-700 px-2 py-1 rounded-md min-w-[3rem] text-center">50+</span>
+      </div>
+    </div>
+
+    <!-- Bottom Row: Perks & Benefits Checkboxes -->
+    <div class="pt-2 border-t border-stone-200/80 flex flex-wrap gap-4 items-center">
+      <span class="text-xs font-semibold uppercase text-stone-500 tracking-wider">Perks:</span>
+      
+      <label class="inline-flex items-center gap-1.5 text-xs text-stone-700 cursor-pointer">
+        <input type="checkbox" id="parkingFilter" class="rounded border-stone-300 text-stone-700 focus:ring-stone-400">
+        Free Parking
+      </label>
+
+      <label class="inline-flex items-center gap-1.5 text-xs text-stone-700 cursor-pointer">
+        <input type="checkbox" id="housingFilter" class="rounded border-stone-300 text-stone-700 focus:ring-stone-400">
+        Housing Stipend
+      </label>
+
+      <label class="inline-flex items-center gap-1.5 text-xs text-stone-700 cursor-pointer">
+        <input type="checkbox" id="mealFilter" class="rounded border-stone-300 text-stone-700 focus:ring-stone-400">
+        Meal Stipend
+      </label>
+
+      <label class="inline-flex items-center gap-1.5 text-xs text-stone-700 cursor-pointer">
+        <input type="checkbox" id="techFilter" class="rounded border-stone-300 text-stone-700 focus:ring-stone-400">
+        Tech Stipend
+      </label>
+    </div>
+
   </div>
 
   <!-- Interactive Map Section -->
@@ -80,7 +151,7 @@
     let map;
     let markers = [];
 
-    // Initialize Leaflet Map centered on the US
+    // Initialize Leaflet Map
     function initMap() {
       map = L.map('map').setView([39.8283, -98.5795], 4);
       
@@ -88,6 +159,43 @@
         maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }).addTo(map);
+    }
+
+    // Dynamic Options Populator
+    function populateDropdowns(data) {
+      const stateSelect = document.getElementById('stateFilter');
+      const interestSelect = document.getElementById('interestFilter');
+      const settingSelect = document.getElementById('settingFilter');
+      const competitivenessSelect = document.getElementById('competitivenessFilter');
+
+      const states = new Set();
+      const interests = new Set();
+      const settings = new Set();
+      const competitivenessSet = new Set();
+      let maxClassFound = 0;
+
+      data.forEach(prog => {
+        if (prog['State']) states.add(prog['State'].trim());
+        if (prog['Interest']) interests.add(prog['Interest'].trim());
+        if (prog['Setting']) settings.add(prog['Setting'].trim());
+        if (prog['Competitiveness']) competitivenessSet.add(prog['Competitiveness'].trim());
+        
+        const size = parseInt(prog['Class size']);
+        if (!isNaN(size) && size > maxClassFound) maxClassFound = size;
+      });
+
+      Array.from(states).sort().forEach(val => stateSelect.add(new Option(val, val)));
+      interests.forEach(val => interestSelect.add(new Option(val, val)));
+      settings.forEach(val => settingSelect.add(new Option(val, val)));
+      competitivenessSet.forEach(val => competitivenessSelect.add(new Option(val, val)));
+
+      // Adjust Slider Max if CSV has larger class sizes
+      if (maxClassFound > 0) {
+        const slider = document.getElementById('classSizeFilter');
+        slider.max = maxClassFound;
+        slider.value = maxClassFound;
+        document.getElementById('classSizeValue').innerText = maxClassFound + "+";
+      }
     }
 
     // Load CSV Data
@@ -98,21 +206,27 @@
       complete: function(results) {
         allPrograms = results.data;
         initMap();
+        populateDropdowns(allPrograms);
         renderDashboard(allPrograms);
       }
     });
+
+    // Helper function to check boolean columns (e.g., "Yes", "TRUE", 1, "x")
+    function isTrueValue(val) {
+      if (!val) return false;
+      const cleanVal = String(val).trim().toLowerCase();
+      return ['yes', 'true', '1', 'x', 'y'].includes(cleanVal);
+    }
 
     // Render Table and Map Markers
     function renderDashboard(data) {
       const tableBody = document.getElementById('tableBody');
       tableBody.innerHTML = '';
       
-      // Clear existing markers
       markers.forEach(m => map.removeLayer(m));
       markers = [];
 
       data.forEach(prog => {
-        // Map exact CSV headers
         const programName = prog['Program'] || 'N/A';
         const city = prog['City'] || '';
         const state = prog['State'] || '';
@@ -121,7 +235,7 @@
         const classSize = prog['Class size'] || '-';
         const competitiveness = prog['Competitiveness'] || '-';
 
-        // 1. Add Row to Table
+        // 1. Table Row
         const tr = document.createElement('tr');
         tr.className = "hover:bg-stone-100/50 transition-colors";
         tr.innerHTML = `
@@ -134,7 +248,7 @@
         `;
         tableBody.appendChild(tr);
 
-        // 2. Add Marker to Map if coordinates exist in CSV
+        // 2. Map Marker
         const lat = parseFloat(prog['Latitude'] || prog['lat']);
         const lng = parseFloat(prog['Longitude'] || prog['lng']);
 
@@ -160,24 +274,70 @@
       });
     }
 
-    // Live Search Filter
-    document.getElementById('searchInput').addEventListener('input', function(e) {
-      const query = e.target.value.toLowerCase();
+    // Unified Filter Execution
+    function applyFilters() {
+      const searchVal = document.getElementById('searchInput').value.toLowerCase();
+      const stateVal = document.getElementById('stateFilter').value;
+      const interestVal = document.getElementById('interestFilter').value;
+      const settingVal = document.getElementById('settingFilter').value;
+      const competitivenessVal = document.getElementById('competitivenessFilter').value;
+      
+      const maxClassSize = parseInt(document.getElementById('classSizeFilter').value);
+      const sliderMax = parseInt(document.getElementById('classSizeFilter').max);
+
+      // Perks
+      const requireParking = document.getElementById('parkingFilter').checked;
+      const requireHousing = document.getElementById('housingFilter').checked;
+      const requireMeal = document.getElementById('mealFilter').checked;
+      const requireTech = document.getElementById('techFilter').checked;
 
       const filtered = allPrograms.filter(prog => {
         const name = (prog['Program'] || '').toLowerCase();
         const city = (prog['City'] || '').toLowerCase();
-        const state = (prog['State'] || '').toLowerCase();
-        const interest = (prog['Interest'] || '').toLowerCase();
-        const setting = (prog['Setting'] || '').toLowerCase();
-        const competitiveness = (prog['Competitiveness'] || '').toLowerCase();
+        
+        // Basic Filters
+        const matchesSearch = name.includes(searchVal) || city.includes(searchVal);
+        const matchesState = !stateVal || (prog['State'] || '').trim() === stateVal;
+        const matchesInterest = !interestVal || (prog['Interest'] || '').trim() === interestVal;
+        const matchesSetting = !settingVal || (prog['Setting'] || '').trim() === settingVal;
+        const matchesCompetitiveness = !competitivenessVal || (prog['Competitiveness'] || '').trim() === competitivenessVal;
 
-        return name.includes(query) || city.includes(query) || state.includes(query) || 
-               interest.includes(query) || setting.includes(query) || competitiveness.includes(query);
+        // Class Size Filter
+        const classSizeNum = parseInt(prog['Class size']);
+        const matchesClassSize = isNaN(classSizeNum) || maxClassSize === sliderMax || classSizeNum <= maxClassSize;
+
+        // Perk Filters (Checks headers like "Free Parking", "Housing Stipend", "Meal Stipend", "Tech Stipend")
+        const matchesParking = !requireParking || isTrueValue(prog['Free Parking'] || prog['Parking']);
+        const matchesHousing = !requireHousing || isTrueValue(prog['Housing Stipend'] || prog['Housing']);
+        const matchesMeal = !requireMeal || isTrueValue(prog['Meal Stipend'] || prog['Meals']);
+        const matchesTech = !requireTech || isTrueValue(prog['Tech Stipend'] || prog['Tech']);
+
+        return matchesSearch && matchesState && matchesInterest && matchesSetting && 
+               matchesCompetitiveness && matchesClassSize && matchesParking && 
+               matchesHousing && matchesMeal && matchesTech;
       });
 
       renderDashboard(filtered);
+    }
+
+    // Event Listeners
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.getElementById('stateFilter').addEventListener('change', applyFilters);
+    document.getElementById('interestFilter').addEventListener('change', applyFilters);
+    document.getElementById('settingFilter').addEventListener('change', applyFilters);
+    document.getElementById('competitivenessFilter').addEventListener('change', applyFilters);
+
+    document.getElementById('classSizeFilter').addEventListener('input', function(e) {
+      const val = e.target.value;
+      const max = e.target.max;
+      document.getElementById('classSizeValue').innerText = val == max ? val + "+" : "≤ " + val;
+      applyFilters();
     });
+
+    document.getElementById('parkingFilter').addEventListener('change', applyFilters);
+    document.getElementById('housingFilter').addEventListener('change', applyFilters);
+    document.getElementById('mealFilter').addEventListener('change', applyFilters);
+    document.getElementById('techFilter').addEventListener('change', applyFilters);
   </script>
 </body>
 </html>
