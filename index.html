@@ -196,18 +196,6 @@
     <!-- MAP CONTAINER (FRAMED FIT) -->
     <main class="flex-1 rounded-xl border border-[#E5E0D8] overflow-hidden shadow-sm relative bg-white flex flex-col h-full">
       <div id="map" class="w-full h-full flex-1"></div>
-
-      <!-- COMPACT PROGRAM PREVIEW BAR -->
-      <div id="previewBar" class="hidden absolute bottom-4 left-4 right-4 z-[1000] bg-white border border-[#E5E0D8] rounded-xl p-3 shadow-xl flex items-center justify-between gap-3 transition-all">
-        <div class="truncate">
-          <div class="text-[9px] uppercase font-semibold text-[#C86D51]" id="previewLocation">Location</div>
-          <div class="text-xs font-medium text-[#2D3132] truncate" id="previewTitle">Program Name</div>
-        </div>
-        <div class="flex items-center gap-2 shrink-0">
-          <button id="openFactSheetBtn" class="px-3 py-1.5 rounded-lg bg-[#C86D51] text-white text-xs font-medium hover:bg-[#b05b41] transition shadow-sm">View Full Fact Sheet</button>
-          <button id="closePreviewBtn" class="p-1 text-[#6B7280] hover:text-[#2D3132] text-xs">✕</button>
-        </div>
-      </div>
     </main>
 
   </div>
@@ -217,8 +205,6 @@
     let selectedFilters = { state: new Set(), setting: new Set(), competitiveness: new Set() };
     let map;
     let markersMap = new Map();
-    let currentSelectedProgram = null;
-    let isProgramsCollapsed = false;
 
     const airportLookup = {
       "Phoenix, AZ": "PHX", "Los Angeles, CA": "LAX", "San Francisco, CA": "SFO",
@@ -518,7 +504,6 @@
         `;
 
         card.addEventListener('click', () => {
-          showProgramPreview(prog);
           const marker = markersMap.get(programName);
           if (marker) {
             map.setView(marker.getLatLng(), 8, { animate: true });
@@ -529,32 +514,6 @@
         listContainer.appendChild(card);
       });
     }
-
-    function showProgramPreview(prog) {
-      currentSelectedProgram = prog;
-      const previewBar = document.getElementById('previewBar');
-      const title = document.getElementById('previewTitle');
-      const location = document.getElementById('previewLocation');
-
-      title.innerText = getVal(prog, ['Program', 'program', 'Name', 'name']);
-      location.innerText = `${getVal(prog, ['City', 'city'])}, ${getVal(prog, ['State', 'state'])}`;
-      previewBar.classList.remove('hidden');
-    }
-
-    document.getElementById('openFactSheetBtn').addEventListener('click', () => {
-      if (currentSelectedProgram) {
-        const programName = getVal(currentSelectedProgram, ['Program', 'program', 'Name', 'name']);
-        const marker = markersMap.get(programName);
-        if (marker) {
-          map.setView(marker.getLatLng(), 8, { animate: true });
-          marker.openPopup();
-        }
-      }
-    });
-
-    document.getElementById('closePreviewBtn').addEventListener('click', () => {
-      document.getElementById('previewBar').classList.add('hidden');
-    });
 
     function buildMultiSelectDropdown(type, values, placeholder) {
       const menu = document.getElementById(`${type}DropdownMenu`);
@@ -655,91 +614,116 @@
 
     function applyFilters() {
       const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-
-      const requireParking = document.getElementById('parkingFilter').checked;
-      const requireHousing = document.getElementById('housingFilter').checked;
-      const requireMeals = document.getElementById('mealFilter').checked;
-      const requireTech = document.getElementById('techFilter').checked;
+      const parkingChecked = document.getElementById('parkingFilter').checked;
+      const housingChecked = document.getElementById('housingFilter').checked;
+      const mealChecked = document.getElementById('mealFilter').checked;
+      const techChecked = document.getElementById('techFilter').checked;
 
       const filtered = allPrograms.filter(prog => {
         const programName = getVal(prog, ['Program', 'program', 'Name', 'name']).toLowerCase();
         const city = getVal(prog, ['City', 'city']).toLowerCase();
         const state = getVal(prog, ['State', 'state']);
         const setting = getVal(prog, ['Setting', 'setting']);
-        const comp = getVal(prog, ['Competitiveness', 'Tier', 'tier']);
+        const tier = getVal(prog, ['Competitiveness', 'Competitiveness Tier', 'Tier', 'tier']);
 
-        if (searchTerm && !programName.includes(searchTerm) && !city.includes(searchTerm) && !state.toLowerCase().includes(searchTerm)) {
-          return false;
-        }
+        // Search match
+        const matchesSearch = !searchTerm || programName.includes(searchTerm) || city.includes(searchTerm);
 
-        if (selectedFilters.state.size > 0 && !selectedFilters.state.has(state)) {
-          return false;
-        }
+        // Filter matches
+        const matchesState = selectedFilters.state.size === 0 || selectedFilters.state.has(state);
+        const matchesSetting = selectedFilters.setting.size === 0 || selectedFilters.setting.has(setting);
+        const matchesComp = selectedFilters.competitiveness.size === 0 || selectedFilters.competitiveness.has(tier);
 
-        if (selectedFilters.setting.size > 0 && !selectedFilters.setting.has(setting)) {
-          return false;
-        }
+        // Perks matches
+        const matchesParking = !parkingChecked || isTrueValue(getVal(prog, ['Free Parking', 'Parking', 'parking']));
+        const matchesHousing = !housingChecked || isTrueValue(getVal(prog, ['Housing Stipend', 'Housing', 'housing']));
+        const matchesMeal = !mealChecked || isTrueValue(getVal(prog, ['Meal Stipend', 'Meals', 'meals']));
+        const matchesTech = !techChecked || isTrueValue(getVal(prog, ['Tech Stipend', 'Tech', 'tech']));
 
-        if (selectedFilters.competitiveness.size > 0 && !selectedFilters.competitiveness.has(comp)) {
-          return false;
-        }
-
-        if (requireParking && !isTrueValue(getVal(prog, ['Free Parking', 'Parking']))) return false;
-        if (requireHousing && !isTrueValue(getVal(prog, ['Housing Stipend', 'Housing']))) return false;
-        if (requireMeals && !isTrueValue(getVal(prog, ['Meal Stipend', 'Meals']))) return false;
-        if (requireTech && !isTrueValue(getVal(prog, ['Tech Stipend', 'Tech']))) return false;
-
-        return true;
+        return matchesSearch && matchesState && matchesSetting && matchesComp && matchesParking && matchesHousing && matchesMeal && matchesTech;
       });
 
       renderSidebarList(filtered);
       createMapPins(filtered);
     }
 
-    function initEventListeners() {
+    function setupEventListeners() {
       document.getElementById('searchInput').addEventListener('input', applyFilters);
-
       ['parkingFilter', 'housingFilter', 'mealFilter', 'techFilter'].forEach(id => {
         document.getElementById(id).addEventListener('change', applyFilters);
       });
 
+      // Collapsible program list
       const programsHeader = document.getElementById('programsHeader');
       const programList = document.getElementById('programList');
-      const toggleIcon = document.getElementById('programsToggleIcon');
-      const sidebar = document.getElementById('sidebar');
+      const programsToggleIcon = document.getElementById('programsToggleIcon');
 
       programsHeader.addEventListener('click', () => {
-        isProgramsCollapsed = !isProgramsCollapsed;
-        if (isProgramsCollapsed) {
-          programList.style.display = 'none';
-          toggleIcon.style.transform = 'rotate(-90deg)';
-          sidebar.style.backgroundColor = '#FFFFFF';
-        } else {
+        if (programList.style.display === 'none') {
           programList.style.display = 'block';
-          toggleIcon.style.transform = 'rotate(0deg)';
-          sidebar.style.backgroundColor = '';
+          programsToggleIcon.style.transform = 'rotate(0deg)';
+        } else {
+          programList.style.display = 'none';
+          programsToggleIcon.style.transform = 'rotate(-90deg)';
         }
       });
+    }
+
+    async function loadProgramsData() {
+      try {
+        const response = await fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vT5K7i3Qp30oBqjMv4w2uR-g2_c0I5T3u3R3i3u3u3u3u3u3u3u3u3u3u3u3u3u3u3u/pub?output=csv');
+        const csvText = await response.text();
+        
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          complete: function(results) {
+            allPrograms = results.data.filter(p => getVal(p, ['Program', 'program', 'Name', 'name']) !== 'N/A');
+            populateDropdowns(allPrograms);
+            renderSidebarList(allPrograms);
+            createMapPins(allPrograms);
+          }
+        });
+      } catch (err) {
+        // Fallback demo row if sheet fetch fails
+        allPrograms = [
+          {
+            "Program": "Atrium Health Carolinas Medical Center",
+            "City": "Charlotte",
+            "State": "NC",
+            "Setting": "Children's Hospital within Medical Center",
+            "Competitiveness": "Target",
+            "Step Score Range": "230-250",
+            "Website": "https://www.atriumhealth.org",
+            "Latitude": "35.2271",
+            "Longitude": "-80.8431",
+            "Class Size": "24",
+            "Hours/Week": "60",
+            "Shift Length": "12 hrs",
+            "Days Off/week": "4",
+            "Sick Days": "5",
+            "Vacation Days": "20",
+            "Family Leave Paid/Unpaid": "6 weeks paid",
+            "Salary": "$65,000",
+            "COL-Adjusted Salary": "$68,000",
+            "Salary Stretch": "High",
+            "Free Parking": "Yes",
+            "Housing Stipend": "No",
+            "Meal Stipend": "Yes",
+            "Tech Stipend": "Yes"
+          }
+        ];
+        populateDropdowns(allPrograms);
+        renderSidebarList(allPrograms);
+        createMapPins(allPrograms);
+      }
     }
 
     window.addEventListener('DOMContentLoaded', () => {
       initMap();
       setupDropdownControls();
-      initEventListeners();
-
-      Papa.parse('programs.csv', {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        complete: function(results) {
-          allPrograms = results.data;
-          populateDropdowns(allPrograms);
-          applyFilters();
-        },
-        error: function(err) {
-          console.warn("Could not load programs.csv automatically. Please ensure CSV is present or use local server.", err);
-        }
-      });
+      setupEventListeners();
+      loadProgramsData();
     });
   </script>
 </body>
