@@ -235,7 +235,6 @@
     let markersMap = new Map();
     let currentSelectedProgram = null;
 
-    // City to Airport Fallback Mapping
     const airportLookup = {
       "Phoenix, AZ": "PHX", "Los Angeles, CA": "LAX", "San Francisco, CA": "SFO",
       "Oakland, CA": "OAK", "Sacramento, CA": "SMF", "San Diego, CA": "SAN",
@@ -275,15 +274,11 @@
       "Richmond, VA": [37.5407, -77.4360], "Milwaukee, WI": [43.0389, -87.9065]
     };
 
-    // Robust CSV Field Value Extraction Helper
-    function getProp(obj, keys, defaultVal = '') {
-      if (!obj) return defaultVal;
-      for (const key of keys) {
-        if (obj[key] !== undefined && obj[key] !== null && String(obj[key]).trim() !== '') {
-          return String(obj[key]).trim();
-        }
+    function getVal(prog, key) {
+      if (!prog || prog[key] === undefined || prog[key] === null || String(prog[key]).trim() === '') {
+        return 'N/A';
       }
-      return defaultVal;
+      return String(prog[key]).trim();
     }
 
     function isTrueValue(val) {
@@ -293,7 +288,7 @@
     }
 
     function cleanSettingName(val) {
-      if (!val) return 'N/A';
+      if (!val || val === 'N/A') return 'N/A';
       let cleaned = val.trim();
       if (cleaned === "CB/University Affiliated" || cleaned === "CB / University Affiliated") {
         return "Community-Based Univ. Affiliated";
@@ -313,23 +308,23 @@
     }
 
     function createInMapFactSheetPopup(prog) {
-      const city = getProp(prog, ['City', 'city', 'Location City']);
-      const state = getProp(prog, ['State', 'state', 'Location State']);
+      const city = getVal(prog, 'City');
+      const state = getVal(prog, 'State');
       const cityStateKey = `${city}, ${state}`;
 
-      const website = getProp(prog, ['Website', 'URL', 'Program Website', 'Website URL', 'Link'], '#');
-      const programName = getProp(prog, ['Program', 'Program Name', 'Hospital', 'Institution'], 'Program Info');
+      const website = getVal(prog, 'Website') !== 'N/A' ? getVal(prog, 'Website') : '#';
+      const programName = getVal(prog, 'Program');
 
       // Nearest Airport
-      const airport = getProp(prog, ['Nearest Airport', 'Airport', 'Nearest Airport Code', 'Airport Code']) || airportLookup[cityStateKey] || (city ? `${city.substring(0,3).toUpperCase()} Airport` : 'N/A');
+      const airport = airportLookup[cityStateKey] || (city !== 'N/A' ? `${city.substring(0,3).toUpperCase()} Airport` : 'N/A');
 
-      // Perks
+      // Perks using exact CSV headers
       let perksHTML = '';
       const perks = [
-        { label: 'Parking', val: getProp(prog, ['Free Parking', 'Parking', 'Parking Stipend']) },
-        { label: 'Housing', val: getProp(prog, ['Housing Stipend', 'Housing', 'Housing Allowance']) },
-        { label: 'Meals', val: getProp(prog, ['Meal Stipend', 'Meals', 'Food Stipend']) },
-        { label: 'Tech', val: getProp(prog, ['Tech Stipend', 'Tech', 'Technology Allowance']) }
+        { label: 'Parking', val: getVal(prog, 'Free Parking') },
+        { label: 'Housing', val: getVal(prog, 'Housing Stipend') },
+        { label: 'Meals', val: getVal(prog, 'Meal Stipend') },
+        { label: 'Tech', val: getVal(prog, 'Tech Stipend') }
       ];
 
       perks.forEach(p => {
@@ -339,22 +334,22 @@
       });
       if (!perksHTML) perksHTML = `<span class="text-[10px] text-[#6B7280] italic">Standard Benefits</span>`;
 
-      // Fields Population with Fallback Keys
-      const classSize = getProp(prog, ['Class size', 'Class Size', 'Class size per year', 'Program Size'], 'N/A');
-      const setting = cleanSettingName(getProp(prog, ['Setting', 'Program Setting', 'Hospital Setting']));
-      const tier = getProp(prog, ['Competitiveness', 'Tier', 'Category', 'Target/Reach'], 'N/A');
-      const stepScore = getProp(prog, ['Step Score Range', 'Step Score', 'USMLE Step 2', 'Step 2 Score'], 'N/A');
+      // Direct mapping to exact CSV columns
+      const classSize = getVal(prog, 'Class size');
+      const setting = cleanSettingName(getVal(prog, 'Setting'));
+      const tier = getVal(prog, 'Competitiveness');
+      const stepScore = getVal(prog, 'Step Score Range');
 
-      const avgHours = getProp(prog, ['Work Hours', 'Average Hours Worked', 'Average Hours Worked Per Week', 'Hours/Week'], 'N/A');
-      const shiftLength = getProp(prog, ['Longest Shift Length', 'Shift Length', 'Max Shift Length'], 'N/A');
-      const daysOff = getProp(prog, ['Days Off Per Week', 'Average Days Off Per Week', 'Days Off'], 'N/A');
-      const sickDays = getProp(prog, ['Sick Days', 'Sick Leave Days'], 'N/A');
-      const vacationDays = getProp(prog, ['Vacation', 'Vacation Days'], 'N/A');
-      const paidLeave = getProp(prog, ['Family Leave Paid/Unpaid', 'Paid Family Leave Days', 'Paid Family Leave', 'Paid Leave'], 'N/A');
+      const avgHours = getVal(prog, 'Hours/Week');
+      const shiftLength = getVal(prog, 'Longest Shift');
+      const daysOff = getVal(prog, 'Days Off/week');
+      const sickDays = getVal(prog, 'Sick Days');
+      const vacationDays = getVal(prog, 'Vacation Days');
+      const paidLeave = getVal(prog, 'Family Leave Paid/Unpaid');
 
-      const baseSalary = getProp(prog, ['Salary', 'Base Salary', 'PGY1 Salary'], 'N/A');
-      const colSalary = getProp(prog, ['COL-Adjusted Salary', 'COL Adjusted Salary', 'Adjusted Salary', 'Cost of Living Adjusted Salary'], 'N/A');
-      const stretchScore = getProp(prog, ['Salary Stretch', 'Salary Stretch Score', 'Stretch Score'], 'N/A');
+      const baseSalary = getVal(prog, 'Salary');
+      const colSalary = getVal(prog, 'COL-Adjusted Salary');
+      const stretchScore = getVal(prog, 'Salary Stretch');
 
       return `
         <div class="p-3.5 space-y-3 font-sans max-h-[400px] overflow-y-auto custom-scroll bg-white">
@@ -364,7 +359,7 @@
             <h3 class="font-medium text-xs text-[#2D3132] leading-snug">
               ${website !== '#' ? `<a href="${website.startsWith('http') ? website : 'https://' + website}" target="_blank" rel="noopener noreferrer" class="text-[#C86D51] hover:underline flex items-center gap-1 font-semibold">${programName} <span class="text-[9px]">↗</span></a>` : `<span class="font-semibold">${programName}</span>`}
             </h3>
-            <p class="text-[10px] text-[#6B7280] mt-0.5">${city}${city && state ? ', ' : ''}${state}</p>
+            <p class="text-[10px] text-[#6B7280] mt-0.5">${city !== 'N/A' ? city : ''}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state !== 'N/A' ? state : ''}</p>
           </div>
 
           <!-- Section 1: Basics -->
@@ -476,13 +471,13 @@
       markersMap.clear();
 
       programs.forEach(prog => {
-        const programName = getProp(prog, ['Program', 'Program Name'], 'N/A');
-        const city = getProp(prog, ['City', 'city']);
-        const state = getProp(prog, ['State', 'state']);
+        const programName = getVal(prog, 'Program');
+        const city = getVal(prog, 'City');
+        const state = getVal(prog, 'State');
         const cityStateKey = `${city}, ${state}`;
 
-        let lat = parseFloat(getProp(prog, ['Latitude', 'lat']));
-        let lng = parseFloat(getProp(prog, ['Longitude', 'lng']));
+        let lat = parseFloat(prog['Latitude'] || prog['lat']);
+        let lng = parseFloat(prog['Longitude'] || prog['lng']);
 
         if ((isNaN(lat) || isNaN(lng)) && cityCoordinates[cityStateKey]) {
           [lat, lng] = cityCoordinates[cityStateKey];
@@ -494,7 +489,7 @@
           marker.bindTooltip(`
             <div class="font-sans">
               <div class="font-semibold text-[#2D3132]">${programName}</div>
-              <div class="text-[10px] text-[#6B7280]">${city}${city && state ? ', ' : ''}${state}</div>
+              <div class="text-[10px] text-[#6B7280]">${city !== 'N/A' ? city : ''}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state !== 'N/A' ? state : ''}</div>
             </div>
           `, { className: 'custom-map-tooltip', direction: 'top', offset: [0, -5] });
 
@@ -516,10 +511,10 @@
       }
 
       programs.forEach(prog => {
-        const programName = getProp(prog, ['Program', 'Program Name'], 'N/A');
-        const city = getProp(prog, ['City', 'city']);
-        const state = getProp(prog, ['State', 'state']);
-        const setting = cleanSettingName(getProp(prog, ['Setting', 'Program Setting']));
+        const programName = getVal(prog, 'Program');
+        const city = getVal(prog, 'City');
+        const state = getVal(prog, 'State');
+        const setting = cleanSettingName(getVal(prog, 'Setting'));
 
         const card = document.createElement('div');
         card.className = "p-3 rounded-lg border border-[#E5E0D8] bg-white shadow-xs hover:border-[#C86D51] transition group cursor-pointer";
@@ -528,7 +523,7 @@
           <div class="flex justify-between items-start gap-1">
             <h3 class="font-medium text-xs leading-snug text-[#2D3132] group-hover:text-[#C86D51] transition-colors">${programName}</h3>
           </div>
-          <p class="text-[10px] text-[#6B7280] mt-0.5">${city}${city && state ? ', ' : ''}${state}</p>
+          <p class="text-[10px] text-[#6B7280] mt-0.5">${city !== 'N/A' ? city : ''}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state !== 'N/A' ? state : ''}</p>
           <div class="mt-2 pt-1.5 border-t border-[#FAF9F5] flex justify-between items-center text-[10px] text-[#6B7280]">
             <span class="truncate text-[9px]">${setting}</span>
             <span class="text-[#C86D51] font-medium text-[9px]">Select →</span>
@@ -554,14 +549,14 @@
       const title = document.getElementById('previewTitle');
       const location = document.getElementById('previewLocation');
 
-      title.innerText = getProp(prog, ['Program', 'Program Name'], 'Program Selected');
-      location.innerText = `${getProp(prog, ['City', 'city'])}, ${getProp(prog, ['State', 'state'])}`;
+      title.innerText = getVal(prog, 'Program');
+      location.innerText = `${getVal(prog, 'City')}, ${getVal(prog, 'State')}`;
       previewBar.classList.remove('hidden');
     }
 
     document.getElementById('openFactSheetBtn').addEventListener('click', () => {
       if (currentSelectedProgram) {
-        const programName = getProp(currentSelectedProgram, ['Program', 'Program Name']);
+        const programName = getVal(currentSelectedProgram, 'Program');
         const marker = markersMap.get(programName);
         if (marker) {
           map.setView(marker.getLatLng(), 8, { animate: true });
@@ -658,14 +653,14 @@
       let maxClassFound = 0;
 
       data.forEach(prog => {
-        const st = getProp(prog, ['State', 'state']);
-        const set = getProp(prog, ['Setting', 'Program Setting']);
-        const comp = getProp(prog, ['Competitiveness', 'Tier']);
-        const sizeStr = getProp(prog, ['Class size', 'Class Size', 'Program Size']);
+        const st = prog['State'];
+        const set = prog['Setting'];
+        const comp = prog['Competitiveness'];
+        const sizeStr = prog['Class size'];
 
-        if (st) sets.state.add(st);
-        if (set) sets.setting.add(set);
-        if (comp) sets.competitiveness.add(comp);
+        if (st && String(st).trim() !== '') sets.state.add(String(st).trim());
+        if (set && String(set).trim() !== '') sets.setting.add(String(set).trim());
+        if (comp && String(comp).trim() !== '') sets.competitiveness.add(String(comp).trim());
         
         const size = parseInt(sizeStr);
         if (!isNaN(size) && size > maxClassFound) maxClassFound = size;
@@ -693,12 +688,12 @@
       const techReq = document.getElementById('techFilter').checked;
 
       const filtered = allPrograms.filter(prog => {
-        const name = getProp(prog, ['Program', 'Program Name']).toLowerCase();
-        const city = getProp(prog, ['City', 'city']).toLowerCase();
-        const state = getProp(prog, ['State', 'state']);
-        const setting = getProp(prog, ['Setting', 'Program Setting']);
-        const comp = getProp(prog, ['Competitiveness', 'Tier']);
-        const size = parseInt(getProp(prog, ['Class size', 'Class Size', 'Program Size'])) || 0;
+        const name = getVal(prog, 'Program').toLowerCase();
+        const city = getVal(prog, 'City').toLowerCase();
+        const state = getVal(prog, 'State');
+        const setting = getVal(prog, 'Setting');
+        const comp = getVal(prog, 'Competitiveness');
+        const size = parseInt(getVal(prog, 'Class size')) || 0;
 
         // Search Match
         if (searchQuery && !name.includes(searchQuery) && !city.includes(searchQuery) && !state.toLowerCase().includes(searchQuery)) {
@@ -726,10 +721,10 @@
         }
 
         // Perks Check
-        if (parkingReq && !isTrueValue(getProp(prog, ['Free Parking', 'Parking']))) return false;
-        if (housingReq && !isTrueValue(getProp(prog, ['Housing Stipend', 'Housing']))) return false;
-        if (mealReq && !isTrueValue(getProp(prog, ['Meal Stipend', 'Meals']))) return false;
-        if (techReq && !isTrueValue(getProp(prog, ['Tech Stipend', 'Tech']))) return false;
+        if (parkingReq && !isTrueValue(getVal(prog, 'Free Parking'))) return false;
+        if (housingReq && !isTrueValue(getVal(prog, 'Housing Stipend'))) return false;
+        if (mealReq && !isTrueValue(getVal(prog, 'Meal Stipend'))) return false;
+        if (techReq && !isTrueValue(getVal(prog, 'Tech Stipend'))) return false;
 
         return true;
       });
@@ -744,7 +739,7 @@
         header: true,
         skipEmptyLines: true,
         complete: function(results) {
-          allPrograms = results.data.filter(p => getProp(p, ['Program', 'Program Name']) !== '');
+          allPrograms = results.data.filter(p => getVal(p, 'Program') !== 'N/A');
           populateDropdowns(allPrograms);
           setupDropdownControls();
           applyFilters();
