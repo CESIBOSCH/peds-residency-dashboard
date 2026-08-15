@@ -274,26 +274,15 @@
       "Richmond, VA": [37.5407, -77.4360], "Milwaukee, WI": [43.0389, -87.9065]
     };
 
-    function formatVal(val) {
-      if (val === undefined || val === null) return 'Negotiable';
-      let str = String(val).trim();
-      if (str === '' || str.toLowerCase() === 'n/a') return 'Negotiable';
-      
-      // Replace any standalone letter 'N' or 'n' with 'Negotiable'
-      // A standalone letter N is surrounded by whitespace, punctuation, or start/end of string
-      let replaced = str.replace(/\b[Nn]\b/g, 'Negotiable');
-      return replaced;
-    }
-
     function getVal(prog, keys) {
-      if (!prog) return 'Negotiable';
+      if (!prog) return 'N/A';
       const keyList = Array.isArray(keys) ? keys : [keys];
       for (let k of keyList) {
         if (prog[k] !== undefined && prog[k] !== null && String(prog[k]).trim() !== '') {
-          return formatVal(prog[k]);
+          return String(prog[k]).trim();
         }
       }
-      return 'Negotiable';
+      return 'N/A';
     }
 
     function isTrueValue(val) {
@@ -303,9 +292,8 @@
     }
 
     function cleanSettingName(val) {
-      let formatted = formatVal(val);
-      if (formatted === 'Negotiable') return 'Negotiable';
-      let cleaned = formatted.trim();
+      if (!val || val === 'N/A') return 'N/A';
+      let cleaned = val.trim();
       if (cleaned === "CB/University Affiliated" || cleaned === "CB / University Affiliated") {
         return "Community-Based Univ. Affiliated";
       }
@@ -328,10 +316,10 @@
       const state = getVal(prog, ['State', 'state']);
       const cityStateKey = `${city}, ${state}`;
 
-      let website = getVal(prog, ['Website', 'website', 'URL', 'url']);
+      const website = getVal(prog, ['Website', 'website', 'URL', 'url']);
       const programName = getVal(prog, ['Program', 'program', 'Name', 'name']);
 
-      const airport = airportLookup[cityStateKey] || (city !== 'Negotiable' ? `${city.substring(0,3).toUpperCase()} Airport` : 'Negotiable');
+      const airport = airportLookup[cityStateKey] || (city !== 'N/A' ? `${city.substring(0,3).toUpperCase()} Airport` : 'N/A');
 
       let perksHTML = '';
       const perks = [
@@ -364,21 +352,15 @@
       const colSalary = getVal(prog, ['COL-Adjusted Salary', 'COL Salary']);
       const stretchScore = getVal(prog, ['Salary Stretch', 'Stretch']);
 
-      let websiteLinkHTML = `<span class="font-semibold">${programName}</span>`;
-      if (website !== '#' && website !== 'Negotiable') {
-        const urlStr = website.startsWith('http') ? website : 'https://' + website;
-        websiteLinkHTML = `<a href="${urlStr}" target="_blank" rel="noopener noreferrer" class="text-[#C86D51] hover:underline flex items-center gap-1 font-semibold">${programName} <span class="text-[9px]">↗</span></a>`;
-      }
-
       return `
         <div class="p-3.5 space-y-3 font-sans max-h-[400px] overflow-y-auto custom-scroll bg-white">
           
           <!-- Header with Direct Web Link -->
           <div class="border-b border-[#E5E0D8] pb-2">
             <h3 class="font-medium text-xs text-[#2D3132] leading-snug">
-              ${websiteLinkHTML}
+              ${website !== '#' && website !== 'N/A' ? `<a href="${website.startsWith('http') ? website : 'https://' + website}" target="_blank" rel="noopener noreferrer" class="text-[#C86D51] hover:underline flex items-center gap-1 font-semibold">${programName} <span class="text-[9px]">↗</span></a>` : `<span class="font-semibold">${programName}</span>`}
             </h3>
-            <p class="text-[10px] text-[#6B7280] mt-0.5">${city !== 'Negotiable' ? city : ''}${city !== 'Negotiable' && state !== 'Negotiable' ? ', ' : ''}${state !== 'Negotiable' ? state : ''}</p>
+            <p class="text-[10px] text-[#6B7280] mt-0.5">${city !== 'N/A' ? city : ''}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state !== 'N/A' ? state : ''}</p>
           </div>
 
           <!-- Section 1: Basics -->
@@ -508,7 +490,7 @@
           marker.bindTooltip(`
             <div class="font-sans">
               <div class="font-semibold text-[#2D3132]">${programName}</div>
-              <div class="text-[10px] text-[#6B7280]">${city !== 'Negotiable' ? city : ''}${city !== 'Negotiable' && state !== 'Negotiable' ? ', ' : ''}${state !== 'Negotiable' ? state : ''}</div>
+              <div class="text-[10px] text-[#6B7280]">${city !== 'N/A' ? city : ''}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state !== 'N/A' ? state : ''}</div>
             </div>
           `, { className: 'custom-map-tooltip', direction: 'top', offset: [0, -5] });
 
@@ -542,7 +524,7 @@
           <div class="flex justify-between items-start gap-1">
             <h3 class="font-medium text-xs leading-snug text-[#2D3132] group-hover:text-[#C86D51] transition-colors">${programName}</h3>
           </div>
-          <p class="text-[10px] text-[#6B7280] mt-0.5">${city !== 'Negotiable' ? city : ''}${city !== 'Negotiable' && state !== 'Negotiable' ? ', ' : ''}${state !== 'Negotiable' ? state : ''}</p>
+          <p class="text-[10px] text-[#6B7280] mt-0.5">${city !== 'N/A' ? city : ''}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state !== 'N/A' ? state : ''}</p>
           <div class="mt-2 pt-1.5 border-t border-[#FAF9F5] flex justify-between items-center text-[10px] text-[#6B7280]">
             <span class="truncate text-[9px]">${setting}</span>
             <span class="text-[#C86D51] font-medium text-[9px]">Select →</span>
@@ -593,8 +575,7 @@
       menu.innerHTML = '';
 
       Array.from(values).sort().forEach(val => {
-        const formattedVal = formatVal(val);
-        const displayVal = type === 'setting' ? cleanSettingName(val) : formattedVal;
+        const displayVal = type === 'setting' ? cleanSettingName(val) : val;
         const label = document.createElement('label');
         label.className = "flex items-center gap-2 px-1.5 py-1 hover:bg-[#FBF4F1] rounded cursor-pointer text-stone-700 transition";
         label.innerHTML = `
@@ -628,7 +609,7 @@
         resetBtn.classList.add('hidden');
       } else if (count === 1) {
         const val = Array.from(selectedFilters[type])[0];
-        label.innerText = type === 'setting' ? cleanSettingName(val) : formatVal(val);
+        label.innerText = type === 'setting' ? cleanSettingName(val) : val;
         resetBtn.classList.remove('hidden');
       } else {
         label.innerText = `${count} Selected`;
@@ -681,11 +662,9 @@
         if (st && String(st).trim() !== '') sets.state.add(String(st).trim());
         if (set && String(set).trim() !== '') sets.setting.add(String(set).trim());
         if (comp && String(comp).trim() !== '') sets.competitiveness.add(String(comp).trim());
-
+        
         const size = parseInt(sizeStr);
-        if (!isNaN(size) && size > maxClassFound) {
-          maxClassFound = size;
-        }
+        if (!isNaN(size) && size > maxClassFound) maxClassFound = size;
       });
 
       buildMultiSelectDropdown('state', sets.state, 'All States');
@@ -703,49 +682,44 @@
     function applyFilters() {
       const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
       const maxClassSize = parseInt(document.getElementById('classSizeFilter').value);
-      const parkingReq = document.getElementById('parkingFilter').checked;
-      const housingReq = document.getElementById('housingFilter').checked;
-      const mealReq = document.getElementById('mealFilter').checked;
-      const techReq = document.getElementById('techFilter').checked;
+
+      const requireParking = document.getElementById('parkingFilter').checked;
+      const requireHousing = document.getElementById('housingFilter').checked;
+      const requireMeals = document.getElementById('mealFilter').checked;
+      const requireTech = document.getElementById('techFilter').checked;
 
       const filtered = allPrograms.filter(prog => {
         const programName = getVal(prog, ['Program', 'program', 'Name', 'name']).toLowerCase();
         const city = getVal(prog, ['City', 'city']).toLowerCase();
         const state = getVal(prog, ['State', 'state']);
         const setting = getVal(prog, ['Setting', 'setting']);
-        const tier = getVal(prog, ['Competitiveness', 'Competitiveness Tier', 'Tier', 'tier']);
-        const classSize = parseInt(getVal(prog, ['Class size', 'Class Size', 'class_size'])) || 0;
+        const comp = getVal(prog, ['Competitiveness', 'Tier', 'tier']);
+        const classSize = parseInt(getVal(prog, ['Class size', 'Class Size'])) || 0;
 
-        // Search Match
         if (searchTerm && !programName.includes(searchTerm) && !city.includes(searchTerm) && !state.toLowerCase().includes(searchTerm)) {
           return false;
         }
 
-        // State Filter
         if (selectedFilters.state.size > 0 && !selectedFilters.state.has(state)) {
           return false;
         }
 
-        // Setting Filter
         if (selectedFilters.setting.size > 0 && !selectedFilters.setting.has(setting)) {
           return false;
         }
 
-        // Competitiveness Filter
-        if (selectedFilters.competitiveness.size > 0 && !selectedFilters.competitiveness.has(tier)) {
+        if (selectedFilters.competitiveness.size > 0 && !selectedFilters.competitiveness.has(comp)) {
           return false;
         }
 
-        // Class Size Filter
-        if (classSize > 0 && classSize > maxClassSize) {
+        if (classSize > maxClassSize) {
           return false;
         }
 
-        // Benefits Filter
-        if (parkingReq && !isTrueValue(getVal(prog, ['Free Parking', 'Parking', 'parking']))) return false;
-        if (housingReq && !isTrueValue(getVal(prog, ['Housing Stipend', 'Housing', 'housing']))) return false;
-        if (mealReq && !isTrueValue(getVal(prog, ['Meal Stipend', 'Meals', 'meals']))) return false;
-        if (techReq && !isTrueValue(getVal(prog, ['Tech Stipend', 'Tech', 'tech']))) return false;
+        if (requireParking && !isTrueValue(getVal(prog, ['Free Parking', 'Parking']))) return false;
+        if (requireHousing && !isTrueValue(getVal(prog, ['Housing Stipend', 'Housing']))) return false;
+        if (requireMeals && !isTrueValue(getVal(prog, ['Meal Stipend', 'Meals']))) return false;
+        if (requireTech && !isTrueValue(getVal(prog, ['Tech Stipend', 'Tech']))) return false;
 
         return true;
       });
@@ -754,30 +728,7 @@
       createMapPins(filtered);
     }
 
-    function loadCSVData() {
-      const csvUrl = 'https://raw.githubusercontent.com/francesbosch/pediatric-residency-data/main/pediatric_residency_data.csv';
-      
-      Papa.parse(csvUrl, {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        complete: function(results) {
-          allPrograms = results.data.filter(p => getVal(p, ['Program', 'program', 'Name', 'name']) !== 'Negotiable');
-          populateDropdowns(allPrograms);
-          applyFilters();
-        },
-        error: function(err) {
-          console.error("Error loading CSV:", err);
-          document.getElementById('programList').innerHTML = `<p class="text-xs text-red-500 text-center py-6">Failed to load residency data CSV.</p>`;
-        }
-      });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      initMap();
-      setupDropdownControls();
-      loadCSVData();
-
+    function initEventListeners() {
       document.getElementById('searchInput').addEventListener('input', applyFilters);
       document.getElementById('classSizeFilter').addEventListener('input', (e) => {
         document.getElementById('classSizeValue').innerText = e.target.value;
@@ -786,6 +737,26 @@
 
       ['parkingFilter', 'housingFilter', 'mealFilter', 'techFilter'].forEach(id => {
         document.getElementById(id).addEventListener('change', applyFilters);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      setupDropdownControls();
+      initEventListeners();
+
+      Papa.parse('programs.csv', {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          allPrograms = results.data;
+          populateDropdowns(allPrograms);
+          applyFilters();
+        },
+        error: function(err) {
+          console.warn("Could not load programs.csv automatically. Please ensure CSV is present or use local server.", err);
+        }
       });
     });
   </script>
