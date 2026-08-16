@@ -121,9 +121,9 @@
     }
 
     .page-shell {
-      margin-left: 170px;
-      padding: 26px 28px 40px;
-    }
+  margin-left: 210px;
+  padding: 26px 28px 40px;
+}
 
     .compact-card {
       background: white;
@@ -132,26 +132,28 @@
     }
 
     .resource-card {
-      background: white;
-      border: 1px solid var(--border-light);
-      border-radius: 12px;
+  background: white;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
 
-      padding: 11px 12px;
-      min-height: 64px;
+  padding: 8px 11px;
+  min-height: 54px;
 
-      transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease;
-    }
+  display: flex;
+  align-items: center;
 
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
     .resource-card:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 14px rgba(45, 49, 50, 0.05);
     }
 
     .resource-icon {
-      width: 30px;
-      height: 30px;
+      width: 28px;
+      height: 28px;
 
       border-radius: 50%;
 
@@ -169,10 +171,11 @@
     }
 
     .resource-title {
-      font-weight: 600;
-      font-size: 13px;
-      text-decoration: none;
-    }
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.2;
+  text-decoration: none;
+}
 
     .resource-title:hover {
       color: var(--accent-terracotta);
@@ -370,7 +373,7 @@
     </header>
 
     <!-- Top layout -->
-    <section class="grid grid-cols-1 xl:grid-cols-[410px_1fr] gap-6 items-start mb-6">
+    <section class="grid grid-cols-1 xl:grid-cols-[360px_1fr] gap-5 items-start mb-6">
 
       <!-- Left information stack -->
       <div class="space-y-3">
@@ -573,13 +576,13 @@
     </section>
 
     <!-- Smaller study-resource row -->
-    <section>
+    <section class="w-full max-w-[1180px]">
 
       <div class="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8A9484] mb-2">
         Study Resources
       </div>
 
-      <div class="grid grid-cols-5 gap-2">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2">
 
         <a
           href="https://www.uworld.com/app/index.html#/login/"
