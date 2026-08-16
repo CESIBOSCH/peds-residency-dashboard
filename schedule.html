@@ -717,7 +717,7 @@
     6px
     7px;
 
-  overflow: hidden;
+  overflow: visible;
 
   background: #FFFFFF;
 
@@ -2522,6 +2522,7 @@
 
     const shouldRemove =
   calendarEvents[i].type === 'deadline' ||
+  calendarEvents[i].title === 'Thanksgiving Break' ||
   seededPrefixes.some(
     prefix =>
       eventId === prefix ||
