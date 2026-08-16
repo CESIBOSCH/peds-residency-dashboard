@@ -2515,14 +2515,14 @@
 
 
     const shouldRemove =
-      seededPrefixes.some(
-        prefix =>
-          eventId === prefix ||
-          eventId.startsWith(
-            prefix + '-'
-          )
-      );
-
+  calendarEvents[i].type === 'deadline' ||
+  seededPrefixes.some(
+    prefix =>
+      eventId === prefix ||
+      eventId.startsWith(
+        prefix + '-'
+      )
+  );
 
     if (
       shouldRemove
