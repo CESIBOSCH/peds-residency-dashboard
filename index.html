@@ -302,9 +302,9 @@
       margin-left: 88px;
 
       padding:
-        22px
-        34px
-        48px;
+        20px
+        32px
+        46px;
 
       transition:
         margin-left
@@ -326,7 +326,7 @@
 
       width:
         min(
-          1180px,
+          1280px,
           100%
         );
 
@@ -398,7 +398,7 @@
 
 
     /* =========================================
-       HOME LAYOUT
+       MAIN HOME LAYOUT
     ========================================= */
 
     .home-layout {
@@ -409,7 +409,7 @@
         minmax(0, 1fr)
         350px;
 
-      gap: 20px;
+      gap: 22px;
 
       align-items: start;
 
@@ -441,7 +441,7 @@
 
     .quick-section {
 
-      margin-bottom: 20px;
+      margin-bottom: 18px;
 
     }
 
@@ -452,7 +452,7 @@
 
       grid-template-columns:
         repeat(
-          4,
+          7,
           minmax(0, 1fr)
         );
 
@@ -465,17 +465,21 @@
 
     .quick-link {
 
-      min-height: 78px;
+      min-height: 150px;
 
       display: flex;
 
-      align-items: center;
+      flex-direction: column;
 
-      gap: 11px;
+      align-items: center;
+      justify-content: flex-start;
+
+      gap: 8px;
 
       padding:
-        12px
-        13px;
+        15px
+        7px
+        12px;
 
       background:
         white;
@@ -486,6 +490,8 @@
         var(--border-light);
 
       border-radius: 12px;
+
+      text-align: center;
 
       text-decoration: none;
 
@@ -525,17 +531,20 @@
     }
 
 
-    .resource-icon {
+    .resource-icon,
+    .atrium-tree {
 
-      width: 36px;
-      height: 36px;
-
-      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
 
       display: flex;
 
       align-items: center;
       justify-content: center;
+
+      flex-shrink: 0;
+
+      margin-bottom: 3px;
 
       border-radius: 50%;
 
@@ -546,6 +555,11 @@
         #71806C;
 
       overflow: hidden;
+
+    }
+
+
+    .resource-icon {
 
       font-size: 12px;
 
@@ -558,8 +572,8 @@
 
     .resource-icon svg {
 
-      width: 20px;
-      height: 20px;
+      width: 23px;
+      height: 23px;
 
       stroke:
         #71806C;
@@ -569,7 +583,7 @@
 
     .logo-epic {
 
-      font-size: 10px;
+      font-size: 11px;
 
       font-weight: 800;
 
@@ -586,7 +600,7 @@
         Georgia,
         serif;
 
-      font-size: 17px;
+      font-size: 20px;
 
       font-weight: 500;
 
@@ -597,37 +611,17 @@
 
     .logo-canvas {
 
-      font-size: 16px;
+      font-size: 19px;
 
       letter-spacing: -0.15em;
 
     }
 
 
-    .atrium-tree {
-
-      width: 38px;
-      height: 38px;
-
-      display: flex;
-
-      align-items: center;
-      justify-content: center;
-
-      flex-shrink: 0;
-
-      border-radius: 50%;
-
-      background:
-        var(--soft-sage);
-
-    }
-
-
     .atrium-tree svg {
 
-      width: 27px;
-      height: 27px;
+      width: 31px;
+      height: 31px;
 
       stroke:
         #71806C;
@@ -648,25 +642,250 @@
       color:
         var(--text-charcoal);
 
-      font-size: 12px;
+      font-size: 11px;
 
       font-weight: 650;
 
-      line-height: 1.2;
+      line-height: 1.25;
 
     }
 
 
     .quick-subtitle {
 
-      margin-top: 3px;
+      color:
+        var(--text-gray);
+
+      font-size: 9px;
+
+      line-height: 1.35;
+
+    }
+
+
+
+    /* =========================================
+       CURRENT ROTATION
+    ========================================= */
+
+    .rotation-card {
+
+      padding:
+        20px
+        22px;
+
+      margin-top: 16px;
+
+    }
+
+
+    .rotation-layout {
+
+      display: grid;
+
+      grid-template-columns:
+        minmax(
+          185px,
+          1.15fr
+        )
+        repeat(
+          3,
+          minmax(
+            120px,
+            1fr
+          )
+        );
+
+      gap: 0;
+
+      margin-top: 15px;
+
+    }
+
+
+    .rotation-primary {
+
+      padding-right: 20px;
+
+    }
+
+
+    .rotation-column {
+
+      padding:
+        0
+        18px;
+
+      border-left:
+        1px
+        solid
+        var(--border-light);
+
+    }
+
+
+    .rotation-title {
+
+      color:
+        var(--accent-terracotta);
+
+      font-size: 21px;
+
+      font-weight: 650;
+
+    }
+
+
+    .rotation-dates {
+
+      margin-top: 5px;
+
+      color:
+        var(--text-charcoal);
+
+      font-size: 11px;
+
+    }
+
+
+    .detail-heading {
+
+      margin-bottom: 6px;
+
+      color:
+        var(--accent-sage);
+
+      font-size: 8px;
+
+      font-weight: 650;
+
+      letter-spacing: 0.08em;
+
+      text-transform: uppercase;
+
+    }
+
+
+    .detail-value {
+
+      color:
+        var(--text-charcoal);
+
+      font-size: 10px;
+
+      line-height: 1.55;
+
+    }
+
+
+    .rotation-actions {
+
+      display: flex;
+
+      justify-content: flex-end;
+
+      flex-wrap: wrap;
+
+      gap: 22px;
+
+      margin-top: 16px;
+
+    }
+
+
+    .rotation-actions a {
+
+      color:
+        var(--accent-terracotta);
+
+      text-decoration: none;
+
+      font-size: 10px;
+
+      font-weight: 550;
+
+    }
+
+
+
+    /* =========================================
+       IT SUPPORT
+    ========================================= */
+
+    .support-card {
+
+      margin-top: 14px;
+
+      padding:
+        17px
+        20px;
+
+    }
+
+
+    .support-content {
+
+      display: flex;
+
+      flex-wrap: wrap;
+
+      align-items: center;
+
+      gap:
+        12px
+        50px;
+
+      margin-top: 12px;
 
       color:
         var(--text-gray);
 
-      font-size: 10px;
+      font-size: 11px;
 
-      line-height: 1.25;
+    }
+
+
+    .support-item {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+    }
+
+
+    .support-icon {
+
+      width: 30px;
+      height: 30px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      flex-shrink: 0;
+
+      border-radius: 50%;
+
+      background:
+        var(--soft-sage);
+
+      color:
+        #71806C;
+
+    }
+
+
+    .support-icon svg {
+
+      width: 16px;
+      height: 16px;
+
+      stroke:
+        #71806C;
 
     }
 
@@ -678,7 +897,10 @@
 
     .calendar-card {
 
-      padding: 17px;
+      padding:
+        18px
+        18px
+        16px;
 
     }
 
@@ -692,9 +914,9 @@
 
       gap: 10px;
 
-      margin-top: 8px;
+      margin-top: 9px;
 
-      margin-bottom: 12px;
+      margin-bottom: 13px;
 
     }
 
@@ -723,6 +945,11 @@
 
       height: 29px;
 
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
       padding:
         0
         8px;
@@ -743,6 +970,8 @@
       cursor: pointer;
 
       font-size: 11px;
+
+      text-decoration: none;
 
     }
 
@@ -794,7 +1023,7 @@
 
       position: relative;
 
-      height: 27px;
+      height: 28px;
 
       display: flex;
 
@@ -893,13 +1122,13 @@
       display: grid;
 
       grid-template-columns:
-        65px
+        72px
         minmax(0, 1fr);
 
       gap: 13px;
 
       padding:
-        12px
+        13px
         0;
 
       border-bottom:
@@ -935,9 +1164,11 @@
 
     .week-event-title {
 
-      font-size: 12px;
+      font-size: 11px;
 
       font-weight: 650;
+
+      line-height: 1.4;
 
     }
 
@@ -956,236 +1187,35 @@
 
 
     /* =========================================
-       CURRENT ROTATION
-    ========================================= */
-
-    .rotation-card {
-
-      padding:
-        17px
-        20px;
-
-      margin-top: 20px;
-
-    }
-
-
-    .rotation-layout {
-
-      display: grid;
-
-      grid-template-columns:
-        minmax(
-          220px,
-          1.25fr
-        )
-        repeat(
-          3,
-          minmax(
-            110px,
-            0.8fr
-          )
-        );
-
-      gap: 0;
-
-      margin-top: 12px;
-
-    }
-
-
-    .rotation-primary {
-
-      padding-right: 18px;
-
-    }
-
-
-    .rotation-column {
-
-      padding:
-        0
-        16px;
-
-      border-left:
-        1px
-        solid
-        var(--border-light);
-
-    }
-
-
-    .rotation-title {
-
-      color:
-        var(--accent-terracotta);
-
-      font-size: 19px;
-
-      font-weight: 650;
-
-    }
-
-
-    .rotation-dates {
-
-      margin-top: 4px;
-
-      color:
-        var(--text-gray);
-
-      font-size: 11px;
-
-    }
-
-
-    .detail-heading {
-
-      margin-bottom: 5px;
-
-      color:
-        var(--accent-sage);
-
-      font-size: 8px;
-
-      font-weight: 650;
-
-      letter-spacing: 0.08em;
-
-      text-transform: uppercase;
-
-    }
-
-
-    .detail-value {
-
-      color:
-        var(--text-charcoal);
-
-      font-size: 10px;
-
-      line-height: 1.5;
-
-    }
-
-
-    .rotation-actions {
-
-      display: flex;
-
-      justify-content: flex-end;
-
-      flex-wrap: wrap;
-
-      gap: 22px;
-
-      margin-top: 13px;
-
-    }
-
-
-    .rotation-actions a {
-
-      color:
-        var(--accent-terracotta);
-
-      text-decoration: none;
-
-      font-size: 10px;
-
-      font-weight: 550;
-
-    }
-
-
-
-    /* =========================================
-       IT SUPPORT
-    ========================================= */
-
-    .support-card {
-
-      margin-top: 14px;
-
-      padding:
-        16px
-        20px;
-
-    }
-
-
-    .support-content {
-
-      display: flex;
-
-      flex-wrap: wrap;
-
-      gap:
-        12px
-        30px;
-
-      margin-top: 12px;
-
-      color:
-        var(--text-gray);
-
-      font-size: 11px;
-
-    }
-
-
-    .support-item {
-
-      display: flex;
-
-      align-items: center;
-
-      gap: 9px;
-
-    }
-
-
-    .support-icon {
-
-      width: 30px;
-      height: 30px;
-
-      display: flex;
-
-      align-items: center;
-      justify-content: center;
-
-      flex-shrink: 0;
-
-      border-radius: 50%;
-
-      background:
-        var(--soft-sage);
-
-      color:
-        #71806C;
-
-    }
-
-
-    .support-icon svg {
-
-      width: 16px;
-      height: 16px;
-
-      stroke:
-        #71806C;
-
-    }
-
-
-
-    /* =========================================
        RESPONSIVE
     ========================================= */
 
     @media (
-      max-width: 1050px
+      max-width: 1150px
+    ) {
+
+      .quick-grid {
+
+        grid-template-columns:
+          repeat(
+            4,
+            minmax(0, 1fr)
+          );
+
+      }
+
+
+      .quick-link {
+
+        min-height: 118px;
+
+      }
+
+    }
+
+
+    @media (
+      max-width: 1000px
     ) {
 
       .home-layout {
@@ -1203,17 +1233,6 @@
         grid-template-columns:
           1fr
           1fr;
-
-      }
-
-
-      .quick-grid {
-
-        grid-template-columns:
-          repeat(
-            3,
-            minmax(0, 1fr)
-          );
 
       }
 
@@ -1285,8 +1304,10 @@
       .quick-grid {
 
         grid-template-columns:
-          1fr
-          1fr;
+          repeat(
+            2,
+            minmax(0, 1fr)
+          );
 
       }
 
@@ -1320,7 +1341,7 @@
 
 
     @media (
-      max-width: 520px
+      max-width: 480px
     ) {
 
       .quick-grid {
@@ -1438,7 +1459,7 @@
 
 
         <!-- =====================================
-             LEFT / MAIN COLUMN
+             LEFT COLUMN
         ====================================== -->
 
         <div class="home-main">
@@ -1490,16 +1511,12 @@
                 </div>
 
 
-                <div>
+                <div class="quick-title">
+                  Outlook
+                </div>
 
-                  <div class="quick-title">
-                    Outlook
-                  </div>
-
-                  <div class="quick-subtitle">
-                    Email
-                  </div>
-
+                <div class="quick-subtitle">
+                  Email
                 </div>
 
               </a>
@@ -1525,16 +1542,12 @@
                 </div>
 
 
-                <div>
+                <div class="quick-title">
+                  Epic
+                </div>
 
-                  <div class="quick-title">
-                    Epic
-                  </div>
-
-                  <div class="quick-subtitle">
-                    Wake Health
-                  </div>
-
+                <div class="quick-subtitle">
+                  Wake Health
                 </div>
 
               </a>
@@ -1560,16 +1573,12 @@
                 </div>
 
 
-                <div>
+                <div class="quick-title">
+                  Canvas
+                </div>
 
-                  <div class="quick-title">
-                    Canvas
-                  </div>
-
-                  <div class="quick-subtitle">
-                    WFU School of Medicine
-                  </div>
-
+                <div class="quick-subtitle">
+                  WFU School of Medicine
                 </div>
 
               </a>
@@ -1595,16 +1604,12 @@
                 </div>
 
 
-                <div>
+                <div class="quick-title">
+                  OpenEvidence
+                </div>
 
-                  <div class="quick-title">
-                    OpenEvidence
-                  </div>
-
-                  <div class="quick-subtitle">
-                    Clinical evidence
-                  </div>
-
+                <div class="quick-subtitle">
+                  Clinical evidence
                 </div>
 
               </a>
@@ -1660,16 +1665,12 @@
                 </div>
 
 
-                <div>
+                <div class="quick-title">
+                  MDCalc
+                </div>
 
-                  <div class="quick-title">
-                    MDCalc
-                  </div>
-
-                  <div class="quick-subtitle">
-                    Clinical calculators
-                  </div>
-
+                <div class="quick-subtitle">
+                  Clinical calculators
                 </div>
 
               </a>
@@ -1725,16 +1726,12 @@
                 </div>
 
 
-                <div>
+                <div class="quick-title">
+                  PeopleSoft
+                </div>
 
-                  <div class="quick-title">
-                    PeopleSoft
-                  </div>
-
-                  <div class="quick-subtitle">
-                    WFU BMC
-                  </div>
-
+                <div class="quick-subtitle">
+                  WFU BMC
                 </div>
 
               </a>
@@ -1803,16 +1800,12 @@
                 </div>
 
 
-                <div>
+                <div class="quick-title">
+                  Make a Doctor's Appointment
+                </div>
 
-                  <div class="quick-title">
-                    Make a Doctor's Appointment
-                  </div>
-
-                  <div class="quick-subtitle">
-                    Atrium Health
-                  </div>
-
+                <div class="quick-subtitle">
+                  Atrium Health
                 </div>
 
               </a>
@@ -2050,7 +2043,7 @@
 
                 <a
                   href="schedule.html"
-                  class="calendar-button flex items-center no-underline"
+                  class="calendar-button"
                 >
                   Today
                 </a>
