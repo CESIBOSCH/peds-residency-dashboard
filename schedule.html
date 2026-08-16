@@ -3685,6 +3685,28 @@ const eventLinkInput =
       eventLocationInput.value =
         event.location || '';
 
+      eventEndDateInput.value =
+  event.endDate || '';
+
+
+eventStartTimeInput.value =
+  event.startTime || '';
+
+
+eventEndTimeInput.value =
+  event.endTime || '';
+
+
+eventAllDayInput.checked =
+  event.allDay || false;
+
+
+eventLinkInput.value =
+  event.link || '';
+
+
+updateEventFieldVisibility();
+
 
       deleteEventButton.style.visibility =
         event.id
