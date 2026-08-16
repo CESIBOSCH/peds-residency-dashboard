@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>4th Year Schedule | Fourth Year</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -11,27 +12,80 @@
     :root {
       --bg-app: #FAF9F5;
       --bg-surface: #FFFFFF;
+
       --text-charcoal: #2D3132;
       --text-gray: #6B7280;
+
       --accent-terracotta: #C86D51;
       --accent-sage: #8E9B88;
+
       --border-light: #E5E0D8;
+
+      --soft-sage: #EEF1EB;
+      --soft-terracotta: #FBF4F1;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
       margin: 0;
+
       background: var(--bg-app);
       color: var(--text-charcoal);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        sans-serif;
     }
+
+    a {
+      color: inherit;
+    }
+
+
+    /* -------------------------
+       LEFT NAVIGATION
+    -------------------------- */
+
+    .site-rail {
+      position: fixed;
+
+      top: 0;
+      left: 0;
+
+      width: 170px;
+      height: 100vh;
+
+      padding: 28px 18px;
+
+      z-index: 30;
+
+      background: var(--bg-app);
+    }
+
+    .site-rail-inner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+
+    /* -------------------------
+       TRANSPARENT MENU
+    -------------------------- */
 
     .menu-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(45, 49, 50, 0.25);
+
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.2s ease;
+
       z-index: 40;
     }
 
@@ -42,142 +96,418 @@
 
     .menu-panel {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: min(340px, 88vw);
-      height: 100vh;
-      background: #fff;
-      transform: translateX(-100%);
-      transition: transform 0.25s ease;
+
+      top: 76px;
+      left: 22px;
+
       z-index: 50;
-      border-right: 1px solid var(--border-light);
-      padding: 24px;
-      box-sizing: border-box;
+
+      opacity: 0;
+
+      transform: translateY(-8px);
+
+      pointer-events: none;
+
+      transition:
+        opacity 0.18s ease,
+        transform 0.18s ease;
     }
 
     .menu-panel.open {
-      transform: translateX(0);
+      opacity: 1;
+
+      transform: translateY(0);
+
+      pointer-events: auto;
     }
 
     .menu-link {
       display: block;
-      padding: 12px 14px;
-      border-radius: 10px;
+
+      width: max-content;
+
+      padding: 5px 0;
+
+      color: var(--accent-sage);
+
       text-decoration: none;
-      color: var(--text-charcoal);
-      margin-bottom: 4px;
+
+      font-size: 13px;
+      font-weight: 500;
+
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+
+      transition: color 0.15s ease;
     }
 
     .menu-link:hover {
-      background: #F5F2EC;
+      color: var(--accent-terracotta);
     }
 
     .menu-link.active {
-      background: #F3ECE7;
       color: var(--accent-terracotta);
       font-weight: 600;
+    }
+
+
+    /* -------------------------
+       PAGE
+    -------------------------- */
+
+    .page-shell {
+      margin-left: 210px;
+
+      padding:
+        26px
+        28px
+        40px;
+    }
+
+    .compact-card {
+      background: white;
+
+      border:
+        1px
+        solid
+        var(--border-light);
+
+      border-radius: 12px;
+    }
+
+    .section-label {
+      color: var(--accent-sage);
+
+      font-size: 10px;
+      font-weight: 600;
+
+      letter-spacing: 0.16em;
+
+      text-transform: uppercase;
+    }
+
+
+    /* -------------------------
+       SCHOOL LINKS
+    -------------------------- */
+
+    .school-link {
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      min-height: 52px;
+
+      padding: 10px 13px;
+
+      background: white;
+
+      border:
+        1px
+        solid
+        var(--border-light);
+
+      border-radius: 10px;
+
+      text-decoration: none;
+    }
+
+    .school-link:hover {
+      border-color: #CFC8BD;
+    }
+
+    .school-icon {
+      width: 28px;
+      height: 28px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      flex-shrink: 0;
+
+      border-radius: 50%;
+
+      background: var(--soft-sage);
+
+      color: #71806C;
+
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+
+    /* -------------------------
+       ROTATION DETAILS
+    -------------------------- */
+
+    .rotation-field {
+      width: 100%;
+
+      padding: 8px 9px;
+
+      border:
+        1px
+        solid
+        var(--border-light);
+
+      border-radius: 7px;
+
+      background: white;
+
+      color: var(--text-charcoal);
+
+      font-size: 12px;
+
+      outline: none;
+    }
+
+    .rotation-field:focus {
+      border-color: var(--accent-sage);
+    }
+
+    textarea.rotation-field {
+      min-height: 92px;
+
+      resize: vertical;
+    }
+
+
+    /* -------------------------
+       UPCOMING ROTATIONS
+    -------------------------- */
+
+    .upcoming-card {
+      padding: 12px 14px;
+
+      background: white;
+
+      border:
+        1px
+        solid
+        var(--border-light);
+
+      border-radius: 10px;
+    }
+
+
+    /* -------------------------
+       CALENDAR
+    -------------------------- */
+
+    .calendar-day {
+      min-height: 66px;
+
+      padding: 5px;
+
+      overflow: hidden;
+
+      cursor: pointer;
+
+      background: white;
+
+      border-right:
+        1px
+        solid
+        var(--border-light);
+
+      border-bottom:
+        1px
+        solid
+        var(--border-light);
+    }
+
+    .calendar-day:nth-child(7n) {
+      border-right: 0;
+    }
+
+    .calendar-date {
+      color: var(--text-charcoal);
+
+      font-size: 10px;
+    }
+
+    .calendar-date.muted {
+      color: #A6ADB7;
+    }
+
+    .calendar-event {
+      margin-top: 3px;
+
+      padding: 3px 5px;
+
+      overflow: hidden;
+
+      border-radius: 4px;
+
+      background: var(--soft-terracotta);
+      color: #A95036;
+
+      font-size: 8px;
+
+      line-height: 1.2;
+
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      cursor: pointer;
+    }
+
+    .calendar-event.break-event {
+      background: var(--soft-sage);
+      color: #71806C;
+    }
+
+    .calendar-event.deadline-event {
+      background: #FBF4F1;
+      color: #C86D51;
+    }
+
+    .calendar-event.rotation-event {
+      background: #F2F4EF;
+      color: #687361;
+    }
+
+
+    /* -------------------------
+       EVENT MODAL
+    -------------------------- */
+
+    .modal-overlay {
+      position: fixed;
+
+      inset: 0;
+
+      display: none;
+
+      align-items: center;
+      justify-content: center;
+
+      z-index: 100;
+
+      padding: 20px;
+
+      background:
+        rgba(45, 49, 50, 0.30);
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+
+    @media (max-width: 1000px) {
+      .site-rail {
+        position: sticky;
+
+        width: 100%;
+        height: auto;
+
+        padding: 16px 18px;
+
+        background:
+          rgba(250, 249, 245, 0.96);
+      }
+
+      .page-shell {
+        margin-left: 0;
+
+        padding: 20px;
+      }
+
+      .menu-panel {
+        top: 64px;
+        left: 20px;
+      }
     }
   </style>
 </head>
 
+
 <body>
 
-  <!-- Top navigation -->
-  <header class="border-b border-[#E5E0D8] bg-white">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center">
+  <!-- LEFT NAVIGATION -->
+
+  <div class="site-rail">
+
+    <div class="site-rail-inner">
 
       <button
         id="menuButton"
-        class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-[#F5F2EC]"
+        class="w-11 h-11 flex items-center justify-center rounded-lg text-[#2D3132] hover:bg-[#F5F2EC] hover:text-[#C86D51]"
         aria-label="Open menu"
       >
-        <span class="text-2xl">☰</span>
+        <span class="text-2xl leading-none">☰</span>
       </button>
+
 
       <a
         href="index.html"
-        class="ml-4 text-sm font-semibold tracking-[0.18em] uppercase text-[#8E9B88]"
+        class="text-sm font-semibold tracking-[0.18em] uppercase text-[#8E9B88] no-underline whitespace-nowrap"
       >
         Fourth Year
       </a>
 
     </div>
-  </header>
 
-  <!-- Page content -->
-  <main class="max-w-7xl mx-auto px-6 py-12">
+  </div>
 
-    <div class="max-w-3xl">
 
-      <p class="text-xs uppercase tracking-[0.2em] text-[#8E9B88] font-semibold mb-3">
-        Medical School
-      </p>
+  <div
+    id="menuOverlay"
+    class="menu-overlay"
+  ></div>
 
-      <h1 class="text-4xl font-semibold tracking-tight">
-        4th Year Schedule
-      </h1>
 
-      <p class="mt-4 text-[#6B7280] leading-relaxed">
-        Keep rotations, deadlines, days off, course information, locations, and important dates in one place.
-      </p>
-
-    </div>
-
-    <div class="mt-10 border border-[#E5E0D8] bg-white rounded-2xl p-8">
-
-      <p class="text-sm text-[#6B7280]">
-        We'll build your fourth-year calendar and rotation schedule here.
-      </p>
-
-    </div>
-
-  </main>
-
-  <!-- Menu overlay -->
-  <div id="menuOverlay" class="menu-overlay"></div>
-
-  <!-- Hamburger menu -->
-  <aside id="menuPanel" class="menu-panel">
-
-    <div class="flex items-center justify-between mb-8">
-
-      <span class="text-xs uppercase tracking-[0.18em] font-semibold text-[#8E9B88]">
-        Fourth Year
-      </span>
-
-      <button
-        id="closeMenuButton"
-        class="text-2xl text-[#6B7280]"
-        aria-label="Close menu"
-      >
-        ×
-      </button>
-
-    </div>
+  <aside
+    id="menuPanel"
+    class="menu-panel"
+  >
 
     <nav>
 
-      <a href="index.html" class="menu-link">
+      <a
+        href="index.html"
+        class="menu-link"
+      >
         Home
       </a>
 
-      <a href="step.html" class="menu-link">
+      <a
+        href="step.html"
+        class="menu-link"
+      >
         Step & Study
       </a>
 
-      <a href="programs.html" class="menu-link">
+      <a
+        href="programs.html"
+        class="menu-link"
+      >
         Program Explorer
       </a>
 
-      <a href="resources.html" class="menu-link">
+      <a
+        href="resources.html"
+        class="menu-link"
+      >
         Program Research
       </a>
 
-      <a href="application.html" class="menu-link">
+      <a
+        href="application.html"
+        class="menu-link"
+      >
         Application Tracker
       </a>
 
-      <a href="schedule.html" class="menu-link active">
+      <a
+        href="schedule.html"
+        class="menu-link active"
+      >
         4th Year Schedule
       </a>
 
@@ -185,25 +515,1771 @@
 
   </aside>
 
+
+  <main class="page-shell">
+
+
+    <!-- TITLE -->
+
+    <header
+      class="flex items-center justify-center pt-2 pb-5"
+    >
+
+      <h1
+        class="text-[28px] md:text-[34px] font-light uppercase tracking-[0.10em] text-[#8A9484] leading-none whitespace-nowrap"
+      >
+        4th Year Schedule
+      </h1>
+
+    </header>
+
+
+    <!-- SCHOOL LINKS -->
+
+    <section class="mb-5">
+
+      <div
+        class="grid grid-cols-1 md:grid-cols-3 gap-2"
+      >
+
+        <a
+          href="https://ahw-psweb-lx-01.medctr.ad.wfubmc.edu:8042/psp/cppro/?&cmd=login&errorCode=105&languageCd=ENG"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="school-link"
+        >
+
+          <div class="school-icon">
+            PS
+          </div>
+
+          <div>
+
+            <div class="section-label mb-0.5">
+              Registration
+            </div>
+
+            <div class="text-xs font-semibold">
+              PeopleSoft
+            </div>
+
+          </div>
+
+        </a>
+
+
+        <a
+          href="https://wfusm.instructure.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="school-link"
+        >
+
+          <div class="school-icon">
+            C
+          </div>
+
+          <div>
+
+            <div class="section-label mb-0.5">
+              Courses
+            </div>
+
+            <div class="text-xs font-semibold">
+              Canvas
+            </div>
+
+          </div>
+
+        </a>
+
+
+        <a
+          href="https://waketrack.wakehealth.edu/students/authenticated/dashboard"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="school-link"
+        >
+
+          <div class="school-icon">
+            WT
+          </div>
+
+          <div>
+
+            <div class="section-label mb-0.5">
+              Scheduling
+            </div>
+
+            <div class="text-xs font-semibold">
+              Wake Track
+            </div>
+
+          </div>
+
+        </a>
+
+      </div>
+
+    </section>
+
+
+    <!-- CURRENT ROTATION + CALENDAR -->
+
+    <section
+      class="grid grid-cols-1 xl:grid-cols-[360px_1fr] gap-5 items-start mb-6"
+    >
+
+
+      <!-- CURRENT ROTATION -->
+
+      <div class="space-y-3 xl:pt-[26px]">
+
+        <div
+          class="compact-card p-4"
+        >
+
+          <div class="section-label mb-3">
+            Current Rotation
+          </div>
+
+
+          <div
+            id="currentRotationName"
+            class="text-lg font-semibold text-[#C86D51]"
+          >
+          </div>
+
+
+          <div
+            id="currentRotationDates"
+            class="text-xs text-[#6B7280] mt-1 mb-4"
+          >
+          </div>
+
+
+          <div class="space-y-3">
+
+            <div>
+
+              <label
+                class="section-label block mb-1"
+              >
+                Location
+              </label>
+
+              <input
+                id="rotationLocation"
+                class="rotation-field"
+                type="text"
+                placeholder="Hospital, clinic, address..."
+              >
+
+            </div>
+
+
+            <div>
+
+              <label
+                class="section-label block mb-1"
+              >
+                Contact Information
+              </label>
+
+              <textarea
+                id="rotationContacts"
+                class="rotation-field"
+                placeholder="Course director, coordinator, phone, email..."
+              ></textarea>
+
+            </div>
+
+
+            <div>
+
+              <label
+                class="section-label block mb-1"
+              >
+                Syllabus
+              </label>
+
+              <input
+                id="rotationSyllabus"
+                class="rotation-field"
+                type="url"
+                placeholder="Paste syllabus link"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label
+                class="section-label block mb-1"
+              >
+                Tasks / Assignments
+              </label>
+
+              <textarea
+                id="rotationTasks"
+                class="rotation-field"
+                placeholder="Projects, assignments, presentations, forms..."
+              ></textarea>
+
+            </div>
+
+          </div>
+
+
+          <div
+            id="rotationSaveStatus"
+            class="text-[10px] text-[#8E9B88] mt-3"
+          ></div>
+
+        </div>
+
+      </div>
+
+
+      <!-- CALENDAR -->
+
+      <div>
+
+        <div
+          class="section-label mb-2"
+        >
+          Calendar
+        </div>
+
+
+        <div
+          class="bg-white border border-[#E5E0D8] rounded-xl overflow-hidden"
+        >
+
+
+          <div
+            class="flex items-center justify-between px-4 py-3 border-b border-[#E5E0D8]"
+          >
+
+            <h2
+              id="calendarMonthLabel"
+              class="text-sm font-medium tracking-wide"
+            ></h2>
+
+
+            <div class="flex gap-1.5">
+
+              <button
+                id="previousMonthButton"
+                class="px-2.5 py-1 border border-[#E5E0D8] rounded-md text-sm hover:bg-[#FAF9F5]"
+              >
+                ‹
+              </button>
+
+
+              <button
+                id="todayButton"
+                class="px-2.5 py-1 border border-[#E5E0D8] rounded-md text-xs hover:bg-[#FAF9F5]"
+              >
+                Today
+              </button>
+
+
+              <button
+                id="nextMonthButton"
+                class="px-2.5 py-1 border border-[#E5E0D8] rounded-md text-sm hover:bg-[#FAF9F5]"
+              >
+                ›
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div
+            class="grid grid-cols-7 text-center text-[9px] font-semibold tracking-wide text-[#6B7280] border-b border-[#E5E0D8]"
+          >
+
+            <div class="py-2">SUN</div>
+            <div class="py-2">MON</div>
+            <div class="py-2">TUE</div>
+            <div class="py-2">WED</div>
+            <div class="py-2">THU</div>
+            <div class="py-2">FRI</div>
+            <div class="py-2">SAT</div>
+
+          </div>
+
+
+          <div
+            id="calendarGrid"
+            class="grid grid-cols-7"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- UPCOMING ROTATIONS -->
+
+    <section>
+
+      <div class="section-label mb-2">
+        Upcoming Rotations
+      </div>
+
+
+      <div
+        id="upcomingRotations"
+        class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2"
+      ></div>
+
+    </section>
+
+  </main>
+
+
+  <!-- CALENDAR EVENT MODAL -->
+
+  <div
+    id="eventModal"
+    class="modal-overlay"
+  >
+
+    <div
+      class="bg-white border border-[#E5E0D8] rounded-xl p-6 w-full max-w-md shadow-xl"
+    >
+
+      <div
+        class="flex justify-between items-center mb-5"
+      >
+
+        <h2 class="font-semibold">
+          Calendar Event
+        </h2>
+
+
+        <button
+          id="closeEventModalButton"
+          class="text-xl text-[#6B7280]"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <input
+        id="eventIdInput"
+        type="hidden"
+      >
+
+
+      <div class="mb-4">
+
+        <label
+          class="section-label block mb-1.5"
+        >
+          Event
+        </label>
+
+        <input
+          id="eventTitleInput"
+          type="text"
+          class="rotation-field"
+          placeholder="Event name"
+        >
+
+      </div>
+
+
+      <div class="mb-4">
+
+        <label
+          class="section-label block mb-1.5"
+        >
+          Date
+        </label>
+
+        <input
+          id="eventDateInput"
+          type="date"
+          class="rotation-field"
+        >
+
+      </div>
+
+
+      <div class="mb-5">
+
+        <label
+          class="section-label block mb-1.5"
+        >
+          Location
+        </label>
+
+        <input
+          id="eventLocationInput"
+          type="text"
+          class="rotation-field"
+          placeholder="Hospital, address, Zoom..."
+        >
+
+      </div>
+
+
+      <div class="flex justify-between">
+
+        <button
+          id="deleteEventButton"
+          class="text-sm text-[#6B7280] hover:text-[#C86D51]"
+        >
+          Delete
+        </button>
+
+
+        <button
+          id="saveEventButton"
+          class="px-4 py-2 bg-[#C86D51] text-white rounded-lg text-sm"
+        >
+          Save event
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
   <script>
-    const menuButton = document.getElementById('menuButton');
-    const closeMenuButton = document.getElementById('closeMenuButton');
-    const menuPanel = document.getElementById('menuPanel');
-    const menuOverlay = document.getElementById('menuOverlay');
+
+    /* =====================================================
+       NAVIGATION
+    ===================================================== */
+
+    const menuButton =
+      document.getElementById('menuButton');
+
+    const menuPanel =
+      document.getElementById('menuPanel');
+
+    const menuOverlay =
+      document.getElementById('menuOverlay');
+
 
     function openMenu() {
       menuPanel.classList.add('open');
       menuOverlay.classList.add('open');
     }
 
+
     function closeMenu() {
       menuPanel.classList.remove('open');
       menuOverlay.classList.remove('open');
     }
 
-    menuButton.addEventListener('click', openMenu);
-    closeMenuButton.addEventListener('click', closeMenu);
-    menuOverlay.addEventListener('click', closeMenu);
+
+    menuButton.addEventListener(
+      'click',
+      () => {
+
+        if (
+          menuPanel.classList.contains('open')
+        ) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+
+      }
+    );
+
+
+    menuOverlay.addEventListener(
+      'click',
+      closeMenu
+    );
+
+
+    /* =====================================================
+       YOUR ROTATIONS
+    ===================================================== */
+
+    const rotations = [
+
+      {
+        id: 'fm-ai',
+        name: 'FM AI',
+        start: '2026-07-20',
+        end: '2026-08-16',
+        block: 'Block 5'
+      },
+
+      {
+        id: 'peds-heme-onc',
+        name: 'Peds Heme/Onc',
+        start: '2026-08-17',
+        end: '2026-09-13',
+        block: 'Block 6'
+      },
+
+      {
+        id: 'geri-pal',
+        name: 'Geri Pal',
+        start: '2026-09-28',
+        end: '2026-10-11',
+        block: 'Block 7B'
+      },
+
+      {
+        id: 'picu',
+        name: 'PICU',
+        start: '2026-10-12',
+        end: '2026-11-08',
+        block: 'Block 8'
+      },
+
+      {
+        id: 'interview-block',
+        name: 'Flex – Interview Block',
+        start: '2026-11-09',
+        end: '2026-12-06',
+        block: 'Block 9'
+      },
+
+      {
+        id: 'mfm',
+        name: 'Outpatient Maternal Fetal Medicine',
+        start: '2026-12-07',
+        end: '2027-01-17',
+        block: 'Block 10'
+      },
+
+      {
+        id: 'child-protection',
+        name: 'Child Protection',
+        start: '2027-01-19',
+        end: '2027-02-14',
+        block: 'Block 11'
+      },
+
+      {
+        id: 'global-health-spain',
+        name: 'Global Health Spain',
+        start: '2027-02-15',
+        end: '2027-03-14',
+        block: 'Block 12'
+      }
+
+    ];
+
+
+    /* =====================================================
+       SHARED CALENDAR DATA
+    ===================================================== */
+
+    const CALENDAR_STORAGE_KEY =
+      'fourthYearSharedCalendarEvents';
+
+
+    let calendarEvents =
+      JSON.parse(
+        localStorage.getItem(
+          CALENDAR_STORAGE_KEY
+        ) || '[]'
+      );
+
+
+    function saveCalendarEvents() {
+
+      localStorage.setItem(
+        CALENDAR_STORAGE_KEY,
+        JSON.stringify(calendarEvents)
+      );
+
+    }
+
+
+    function seedEvent(event) {
+
+      const exists =
+        calendarEvents.some(
+          existing =>
+            existing.id === event.id
+        );
+
+
+      if (!exists) {
+        calendarEvents.push(event);
+      }
+
+    }
+
+
+    function seedBreakRange(
+      idPrefix,
+      title,
+      startDate,
+      endDate
+    ) {
+
+      const start =
+        new Date(
+          startDate + 'T12:00:00'
+        );
+
+
+      const end =
+        new Date(
+          endDate + 'T12:00:00'
+        );
+
+
+      let current =
+        new Date(start);
+
+
+      while (
+        current <= end
+      ) {
+
+        const date =
+          formatDateKey(current);
+
+
+        seedEvent({
+
+          id:
+            `${idPrefix}-${date}`,
+
+          title,
+
+          date,
+
+          location: '',
+
+          type: 'break'
+
+        });
+
+
+        current.setDate(
+          current.getDate() + 1
+        );
+
+      }
+
+    }
+
+
+    function seedSchoolCalendar() {
+
+      /* Drop/Add deadlines */
+
+      const deadlines = [
+
+        ['drop-block-1', 'Block 1 Drop/Add Deadline', '2026-03-09'],
+        ['drop-block-2', 'Block 2 Drop/Add Deadline', '2026-03-30'],
+        ['drop-block-3', 'Block 3 Drop/Add Deadline', '2026-04-28'],
+        ['drop-block-4', 'Block 4 Drop/Add Deadline', '2026-05-25'],
+        ['drop-block-5', 'Block 5 Drop/Add Deadline', '2026-06-22'],
+        ['drop-block-6', 'Block 6 Drop/Add Deadline', '2026-07-20'],
+        ['drop-block-7', 'Block 7 Drop/Add Deadline', '2026-08-17'],
+        ['drop-block-8', 'Block 8 Drop/Add Deadline', '2026-09-14'],
+        ['drop-block-9', 'Block 9 Drop/Add Deadline', '2026-10-12'],
+        ['drop-block-10', 'Block 10 Drop/Add Deadline', '2026-11-09'],
+        ['drop-block-11', 'Block 11 Drop/Add Deadline', '2026-12-22'],
+        ['drop-block-12', 'Block 12 Drop/Add Deadline', '2026-12-31']
+
+      ];
+
+
+      deadlines.forEach(
+        item => {
+
+          seedEvent({
+
+            id: item[0],
+
+            title: item[1],
+
+            date: item[2],
+
+            location: '',
+
+            type: 'deadline'
+
+          });
+
+        }
+      );
+
+
+      /* Time off */
+
+      seedBreakRange(
+        'labor-day',
+        'Labor Day',
+        '2026-09-07',
+        '2026-09-07'
+      );
+
+
+      seedBreakRange(
+        'thanksgiving',
+        'Thanksgiving Break',
+        '2026-11-25',
+        '2026-11-29'
+      );
+
+
+      seedBreakRange(
+        'winter-break',
+        'Winter Break',
+        '2026-12-21',
+        '2027-01-03'
+      );
+
+
+      seedBreakRange(
+        'mlk-day',
+        'MLK Day',
+        '2027-01-18',
+        '2027-01-18'
+      );
+
+
+      seedBreakRange(
+        'match-week',
+        'Match Week',
+        '2027-03-15',
+        '2027-03-21'
+      );
+
+
+      seedBreakRange(
+        'graduation-prep',
+        'Graduation Prep',
+        '2027-04-10',
+        '2027-05-14'
+      );
+
+
+      seedBreakRange(
+        'hooding-weekend',
+        'Graduation Hooding Weekend',
+        '2027-05-15',
+        '2027-05-16'
+      );
+
+
+      seedBreakRange(
+        'graduation',
+        'WFU Graduation',
+        '2027-05-17',
+        '2027-05-17'
+      );
+
+
+      saveCalendarEvents();
+
+    }
+
+
+    /* =====================================================
+       CURRENT ROTATION
+    ===================================================== */
+
+    const currentRotationName =
+      document.getElementById(
+        'currentRotationName'
+      );
+
+
+    const currentRotationDates =
+      document.getElementById(
+        'currentRotationDates'
+      );
+
+
+    const rotationLocation =
+      document.getElementById(
+        'rotationLocation'
+      );
+
+
+    const rotationContacts =
+      document.getElementById(
+        'rotationContacts'
+      );
+
+
+    const rotationSyllabus =
+      document.getElementById(
+        'rotationSyllabus'
+      );
+
+
+    const rotationTasks =
+      document.getElementById(
+        'rotationTasks'
+      );
+
+
+    const rotationSaveStatus =
+      document.getElementById(
+        'rotationSaveStatus'
+      );
+
+
+    function dateOnly(date) {
+
+      return new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+      );
+
+    }
+
+
+    function getCurrentRotation() {
+
+      const today =
+        dateOnly(
+          new Date()
+        );
+
+
+      return rotations.find(
+        rotation => {
+
+          const start =
+            new Date(
+              rotation.start +
+              'T12:00:00'
+            );
+
+
+          const end =
+            new Date(
+              rotation.end +
+              'T12:00:00'
+            );
+
+
+          return (
+            today >= start &&
+            today <= end
+          );
+
+        }
+      );
+
+    }
+
+
+    function formatDisplayDate(
+      dateString
+    ) {
+
+      return new Intl.DateTimeFormat(
+        'en-US',
+        {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        }
+      )
+      .format(
+        new Date(
+          dateString +
+          'T12:00:00'
+        )
+      );
+
+    }
+
+
+    let activeRotation =
+      getCurrentRotation();
+
+
+    function rotationStorageKey(
+      rotationId
+    ) {
+
+      return (
+        'fourthYearRotationDetails-' +
+        rotationId
+      );
+
+    }
+
+
+    function loadCurrentRotation() {
+
+      if (!activeRotation) {
+
+        currentRotationName.textContent =
+          'No rotation scheduled';
+
+
+        currentRotationDates.textContent =
+          'There is no rotation entered for today.';
+
+
+        rotationLocation.disabled = true;
+        rotationContacts.disabled = true;
+        rotationSyllabus.disabled = true;
+        rotationTasks.disabled = true;
+
+        return;
+
+      }
+
+
+      currentRotationName.textContent =
+        activeRotation.name;
+
+
+      currentRotationDates.textContent =
+        `${activeRotation.block} · ${formatDisplayDate(activeRotation.start)} – ${formatDisplayDate(activeRotation.end)}`;
+
+
+      const saved =
+        JSON.parse(
+          localStorage.getItem(
+            rotationStorageKey(
+              activeRotation.id
+            )
+          ) || '{}'
+        );
+
+
+      rotationLocation.value =
+        saved.location || '';
+
+
+      rotationContacts.value =
+        saved.contacts || '';
+
+
+      rotationSyllabus.value =
+        saved.syllabus || '';
+
+
+      rotationTasks.value =
+        saved.tasks || '';
+
+    }
+
+
+    function saveRotationDetails() {
+
+      if (!activeRotation) {
+        return;
+      }
+
+
+      const details = {
+
+        location:
+          rotationLocation.value,
+
+        contacts:
+          rotationContacts.value,
+
+        syllabus:
+          rotationSyllabus.value,
+
+        tasks:
+          rotationTasks.value
+
+      };
+
+
+      localStorage.setItem(
+        rotationStorageKey(
+          activeRotation.id
+        ),
+        JSON.stringify(details)
+      );
+
+
+      rotationSaveStatus.textContent =
+        'Saved';
+
+
+      setTimeout(
+        () => {
+
+          rotationSaveStatus.textContent =
+            '';
+
+        },
+        1200
+      );
+
+    }
+
+
+    [
+      rotationLocation,
+      rotationContacts,
+      rotationSyllabus,
+      rotationTasks
+    ]
+    .forEach(
+      field => {
+
+        field.addEventListener(
+          'input',
+          saveRotationDetails
+        );
+
+      }
+    );
+
+
+    /* =====================================================
+       UPCOMING ROTATIONS
+    ===================================================== */
+
+    const upcomingRotations =
+      document.getElementById(
+        'upcomingRotations'
+      );
+
+
+    function renderUpcomingRotations() {
+
+      const today =
+        dateOnly(
+          new Date()
+        );
+
+
+      const upcoming =
+        rotations
+          .filter(
+            rotation => {
+
+              const start =
+                new Date(
+                  rotation.start +
+                  'T12:00:00'
+                );
+
+
+              return start > today;
+
+            }
+          )
+          .slice(
+            0,
+            4
+          );
+
+
+      upcomingRotations.innerHTML = '';
+
+
+      upcoming.forEach(
+        rotation => {
+
+          const card =
+            document.createElement(
+              'div'
+            );
+
+
+          card.className =
+            'upcoming-card';
+
+
+          card.innerHTML = `
+
+            <div class="section-label mb-1">
+              ${rotation.block}
+            </div>
+
+            <div class="text-sm font-semibold">
+              ${rotation.name}
+            </div>
+
+            <div class="text-[11px] text-[#6B7280] mt-1">
+              ${formatDisplayDate(rotation.start)}
+              –
+              ${formatDisplayDate(rotation.end)}
+            </div>
+
+          `;
+
+
+          upcomingRotations.appendChild(
+            card
+          );
+
+        }
+      );
+
+    }
+
+
+    /* =====================================================
+       CALENDAR
+    ===================================================== */
+
+    let currentCalendarDate =
+      new Date();
+
+
+    const calendarGrid =
+      document.getElementById(
+        'calendarGrid'
+      );
+
+
+    const calendarMonthLabel =
+      document.getElementById(
+        'calendarMonthLabel'
+      );
+
+
+    const previousMonthButton =
+      document.getElementById(
+        'previousMonthButton'
+      );
+
+
+    const nextMonthButton =
+      document.getElementById(
+        'nextMonthButton'
+      );
+
+
+    const todayButton =
+      document.getElementById(
+        'todayButton'
+      );
+
+
+    const eventModal =
+      document.getElementById(
+        'eventModal'
+      );
+
+
+    const closeEventModalButton =
+      document.getElementById(
+        'closeEventModalButton'
+      );
+
+
+    const eventIdInput =
+      document.getElementById(
+        'eventIdInput'
+      );
+
+
+    const eventTitleInput =
+      document.getElementById(
+        'eventTitleInput'
+      );
+
+
+    const eventDateInput =
+      document.getElementById(
+        'eventDateInput'
+      );
+
+
+    const eventLocationInput =
+      document.getElementById(
+        'eventLocationInput'
+      );
+
+
+    const saveEventButton =
+      document.getElementById(
+        'saveEventButton'
+      );
+
+
+    const deleteEventButton =
+      document.getElementById(
+        'deleteEventButton'
+      );
+
+
+    function formatDateKey(date) {
+
+      const year =
+        date.getFullYear();
+
+
+      const month =
+        String(
+          date.getMonth() + 1
+        )
+        .padStart(
+          2,
+          '0'
+        );
+
+
+      const day =
+        String(
+          date.getDate()
+        )
+        .padStart(
+          2,
+          '0'
+        );
+
+
+      return `${year}-${month}-${day}`;
+
+    }
+
+
+    function rotationForDate(
+      dateKey
+    ) {
+
+      return rotations.find(
+        rotation =>
+          dateKey >= rotation.start &&
+          dateKey <= rotation.end
+      );
+
+    }
+
+
+    function renderCalendar() {
+
+      calendarGrid.innerHTML = '';
+
+
+      const year =
+        currentCalendarDate
+          .getFullYear();
+
+
+      const month =
+        currentCalendarDate
+          .getMonth();
+
+
+      calendarMonthLabel.textContent =
+        new Intl.DateTimeFormat(
+          'en-US',
+          {
+            month: 'long',
+            year: 'numeric'
+          }
+        )
+        .format(
+          currentCalendarDate
+        )
+        .toUpperCase();
+
+
+      const firstDayOfMonth =
+        new Date(
+          year,
+          month,
+          1
+        );
+
+
+      const firstVisibleDate =
+        new Date(
+          year,
+          month,
+          1 -
+          firstDayOfMonth.getDay()
+        );
+
+
+      for (
+        let index = 0;
+        index < 42;
+        index++
+      ) {
+
+        const cellDate =
+          new Date(
+            firstVisibleDate
+          );
+
+
+        cellDate.setDate(
+          firstVisibleDate.getDate() +
+          index
+        );
+
+
+        const dateKey =
+          formatDateKey(
+            cellDate
+          );
+
+
+        const day =
+          document.createElement(
+            'div'
+          );
+
+
+        day.className =
+          'calendar-day';
+
+
+        const dateLabel =
+          document.createElement(
+            'div'
+          );
+
+
+        dateLabel.textContent =
+          cellDate.getDate();
+
+
+        dateLabel.className =
+          'calendar-date';
+
+
+        if (
+          cellDate.getMonth()
+          !== month
+        ) {
+
+          dateLabel.classList.add(
+            'muted'
+          );
+
+        }
+
+
+        day.appendChild(
+          dateLabel
+        );
+
+
+        /* Rotation overlay */
+
+        const rotation =
+          rotationForDate(
+            dateKey
+          );
+
+
+        if (rotation) {
+
+          const rotationElement =
+            document.createElement(
+              'div'
+            );
+
+
+          rotationElement.className =
+            'calendar-event rotation-event';
+
+
+          rotationElement.textContent =
+            rotation.name;
+
+
+          rotationElement.title =
+            `${rotation.block}: ${rotation.name}`;
+
+
+          day.appendChild(
+            rotationElement
+          );
+
+        }
+
+
+        /* Shared calendar events */
+
+        const eventsForDay =
+          calendarEvents.filter(
+            event =>
+              event.date === dateKey
+          );
+
+
+        eventsForDay.forEach(
+          event => {
+
+            const eventElement =
+              document.createElement(
+                'div'
+              );
+
+
+            eventElement.className =
+              'calendar-event';
+
+
+            if (
+              event.type === 'break'
+            ) {
+
+              eventElement
+                .classList
+                .add(
+                  'break-event'
+                );
+
+            }
+
+
+            if (
+              event.type === 'deadline'
+            ) {
+
+              eventElement
+                .classList
+                .add(
+                  'deadline-event'
+                );
+
+            }
+
+
+            eventElement.textContent =
+              event.title;
+
+
+            eventElement.title =
+              event.location
+                ? `${event.title} — ${event.location}`
+                : event.title;
+
+
+            eventElement.addEventListener(
+              'click',
+              clickEvent => {
+
+                clickEvent
+                  .stopPropagation();
+
+
+                openEventModal(
+                  event
+                );
+
+              }
+            );
+
+
+            day.appendChild(
+              eventElement
+            );
+
+          }
+        );
+
+
+        day.addEventListener(
+          'click',
+          () => {
+
+            openEventModal({
+              date: dateKey
+            });
+
+          }
+        );
+
+
+        calendarGrid.appendChild(
+          day
+        );
+
+      }
+
+    }
+
+
+    /* =====================================================
+       EVENT EDITOR
+    ===================================================== */
+
+    function openEventModal(
+      event = {}
+    ) {
+
+      eventIdInput.value =
+        event.id || '';
+
+
+      eventTitleInput.value =
+        event.title || '';
+
+
+      eventDateInput.value =
+        event.date ||
+        formatDateKey(
+          new Date()
+        );
+
+
+      eventLocationInput.value =
+        event.location || '';
+
+
+      deleteEventButton
+        .style
+        .visibility =
+          event.id
+            ? 'visible'
+            : 'hidden';
+
+
+      eventModal.classList.add(
+        'open'
+      );
+
+
+      setTimeout(
+        () =>
+          eventTitleInput.focus(),
+        50
+      );
+
+    }
+
+
+    function closeEventModal() {
+
+      eventModal.classList.remove(
+        'open'
+      );
+
+    }
+
+
+    saveEventButton.addEventListener(
+      'click',
+      () => {
+
+        const title =
+          eventTitleInput
+            .value
+            .trim();
+
+
+        const date =
+          eventDateInput
+            .value;
+
+
+        const location =
+          eventLocationInput
+            .value
+            .trim();
+
+
+        if (
+          !title ||
+          !date
+        ) {
+          return;
+        }
+
+
+        const existingId =
+          eventIdInput.value;
+
+
+        if (existingId) {
+
+          const event =
+            calendarEvents.find(
+              item =>
+                item.id === existingId
+            );
+
+
+          if (event) {
+
+            event.title =
+              title;
+
+            event.date =
+              date;
+
+            event.location =
+              location;
+
+          }
+
+        } else {
+
+          calendarEvents.push({
+
+            id:
+              Date.now()
+                .toString()
+              +
+              Math.random()
+                .toString(16)
+                .slice(2),
+
+            title,
+
+            date,
+
+            location
+
+          });
+
+        }
+
+
+        saveCalendarEvents();
+
+        closeEventModal();
+
+        renderCalendar();
+
+      }
+    );
+
+
+    deleteEventButton.addEventListener(
+      'click',
+      () => {
+
+        const eventId =
+          eventIdInput.value;
+
+
+        if (!eventId) {
+          return;
+        }
+
+
+        calendarEvents =
+          calendarEvents.filter(
+            event =>
+              event.id !== eventId
+          );
+
+
+        saveCalendarEvents();
+
+        closeEventModal();
+
+        renderCalendar();
+
+      }
+    );
+
+
+    closeEventModalButton.addEventListener(
+      'click',
+      closeEventModal
+    );
+
+
+    eventModal.addEventListener(
+      'click',
+      event => {
+
+        if (
+          event.target === eventModal
+        ) {
+
+          closeEventModal();
+
+        }
+
+      }
+    );
+
+
+    previousMonthButton.addEventListener(
+      'click',
+      () => {
+
+        currentCalendarDate =
+          new Date(
+            currentCalendarDate
+              .getFullYear(),
+
+            currentCalendarDate
+              .getMonth() - 1,
+
+            1
+          );
+
+
+        renderCalendar();
+
+      }
+    );
+
+
+    nextMonthButton.addEventListener(
+      'click',
+      () => {
+
+        currentCalendarDate =
+          new Date(
+            currentCalendarDate
+              .getFullYear(),
+
+            currentCalendarDate
+              .getMonth() + 1,
+
+            1
+          );
+
+
+        renderCalendar();
+
+      }
+    );
+
+
+    todayButton.addEventListener(
+      'click',
+      () => {
+
+        currentCalendarDate =
+          new Date();
+
+
+        renderCalendar();
+
+      }
+    );
+
+
+    /* =====================================================
+       START PAGE
+    ===================================================== */
+
+    seedSchoolCalendar();
+
+    loadCurrentRotation();
+
+    renderUpcomingRotations();
+
+    renderCalendar();
+
   </script>
 
 </body>
