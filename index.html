@@ -10,7 +10,7 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Home | Fourth Year</title>
+  <title>Home Stretch | Fourth Year</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -82,6 +82,7 @@
 
     /* =========================================
        COLLAPSIBLE LEFT NAVIGATION
+       UNCHANGED
     ========================================= */
 
     .left-navigation {
@@ -302,9 +303,9 @@
       margin-left: 88px;
 
       padding:
-        20px
-        32px
-        46px;
+        27px
+        30px
+        42px;
 
       transition:
         margin-left
@@ -324,11 +325,9 @@
 
     .page-content {
 
-      width:
-        min(
-          1280px,
-          100%
-        );
+      width: 100%;
+
+      max-width: 1320px;
 
       margin:
         0
@@ -340,27 +339,26 @@
     .page-title {
 
       margin:
+        4px
         0
-        0
-        20px;
+        30px;
 
       text-align: center;
 
       color:
-        #8A9484;
+        var(--accent-sage);
 
-      font-size:
-        clamp(
-          30px,
-          4vw,
-          46px
-        );
+      font-size: 34px;
 
       font-weight: 300;
 
-      letter-spacing: 0.13em;
+      line-height: 1;
+
+      letter-spacing: 0.105em;
 
       text-transform: uppercase;
+
+      white-space: nowrap;
 
     }
 
@@ -372,9 +370,9 @@
 
       font-size: 10px;
 
-      font-weight: 650;
+      font-weight: 600;
 
-      letter-spacing: 0.18em;
+      letter-spacing: 0.16em;
 
       text-transform: uppercase;
 
@@ -391,7 +389,7 @@
         solid
         var(--border-light);
 
-      border-radius: 13px;
+      border-radius: 12px;
 
     }
 
@@ -441,7 +439,7 @@
 
     .quick-section {
 
-      margin-bottom: 18px;
+      margin-bottom: 16px;
 
     }
 
@@ -465,7 +463,7 @@
 
     .quick-link {
 
-      min-height: 150px;
+      min-height: 132px;
 
       display: flex;
 
@@ -474,12 +472,12 @@
       align-items: center;
       justify-content: flex-start;
 
-      gap: 8px;
+      gap: 7px;
 
       padding:
-        15px
+        13px
         7px
-        12px;
+        11px;
 
       background:
         white;
@@ -534,8 +532,8 @@
     .resource-icon,
     .atrium-tree {
 
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
 
       display: flex;
 
@@ -572,8 +570,8 @@
 
     .resource-icon svg {
 
-      width: 23px;
-      height: 23px;
+      width: 22px;
+      height: 22px;
 
       stroke:
         #71806C;
@@ -609,19 +607,118 @@
     }
 
 
-    .logo-canvas {
+    /* =========================================
+       CANVAS LOGO
+    ========================================= */
 
-      font-size: 19px;
+    .canvas-logo {
 
-      letter-spacing: -0.15em;
+      position: relative;
+
+      width: 27px;
+      height: 27px;
+
+    }
+
+
+    .canvas-dot {
+
+      position: absolute;
+
+      left: 50%;
+      top: 50%;
+
+      width: 5px;
+      height: 5px;
+
+      margin:
+        -2.5px
+        0
+        0
+        -2.5px;
+
+      border-radius: 50%;
+
+      background:
+        #71806C;
+
+      transform-origin:
+        2.5px
+        2.5px;
+
+    }
+
+
+    .canvas-dot:nth-child(1) {
+      transform: rotate(0deg) translateY(-10px);
+    }
+
+
+    .canvas-dot:nth-child(2) {
+      transform: rotate(45deg) translateY(-10px);
+    }
+
+
+    .canvas-dot:nth-child(3) {
+      transform: rotate(90deg) translateY(-10px);
+    }
+
+
+    .canvas-dot:nth-child(4) {
+      transform: rotate(135deg) translateY(-10px);
+    }
+
+
+    .canvas-dot:nth-child(5) {
+      transform: rotate(180deg) translateY(-10px);
+    }
+
+
+    .canvas-dot:nth-child(6) {
+      transform: rotate(225deg) translateY(-10px);
+    }
+
+
+    .canvas-dot:nth-child(7) {
+      transform: rotate(270deg) translateY(-10px);
+    }
+
+
+    .canvas-dot:nth-child(8) {
+      transform: rotate(315deg) translateY(-10px);
+    }
+
+
+    .canvas-center {
+
+      position: absolute;
+
+      left: 50%;
+      top: 50%;
+
+      width: 7px;
+      height: 7px;
+
+      transform:
+        translate(
+          -50%,
+          -50%
+        );
+
+      border:
+        2px
+        solid
+        #71806C;
+
+      border-radius: 50%;
 
     }
 
 
     .atrium-tree svg {
 
-      width: 31px;
-      height: 31px;
+      width: 30px;
+      height: 30px;
 
       stroke:
         #71806C;
@@ -671,10 +768,10 @@
     .rotation-card {
 
       padding:
-        20px
-        22px;
+        18px
+        20px;
 
-      margin-top: 16px;
+      margin-top: 15px;
 
     }
 
@@ -698,7 +795,7 @@
 
       gap: 0;
 
-      margin-top: 15px;
+      margin-top: 14px;
 
     }
 
@@ -729,7 +826,7 @@
       color:
         var(--accent-terracotta);
 
-      font-size: 21px;
+      font-size: 20px;
 
       font-weight: 650;
 
@@ -788,7 +885,7 @@
 
       gap: 22px;
 
-      margin-top: 16px;
+      margin-top: 14px;
 
     }
 
@@ -809,16 +906,170 @@
 
 
     /* =========================================
+       LOWER LEFT ROW
+       CHAOS + IT SUPPORT
+    ========================================= */
+
+    .lower-left-row {
+
+      display: grid;
+
+      grid-template-columns:
+        minmax(0, 1.5fr)
+        minmax(240px, 0.8fr);
+
+      gap: 14px;
+
+      margin-top: 14px;
+
+    }
+
+
+
+    /* =========================================
+       CHAOS CARD
+    ========================================= */
+
+    .chaos-card {
+
+      position: relative;
+
+      min-height: 112px;
+
+      display: grid;
+
+      grid-template-columns:
+        105px
+        minmax(0, 1fr);
+
+      align-items: center;
+
+      gap: 14px;
+
+      padding:
+        14px
+        18px;
+
+      overflow: hidden;
+
+    }
+
+
+    .chaos-creature {
+
+      height: 82px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      font-size: 58px;
+
+      line-height: 1;
+
+      user-select: none;
+
+      filter:
+        saturate(0.72)
+        sepia(0.08);
+
+    }
+
+
+    .chaos-label {
+
+      margin-bottom: 7px;
+
+      color:
+        var(--accent-sage);
+
+      font-size: 9px;
+
+      font-weight: 650;
+
+      letter-spacing: 0.18em;
+
+      text-transform: uppercase;
+
+    }
+
+
+    .chaos-message {
+
+      max-width: 470px;
+
+      color:
+        var(--text-charcoal);
+
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+      font-size: 15px;
+
+      font-style: italic;
+
+      line-height: 1.45;
+
+    }
+
+
+    .chaos-name {
+
+      margin-top: 7px;
+
+      color:
+        var(--accent-terracotta);
+
+      font-size: 9px;
+
+      font-weight: 600;
+
+    }
+
+
+    .chaos-sparkle {
+
+      position: absolute;
+
+      color:
+        #D5A163;
+
+      opacity: 0.75;
+
+      font-size: 12px;
+
+    }
+
+
+    .sparkle-one {
+
+      top: 16px;
+      left: 25px;
+
+    }
+
+
+    .sparkle-two {
+
+      bottom: 17px;
+      left: 92px;
+
+    }
+
+
+
+    /* =========================================
        IT SUPPORT
     ========================================= */
 
     .support-card {
 
-      margin-top: 14px;
-
       padding:
         17px
-        20px;
+        18px;
 
     }
 
@@ -827,20 +1078,16 @@
 
       display: flex;
 
-      flex-wrap: wrap;
+      flex-direction: column;
 
-      align-items: center;
-
-      gap:
-        12px
-        50px;
+      gap: 12px;
 
       margin-top: 12px;
 
       color:
         var(--text-gray);
 
-      font-size: 11px;
+      font-size: 10px;
 
     }
 
@@ -851,15 +1098,15 @@
 
       align-items: center;
 
-      gap: 10px;
+      gap: 9px;
 
     }
 
 
     .support-icon {
 
-      width: 30px;
-      height: 30px;
+      width: 28px;
+      height: 28px;
 
       display: flex;
 
@@ -881,8 +1128,8 @@
 
     .support-icon svg {
 
-      width: 16px;
-      height: 16px;
+      width: 15px;
+      height: 15px;
 
       stroke:
         #71806C;
@@ -1204,13 +1451,6 @@
 
       }
 
-
-      .quick-link {
-
-        min-height: 118px;
-
-      }
-
     }
 
 
@@ -1337,6 +1577,14 @@
 
       }
 
+
+      .lower-left-row {
+
+        grid-template-columns:
+          1fr;
+
+      }
+
     }
 
 
@@ -1348,6 +1596,22 @@
 
         grid-template-columns:
           1fr;
+
+      }
+
+
+      .chaos-card {
+
+        grid-template-columns:
+          78px
+          minmax(0, 1fr);
+
+      }
+
+
+      .chaos-creature {
+
+        font-size: 46px;
 
       }
 
@@ -1363,6 +1627,7 @@
 
   <!-- =========================================
        NAVIGATION
+       UNCHANGED
   ========================================== -->
 
   <aside
@@ -1451,7 +1716,7 @@
 
 
       <h1 class="page-title">
-        Fourth Year
+        Home Stretch
       </h1>
 
 
@@ -1563,13 +1828,23 @@
                 class="quick-link"
               >
 
-                <div
-                  class="
-                    resource-icon
-                    logo-canvas
-                  "
-                >
-                  ◌
+                <div class="resource-icon">
+
+                  <div class="canvas-logo">
+
+                    <span class="canvas-dot"></span>
+                    <span class="canvas-dot"></span>
+                    <span class="canvas-dot"></span>
+                    <span class="canvas-dot"></span>
+                    <span class="canvas-dot"></span>
+                    <span class="canvas-dot"></span>
+                    <span class="canvas-dot"></span>
+                    <span class="canvas-dot"></span>
+
+                    <span class="canvas-center"></span>
+
+                  </div>
+
                 </div>
 
 
@@ -1921,88 +2196,154 @@
 
 
 
-          <!-- IT Support -->
+          <!-- Chaos Card + IT Support -->
 
-          <section class="card support-card">
-
-            <div class="section-label">
-              IT Support
-            </div>
+          <div class="lower-left-row">
 
 
-            <div class="support-content">
+            <!-- Daily Chaos -->
+
+            <section class="card chaos-card">
+
+              <span
+                class="
+                  chaos-sparkle
+                  sparkle-one
+                "
+              >
+                ✦
+              </span>
+
+              <span
+                class="
+                  chaos-sparkle
+                  sparkle-two
+                "
+              >
+                ✦
+              </span>
 
 
-              <div class="support-item">
-
-                <div class="support-icon">
-
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke-width="1.8"
-                  >
-
-                    <path
-                      d="
-                        M5 4
-                        l3 3
-                        -2 3
-                        c2 4
-                        4 6
-                        8 8
-                        l3-2
-                        3 3
-                      "
-                    ></path>
-
-                  </svg>
-
-                </div>
-
-                <span>
-                  Phone: TBD
-                </span>
-
+              <div
+                id="chaosCreature"
+                class="chaos-creature"
+                aria-hidden="true"
+              >
+                🦆
               </div>
 
 
-              <div class="support-item">
+              <div>
 
-                <div class="support-icon">
-
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke-width="1.8"
-                  >
-
-                    <rect
-                      x="3"
-                      y="5"
-                      width="18"
-                      height="14"
-                      rx="2"
-                    ></rect>
-
-                    <path
-                      d="M4 7l8 6 8-6"
-                    ></path>
-
-                  </svg>
-
+                <div class="chaos-label">
+                  Daily Chaos
                 </div>
 
-                <span>
-                  Email: TBD
-                </span>
+                <div
+                  id="chaosMessage"
+                  class="chaos-message"
+                >
+                  Doing my best with the information available to the duck.
+                </div>
+
+                <div
+                  id="chaosName"
+                  class="chaos-name"
+                >
+                  Today's creature: Administrative Duck
+                </div>
 
               </div>
 
+            </section>
 
-            </div>
 
-          </section>
+
+            <!-- IT Support -->
+
+            <section class="card support-card">
+
+              <div class="section-label">
+                IT Support
+              </div>
+
+
+              <div class="support-content">
+
+
+                <div class="support-item">
+
+                  <div class="support-icon">
+
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke-width="1.8"
+                    >
+
+                      <path
+                        d="
+                          M5 4
+                          l3 3
+                          -2 3
+                          c2 4
+                          4 6
+                          8 8
+                          l3-2
+                          3 3
+                        "
+                      ></path>
+
+                    </svg>
+
+                  </div>
+
+                  <span>
+                    Phone: TBD
+                  </span>
+
+                </div>
+
+
+                <div class="support-item">
+
+                  <div class="support-icon">
+
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke-width="1.8"
+                    >
+
+                      <rect
+                        x="3"
+                        y="5"
+                        width="18"
+                        height="14"
+                        rx="2"
+                      ></rect>
+
+                      <path
+                        d="M4 7l8 6 8-6"
+                      ></path>
+
+                    </svg>
+
+                  </div>
+
+                  <span>
+                    Email: TBD
+                  </span>
+
+                </div>
+
+
+              </div>
+
+            </section>
+
+
+          </div>
 
 
         </div>
@@ -2273,10 +2614,15 @@
 
 
   <!-- =========================================
-       NAVIGATION SCRIPT
+       SCRIPT
   ========================================== -->
 
   <script>
+
+    /* =========================================
+       NAVIGATION
+       UNCHANGED
+    ========================================= */
 
     const leftNavigation =
       document.getElementById(
@@ -2337,6 +2683,167 @@
         'click',
         toggleMenu
       );
+
+
+
+    /* =========================================
+       DAILY CHAOS CARD
+    ========================================= */
+
+    const chaosCards = [
+
+      {
+        creature: '🦆',
+        name: 'Administrative Duck',
+        message:
+          'Lists? Check. Plans? Questionable. Vibes? Unbothered.'
+      },
+
+      {
+        creature: '🦝',
+        name: 'Overcaffeinated Raccoon',
+        message:
+          'Powered by caffeine, stubbornness, and several tabs I refuse to close.'
+      },
+
+      {
+        creature: '🐸',
+        name: 'Rainy Day Frog',
+        message:
+          'You do not have to conquer the day. Existing successfully is acceptable.'
+      },
+
+      {
+        creature: '🦔',
+        name: 'Blanket Hedgehog',
+        message:
+          'Do one thing. Pretend that was the plan.'
+      },
+
+      {
+        creature: '🐦',
+        name: 'Parking Lot Pigeon',
+        message:
+          'No map. No strategy. Somehow still arriving where I need to be.'
+      },
+
+      {
+        creature: '🐀',
+        name: 'Competent Little Rat',
+        message:
+          'Suspiciously productive today. We will not investigate further.'
+      },
+
+      {
+        creature: '🐿️',
+        name: 'Inbox Squirrel',
+        message:
+          'I have hidden twelve tasks in twelve different places for safekeeping.'
+      },
+
+      {
+        creature: '🦦',
+        name: 'Floating Otter',
+        message:
+          'Today we are conserving energy and calling it clinical judgment.'
+      },
+
+      {
+        creature: '🐌',
+        name: 'Deadline Snail',
+        message:
+          'Moving forward is moving forward. Please stop timing me.'
+      },
+
+      {
+        creature: '🪿',
+        name: 'Supervising Goose',
+        message:
+          'I have no authority here, but I do have several strong opinions.'
+      },
+
+      {
+        creature: '🐈',
+        name: 'Hospital Cat',
+        message:
+          'Present. Observant. Emotionally unavailable until after lunch.'
+      },
+
+      {
+        creature: '🦥',
+        name: 'Strategic Sloth',
+        message:
+          'Efficiency is simply choosing which things will not be happening today.'
+      },
+
+      {
+        creature: '🐧',
+        name: 'Professional Penguin',
+        message:
+          'Dressed appropriately. Internally improvising.'
+      },
+
+      {
+        creature: '🐁',
+        name: 'Tiny Clipboard Mouse',
+        message:
+          'I wrote it down, which means the situation is officially under control.'
+      }
+
+    ];
+
+
+    const now =
+      new Date();
+
+
+    const startOfYear =
+      new Date(
+        now.getFullYear(),
+        0,
+        0
+      );
+
+
+    const dayNumber =
+      Math.floor(
+        (
+          now -
+          startOfYear
+        ) /
+        86400000
+      );
+
+
+    const chaosCard =
+      chaosCards[
+        dayNumber %
+        chaosCards.length
+      ];
+
+
+    document
+      .getElementById(
+        'chaosCreature'
+      )
+      .textContent =
+        chaosCard.creature;
+
+
+    document
+      .getElementById(
+        'chaosMessage'
+      )
+      .textContent =
+        chaosCard.message;
+
+
+    document
+      .getElementById(
+        'chaosName'
+      )
+      .textContent =
+        `Today's creature: ${chaosCard.name}`;
 
   </script>
 
