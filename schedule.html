@@ -3799,6 +3799,33 @@ updateEventFieldVisibility();
               .value
               .trim();
 
+          const endDate =
+  eventAllDayInput.checked
+    ? eventEndDateInput.value
+    : '';
+
+
+const startTime =
+  eventAllDayInput.checked
+    ? ''
+    : eventStartTimeInput.value;
+
+
+const endTime =
+  eventAllDayInput.checked
+    ? ''
+    : eventEndTimeInput.value;
+
+
+const allDay =
+  eventAllDayInput.checked;
+
+
+const link =
+  eventLinkInput
+    .value
+    .trim();
+
 
           if (
             !title ||
@@ -3844,6 +3871,25 @@ updateEventFieldVisibility();
               existingEvent.location =
                 location;
 
+              existingEvent.endDate =
+  endDate;
+
+
+existingEvent.startTime =
+  startTime;
+
+
+existingEvent.endTime =
+  endTime;
+
+
+existingEvent.allDay =
+  allDay;
+
+
+existingEvent.link =
+  link;
+
 
             }
 
@@ -3864,8 +3910,18 @@ updateEventFieldVisibility();
 
               location,
 
-              type:
-                'user'
+endDate,
+
+startTime,
+
+endTime,
+
+allDay,
+
+link,
+
+type:
+  'user'
 
             });
 
