@@ -35,16 +35,23 @@
       color: inherit;
     }
 
-    /* Sticky / always-visible navigation */
-    .site-nav {
-      position: sticky;
+    .site-rail {
+      position: fixed;
       top: 0;
+      left: 0;
+      width: 170px;
+      height: 100vh;
+      padding: 28px 18px;
       z-index: 30;
-      background: rgba(250, 249, 245, 0.96);
-      backdrop-filter: blur(8px);
+      background: var(--bg-app);
     }
 
-    /* Hamburger menu */
+    .site-rail-inner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
     .menu-overlay {
       position: fixed;
       inset: 0;
@@ -97,7 +104,11 @@
       font-weight: 600;
     }
 
-    /* Cards */
+    .page-shell {
+      margin-left: 170px;
+      padding: 26px 28px 40px;
+    }
+
     .compact-card {
       background: white;
       border: 1px solid var(--border-light);
@@ -108,8 +119,8 @@
       background: white;
       border: 1px solid var(--border-light);
       border-radius: 12px;
-      padding: 16px;
-      min-height: 84px;
+      padding: 14px 16px;
+      min-height: 76px;
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
@@ -119,8 +130,8 @@
     }
 
     .resource-icon {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       background: var(--soft-sage);
       color: #71806C;
@@ -128,7 +139,7 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
     }
 
@@ -157,11 +168,15 @@
       border-color: var(--accent-sage);
     }
 
-    /* Smaller calendar */
+    .calendar-wrap {
+      max-width: 760px;
+      margin-left: auto;
+    }
+
     .calendar-day {
-      min-height: 72px;
+      min-height: 60px;
       background: white;
-      padding: 6px;
+      padding: 5px;
       border-right: 1px solid var(--border-light);
       border-bottom: 1px solid var(--border-light);
       overflow: hidden;
@@ -172,7 +187,7 @@
     }
 
     .calendar-date {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-charcoal);
     }
 
@@ -181,13 +196,13 @@
     }
 
     .calendar-event {
-      margin-top: 4px;
+      margin-top: 3px;
       padding: 3px 5px;
       background: var(--soft-terracotta);
       color: #A95036;
       border-radius: 4px;
-      font-size: 9px;
-      line-height: 1.25;
+      font-size: 8px;
+      line-height: 1.2;
       cursor: pointer;
       white-space: nowrap;
       overflow: hidden;
@@ -198,7 +213,6 @@
       background: #F5E5DE;
     }
 
-    /* Event modal */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -213,26 +227,45 @@
     .modal-overlay.open {
       display: flex;
     }
+
+    @media (max-width: 900px) {
+      .site-rail {
+        width: 100%;
+        height: auto;
+        position: sticky;
+        padding: 16px 18px;
+        background: rgba(250, 249, 245, 0.96);
+      }
+
+      .page-shell {
+        margin-left: 0;
+        padding: 20px;
+      }
+
+      .calendar-wrap {
+        max-width: none;
+      }
+    }
   </style>
 </head>
 
 <body>
 
-  <!-- Always-visible Fourth Year navigation -->
-  <div class="site-nav">
-    <div class="w-full max-w-7xl mx-auto h-14 flex items-center px-4 md:px-6">
+  <!-- Fixed left navigation -->
+  <div class="site-rail">
+    <div class="site-rail-inner">
 
       <button
         id="menuButton"
-        class="w-9 h-9 flex items-center justify-center rounded-lg text-[#2D3132] hover:bg-[#F5F2EC] hover:text-[#C86D51]"
+        class="w-11 h-11 flex items-center justify-center rounded-lg text-[#2D3132] hover:bg-[#F5F2EC] hover:text-[#C86D51]"
         aria-label="Open menu"
       >
-        <span class="text-xl leading-none">☰</span>
+        <span class="text-2xl leading-none">☰</span>
       </button>
 
       <a
         href="index.html"
-        class="ml-3 text-xs font-semibold tracking-[0.18em] uppercase text-[#8E9B88] no-underline"
+        class="text-sm font-semibold tracking-[0.18em] uppercase text-[#8E9B88] no-underline whitespace-nowrap"
       >
         Fourth Year
       </a>
@@ -240,14 +273,10 @@
     </div>
   </div>
 
-  <!-- Menu overlay -->
   <div id="menuOverlay" class="menu-overlay"></div>
 
-  <!-- Slide-out menu -->
   <aside id="menuPanel" class="menu-panel">
-
     <div class="flex items-center justify-between mb-8">
-
       <span class="text-xs uppercase tracking-[0.18em] font-semibold text-[#8E9B88]">
         Fourth Year
       </span>
@@ -259,7 +288,6 @@
       >
         ×
       </button>
-
     </div>
 
     <nav>
@@ -270,170 +298,179 @@
       <a href="application.html" class="menu-link">Application Tracker</a>
       <a href="schedule.html" class="menu-link">4th Year Schedule</a>
     </nav>
-
   </aside>
 
-  <main class="w-full max-w-7xl mx-auto px-4 md:px-6 pb-10">
+  <main class="page-shell">
 
     <!-- Program Explorer-style title -->
-    <header class="flex items-center justify-center shrink-0 pt-3 pb-6">
-
+    <header class="flex items-center justify-center pt-2 pb-5">
       <h1 class="text-[28px] md:text-[34px] font-light uppercase tracking-[0.16em] text-[#8A9484] leading-none whitespace-nowrap">
         Step & Study
       </h1>
-
     </header>
 
-    <!-- Quick info row -->
-    <section class="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-4 mb-5">
+    <!-- Top layout -->
+    <section class="grid grid-cols-1 xl:grid-cols-[320px_1fr] gap-5 items-start mb-6">
 
-      <!-- Exam info -->
-      <div class="compact-card p-4">
+      <!-- Left information stack -->
+      <div class="space-y-3">
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-          <div>
-            <div class="text-[9px] uppercase tracking-[0.15em] text-[#6B7280] font-semibold mb-1.5">
-              Step 2 CK Test Date
-            </div>
-
-            <input
-              id="testDateInput"
-              type="date"
-              class="field-input"
-            >
-          </div>
+        <!-- Google Meet -->
+        <a
+          href="http://meet.google.com/nks-mrig-aac"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="compact-card px-4 py-3 flex items-center gap-3 no-underline hover:border-[#CFC8BD]"
+        >
+          <div class="resource-icon">◫</div>
 
           <div>
-            <div class="text-[9px] uppercase tracking-[0.15em] text-[#6B7280] font-semibold mb-1.5">
-              Permit
+            <div class="text-[9px] uppercase tracking-[0.15em] text-[#8A9484] font-semibold mb-1">
+              Tutoring
             </div>
 
-            <input
-              id="permitInput"
-              type="text"
-              class="field-input"
-              placeholder="Add permit link or note"
-            >
+            <div class="resource-title">
+              Google Meet with Quinton
+            </div>
+          </div>
+        </a>
+
+        <!-- Step 2 info -->
+        <div class="compact-card p-4">
+          <div class="text-[9px] uppercase tracking-[0.15em] text-[#8A9484] font-semibold mb-3">
+            Step 2 CK
           </div>
 
+          <div class="space-y-3">
+            <div>
+              <div class="text-[9px] uppercase tracking-[0.12em] text-[#6B7280] mb-1">
+                Test Date
+              </div>
+
+              <input
+                id="testDateInput"
+                type="date"
+                class="field-input"
+              >
+            </div>
+
+            <div>
+              <div class="text-[9px] uppercase tracking-[0.12em] text-[#6B7280] mb-1">
+                Location
+              </div>
+
+              <input
+                id="testLocationInput"
+                type="text"
+                class="field-input"
+                placeholder="Testing center / city"
+              >
+            </div>
+          </div>
         </div>
 
-        <div class="mt-3 pt-3 border-t border-[#E5E0D8]">
-          <a
-            href="https://proscheduler.prometric.com/"
-            target="_blank"
-            rel="noopener noreferrer"
+        <!-- Permit + Prometric -->
+        <div class="compact-card px-4 py-3">
+          <div class="text-[9px] uppercase tracking-[0.15em] text-[#8A9484] font-semibold mb-2">
+            Registration
+          </div>
+
+          <div class="space-y-2 text-sm">
+            <a
+              id="permitLink"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-[#C86D51] hover:underline"
+            >
+              Step 2 Permit
+            </a>
+
+            <div>
+              <a
+                href="https://proscheduler.prometric.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-[#C86D51] hover:underline"
+              >
+                Prometric ProScheduler
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Smaller calendar on the right -->
+      <div class="calendar-wrap">
+
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8A9484]">
+            Calendar
+          </div>
+
+          <button
+            id="addEventButton"
             class="text-xs font-medium text-[#C86D51] hover:underline"
           >
-            Prometric ProScheduler
-          </a>
+            + Add event
+          </button>
         </div>
 
-      </div>
+        <div class="bg-white border border-[#E5E0D8] rounded-xl overflow-hidden">
 
-      <!-- Compact tutoring link -->
-      <a
-        href="http://meet.google.com/nks-mrig-aac"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="compact-card px-4 py-3 flex items-center gap-3 no-underline hover:border-[#CFC8BD]"
-      >
+          <div class="flex items-center justify-between px-4 py-3 border-b border-[#E5E0D8]">
+            <h2
+              id="calendarMonthLabel"
+              class="text-sm font-medium tracking-wide"
+            ></h2>
 
-        <div class="resource-icon">
-          ◫
-        </div>
+            <div class="flex gap-1.5">
+              <button
+                id="previousMonthButton"
+                class="px-2.5 py-1 border border-[#E5E0D8] rounded-md text-sm hover:bg-[#FAF9F5]"
+              >
+                ‹
+              </button>
 
-        <div>
-          <div class="text-[9px] uppercase tracking-[0.15em] text-[#8A9484] font-semibold mb-1">
-            Tutoring
+              <button
+                id="todayButton"
+                class="px-2.5 py-1 border border-[#E5E0D8] rounded-md text-xs hover:bg-[#FAF9F5]"
+              >
+                Today
+              </button>
+
+              <button
+                id="nextMonthButton"
+                class="px-2.5 py-1 border border-[#E5E0D8] rounded-md text-sm hover:bg-[#FAF9F5]"
+              >
+                ›
+              </button>
+            </div>
           </div>
 
-          <div class="resource-title">
-            Google Meet with Quinton
-          </div>
-        </div>
-
-      </a>
-
-    </section>
-
-    <!-- Calendar moved up -->
-    <section class="mb-6">
-
-      <div class="flex items-center justify-between mb-2">
-
-        <div class="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8A9484]">
-          Calendar
-        </div>
-
-        <button
-          id="addEventButton"
-          class="text-xs font-medium text-[#C86D51] hover:underline"
-        >
-          + Add event
-        </button>
-
-      </div>
-
-      <div class="bg-white border border-[#E5E0D8] rounded-xl overflow-hidden">
-
-        <div class="flex items-center justify-between px-4 py-3 border-b border-[#E5E0D8]">
-
-          <h2
-            id="calendarMonthLabel"
-            class="text-sm font-medium tracking-wide"
-          ></h2>
-
-          <div class="flex gap-1.5">
-
-            <button
-              id="previousMonthButton"
-              class="px-2.5 py-1 border border-[#E5E0D8] rounded-md text-sm hover:bg-[#FAF9F5]"
-            >
-              ‹
-            </button>
-
-            <button
-              id="todayButton"
-              class="px-2.5 py-1 border border-[#E5E0D8] rounded-md text-xs hover:bg-[#FAF9F5]"
-            >
-              Today
-            </button>
-
-            <button
-              id="nextMonthButton"
-              class="px-2.5 py-1 border border-[#E5E0D8] rounded-md text-sm hover:bg-[#FAF9F5]"
-            >
-              ›
-            </button>
-
+          <div class="grid grid-cols-7 text-center text-[9px] font-semibold tracking-wide text-[#6B7280] border-b border-[#E5E0D8]">
+            <div class="py-2">SUN</div>
+            <div class="py-2">MON</div>
+            <div class="py-2">TUE</div>
+            <div class="py-2">WED</div>
+            <div class="py-2">THU</div>
+            <div class="py-2">FRI</div>
+            <div class="py-2">SAT</div>
           </div>
 
+          <div
+            id="calendarGrid"
+            class="grid grid-cols-7"
+          ></div>
+
         </div>
-
-        <div class="grid grid-cols-7 text-center text-[9px] font-semibold tracking-wide text-[#6B7280] border-b border-[#E5E0D8]">
-          <div class="py-2">SUN</div>
-          <div class="py-2">MON</div>
-          <div class="py-2">TUE</div>
-          <div class="py-2">WED</div>
-          <div class="py-2">THU</div>
-          <div class="py-2">FRI</div>
-          <div class="py-2">SAT</div>
-        </div>
-
-        <div
-          id="calendarGrid"
-          class="grid grid-cols-7"
-        ></div>
-
       </div>
 
     </section>
 
-    <!-- Resources now below the calendar -->
+    <!-- Resources below -->
     <section>
-
       <div class="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8A9484] mb-2">
         Study Resources
       </div>
@@ -501,18 +538,15 @@
         </a>
 
       </div>
-
     </section>
 
   </main>
 
-  <!-- Calendar event modal -->
+  <!-- Event modal -->
   <div id="eventModal" class="modal-overlay">
-
     <div class="bg-white border border-[#E5E0D8] rounded-xl p-6 w-full max-w-md shadow-xl">
 
       <div class="flex justify-between items-center mb-5">
-
         <h2 class="font-semibold">
           Calendar Event
         </h2>
@@ -523,16 +557,11 @@
         >
           ×
         </button>
-
       </div>
 
-      <input
-        id="eventIdInput"
-        type="hidden"
-      >
+      <input id="eventIdInput" type="hidden">
 
       <div class="mb-4">
-
         <label class="block text-[9px] uppercase tracking-wide text-[#6B7280] mb-1.5">
           Event
         </label>
@@ -543,11 +572,9 @@
           class="field-input"
           placeholder="e.g. NBME 12"
         >
-
       </div>
 
       <div class="mb-4">
-
         <label class="block text-[9px] uppercase tracking-wide text-[#6B7280] mb-1.5">
           Date
         </label>
@@ -557,12 +584,9 @@
           type="date"
           class="field-input"
         >
-
       </div>
 
-      <!-- NEW LOCATION FIELD -->
       <div class="mb-5">
-
         <label class="block text-[9px] uppercase tracking-wide text-[#6B7280] mb-1.5">
           Location
         </label>
@@ -571,13 +595,11 @@
           id="eventLocationInput"
           type="text"
           class="field-input"
-          placeholder="Hospital, classroom, address, Zoom, etc."
+          placeholder="Hospital, address, Zoom, etc."
         >
-
       </div>
 
       <div class="flex justify-between">
-
         <button
           id="deleteEventButton"
           class="text-sm text-[#6B7280] hover:text-[#C86D51]"
@@ -591,119 +613,75 @@
         >
           Save event
         </button>
-
       </div>
 
     </div>
-
   </div>
 
   <script>
-    /* --------------------------
-       Hamburger navigation
-    -------------------------- */
-
-    const menuButton =
-      document.getElementById('menuButton');
-
-    const closeMenuButton =
-      document.getElementById('closeMenuButton');
-
-    const menuPanel =
-      document.getElementById('menuPanel');
-
-    const menuOverlay =
-      document.getElementById('menuOverlay');
-
+    const menuButton = document.getElementById('menuButton');
+    const closeMenuButton = document.getElementById('closeMenuButton');
+    const menuPanel = document.getElementById('menuPanel');
+    const menuOverlay = document.getElementById('menuOverlay');
 
     function openMenu() {
       menuPanel.classList.add('open');
       menuOverlay.classList.add('open');
     }
 
-
     function closeMenu() {
       menuPanel.classList.remove('open');
       menuOverlay.classList.remove('open');
     }
 
+    menuButton.addEventListener('click', openMenu);
+    closeMenuButton.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', closeMenu);
 
-    menuButton.addEventListener(
-      'click',
-      openMenu
-    );
-
-    closeMenuButton.addEventListener(
-      'click',
-      closeMenu
-    );
-
-    menuOverlay.addEventListener(
-      'click',
-      closeMenu
-    );
-
-
-    /* --------------------------
-       Exam details
-    -------------------------- */
-
-    const testDateInput =
-      document.getElementById('testDateInput');
-
-    const permitInput =
-      document.getElementById('permitInput');
-
+    const testDateInput = document.getElementById('testDateInput');
+    const testLocationInput = document.getElementById('testLocationInput');
+    const permitLink = document.getElementById('permitLink');
 
     testDateInput.value =
       localStorage.getItem('fourthYearStepTestDate') || '';
 
+    testLocationInput.value =
+      localStorage.getItem('fourthYearStepLocation') || '';
 
-    permitInput.value =
-      localStorage.getItem('fourthYearStepPermit') || '';
+    const storedPermitUrl =
+      localStorage.getItem('fourthYearStepPermitUrl') || '';
 
+    if (storedPermitUrl) {
+      permitLink.href = storedPermitUrl;
+    } else {
+      permitLink.addEventListener('click', event => {
+        event.preventDefault();
+      });
+    }
 
-    testDateInput.addEventListener(
-      'change',
-      () => {
-        localStorage.setItem(
-          'fourthYearStepTestDate',
-          testDateInput.value
-        );
-      }
-    );
+    testDateInput.addEventListener('change', () => {
+      localStorage.setItem(
+        'fourthYearStepTestDate',
+        testDateInput.value
+      );
+    });
 
-
-    permitInput.addEventListener(
-      'input',
-      () => {
-        localStorage.setItem(
-          'fourthYearStepPermit',
-          permitInput.value
-        );
-      }
-    );
-
-
-    /* --------------------------
-       Shared calendar
-    -------------------------- */
+    testLocationInput.addEventListener('input', () => {
+      localStorage.setItem(
+        'fourthYearStepLocation',
+        testLocationInput.value
+      );
+    });
 
     const CALENDAR_STORAGE_KEY =
       'fourthYearSharedCalendarEvents';
 
-
     let calendarEvents =
       JSON.parse(
-        localStorage.getItem(
-          CALENDAR_STORAGE_KEY
-        ) || '[]'
+        localStorage.getItem(CALENDAR_STORAGE_KEY) || '[]'
       );
 
-
-    let currentCalendarDate =
-      new Date();
-
+    let currentCalendarDate = new Date();
 
     const calendarGrid =
       document.getElementById('calendarGrid');
@@ -747,45 +725,26 @@
     const deleteEventButton =
       document.getElementById('deleteEventButton');
 
-
     function saveCalendarEvents() {
-
       localStorage.setItem(
         CALENDAR_STORAGE_KEY,
         JSON.stringify(calendarEvents)
       );
-
     }
-
 
     function formatDateKey(date) {
-
-      const year =
-        date.getFullYear();
-
-      const month =
-        String(date.getMonth() + 1)
-          .padStart(2, '0');
-
-      const day =
-        String(date.getDate())
-          .padStart(2, '0');
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
 
       return `${year}-${month}-${day}`;
-
     }
 
-
     function renderCalendar() {
-
       calendarGrid.innerHTML = '';
 
-      const year =
-        currentCalendarDate.getFullYear();
-
-      const month =
-        currentCalendarDate.getMonth();
-
+      const year = currentCalendarDate.getFullYear();
+      const month = currentCalendarDate.getMonth();
 
       calendarMonthLabel.textContent =
         new Intl.DateTimeFormat(
@@ -798,14 +757,8 @@
         .format(currentCalendarDate)
         .toUpperCase();
 
-
       const firstDayOfMonth =
-        new Date(
-          year,
-          month,
-          1
-        );
-
+        new Date(year, month, 1);
 
       const firstVisibleDate =
         new Date(
@@ -814,372 +767,226 @@
           1 - firstDayOfMonth.getDay()
         );
 
-
-      for (
-        let index = 0;
-        index < 42;
-        index++
-      ) {
-
-        const cellDate =
-          new Date(firstVisibleDate);
-
+      for (let index = 0; index < 42; index++) {
+        const cellDate = new Date(firstVisibleDate);
 
         cellDate.setDate(
-          firstVisibleDate.getDate()
-          + index
+          firstVisibleDate.getDate() + index
         );
 
-
-        const dateKey =
-          formatDateKey(cellDate);
-
+        const dateKey = formatDateKey(cellDate);
 
         const day =
           document.createElement('div');
 
-
-        day.className =
-          'calendar-day';
-
+        day.className = 'calendar-day';
 
         const dateLabel =
           document.createElement('div');
 
-
         dateLabel.textContent =
           cellDate.getDate();
-
 
         dateLabel.className =
           'calendar-date';
 
-
-        if (
-          cellDate.getMonth()
-          !== month
-        ) {
-
-          dateLabel.classList.add(
-            'muted'
-          );
-
+        if (cellDate.getMonth() !== month) {
+          dateLabel.classList.add('muted');
         }
 
-
-        day.appendChild(
-          dateLabel
-        );
-
+        day.appendChild(dateLabel);
 
         const eventsForDay =
           calendarEvents.filter(
-            event =>
-              event.date === dateKey
+            event => event.date === dateKey
           );
 
+        eventsForDay.forEach(event => {
+          const eventElement =
+            document.createElement('div');
 
-        eventsForDay.forEach(
-          event => {
+          eventElement.className =
+            'calendar-event';
 
-            const eventElement =
-              document.createElement('div');
+          eventElement.textContent =
+            event.title;
 
+          eventElement.title =
+            event.location
+              ? `${event.title} — ${event.location}`
+              : event.title;
 
-            eventElement.className =
-              'calendar-event';
+          eventElement.addEventListener(
+            'click',
+            () => openEventModal(event)
+          );
 
-
-            eventElement.textContent =
-              event.title;
-
-
-            if (event.location) {
-
-              eventElement.title =
-                `${event.title} — ${event.location}`;
-
-            } else {
-
-              eventElement.title =
-                event.title;
-
-            }
-
-
-            eventElement.addEventListener(
-              'click',
-              () =>
-                openEventModal(event)
-            );
-
-
-            day.appendChild(
-              eventElement
-            );
-
-          }
-        );
-
+          day.appendChild(eventElement);
+        });
 
         day.addEventListener(
           'dblclick',
-          () =>
-            openEventModal({
-              date: dateKey
-            })
+          () => openEventModal({
+            date: dateKey
+          })
         );
 
-
-        calendarGrid.appendChild(
-          day
-        );
-
+        calendarGrid.appendChild(day);
       }
-
     }
 
-
-    function openEventModal(
-      event = {}
-    ) {
-
+    function openEventModal(event = {}) {
       eventIdInput.value =
         event.id || '';
-
 
       eventTitleInput.value =
         event.title || '';
 
-
       eventDateInput.value =
-        event.date ||
-        formatDateKey(
-          new Date()
-        );
-
+        event.date || formatDateKey(new Date());
 
       eventLocationInput.value =
         event.location || '';
 
-
       deleteEventButton.style.visibility =
-        event.id
-          ? 'visible'
-          : 'hidden';
+        event.id ? 'visible' : 'hidden';
 
-
-      eventModal.classList.add(
-        'open'
-      );
-
+      eventModal.classList.add('open');
 
       setTimeout(
-        () =>
-          eventTitleInput.focus(),
+        () => eventTitleInput.focus(),
         50
       );
-
     }
-
 
     function closeEventModal() {
-
-      eventModal.classList.remove(
-        'open'
-      );
-
+      eventModal.classList.remove('open');
     }
-
 
     saveEventButton.addEventListener(
       'click',
       () => {
-
         const title =
           eventTitleInput.value.trim();
-
 
         const date =
           eventDateInput.value;
 
-
         const location =
           eventLocationInput.value.trim();
-
 
         if (!title || !date) {
           return;
         }
 
-
         const existingId =
           eventIdInput.value;
 
-
         if (existingId) {
-
           const event =
             calendarEvents.find(
-              item =>
-                item.id === existingId
+              item => item.id === existingId
             );
 
-
           if (event) {
-
-            event.title =
-              title;
-
-            event.date =
-              date;
-
-            event.location =
-              location;
-
+            event.title = title;
+            event.date = date;
+            event.location = location;
           }
-
         } else {
-
           calendarEvents.push({
-
             id:
-              Date.now().toString()
-              +
-              Math.random()
-                .toString(16)
-                .slice(2),
-
+              Date.now().toString() +
+              Math.random().toString(16).slice(2),
             title,
             date,
             location
-
           });
-
         }
-
 
         saveCalendarEvents();
         closeEventModal();
         renderCalendar();
-
       }
     );
-
 
     deleteEventButton.addEventListener(
       'click',
       () => {
-
         const eventId =
           eventIdInput.value;
-
 
         if (!eventId) {
           return;
         }
 
-
         calendarEvents =
           calendarEvents.filter(
-            event =>
-              event.id !== eventId
+            event => event.id !== eventId
           );
-
 
         saveCalendarEvents();
         closeEventModal();
         renderCalendar();
-
       }
     );
 
-
     addEventButton.addEventListener(
       'click',
-      () =>
-        openEventModal()
+      () => openEventModal()
     );
-
 
     closeEventModalButton.addEventListener(
       'click',
       closeEventModal
     );
 
-
     eventModal.addEventListener(
       'click',
       event => {
-
-        if (
-          event.target === eventModal
-        ) {
-
+        if (event.target === eventModal) {
           closeEventModal();
-
         }
-
       }
     );
-
 
     previousMonthButton.addEventListener(
       'click',
       () => {
-
         currentCalendarDate =
           new Date(
-            currentCalendarDate
-              .getFullYear(),
-
-            currentCalendarDate
-              .getMonth() - 1,
-
+            currentCalendarDate.getFullYear(),
+            currentCalendarDate.getMonth() - 1,
             1
           );
 
-
         renderCalendar();
-
       }
     );
-
 
     nextMonthButton.addEventListener(
       'click',
       () => {
-
         currentCalendarDate =
           new Date(
-            currentCalendarDate
-              .getFullYear(),
-
-            currentCalendarDate
-              .getMonth() + 1,
-
+            currentCalendarDate.getFullYear(),
+            currentCalendarDate.getMonth() + 1,
             1
           );
 
-
         renderCalendar();
-
       }
     );
-
 
     todayButton.addEventListener(
       'click',
       () => {
-
         currentCalendarDate =
           new Date();
 
         renderCalendar();
-
       }
     );
-
 
     renderCalendar();
   </script>
