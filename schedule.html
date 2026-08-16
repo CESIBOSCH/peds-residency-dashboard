@@ -3596,6 +3596,52 @@ const eventLinkInput =
     'eventLinkInput'
   );
 
+    function updateEventFieldVisibility() {
+
+  const isAllDay =
+    eventAllDayInput.checked;
+
+
+  eventEndDateInput
+    .closest(
+      '.event-field-group'
+    )
+    .style
+    .display =
+      isAllDay
+        ? 'block'
+        : 'none';
+
+
+  eventStartTimeInput
+    .closest(
+      '.event-field-group'
+    )
+    .style
+    .display =
+      isAllDay
+        ? 'none'
+        : 'block';
+
+
+  eventEndTimeInput
+    .closest(
+      '.event-field-group'
+    )
+    .style
+    .display =
+      isAllDay
+        ? 'none'
+        : 'block';
+
+}
+
+    eventAllDayInput
+  .addEventListener(
+    'change',
+    updateEventFieldVisibility
+  );
+
 
     const eventLocationInput =
       document.getElementById(
