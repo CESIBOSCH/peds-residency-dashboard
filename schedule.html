@@ -785,35 +785,25 @@
 
 
     .calendar-event {
+  display: block;
+  order: 50;
+  width: 100%;
 
-      display: block;
-      order: 50;
+  margin-top: 5px;
+  padding: 1px 0;
 
-      width: 100%;
+  overflow: hidden;
+  border-radius: 0;
 
-      margin-top: 5px;
+  background: transparent;
+  color: #2D3132;
 
-      padding:
-        3px
-        5px;
+  font-size: 8px;
+  line-height: 1.2;
 
-      overflow: hidden;
-
-      border-radius: 4px;
-
-      background: var(--soft-terracotta);
-
-      color: #A95036;
-
-      font-size: 8px;
-
-      line-height: 1.15;
-
-      white-space: nowrap;
-
-      text-overflow: ellipsis;
-
-    }
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 
 
     .calendar-event.break-event {
