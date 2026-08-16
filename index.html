@@ -63,16 +63,16 @@
 
     /* Custom Map Pins */
     .custom-desert-pin {
-  width: 18px !important;
-  height: 24px !important;
+  width: 16px !important;
+  height: 21px !important;
   background: transparent !important;
   border: none !important;
 }
 
 .custom-desert-pin svg {
   display: block;
-  width: 18px;
-  height: 24px;
+  width: 16px;
+  height: 21px;
   overflow: visible;
   transform-origin: 50% 100%;
   transition: transform 0.15s ease;
@@ -490,11 +490,10 @@ const paidLeave = familyLeaveParts.join(' / ');
       <circle cx="12" cy="12" r="4" fill="#FAF9F5"/>
     </svg>
   `,
-  iconSize: [18, 24],
-  iconAnchor: [9, 24],
-  popupAnchor: [0, -24],
-  tooltipAnchor: [0, -20]
-});
+  iconSize: [16, 21],
+iconAnchor: [8, 21],
+popupAnchor: [0, -21],
+tooltipAnchor: [0, -18]
 
     function createMapPins(programs) {
       markersMap.forEach(marker => marker.remove());
