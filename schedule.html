@@ -633,114 +633,152 @@
 
       <!-- CURRENT ROTATION -->
 
-      <div class="space-y-3 xl:pt-[26px]">
+      <div class="space-y-3">
 
-        <div
-          class="compact-card p-4"
-        >
+  <div class="compact-card p-4">
 
-          <div class="section-label mb-3">
-            Current Rotation
+    <div class="section-label mb-3">
+      Current Rotation
+    </div>
+
+    <div
+      id="currentRotationName"
+      class="text-lg font-semibold text-[#C86D51]"
+    >
+      Pediatrics Hematology / Oncology
+    </div>
+
+    <div
+      id="currentRotationDates"
+      class="text-xs text-[#6B7280] mt-1 mb-4"
+    >
+      Block 6 · Aug 17, 2026 – Sep 13, 2026
+    </div>
+
+    <!-- CONTACT INFORMATION -->
+    <div class="mb-5">
+
+      <div class="section-label mb-2">
+        Contact Information
+      </div>
+
+      <div class="space-y-3">
+
+        <!-- Course Director -->
+        <div>
+          <div class="text-[10px] uppercase tracking-[0.12em] text-[#8A9484] font-semibold">
+            Course Director
           </div>
 
+          <div class="text-sm font-semibold text-[#2D3132] mt-1">
+            Dr. David Gass
+          </div>
 
-          <div
-            id="currentRotationName"
-            class="text-lg font-semibold text-[#C86D51]"
+          <a
+            href="mailto:david.gass@advocatehealth.org"
+            class="text-xs text-[#C86D51] hover:underline"
           >
+            david.gass@advocatehealth.org
+          </a>
+        </div>
+
+        <!-- Course Coordinator -->
+        <div>
+          <div class="text-[10px] uppercase tracking-[0.12em] text-[#8A9484] font-semibold">
+            Course Coordinator
           </div>
 
+          <div class="text-sm font-semibold text-[#2D3132] mt-1">
+            Alexis Miller
+          </div>
 
-          <div
-            id="currentRotationDates"
-            class="text-xs text-[#6B7280] mt-1 mb-4"
+          <a
+            href="mailto:alexis.miller@advocatehealth.org"
+            class="block text-xs text-[#C86D51] hover:underline"
           >
-          </div>
+            alexis.miller@advocatehealth.org
+          </a>
 
+          <a
+            href="tel:+13365802500"
+            class="block text-xs text-[#C86D51] hover:underline mt-1"
+          >
+            336-580-2500
+          </a>
+        </div>
 
-          <div class="space-y-3">
+      </div>
+    </div>
 
-            <div>
+    <!-- LOCATION -->
+    <div class="mb-5">
 
-              <label
-                class="section-label block mb-1"
-              >
-                Location
-              </label>
+      <div class="section-label mb-2">
+        Location
+      </div>
 
-              <input
-                id="rotationLocation"
-                class="rotation-field"
-                type="text"
-                placeholder="Hospital, clinic, address..."
-              >
+      <div class="text-sm text-[#2D3132]">
+        Pediatric Hematology / Oncology
+      </div>
 
-            </div>
+    </div>
 
+    <!-- SYLLABUS -->
+    <div class="mb-5">
 
-            <div>
+      <div class="section-label mb-2">
+        Syllabus
+      </div>
 
-              <label
-                class="section-label block mb-1"
-              >
-                Contact Information
-              </label>
+      <a
+        href="#"
+        class="text-sm font-semibold text-[#C86D51] hover:underline"
+      >
+        Peds Heme/Onc Syllabus
+      </a>
 
-              <textarea
-                id="rotationContacts"
-                class="rotation-field"
-                placeholder="Course director, coordinator, phone, email..."
-              ></textarea>
+    </div>
 
-            </div>
+    <!-- TASKS / ASSIGNMENTS -->
+    <div>
 
+      <div class="section-label mb-2">
+        Tasks / Assignments
+      </div>
 
-            <div>
+      <div class="space-y-2 text-sm text-[#2D3132]">
 
-              <label
-                class="section-label block mb-1"
-              >
-                Syllabus
-              </label>
+        <div class="flex items-start gap-2">
+          <input
+            type="checkbox"
+            class="mt-1"
+          >
+          <span>Add rotation tasks / assignments</span>
+        </div>
 
-              <input
-                id="rotationSyllabus"
-                class="rotation-field"
-                type="url"
-                placeholder="Paste syllabus link"
-              >
+        <div class="flex items-start gap-2">
+          <input
+            type="checkbox"
+            class="mt-1"
+          >
+          <span>Add presentations / projects</span>
+        </div>
 
-            </div>
-
-
-            <div>
-
-              <label
-                class="section-label block mb-1"
-              >
-                Tasks / Assignments
-              </label>
-
-              <textarea
-                id="rotationTasks"
-                class="rotation-field"
-                placeholder="Projects, assignments, presentations, forms..."
-              ></textarea>
-
-            </div>
-
-          </div>
-
-
-          <div
-            id="rotationSaveStatus"
-            class="text-[10px] text-[#8E9B88] mt-3"
-          ></div>
-
+        <div class="flex items-start gap-2">
+          <input
+            type="checkbox"
+            class="mt-1"
+          >
+          <span>Add required forms / evaluations</span>
         </div>
 
       </div>
 
+    </div>
+
+  </div>
+
+</div>
 
       <!-- CALENDAR -->
 
