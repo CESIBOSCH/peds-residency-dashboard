@@ -1,286 +1,2070 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fourth Year</title>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Home | Fourth Year</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
+
   <style>
+
     :root {
+
       --bg-app: #FAF9F5;
       --bg-surface: #FFFFFF;
+
       --text-charcoal: #2D3132;
       --text-gray: #6B7280;
+
       --accent-terracotta: #C86D51;
       --accent-sage: #8E9B88;
+
+      --soft-sage: #EEF1EB;
+      --soft-terracotta: #FBF4F1;
+
       --border-light: #E5E0D8;
+
     }
+
+
+    * {
+      box-sizing: border-box;
+    }
+
+
+    html,
+    body {
+
+      margin: 0;
+
+      min-height: 100%;
+
+    }
+
 
     body {
-      margin: 0;
-      background: var(--bg-app);
-      color: var(--text-charcoal);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+      background:
+        var(--bg-app);
+
+      color:
+        var(--text-charcoal);
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        sans-serif;
+
     }
 
-    .menu-panel {
-      transform: translateX(-110%);
-      transition: transform 0.25s ease;
+
+    button {
+      font: inherit;
     }
 
-    .menu-panel.open {
-      transform: translateX(0);
+
+    a {
+      color: inherit;
     }
 
-    .menu-overlay {
+
+
+    /* =========================================
+       COLLAPSIBLE LEFT NAVIGATION
+    ========================================= */
+
+    .left-navigation {
+
+      position: fixed;
+
+      top: 0;
+      left: 0;
+
+      width: 88px;
+      height: 100vh;
+
+      z-index: 50;
+
+      padding:
+        28px
+        18px;
+
+      background:
+        var(--bg-app);
+
+      transition:
+        width
+        0.22s
+        ease;
+
+    }
+
+
+    .left-navigation.open {
+
+      width: 245px;
+
+    }
+
+
+    .nav-top {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 15px;
+
+      white-space: nowrap;
+
+    }
+
+
+    .menu-button {
+
+      width: 42px;
+      height: 42px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      flex-shrink: 0;
+
+      border: 0;
+
+      border-radius: 9px;
+
+      background:
+        transparent;
+
+      color:
+        var(--text-charcoal);
+
+      cursor: pointer;
+
+      font-size: 24px;
+
+      line-height: 1;
+
+    }
+
+
+    .menu-button:hover {
+
+      background:
+        #F5F2EC;
+
+      color:
+        var(--accent-terracotta);
+
+    }
+
+
+    .nav-brand {
+
       opacity: 0;
+
       pointer-events: none;
-      transition: opacity 0.2s ease;
+
+      color:
+        var(--accent-sage);
+
+      font-size: 14px;
+
+      font-weight: 600;
+
+      letter-spacing: 0.20em;
+
+      text-transform: uppercase;
+
+      text-decoration: none;
+
+      transition:
+        opacity
+        0.15s
+        ease;
+
     }
 
-    .menu-overlay.open {
+
+    .left-navigation.open
+    .nav-brand {
+
       opacity: 1;
-      pointer-events: auto;
+
     }
+
+
+    .nav-links {
+
+      margin-top: 27px;
+
+      opacity: 0;
+
+      pointer-events: none;
+
+      transform:
+        translateX(-5px);
+
+      transition:
+        opacity
+        0.18s
+        ease,
+        transform
+        0.18s
+        ease;
+
+    }
+
+
+    .left-navigation.open
+    .nav-links {
+
+      opacity: 1;
+
+      pointer-events: auto;
+
+      transform:
+        translateX(0);
+
+    }
+
+
+    .menu-link {
+
+      display: block;
+
+      width: max-content;
+
+      padding:
+        7px
+        0;
+
+      color:
+        var(--accent-sage);
+
+      text-decoration: none;
+
+      font-size: 13px;
+
+      font-weight: 500;
+
+      letter-spacing: 0.15em;
+
+      text-transform: uppercase;
+
+      transition:
+        color
+        0.15s
+        ease;
+
+    }
+
+
+    .menu-link:hover {
+
+      color:
+        var(--accent-terracotta);
+
+    }
+
+
+    .menu-link.active {
+
+      color:
+        var(--accent-terracotta);
+
+      font-weight: 600;
+
+    }
+
+
+
+    /* =========================================
+       PAGE
+    ========================================= */
+
+    .page-shell {
+
+      margin-left: 88px;
+
+      padding:
+        22px
+        34px
+        48px;
+
+      transition:
+        margin-left
+        0.22s
+        ease;
+
+    }
+
+
+    body.nav-open
+    .page-shell {
+
+      margin-left: 245px;
+
+    }
+
+
+    .page-content {
+
+      width:
+        min(
+          1180px,
+          100%
+        );
+
+      margin:
+        0
+        auto;
+
+    }
+
+
+    .page-title {
+
+      margin:
+        0
+        0
+        20px;
+
+      text-align: center;
+
+      color:
+        #8A9484;
+
+      font-size:
+        clamp(
+          30px,
+          4vw,
+          46px
+        );
+
+      font-weight: 300;
+
+      letter-spacing: 0.13em;
+
+      text-transform: uppercase;
+
+    }
+
+
+    .section-label {
+
+      color:
+        var(--accent-sage);
+
+      font-size: 10px;
+
+      font-weight: 650;
+
+      letter-spacing: 0.18em;
+
+      text-transform: uppercase;
+
+    }
+
+
+    .card {
+
+      background:
+        var(--bg-surface);
+
+      border:
+        1px
+        solid
+        var(--border-light);
+
+      border-radius: 13px;
+
+    }
+
+
+
+    /* =========================================
+       QUICK LINKS
+    ========================================= */
+
+    .quick-section {
+
+      margin-bottom: 20px;
+
+    }
+
+
+    .quick-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          4,
+          minmax(0, 1fr)
+        );
+
+      gap: 9px;
+
+      margin-top: 9px;
+
+    }
+
+
+    .quick-link {
+
+      min-height: 72px;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 11px;
+
+      padding:
+        11px
+        13px;
+
+      background:
+        white;
+
+      border:
+        1px
+        solid
+        var(--border-light);
+
+      border-radius: 12px;
+
+      text-decoration: none;
+
+      transition:
+        transform
+        0.15s
+        ease,
+        border-color
+        0.15s
+        ease,
+        box-shadow
+        0.15s
+        ease;
+
+    }
+
+
+    .quick-link:hover {
+
+      transform:
+        translateY(-1px);
+
+      border-color:
+        #CFC8BD;
+
+      box-shadow:
+        0
+        4px
+        14px
+        rgba(
+          45,
+          49,
+          50,
+          0.05
+        );
+
+    }
+
+
+    .resource-icon {
+
+      width: 36px;
+      height: 36px;
+
+      flex-shrink: 0;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      background:
+        var(--soft-sage);
+
+      color:
+        #71806C;
+
+      overflow: hidden;
+
+      font-size: 12px;
+
+      font-weight: 700;
+
+      line-height: 1;
+
+    }
+
+
+    .resource-icon svg {
+
+      width: 20px;
+      height: 20px;
+
+      stroke:
+        #71806C;
+
+    }
+
+
+    .logo-epic {
+
+      font-size: 10px;
+
+      font-weight: 800;
+
+      font-style: italic;
+
+      letter-spacing: -0.05em;
+
+    }
+
+
+    .logo-oe {
+
+      font-family:
+        Georgia,
+        serif;
+
+      font-size: 17px;
+
+      font-weight: 500;
+
+      letter-spacing: -0.07em;
+
+    }
+
+
+    .logo-canvas {
+
+      font-size: 16px;
+
+      letter-spacing: -0.15em;
+
+    }
+
+
+    .quick-title {
+
+      color:
+        var(--text-charcoal);
+
+      font-size: 12px;
+
+      font-weight: 650;
+
+      line-height: 1.2;
+
+    }
+
+
+    .quick-subtitle {
+
+      margin-top: 3px;
+
+      color:
+        var(--text-gray);
+
+      font-size: 10px;
+
+      line-height: 1.25;
+
+    }
+
+
+    .it-support {
+
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap:
+        5px
+        16px;
+
+      margin-top: 10px;
+
+      color:
+        var(--text-gray);
+
+      font-size: 10px;
+
+    }
+
+
+    .it-support strong {
+
+      color:
+        var(--text-charcoal);
+
+      font-weight: 650;
+
+    }
+
+
+
+    /* =========================================
+       TOP DASHBOARD
+    ========================================= */
+
+    .top-dashboard {
+
+      display: grid;
+
+      grid-template-columns:
+        390px
+        minmax(0, 1fr);
+
+      gap: 14px;
+
+      align-items: stretch;
+
+      margin-bottom: 14px;
+
+    }
+
+
+
+    /* =========================================
+       MINI CALENDAR
+    ========================================= */
+
+    .calendar-card {
+
+      padding: 17px;
+
+    }
+
+
+    .calendar-header {
+
+      display: flex;
+
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 10px;
+
+      margin-top: 8px;
+
+      margin-bottom: 12px;
+
+    }
+
+
+    .calendar-month {
+
+      font-size: 14px;
+
+      font-weight: 650;
+
+    }
+
+
+    .calendar-controls {
+
+      display: flex;
+
+      gap: 5px;
+
+    }
+
+
+    .calendar-button {
+
+      min-width: 30px;
+
+      height: 29px;
+
+      padding:
+        0
+        8px;
+
+      border:
+        1px
+        solid
+        var(--border-light);
+
+      border-radius: 7px;
+
+      background:
+        white;
+
+      color:
+        var(--text-charcoal);
+
+      cursor: pointer;
+
+      font-size: 11px;
+
+    }
+
+
+    .calendar-button:hover {
+
+      background:
+        var(--bg-app);
+
+    }
+
+
+    .calendar-weekdays,
+    .calendar-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          7,
+          1fr
+        );
+
+    }
+
+
+    .calendar-weekday {
+
+      padding:
+        4px
+        0
+        6px;
+
+      text-align: center;
+
+      color:
+        var(--text-gray);
+
+      font-size: 8px;
+
+      font-weight: 650;
+
+      letter-spacing: 0.07em;
+
+    }
+
+
+    .mini-day {
+
+      position: relative;
+
+      height: 27px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      color:
+        var(--text-charcoal);
+
+      font-size: 10px;
+
+    }
+
+
+    .mini-day.muted {
+
+      color:
+        #A6ADB7;
+
+    }
+
+
+    .mini-day.today {
+
+      width: 25px;
+      height: 25px;
+
+      justify-self: center;
+
+      border-radius: 50%;
+
+      background:
+        var(--accent-terracotta);
+
+      color:
+        white;
+
+      font-weight: 650;
+
+    }
+
+
+    .mini-day.has-event::after {
+
+      content: "";
+
+      position: absolute;
+
+      bottom: 1px;
+
+      width: 3px;
+      height: 3px;
+
+      border-radius: 50%;
+
+      background:
+        var(--accent-terracotta);
+
+    }
+
+
+    .calendar-link {
+
+      display: inline-block;
+
+      margin-top: 11px;
+
+      color:
+        var(--accent-terracotta);
+
+      text-decoration: none;
+
+      font-size: 11px;
+
+      font-weight: 550;
+
+    }
+
+
+
+    /* =========================================
+       THIS WEEK
+    ========================================= */
+
+    .week-card {
+
+      padding: 18px 20px;
+
+    }
+
+
+    .week-row {
+
+      display: grid;
+
+      grid-template-columns:
+        65px
+        minmax(0, 1fr);
+
+      gap: 13px;
+
+      padding:
+        12px
+        0;
+
+      border-bottom:
+        1px
+        solid
+        var(--border-light);
+
+    }
+
+
+    .week-row:last-of-type {
+
+      border-bottom: 0;
+
+    }
+
+
+    .week-date {
+
+      color:
+        var(--accent-sage);
+
+      font-size: 10px;
+
+      font-weight: 650;
+
+      line-height: 1.45;
+
+      text-transform: uppercase;
+
+    }
+
+
+    .week-event-title {
+
+      font-size: 12px;
+
+      font-weight: 650;
+
+    }
+
+
+    .week-event-detail {
+
+      margin-top: 3px;
+
+      color:
+        var(--text-gray);
+
+      font-size: 10px;
+
+    }
+
+
+
+    /* =========================================
+       CURRENT ROTATION
+    ========================================= */
+
+    .rotation-card {
+
+      padding:
+        17px
+        20px;
+
+      margin-bottom: 14px;
+
+    }
+
+
+    .rotation-layout {
+
+      display: grid;
+
+      grid-template-columns:
+        minmax(
+          260px,
+          1.4fr
+        )
+        repeat(
+          3,
+          minmax(
+            125px,
+            0.8fr
+          )
+        );
+
+      gap: 0;
+
+      margin-top: 12px;
+
+    }
+
+
+    .rotation-primary {
+
+      padding-right: 18px;
+
+    }
+
+
+    .rotation-column {
+
+      padding:
+        0
+        16px;
+
+      border-left:
+        1px
+        solid
+        var(--border-light);
+
+    }
+
+
+    .rotation-title {
+
+      color:
+        var(--accent-terracotta);
+
+      font-size: 19px;
+
+      font-weight: 650;
+
+    }
+
+
+    .rotation-dates {
+
+      margin-top: 4px;
+
+      color:
+        var(--text-gray);
+
+      font-size: 11px;
+
+    }
+
+
+    .detail-heading {
+
+      margin-bottom: 5px;
+
+      color:
+        var(--accent-sage);
+
+      font-size: 8px;
+
+      font-weight: 650;
+
+      letter-spacing: 0.08em;
+
+      text-transform: uppercase;
+
+    }
+
+
+    .detail-value {
+
+      color:
+        var(--text-charcoal);
+
+      font-size: 10px;
+
+      line-height: 1.5;
+
+    }
+
+
+    .rotation-actions {
+
+      display: flex;
+
+      justify-content: flex-end;
+
+      gap: 22px;
+
+      margin-top: 13px;
+
+    }
+
+
+    .rotation-actions a {
+
+      color:
+        var(--accent-terracotta);
+
+      text-decoration: none;
+
+      font-size: 10px;
+
+      font-weight: 550;
+
+    }
+
+
+
+    /* =========================================
+       RESPONSIVE
+    ========================================= */
+
+    @media (
+      max-width: 1000px
+    ) {
+
+      .quick-grid {
+
+        grid-template-columns:
+          repeat(
+            2,
+            minmax(0, 1fr)
+          );
+
+      }
+
+
+      .top-dashboard {
+
+        grid-template-columns:
+          1fr;
+
+      }
+
+
+      .rotation-layout {
+
+        grid-template-columns:
+          1fr
+          1fr;
+
+      }
+
+
+      .rotation-primary {
+
+        padding-bottom: 14px;
+
+      }
+
+
+      .rotation-column {
+
+        border-left: 0;
+
+        padding:
+          10px
+          0;
+
+      }
+
+    }
+
+
+    @media (
+      max-width: 700px
+    ) {
+
+      .left-navigation {
+
+        width: 68px;
+
+        padding:
+          18px
+          12px;
+
+      }
+
+
+      .left-navigation.open {
+
+        width: 225px;
+
+      }
+
+
+      .page-shell {
+
+        margin-left: 68px;
+
+        padding:
+          18px
+          16px
+          40px;
+
+      }
+
+
+      body.nav-open
+      .page-shell {
+
+        margin-left: 68px;
+
+      }
+
+
+      .quick-grid {
+
+        grid-template-columns:
+          1fr;
+
+      }
+
+
+      .rotation-layout {
+
+        grid-template-columns:
+          1fr;
+
+      }
+
+
+      .rotation-column {
+
+        border-top:
+          1px
+          solid
+          var(--border-light);
+
+      }
+
+    }
+
   </style>
+
 </head>
+
 
 <body>
 
-  <!-- Top Navigation -->
-  <header class="h-20 bg-white border-b border-[#E5E0D8] flex items-center justify-between px-8 relative z-30">
-    <button
-      id="menuButton"
-      class="text-3xl text-[#2D3132] hover:text-[#C86D51] transition"
-      aria-label="Open menu"
-    >
-      ☰
-    </button>
 
-    <div class="absolute left-1/2 -translate-x-1/2 text-xl md:text-2xl tracking-[0.22em] text-[#8E9B88] font-medium">
-      FOURTH YEAR
-    </div>
+  <!-- =========================================
+       NAVIGATION
+  ========================================== -->
 
-    <div class="w-8"></div>
-  </header>
-
-  <!-- Overlay -->
-  <div
-    id="menuOverlay"
-    class="menu-overlay fixed inset-0 bg-black/20 z-40"
-  ></div>
-
-  <!-- Hamburger Menu -->
   <aside
-    id="menuPanel"
-    class="menu-panel fixed top-0 left-0 h-full w-72 bg-white border-r border-[#E5E0D8] shadow-xl z-50"
+    id="leftNavigation"
+    class="left-navigation"
   >
-    <div class="h-20 flex items-center justify-between px-6 border-b border-[#E5E0D8]">
-      <span class="tracking-[0.18em] text-sm text-[#8E9B88] font-semibold">FOURTH YEAR</span>
+
+    <div class="nav-top">
 
       <button
-        id="closeMenuButton"
-        class="text-2xl text-[#6B7280] hover:text-[#C86D51]"
-        aria-label="Close menu"
+        id="menuButton"
+        class="menu-button"
+        aria-label="Open menu"
       >
-        ×
+        ☰
       </button>
+
+
+      <a
+        href="index.html"
+        class="nav-brand"
+      >
+        Fourth Year
+      </a>
+
     </div>
 
-    <nav class="p-4 space-y-1">
-      <a href="index.html" class="block px-4 py-3 rounded-lg bg-[#FBF4F1] text-[#C86D51] font-medium">
+
+    <nav class="nav-links">
+
+      <a
+        href="index.html"
+        class="menu-link active"
+      >
         Home
       </a>
 
-      <a href="step.html" class="block px-4 py-3 rounded-lg hover:bg-[#FAF9F5]">
+      <a
+        href="step.html"
+        class="menu-link"
+      >
         Step & Study
       </a>
 
-      <a href="programs.html" class="block px-4 py-3 rounded-lg hover:bg-[#FAF9F5]">
+      <a
+        href="programs.html"
+        class="menu-link"
+      >
         Program Explorer
       </a>
 
-      <a href="resources.html" class="block px-4 py-3 rounded-lg hover:bg-[#FAF9F5]">
+      <a
+        href="resources.html"
+        class="menu-link"
+      >
         Program Research
       </a>
 
-      <a href="application.html" class="block px-4 py-3 rounded-lg hover:bg-[#FAF9F5]">
+      <a
+        href="application.html"
+        class="menu-link"
+      >
         Application Tracker
       </a>
 
-      <a href="schedule.html" class="block px-4 py-3 rounded-lg hover:bg-[#FAF9F5]">
+      <a
+        href="schedule.html"
+        class="menu-link"
+      >
         4th Year Schedule
       </a>
+
     </nav>
+
   </aside>
 
-  <!-- Main Content -->
-  <main class="max-w-6xl mx-auto px-6 py-10">
 
-    <h1 class="text-4xl md:text-5xl font-serif text-[#4F675E] mb-10">
-      Welcome back.
-    </h1>
 
-    <!-- Top Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+  <!-- =========================================
+       MAIN PAGE
+  ========================================== -->
 
-      <!-- Current Rotation -->
-      <section class="bg-white border border-[#E5E0D8] rounded-xl p-7">
-        <div class="text-xs font-semibold tracking-[0.14em] text-[#6B7280] uppercase mb-5">
+  <main class="page-shell">
+
+    <div class="page-content">
+
+
+      <h1 class="page-title">
+        Fourth Year
+      </h1>
+
+
+
+      <!-- =====================================
+           QUICK LINKS
+      ====================================== -->
+
+      <section class="quick-section">
+
+        <div class="section-label">
+          Quick Links
+        </div>
+
+
+        <div class="quick-grid">
+
+
+          <!-- Outlook -->
+
+          <a
+            href="https://outlook.cloud.microsoft/mail/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="quick-link"
+          >
+
+            <div class="resource-icon">
+
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="1.8"
+              >
+                <rect
+                  x="3"
+                  y="5"
+                  width="18"
+                  height="14"
+                  rx="2"
+                ></rect>
+
+                <path
+                  d="M4 7l8 6 8-6"
+                ></path>
+              </svg>
+
+            </div>
+
+            <div>
+
+              <div class="quick-title">
+                Outlook
+              </div>
+
+              <div class="quick-subtitle">
+                Email
+              </div>
+
+            </div>
+
+          </a>
+
+
+
+          <!-- Epic -->
+
+          <a
+            href="https://wakeportal.wakehealth.edu/logon/LogonPoint/tmindex.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="quick-link"
+          >
+
+            <div
+              class="
+                resource-icon
+                logo-epic
+              "
+            >
+              Epic
+            </div>
+
+            <div>
+
+              <div class="quick-title">
+                Epic
+              </div>
+
+              <div class="quick-subtitle">
+                Wake Health portal
+              </div>
+
+            </div>
+
+          </a>
+
+
+
+          <!-- Canvas -->
+
+          <a
+            href="https://wfusm.instructure.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="quick-link"
+          >
+
+            <div
+              class="
+                resource-icon
+                logo-canvas
+              "
+            >
+              ◌
+            </div>
+
+            <div>
+
+              <div class="quick-title">
+                Canvas
+              </div>
+
+              <div class="quick-subtitle">
+                WFU School of Medicine
+              </div>
+
+            </div>
+
+          </a>
+
+
+
+          <!-- OpenEvidence -->
+
+          <a
+            href="https://www.openevidence.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="quick-link"
+          >
+
+            <div
+              class="
+                resource-icon
+                logo-oe
+              "
+            >
+              OE
+            </div>
+
+            <div>
+
+              <div class="quick-title">
+                OpenEvidence
+              </div>
+
+              <div class="quick-subtitle">
+                Clinical evidence
+              </div>
+
+            </div>
+
+          </a>
+
+
+
+          <!-- MDCalc -->
+
+          <a
+            href="https://www.mdcalc.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="quick-link"
+          >
+
+            <div class="resource-icon">
+
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="1.8"
+              >
+
+                <rect
+                  x="5"
+                  y="3"
+                  width="14"
+                  height="18"
+                  rx="2"
+                ></rect>
+
+                <rect
+                  x="8"
+                  y="6"
+                  width="8"
+                  height="4"
+                  rx="1"
+                ></rect>
+
+                <path
+                  d="
+                    M8 14h1
+                    M12 14h1
+                    M16 14h1
+                    M8 18h1
+                    M12 18h1
+                    M16 18h1
+                  "
+                ></path>
+
+              </svg>
+
+            </div>
+
+            <div>
+
+              <div class="quick-title">
+                MDCalc
+              </div>
+
+              <div class="quick-subtitle">
+                Clinical calculators
+              </div>
+
+            </div>
+
+          </a>
+
+
+
+          <!-- PeopleSoft -->
+
+          <a
+            href="https://ahw-psweb-lx-01.medctr.ad.wfubmc.edu:8042/psp/cppro/?cmd=login"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="quick-link"
+          >
+
+            <div class="resource-icon">
+
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="1.7"
+              >
+
+                <circle
+                  cx="9"
+                  cy="8"
+                  r="3"
+                ></circle>
+
+                <circle
+                  cx="17"
+                  cy="9"
+                  r="2.3"
+                ></circle>
+
+                <path
+                  d="
+                    M3.5 19
+                    c0-3.2 2.3-5 5.5-5
+                    s5.5 1.8 5.5 5
+                  "
+                ></path>
+
+                <path
+                  d="
+                    M14 15
+                    c3.5-.5 6 1.1 6.5 4
+                  "
+                ></path>
+
+              </svg>
+
+            </div>
+
+            <div>
+
+              <div class="quick-title">
+                PeopleSoft
+              </div>
+
+              <div class="quick-subtitle">
+                WFU BMC
+              </div>
+
+            </div>
+
+          </a>
+
+
+
+          <!-- LiveWELL / Doctor Appointment -->
+
+          <a
+            href="https://my.atriumhealth.org/myatriumhealth/openscheduling/standalone?dept=1020732000,1025602000,1023072000,1020722000,1020132001,1025952000,1025492000,1025342008,10120162000,1029612017,1028922000&vt=158093"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="quick-link"
+          >
+
+            <div class="resource-icon">
+
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="1.8"
+              >
+
+                <path
+                  d="
+                    M12 21
+                    s-7-4.5-7-10
+                    a4 4 0 0 1 7-2.6
+                    A4 4 0 0 1 19 11
+                    c0 5.5-7 10-7 10z
+                  "
+                ></path>
+
+                <path
+                  d="M12 7v8"
+                ></path>
+
+                <path
+                  d="M8 11h8"
+                ></path>
+
+              </svg>
+
+            </div>
+
+            <div>
+
+              <div class="quick-title">
+                Doctor's Appointment
+              </div>
+
+              <div class="quick-subtitle">
+                LiveWELL Health
+              </div>
+
+            </div>
+
+          </a>
+
+
+        </div>
+
+
+        <!-- IT SUPPORT IS INFORMATION ONLY -->
+
+        <div class="it-support">
+
+          <strong>
+            IT Support
+          </strong>
+
+          <span>
+            Phone: TBD
+          </span>
+
+          <span>
+            Email: TBD
+          </span>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =====================================
+           SMALL CALENDAR + THIS WEEK
+      ====================================== -->
+
+      <section class="top-dashboard">
+
+
+        <!-- Mini Calendar -->
+
+        <div class="card calendar-card">
+
+          <div class="section-label">
+            Calendar
+          </div>
+
+
+          <div class="calendar-header">
+
+            <div class="calendar-month">
+              August 2026
+            </div>
+
+
+            <div class="calendar-controls">
+
+              <button
+                class="calendar-button"
+                type="button"
+              >
+                ‹
+              </button>
+
+              <a
+                href="schedule.html"
+                class="calendar-button flex items-center no-underline"
+              >
+                Today
+              </a>
+
+              <button
+                class="calendar-button"
+                type="button"
+              >
+                ›
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div class="calendar-weekdays">
+
+            <div class="calendar-weekday">SUN</div>
+            <div class="calendar-weekday">MON</div>
+            <div class="calendar-weekday">TUE</div>
+            <div class="calendar-weekday">WED</div>
+            <div class="calendar-weekday">THU</div>
+            <div class="calendar-weekday">FRI</div>
+            <div class="calendar-weekday">SAT</div>
+
+          </div>
+
+
+          <div class="calendar-grid">
+
+            <div class="mini-day muted">26</div>
+            <div class="mini-day muted">27</div>
+            <div class="mini-day muted">28</div>
+            <div class="mini-day muted">29</div>
+            <div class="mini-day muted">30</div>
+            <div class="mini-day muted">31</div>
+            <div class="mini-day">1</div>
+
+            <div class="mini-day">2</div>
+            <div class="mini-day">3</div>
+            <div class="mini-day">4</div>
+            <div class="mini-day">5</div>
+            <div class="mini-day">6</div>
+            <div class="mini-day">7</div>
+            <div class="mini-day">8</div>
+
+            <div class="mini-day">9</div>
+            <div class="mini-day">10</div>
+            <div class="mini-day">11</div>
+            <div class="mini-day">12</div>
+            <div class="mini-day">13</div>
+            <div class="mini-day">14</div>
+            <div class="mini-day">15</div>
+
+            <div class="mini-day today">16</div>
+            <div class="mini-day has-event">17</div>
+            <div class="mini-day">18</div>
+            <div class="mini-day">19</div>
+            <div class="mini-day">20</div>
+            <div class="mini-day">21</div>
+            <div class="mini-day">22</div>
+
+            <div class="mini-day">23</div>
+            <div class="mini-day">24</div>
+            <div class="mini-day">25</div>
+            <div class="mini-day has-event">26</div>
+            <div class="mini-day">27</div>
+            <div class="mini-day">28</div>
+            <div class="mini-day">29</div>
+
+            <div class="mini-day">30</div>
+            <div class="mini-day">31</div>
+            <div class="mini-day muted">1</div>
+            <div class="mini-day muted">2</div>
+            <div class="mini-day muted">3</div>
+            <div class="mini-day muted">4</div>
+            <div class="mini-day muted">5</div>
+
+          </div>
+
+
+          <a
+            href="schedule.html"
+            class="calendar-link"
+          >
+            Open full calendar →
+          </a>
+
+        </div>
+
+
+
+        <!-- This Week -->
+
+        <div class="card week-card">
+
+          <div class="section-label">
+            Coming Up
+          </div>
+
+
+          <div class="week-row">
+
+            <div class="week-date">
+              Mon<br>
+              Aug 17
+            </div>
+
+            <div>
+
+              <div class="week-event-title">
+                Pediatrics Hematology / Oncology begins
+              </div>
+
+              <div class="week-event-detail">
+                Block 6
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="week-row">
+
+            <div class="week-date">
+              Mon<br>
+              Aug 17
+            </div>
+
+            <div>
+
+              <div class="week-event-title">
+                Meeting with Dr. Gass
+              </div>
+
+              <div class="week-event-detail">
+                8:30 AM
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="week-row">
+
+            <div class="week-date">
+              Mon<br>
+              Aug 17
+            </div>
+
+            <div>
+
+              <div class="week-event-title">
+                Block 7 Drop/Add Deadline
+              </div>
+
+              <div class="week-event-detail">
+                Academic deadline
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <a
+            href="schedule.html"
+            class="calendar-link"
+          >
+            View schedule →
+          </a>
+
+        </div>
+
+
+      </section>
+
+
+
+      <!-- =====================================
+           CURRENT ROTATION
+      ====================================== -->
+
+      <section class="card rotation-card">
+
+        <div class="section-label">
           Current Rotation
         </div>
 
-        <h2 class="text-2xl font-semibold text-[#C86D51] mb-2">
-          Pediatric Cardiology
-        </h2>
 
-        <div class="text-sm text-[#2D3132] space-y-2">
-          <div>Aug 3 – Aug 28, 2025</div>
-          <div class="pt-2">Children's Hospital</div>
-          <div>123 Main Street</div>
-          <div>Phoenix, AZ 85004</div>
+        <div class="rotation-layout">
+
+
+          <div class="rotation-primary">
+
+            <div class="rotation-title">
+              FM AI
+            </div>
+
+            <div class="rotation-dates">
+              Through August 16, 2026
+            </div>
+
+          </div>
+
+
+          <div class="rotation-column">
+
+            <div class="detail-heading">
+              Next Rotation
+            </div>
+
+            <div class="detail-value">
+
+              Pediatrics Hematology / Oncology
+
+              <br>
+
+              Begins August 17
+
+            </div>
+
+          </div>
+
+
+          <div class="rotation-column">
+
+            <div class="detail-heading">
+              Next Known Contact
+            </div>
+
+            <div class="detail-value">
+
+              Dr. David Gass
+
+              <br>
+
+              Course Director
+
+            </div>
+
+          </div>
+
+
+          <div class="rotation-column">
+
+            <div class="detail-heading">
+              Next Location
+            </div>
+
+            <div class="detail-value">
+
+              Medical Center Plaza
+
+              <br>
+
+              8:00 AM–5:00 PM
+
+            </div>
+
+          </div>
+
+
         </div>
 
-        <a href="schedule.html" class="inline-block mt-6 text-sm font-medium text-[#C86D51] hover:underline">
-          View rotation details →
-        </a>
+
+        <div class="rotation-actions">
+
+          <a href="schedule.html">
+            Schedule details →
+          </a>
+
+          <a
+            href="4PED32 - Pediatric Hematology-Oncology Syllabus 2026.2027Final.pdf"
+            target="_blank"
+          >
+            Next rotation syllabus →
+          </a>
+
+        </div>
+
       </section>
 
-      <!-- Upcoming Deadlines -->
-      <section class="bg-white border border-[#E5E0D8] rounded-xl p-7">
-        <div class="text-xs font-semibold tracking-[0.14em] text-[#6B7280] uppercase mb-5">
-          Upcoming Deadlines
-        </div>
 
-        <div class="space-y-4 text-sm">
-          <div class="flex justify-between gap-4">
-            <span>ERAS application opens</span>
-            <span class="text-[#C86D51]">Sep 4</span>
-          </div>
-
-          <div class="flex justify-between gap-4">
-            <span>Personal statement draft</span>
-            <span class="text-[#C86D51]">Sep 10</span>
-          </div>
-
-          <div class="flex justify-between gap-4">
-            <span>LOR requests due</span>
-            <span class="text-[#C86D51]">Sep 15</span>
-          </div>
-
-          <div class="flex justify-between gap-4">
-            <span>Step 2 CK</span>
-            <span class="text-[#C86D51]">Sep 18</span>
-          </div>
-        </div>
-
-        <a href="application.html" class="inline-block mt-6 text-sm font-medium text-[#C86D51] hover:underline">
-          View all deadlines →
-        </a>
-      </section>
     </div>
-
-    <!-- Calendar -->
-    <section class="bg-white border border-[#E5E0D8] rounded-xl overflow-hidden">
-      <div class="flex items-center justify-between px-6 py-5 border-b border-[#E5E0D8]">
-        <h2 class="text-lg tracking-wide font-medium">
-          AUGUST 2025
-        </h2>
-
-        <div class="flex gap-2">
-          <button class="px-3 py-1.5 border border-[#E5E0D8] rounded-md text-sm">‹</button>
-          <button class="px-3 py-1.5 border border-[#E5E0D8] rounded-md text-sm">›</button>
-          <button class="px-3 py-1.5 border border-[#E5E0D8] rounded-md text-sm">Today</button>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-7 text-center text-xs font-semibold text-[#6B7280] border-b border-[#E5E0D8]">
-        <div class="py-3">SUN</div>
-        <div class="py-3">MON</div>
-        <div class="py-3">TUE</div>
-        <div class="py-3">WED</div>
-        <div class="py-3">THU</div>
-        <div class="py-3">FRI</div>
-        <div class="py-3">SAT</div>
-      </div>
-
-      <div class="grid grid-cols-7">
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm text-gray-400">27</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm text-gray-400">28</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm text-gray-400">29</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm text-gray-400">30</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm text-gray-400">31</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">1</div>
-        <div class="min-h-28 border-b border-[#E5E0D8] p-2 text-sm">2</div>
-
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">3</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">4</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">5</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">6</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">7</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">8</div>
-        <div class="min-h-28 border-b border-[#E5E0D8] p-2 text-sm">9</div>
-
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">10</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">11</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">12</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">13</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">14</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">
-          15
-          <div class="mt-3 text-[11px] bg-[#FBF4F1] text-[#C86D51] rounded px-2 py-1">
-            LOR requests due
-          </div>
-        </div>
-        <div class="min-h-28 border-b border-[#E5E0D8] p-2 text-sm">16</div>
-
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">17</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">18</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">19</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">20</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">21</div>
-        <div class="min-h-28 border-r border-b border-[#E5E0D8] p-2 text-sm">22</div>
-        <div class="min-h-28 border-b border-[#E5E0D8] p-2 text-sm">23</div>
-
-        <div class="min-h-28 border-r border-[#E5E0D8] p-2 text-sm">24</div>
-        <div class="min-h-28 border-r border-[#E5E0D8] p-2 text-sm">25</div>
-        <div class="min-h-28 border-r border-[#E5E0D8] p-2 text-sm">
-          26
-          <div class="mt-3 text-[11px] bg-[#FBF4F1] text-[#C86D51] rounded px-2 py-1">
-            Personal statement draft
-          </div>
-        </div>
-        <div class="min-h-28 border-r border-[#E5E0D8] p-2 text-sm">27</div>
-        <div class="min-h-28 border-r border-[#E5E0D8] p-2 text-sm">28</div>
-        <div class="min-h-28 border-r border-[#E5E0D8] p-2 text-sm">29</div>
-        <div class="min-h-28 p-2 text-sm">30</div>
-      </div>
-    </section>
 
   </main>
 
+
+
+  <!-- =========================================
+       NAVIGATION SCRIPT
+  ========================================== -->
+
   <script>
-    const menuButton = document.getElementById('menuButton');
-    const closeMenuButton = document.getElementById('closeMenuButton');
-    const menuPanel = document.getElementById('menuPanel');
-    const menuOverlay = document.getElementById('menuOverlay');
 
-    function openMenu() {
-      menuPanel.classList.add('open');
-      menuOverlay.classList.add('open');
+    const leftNavigation =
+      document.getElementById(
+        'leftNavigation'
+      );
+
+
+    const menuButton =
+      document.getElementById(
+        'menuButton'
+      );
+
+
+    function toggleMenu() {
+
+      const opening =
+        !leftNavigation
+          .classList
+          .contains(
+            'open'
+          );
+
+
+      leftNavigation
+        .classList
+        .toggle(
+          'open',
+          opening
+        );
+
+
+      document.body
+        .classList
+        .toggle(
+          'nav-open',
+          opening
+        );
+
+
+      menuButton.textContent =
+        opening
+          ? '×'
+          : '☰';
+
+
+      menuButton.setAttribute(
+        'aria-label',
+        opening
+          ? 'Close menu'
+          : 'Open menu'
+      );
+
     }
 
-    function closeMenu() {
-      menuPanel.classList.remove('open');
-      menuOverlay.classList.remove('open');
-    }
 
-    menuButton.addEventListener('click', openMenu);
-    closeMenuButton.addEventListener('click', closeMenu);
-    menuOverlay.addEventListener('click', closeMenu);
+    menuButton
+      .addEventListener(
+        'click',
+        toggleMenu
+      );
+
   </script>
 
+
 </body>
+
 </html>
