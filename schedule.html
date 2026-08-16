@@ -484,25 +484,20 @@
 
 
     .detail-link {
+  display: inline-block;
+  margin-top: 3px;
+  color: #2f3030;
+  font-size: 11px;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
 
-      display: inline-block;
-
-      margin-top: 3px;
-
-      color: var(--accent-terracotta);
-
-      font-size: 11px;
-
-      text-decoration: none;
-
-    }
-
-
-    .detail-link:hover {
-
-      text-decoration: underline;
-
-    }
+.detail-link:hover,
+.detail-link:focus,
+.detail-link:active {
+  color: var(--accent-terracotta);
+  text-decoration: underline;
+}
 
 
     .contact-entry + .contact-entry {
