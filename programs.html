@@ -95,10 +95,124 @@
     input[type="checkbox"] {
       accent-color: #C86D51;
     }
+  /* Fourth Year hamburger navigation */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(45, 49, 50, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 9998;
+}
+
+.menu-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.menu-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: min(340px, 88vw);
+  height: 100vh;
+  background: #FFFFFF;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+  z-index: 9999;
+  border-right: 1px solid #E5E0D8;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.menu-panel.open {
+  transform: translateX(0);
+}
+
+.menu-link {
+  display: block;
+  padding: 12px 14px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #2D3132;
+  margin-bottom: 4px;
+}
+
+.menu-link:hover {
+  background: #F5F2EC;
+}
+
+.menu-link.active {
+  background: #F3ECE7;
+  color: #C86D51;
+  font-weight: 600;
+}
+
+.fourth-year-menu-button {
+  position: fixed;
+  top: 20px;
+  left: 22px;
+  z-index: 9997;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+  border: 1px solid #E5E0D8;
+  color: #2D3132;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.fourth-year-menu-button:hover {
+  background: #F5F2EC;
+  color: #C86D51;
+}
   </style>
 </head>
 <body class="h-screen w-screen flex flex-col p-4 md:p-6 overflow-hidden gap-2">
 
+  <!-- Fourth Year Navigation -->
+<button
+  id="menuButton"
+  class="fourth-year-menu-button"
+  aria-label="Open menu"
+>
+  ☰
+</button>
+
+<div id="menuOverlay" class="menu-overlay"></div>
+
+<aside id="menuPanel" class="menu-panel">
+
+  <div class="flex items-center justify-between mb-8">
+    <span class="text-xs uppercase tracking-[0.18em] font-semibold text-[#8E9B88]">
+      Fourth Year
+    </span>
+
+    <button
+      id="closeMenuButton"
+      class="text-2xl text-[#6B7280]"
+      aria-label="Close menu"
+    >
+      ×
+    </button>
+  </div>
+
+  <nav>
+    <a href="index.html" class="menu-link">Home</a>
+    <a href="step.html" class="menu-link">Step & Study</a>
+    <a href="programs.html" class="menu-link active">Program Explorer</a>
+    <a href="resources.html" class="menu-link">Program Research</a>
+    <a href="application.html" class="menu-link">Application Tracker</a>
+    <a href="schedule.html" class="menu-link">4th Year Schedule</a>
+  </nav>
+
+</aside>
   <!-- HEADER -->
   <header class="w-full max-w-7xl mx-auto flex items-center justify-center shrink-0 pt-2 pb-4 md:pb-6">
     <h1 class="text-[28px] md:text-[34px] font-light uppercase tracking-[0.16em] text-[#8A9484] leading-none whitespace-nowrap">Pediatrics Residencies</h1>
@@ -796,5 +910,27 @@ tooltipAnchor: [0, -18]
       });
     });
   </script>
+
+  <!-- Fourth Year Navigation Script -->
+<script>
+  const menuButton = document.getElementById('menuButton');
+  const closeMenuButton = document.getElementById('closeMenuButton');
+  const menuPanel = document.getElementById('menuPanel');
+  const menuOverlay = document.getElementById('menuOverlay');
+
+  function openMenu() {
+    menuPanel.classList.add('open');
+    menuOverlay.classList.add('open');
+  }
+
+  function closeMenu() {
+    menuPanel.classList.remove('open');
+    menuOverlay.classList.remove('open');
+  }
+
+  menuButton.addEventListener('click', openMenu);
+  closeMenuButton.addEventListener('click', closeMenu);
+  menuOverlay.addEventListener('click', closeMenu);
+</script>
 </body>
 </html>
