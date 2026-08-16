@@ -369,7 +369,7 @@ const paidLeave = familyLeaveParts.join(' / ');
       const stretchScore = getVal(prog, ['Salary Stretch', 'Stretch']);
 
       return `
-        <div class="p-3.5 space-y-3 font-sans max-h-[300px] overflow-y-auto custom-scroll bg-white">
+        <div class="p-3.5 space-y-3 font-sans max-h-[calc(100vh-120px)] overflow-y-auto custom-scroll bg-white">
           
           <!-- Header with Direct Web Link -->
           <div class="border-b border-[#E5E0D8] pb-2">
@@ -523,8 +523,10 @@ tooltipAnchor: [0, -18]
           `, { className: 'custom-map-tooltip', direction: 'top', offset: [0, -5] });
 
          marker.bindPopup(createInMapFactSheetPopup(prog), {
-  autoPan: false,
-  keepInView: false
+  autoPan: true,
+  keepInView: true,
+  autoPanPaddingTopLeft: [30, 30],
+  autoPanPaddingBottomRight: [30, 30]
 });
           markersMap.set(programName, marker);
         }
@@ -567,21 +569,15 @@ tooltipAnchor: [0, -18]
   const marker = markersMap.get(programName);
 
   if (marker) {
-  const pin = marker.getLatLng();
+    map.flyTo(marker.getLatLng(), 5, {
+      animate: true,
+      duration: 1.2
+    });
 
-  const targetPoint = map.project(pin, 5);
-  targetPoint.y -= 140;
-  const targetLatLng = map.unproject(targetPoint, 5);
-
-  map.flyTo(targetLatLng, 5, {
-    animate: true,
-    duration: 1.5
-  });
-
-  setTimeout(() => {
-    marker.openPopup();
-  }, 1600);
-}
+    setTimeout(() => {
+      marker.openPopup();
+    }, 1300);
+  }
 });
 
         listContainer.appendChild(card);
