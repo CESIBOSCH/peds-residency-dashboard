@@ -149,41 +149,28 @@
   font-weight: 600;
 }
 
-.fourth-year-menu-button {
-  position: fixed;
-  top: 20px;
-  left: 22px;
-  z-index: 9997;
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #FFFFFF;
-  border: 1px solid #E5E0D8;
-  color: #2D3132;
-  font-size: 24px;
-  line-height: 1;
-  cursor: pointer;
-}
 
-.fourth-year-menu-button:hover {
-  background: #F5F2EC;
-  color: #C86D51;
-}
   </style>
 </head>
 <body class="h-screen w-screen flex flex-col p-4 md:p-6 overflow-hidden gap-2">
 
   <!-- Fourth Year Navigation -->
-<button
+<div class="w-full max-w-7xl mx-auto flex items-center h-12 mb-2 shrink-0">
+  <button
   id="menuButton"
-  class="fourth-year-menu-button"
+  class="w-10 h-10 flex items-center justify-center rounded-lg text-[#2D3132] hover:bg-[#F5F2EC] hover:text-[#C86D51] transition-colors"
   aria-label="Open menu"
 >
-  ☰
+  <span class="text-2xl leading-none">☰</span>
 </button>
+
+  <a
+    href="index.html"
+    class="ml-4 text-sm font-semibold tracking-[0.18em] uppercase text-[#8E9B88]"
+  >
+    Fourth Year
+  </a>
+</div>
 
 <div id="menuOverlay" class="menu-overlay"></div>
 
