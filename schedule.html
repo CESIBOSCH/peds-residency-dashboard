@@ -705,32 +705,35 @@
 
     .calendar-day {
 
-      position: relative;
+  position: relative;
 
-      min-width: 0;
-      min-height: 88px;
+  display: flex;
+  flex-direction: column;
 
-      padding:
-        6px
-        7px;
+  min-width: 0;
+  min-height: 88px;
 
-      overflow: hidden;
+  padding:
+    6px
+    7px;
 
-      background: #FFFFFF;
+  overflow: hidden;
 
-      cursor: pointer;
+  background: #FFFFFF;
 
-      border-right:
-        1px
-        solid
-        var(--border-light);
+  cursor: pointer;
 
-      border-bottom:
-        1px
-        solid
-        var(--border-light);
+  border-right:
+    1px
+    solid
+    var(--border-light);
 
-    }
+  border-bottom:
+    1px
+    solid
+    var(--border-light);
+
+}
 
 
     .calendar-day:nth-child(7n) {
@@ -822,12 +825,12 @@
 
 
     .calendar-event.deadline-event {
+  background: #FBF0EB;
+  color: #B55B42;
 
-      background: #FBF0EB;
-
-      color: #B55B42;
-
-    }
+  order: 99;
+  margin-top: auto;
+}
 
     /* =====================================================
    MULTI-DAY CALENDAR BARS
