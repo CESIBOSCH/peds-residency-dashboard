@@ -3649,6 +3649,199 @@ const eventLinkInput =
     'eventLinkInput'
   );
 
+    const eventDetailsView =
+  document.getElementById(
+    'eventDetailsView'
+  );
+
+
+const eventEditView =
+  document.getElementById(
+    'eventEditView'
+  );
+
+
+const eventDetailsTitle =
+  document.getElementById(
+    'eventDetailsTitle'
+  );
+
+
+const eventDetailsDate =
+  document.getElementById(
+    'eventDetailsDate'
+  );
+
+
+const eventDetailsTime =
+  document.getElementById(
+    'eventDetailsTime'
+  );
+
+
+const eventDetailsLocation =
+  document.getElementById(
+    'eventDetailsLocation'
+  );
+
+
+const eventDetailsLink =
+  document.getElementById(
+    'eventDetailsLink'
+  );
+
+
+const editEventButton =
+  document.getElementById(
+    'editEventButton'
+  );
+
+    let activeEventForModal = null;
+
+
+function showEventDetails(
+  event
+) {
+
+  activeEventForModal =
+    event;
+
+
+  eventDetailsView.style.display =
+    'block';
+
+  eventEditView.style.display =
+    'none';
+
+
+  eventDetailsTitle.textContent =
+    event.title || 'Calendar Event';
+
+
+  const startDate =
+    event.date
+      ? new Date(
+          event.date +
+          'T12:00:00'
+        )
+      : null;
+
+
+  const endDate =
+    event.endDate
+      ? new Date(
+          event.endDate +
+          'T12:00:00'
+        )
+      : null;
+
+
+  if (
+    startDate &&
+    endDate
+  ) {
+
+    eventDetailsDate.textContent =
+      `${startDate.toLocaleDateString()} – ${endDate.toLocaleDateString()}`;
+
+  } else if (
+    startDate
+  ) {
+
+    eventDetailsDate.textContent =
+      startDate.toLocaleDateString();
+
+  } else {
+
+    eventDetailsDate.textContent =
+      '';
+
+  }
+
+
+  if (
+    event.startTime ||
+    event.endTime
+  ) {
+
+    eventDetailsTime.textContent =
+      [
+        event.startTime,
+        event.endTime
+      ]
+        .filter(Boolean)
+        .join(' – ');
+
+  } else {
+
+    eventDetailsTime.textContent =
+      event.allDay
+        ? 'All-day event'
+        : '';
+
+  }
+
+
+  eventDetailsLocation.textContent =
+    event.location || '';
+
+
+  if (
+    event.link
+  ) {
+
+    eventDetailsLink.href =
+      event.link;
+
+    eventDetailsLink.style.display =
+      'inline-block';
+
+  } else {
+
+    eventDetailsLink.style.display =
+      'none';
+
+  }
+
+}
+
+    editEventButton
+  .addEventListener(
+    'click',
+    () => {
+
+      if (
+        !activeEventForModal
+      ) {
+
+        return;
+
+      }
+
+
+      eventDetailsView.style.display =
+        'none';
+
+      eventEditView.style.display =
+        'block';
+
+
+      updateEventFieldVisibility();
+
+
+      window.setTimeout(
+        () => {
+
+          eventTitleInput
+            .focus();
+
+        },
+        50
+      );
+
+    }
+  );
+
     function updateEventFieldVisibility() {
 
   const isAllDay =
@@ -3759,6 +3952,27 @@ eventLinkInput.value =
 
 
 updateEventFieldVisibility();
+
+      if (
+  event.id
+) {
+
+  showEventDetails(
+    event
+  );
+
+} else {
+
+  activeEventForModal =
+    null;
+
+  eventDetailsView.style.display =
+    'none';
+
+  eventEditView.style.display =
+    'block';
+
+}
 
 
       deleteEventButton.style.visibility =
