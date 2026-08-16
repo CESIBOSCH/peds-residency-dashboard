@@ -432,7 +432,15 @@
         #F0ECE6;
 
     }
+/* Remove divider lines around Location */
+.rotation-section.location-section {
+  border-top: none;
+  padding-top: 0;
+}
 
+.rotation-section.location-section + .rotation-section {
+  border-top: none;
+}
 
     .detail-label {
 
@@ -1541,34 +1549,23 @@
           <!-- LOCATION -->
 
 
-          <section class="rotation-section">
+          <section class="rotation-section location-section">
 
 
             <div class="section-label">
 
-              First Day / Location
+              Location
 
             </div>
 
 
             <div class="detail-name">
 
-              Levine Children's Hospital
+              Medical Center Plaza
 
             </div>
 
 
-            <div class="detail-text">
-
-              Medical Education Building, Suite 401
-              <br>
-
-              1000 Blythe Blvd
-              <br>
-
-              Charlotte, NC
-
-            </div>
 
 
           </section>
@@ -1607,29 +1604,14 @@
 
           <section class="rotation-section">
 
+  <a
+    href="#"
+    class="section-label detail-link"
+  >
+    Syllabus
+  </a>
 
-            <div class="section-label">
-
-              Syllabus
-
-            </div>
-
-
-            <!--
-              When you upload the PDF to GitHub,
-              replace href="#" below with its filename.
-            -->
-
-            <a
-              href="#"
-              class="detail-link"
-            >
-              Peds Heme/Onc Syllabus
-            </a>
-
-
-          </section>
-
+</section>
 
 
           <!-- TASKS -->
@@ -1637,71 +1619,27 @@
 
           <section class="rotation-section">
 
+  <div class="section-label">
+    Tasks / Assignments
+  </div>
 
-            <div class="section-label">
+  <label class="task-row">
 
-              Tasks / Assignments
+    <input
+      type="checkbox"
+      data-task-id="mid-rotation-feedback"
+    >
 
-            </div>
+    <a
+      href="#"
+      class="detail-link"
+    >
+      Mid-Rotation Feedback Form
+    </a>
 
+  </label>
 
-            <label class="task-row">
-
-              <input
-                type="checkbox"
-                data-task-id="journal-presentation"
-              >
-
-              <span>
-                15-minute journal article presentation
-              </span>
-
-            </label>
-
-
-            <label class="task-row">
-
-              <input
-                type="checkbox"
-                data-task-id="review-patients"
-              >
-
-              <span>
-                Review patient histories before clinic
-              </span>
-
-            </label>
-
-
-            <label class="task-row">
-
-              <input
-                type="checkbox"
-                data-task-id="evaluation-names"
-              >
-
-              <span>
-                Keep track of supervisors for evaluations
-              </span>
-
-            </label>
-
-
-            <label class="task-row">
-
-              <input
-                type="checkbox"
-                data-task-id="course-evaluation"
-              >
-
-              <span>
-                Complete end-of-course evaluation
-              </span>
-
-            </label>
-
-
-          </section>
+</section>
 
 
 
