@@ -340,11 +340,16 @@
     .primary-layout {
       display: grid;
 
+      /*
+        Slightly wider reference column = slightly narrower
+        calendar. The calendar rows are also taller below.
+      */
+
       grid-template-columns:
-        minmax(300px, 325px)
+        minmax(335px, 355px)
         minmax(0, 1fr);
 
-      gap: 24px;
+      gap: 26px;
 
       align-items: start;
     }
@@ -353,6 +358,63 @@
     .left-column,
     .right-column {
       min-width: 0;
+    }
+
+
+
+    /* =====================================================
+       SCHOOL LINKS
+    ===================================================== */
+
+    .school-utility {
+      margin-bottom: 13px;
+    }
+
+
+    .school-utility-links {
+      display: flex;
+      align-items: center;
+
+      flex-wrap: wrap;
+
+      gap: 8px 17px;
+
+      margin-top: 8px;
+    }
+
+
+    .school-utility-link {
+      position: relative;
+
+      color: var(--text-charcoal);
+
+      font-size: 11px;
+      font-weight: 600;
+
+      text-decoration: none;
+
+      transition:
+        color
+        0.15s
+        ease;
+    }
+
+
+    .school-utility-link:hover {
+      color: var(--accent-terracotta);
+    }
+
+
+    .school-utility-link:not(:last-child)::after {
+      content: "·";
+
+      position: absolute;
+
+      right: -11px;
+
+      color: #C8C4BD;
+
+      pointer-events: none;
     }
 
 
@@ -387,40 +449,6 @@
       color: var(--text-gray);
 
       font-size: 11px;
-    }
-
-
-    .current-rotation-links {
-      display: flex;
-
-      flex-wrap: wrap;
-
-      gap: 6px 12px;
-
-      margin-top: 13px;
-
-      padding-bottom: 1px;
-    }
-
-
-    .current-rotation-link {
-      color: var(--accent-sage);
-
-      font-size: 9.5px;
-      font-weight: 600;
-
-      text-decoration: none;
-
-      transition:
-        color
-        0.15s
-        ease;
-    }
-
-
-    .current-rotation-link:hover {
-      color: var(--accent-terracotta);
-      text-decoration: underline;
     }
 
 
@@ -837,10 +865,16 @@
       flex-direction: column;
 
       min-width: 0;
-      min-height: 92px;
+
+      /*
+        Increased from 92px so events have more
+        breathing room vertically.
+      */
+
+      min-height: 106px;
 
       padding:
-        6px
+        7px
         7px;
 
       overflow: visible;
@@ -897,7 +931,8 @@
 
 
     /* =====================================================
-       SINGLE DAY EVENTS
+       STANDARD SINGLE-DAY EVENTS
+       Soft sage pill
     ===================================================== */
 
     .calendar-event {
@@ -908,21 +943,23 @@
       margin-top: 5px;
 
       padding:
-        2px
-        4px;
+        3px
+        5px;
 
       overflow: hidden;
 
       border-radius: 4px;
 
-      background: #FAF7F3;
+      background: #EEF1EB;
 
-      color: var(--text-charcoal);
+      color: #697564;
 
       cursor: pointer;
 
-      font-size: 8px;
-      line-height: 1.25;
+      font-size: 7.5px;
+      font-weight: 550;
+
+      line-height: 1.2;
 
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -939,14 +976,15 @@
 
     .calendar-event:hover,
     .calendar-event.event-highlighted {
-      background: #EEE7E0;
-      color: #343736;
+      background: #DDE4D9;
+      color: #566151;
     }
 
 
 
     /* =====================================================
        DROP / ADD DEADLINES
+       Plain text — no highlight
     ===================================================== */
 
     .calendar-event.deadline-event {
@@ -955,14 +993,14 @@
       margin-top: auto;
 
       padding:
-        2px
-        4px;
+        1px
+        1px;
 
-      background: #EEF1EB;
+      background: transparent;
 
-      color: #6E786A;
+      color: #777D75;
 
-      border-radius: 4px;
+      border-radius: 0;
 
       font-size: 6.8px;
       font-weight: 600;
@@ -973,8 +1011,9 @@
 
     .calendar-event.deadline-event:hover,
     .calendar-event.deadline-event.event-highlighted {
-      background: #DDE4D9;
-      color: #5C6757;
+      background: transparent;
+
+      color: #777D75;
     }
 
 
@@ -1965,7 +2004,7 @@
 
       .primary-layout {
         grid-template-columns:
-          300px
+          320px
           minmax(0, 1fr);
       }
 
@@ -2030,7 +2069,7 @@
 
 
       .calendar-day {
-        min-height: 82px;
+        min-height: 94px;
 
         padding:
           5px
@@ -2152,6 +2191,52 @@
         <div class="left-column">
 
 
+          <!-- SCHOOL LINKS ABOVE CURRENT ROTATION -->
+
+          <section class="school-utility">
+
+            <div class="section-label">
+              School Links
+            </div>
+
+
+            <div class="school-utility-links">
+
+              <a
+                href="https://ahw-psweb-lx-01.medctr.ad.wfubmc.edu:8042/psp/cppro/?cmd=login"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="school-utility-link"
+              >
+                PeopleSoft
+              </a>
+
+
+              <a
+                href="https://wfusm.instructure.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="school-utility-link"
+              >
+                Canvas
+              </a>
+
+
+              <a
+                href="https://waketrack.wakehealth.edu/students/authenticated/dashboard"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="school-utility-link"
+              >
+                WakeTrack
+              </a>
+
+            </div>
+
+          </section>
+
+
+
           <article class="content-card rotation-card">
 
 
@@ -2167,42 +2252,6 @@
 
             <div class="rotation-dates">
               Block 6 · Aug 17, 2026 – Sep 13, 2026
-            </div>
-
-
-            <!-- SIMPLE QUICK LINKS -->
-
-            <div class="current-rotation-links">
-
-              <a
-                href="https://ahw-psweb-lx-01.medctr.ad.wfubmc.edu:8042/psp/cppro/?cmd=login"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="current-rotation-link"
-              >
-                PeopleSoft
-              </a>
-
-
-              <a
-                href="https://wfusm.instructure.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="current-rotation-link"
-              >
-                Canvas
-              </a>
-
-
-              <a
-                href="https://waketrack.wakehealth.edu/students/authenticated/dashboard"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="current-rotation-link"
-              >
-                WakeTrack
-              </a>
-
             </div>
 
 
@@ -2582,8 +2631,6 @@
 
 
 
-      <!-- VIEW MODE -->
-
       <div
         id="eventDetailsView"
         style="display:none;"
@@ -2708,8 +2755,6 @@
       </div>
 
 
-
-      <!-- EDIT MODE -->
 
       <div
         id="eventEditView"
@@ -2922,8 +2967,6 @@
         </div>
 
 
-
-        <!-- ATTACHMENTS -->
 
         <div class="event-edit-section">
 
@@ -6451,46 +6494,9 @@
       url
     ) {
 
-      const value =
-        String(
-          url || ''
-        )
-        .trim();
-
-
-      if (
-        !value
-      ) {
-
-        return '#';
-
-      }
-
-
-      if (
-        value.startsWith(
-          'http://'
-        ) ||
-        value.startsWith(
-          'https://'
-        ) ||
-        value.startsWith(
-          '/'
-        ) ||
-        value.startsWith(
-          './'
-        ) ||
-        value.startsWith(
-          '../'
-        )
-      ) {
-
-        return value;
-
-      }
-
-
-      return value;
+      return String(
+        url || ''
+      ).trim() || '#';
 
     }
 
