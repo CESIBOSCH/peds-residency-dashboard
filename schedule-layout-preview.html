@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4th Year Schedule – Layout Preview</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#FAF9F5}
+iframe{display:block;width:100%;height:100%;border:0;background:#FAF9F5}
+</style>
+</head>
+<body>
+<iframe id="scheduleFrame" src="schedule.html" title="4th Year Schedule Layout Preview"></iframe>
+<script>
+const frame=document.getElementById('scheduleFrame');
+frame.addEventListener('load',()=>{
+  const doc=frame.contentDocument;
+  if(!doc)return;
+
+  const style=doc.createElement('style');
+  style.textContent=`
+    /* Collapsed Current Rotation preview only */
+    .rotation{padding:18px 20px!important}
+    .rotation-head{align-items:flex-start!important}
+    .expand{
+      flex:0 0 auto!important;
+      width:auto!important;
+      min-width:0!important;
+      height:28px!important;
+      padding:0 10px!important;
+      margin:0!important;
+      border:1px solid var(--border)!important;
+      border-radius:7px!important;
+      background:#fff!important;
+      color:var(--muted)!important;
+      font-size:10px!important;
+      font-weight:500!important;
+      letter-spacing:0!important;
+      text-transform:none!important;
+      line-height:26px!important;
+      box-shadow:none!important;
+    }
+    .expand:hover{background:#FAF9F5!important;color:var(--terracotta)!important}
+
+    .rotation .label,
+    .rotation .priority-panel>.label,
+    .rotation .notes-priority>.label,
+    .rotation .encounters-secondary>.label{
+      color:var(--sage)!important;
+      font-size:10px!important;
+      font-weight:600!important;
+      letter-spacing:.14em!important;
+      text-transform:uppercase!important;
+    }
+
+    .rotation-reference{
+      margin-top:13px!important;
+      padding:10px 0!important;
+      display:block!important;
+      border-top:1px solid #F0ECE6!important;
+      border-bottom:1px solid #F0ECE6!important;
+    }
+    .reference-location{display:flex!important;align-items:baseline!important;gap:7px!important;margin:0 0 7px!important;min-width:0!important}
+    .reference-location .label{flex:none!important}
+    .reference-location .editable{margin:0!important;padding:0!important;font-size:11px!important;min-width:0!important}
+
+    .reference-contacts{display:block!important;margin:0!important}
+    .reference-contacts .contact{display:grid!important;grid-template-columns:auto minmax(0,1fr)!important;column-gap:7px!important;row-gap:1px!important;align-items:baseline!important;margin:5px 0 0!important;min-width:0!important}
+    .reference-contacts .role{grid-column:1/-1!important;font-size:8px!important;margin:0!important;padding:0!important}
+    .reference-contacts .name{grid-column:1!important;font-size:10.5px!important;margin:0!important;padding:0!important;white-space:nowrap!important}
+    .reference-contacts a{grid-column:2!important;margin:0!important;padding:0!important;font-size:10px!important;min-width:0!important;max-width:100%!important;overflow-wrap:anywhere!important;word-break:break-word!important;white-space:normal!important}
+    #alexisPhone{grid-column:2!important}
+
+    .reference-syllabus{margin-top:7px!important;display:flex!important;align-items:center!important;gap:4px!important}
+    .reference-syllabus a{font-size:10px!important}
+
+    .rotation-assignments{margin-top:14px!important;padding-top:0!important;border-top:0!important}
+    .priority-grid{display:block!important}
+    .priority-panel{margin-top:16px!important}
+    .notes-priority{margin-top:18px!important}
+    .encounters-secondary{margin-top:18px!important;padding-top:12px!important;border-top:1px solid #F0ECE6!important}
+
+    .notes-tools{display:none!important}
+    .notes{margin-top:7px!important;min-height:120px!important;font-size:12px!important}
+
+    .row input[type=text],.resource-item a{font-size:11px!important}
+    .add{font-size:10px!important}
+  `;
+  doc.head.appendChild(style);
+
+  const rotation=doc.querySelector('.rotation');
+  const head=rotation?.querySelector('.rotation-head');
+  const reference=rotation?.querySelector('.rotation-reference');
+  const assignments=rotation?.querySelector('.rotation-assignments');
+  const priorityGrid=rotation?.querySelector('.priority-grid');
+  const notes=rotation?.querySelector('.notes-priority');
+  const encounters=rotation?.querySelector('.encounters-secondary');
+
+  if(rotation&&head&&reference&&assignments&&priorityGrid&&notes&&encounters){
+    const panels=[...priorityGrid.querySelectorAll('.priority-panel')];
+    const concepts=panels.find(p=>p.textContent.includes('Concepts to Review'));
+    const resources=panels.find(p=>p.textContent.includes('Helpful Resources'));
+
+    rotation.insertBefore(reference,head.nextSibling);
+    rotation.insertBefore(assignments,reference.nextSibling);
+
+    priorityGrid.innerHTML='';
+    if(resources)priorityGrid.appendChild(resources);
+    if(concepts)priorityGrid.appendChild(concepts);
+    rotation.insertBefore(priorityGrid,assignments.nextSibling);
+    rotation.insertBefore(notes,priorityGrid.nextSibling);
+    rotation.insertBefore(encounters,notes.nextSibling);
+  }
+
+  // Preserve keyboard formatting in Notes even though visible buttons are hidden.
+  const notesBox=doc.getElementById('notes');
+  if(notesBox){
+    notesBox.addEventListener('keydown',e=>{
+      if((e.metaKey||e.ctrlKey)&&['b','i','u'].includes(e.key.toLowerCase())){
+        e.preventDefault();
+        doc.execCommand({b:'bold',i:'italic',u:'underline'}[e.key.toLowerCase()],false,null);
+        notesBox.dispatchEvent(new Event('input',{bubbles:true}));
+      }
+    });
+  }
+
+  // Make the Mid-Rotation Feedback assignment directly clickable.
+  const fixFeedbackLink=()=>{
+    [...doc.querySelectorAll('#assignments .row')].forEach(row=>{
+      const input=row.querySelector('input[type="text"]');
+      if(input&&input.value.trim()==='Mid-Rotation Feedback Form'){
+        input.style.cursor='pointer';
+        input.style.color='var(--text)';
+        input.title='Click to open Mid-Rotation Feedback Form';
+        input.onclick=e=>{
+          e.preventDefault();
+          e.stopPropagation();
+          window.open('MS4%20-%20Common%20Mid-Rotation%20Feedback%20Form%20%281%29.pdf','_blank');
+        };
+      }
+    });
+  };
+  fixFeedbackLink();
+  setTimeout(fixFeedbackLink,300);
+});
+</script>
+</body>
+</html>
