@@ -340,11 +340,6 @@
     .primary-layout {
       display: grid;
 
-      /*
-        Slightly wider reference column = slightly narrower
-        calendar. The calendar rows are also taller below.
-      */
-
       grid-template-columns:
         minmax(335px, 355px)
         minmax(0, 1fr);
@@ -363,11 +358,24 @@
 
 
     /* =====================================================
-       SCHOOL LINKS
+       UTILITY LINKS
     ===================================================== */
 
     .school-utility {
-      margin-bottom: 13px;
+      /*
+        Match the 18px inner padding of the Current Rotation
+        card so these line up with the card's CONTENT,
+        rather than its outer border.
+      */
+
+      padding:
+        0
+        18px;
+
+      margin:
+        1px
+        0
+        9px;
     }
 
 
@@ -378,8 +386,6 @@
       flex-wrap: wrap;
 
       gap: 8px 17px;
-
-      margin-top: 8px;
     }
 
 
@@ -425,14 +431,14 @@
 
     .rotation-card {
       padding:
-        17px
+        15px
         18px
-        18px;
+        15px;
     }
 
 
     .rotation-title {
-      margin-top: 11px;
+      margin-top: 8px;
 
       color: var(--accent-terracotta);
 
@@ -444,7 +450,7 @@
 
 
     .rotation-dates {
-      margin-top: 5px;
+      margin-top: 4px;
 
       color: var(--text-gray);
 
@@ -452,8 +458,14 @@
     }
 
 
+    /*
+      Reduced from 18px.
+      This is the main change eliminating the large
+      vertical gaps throughout the Current Rotation card.
+    */
+
     .rotation-section {
-      margin-top: 18px;
+      margin-top: 13px;
     }
 
 
@@ -469,7 +481,7 @@
 
 
     .detail-name {
-      margin-top: 4px;
+      margin-top: 3px;
 
       color: var(--text-charcoal);
 
@@ -479,12 +491,13 @@
 
 
     .detail-text {
-      margin-top: 4px;
+      margin-top: 3px;
 
       color: var(--text-charcoal);
 
       font-size: 11px;
-      line-height: 1.5;
+      font-weight: 400;
+      line-height: 1.45;
 
       white-space: pre-line;
     }
@@ -493,7 +506,7 @@
     .detail-link {
       display: inline-block;
 
-      margin-top: 3px;
+      margin-top: 2px;
 
       color: #2F3030;
 
@@ -536,7 +549,7 @@
 
 
     .contact-entry + .contact-entry {
-      margin-top: 12px;
+      margin-top: 8px;
     }
 
 
@@ -547,7 +560,7 @@
 
       gap: 8px;
 
-      margin-top: 7px;
+      margin-top: 5px;
 
       font-size: 11px;
       line-height: 1.4;
@@ -570,14 +583,14 @@
       display: flex;
       flex-direction: column;
 
-      gap: 8px;
+      gap: 6px;
 
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
 
     .encounter-card {
-      padding: 9px;
+      padding: 8px;
 
       border:
         1px
@@ -652,7 +665,7 @@
 
 
     .remove-encounter {
-      margin-top: 7px;
+      margin-top: 6px;
 
       padding: 0;
 
@@ -674,7 +687,7 @@
 
 
     .add-encounter-button {
-      margin-top: 8px;
+      margin-top: 6px;
 
       padding: 0;
 
@@ -699,9 +712,9 @@
     .rotation-notes {
       width: 100%;
 
-      min-height: 76px;
+      min-height: 60px;
 
-      margin-top: 8px;
+      margin-top: 6px;
 
       padding:
         8px
@@ -733,9 +746,9 @@
 
 
     .save-status {
-      min-height: 13px;
+      min-height: 8px;
 
-      margin-top: 3px;
+      margin-top: 2px;
 
       color: var(--accent-sage);
 
@@ -747,11 +760,6 @@
     /* =====================================================
        CALENDAR
     ===================================================== */
-
-    .calendar-heading {
-      margin-bottom: 8px;
-    }
-
 
     .calendar-card {
       overflow: hidden;
@@ -865,12 +873,6 @@
       flex-direction: column;
 
       min-width: 0;
-
-      /*
-        Increased from 92px so events have more
-        breathing room vertically.
-      */
-
       min-height: 106px;
 
       padding:
@@ -932,7 +934,6 @@
 
     /* =====================================================
        STANDARD SINGLE-DAY EVENTS
-       Soft sage pill
     ===================================================== */
 
     .calendar-event {
@@ -984,7 +985,6 @@
 
     /* =====================================================
        DROP / ADD DEADLINES
-       Plain text — no highlight
     ===================================================== */
 
     .calendar-event.deadline-event {
@@ -1012,7 +1012,6 @@
     .calendar-event.deadline-event:hover,
     .calendar-event.deadline-event.event-highlighted {
       background: transparent;
-
       color: #777D75;
     }
 
@@ -1296,8 +1295,7 @@
 
 
     .inline-editable:hover::after {
-      content:
-        " double-click to edit";
+      content: " double-click to edit";
 
       margin-left: 5px;
 
@@ -2191,14 +2189,9 @@
         <div class="left-column">
 
 
-          <!-- SCHOOL LINKS ABOVE CURRENT ROTATION -->
+          <!-- UTILITY LINKS -->
 
           <section class="school-utility">
-
-            <div class="section-label">
-              School Links
-            </div>
-
 
             <div class="school-utility-links">
 
@@ -2236,6 +2229,8 @@
           </section>
 
 
+
+          <!-- CURRENT ROTATION -->
 
           <article class="content-card rotation-card">
 
@@ -2286,7 +2281,7 @@
               <div class="contact-entry">
 
                 <div class="detail-label">
-                  Course Coordinator / First Day Contact
+                  Course Coordinator
                 </div>
 
                 <div class="detail-name">
@@ -2321,7 +2316,7 @@
                 Location
               </div>
 
-              <div class="detail-name">
+              <div class="detail-text">
                 Medical Center Plaza
               </div>
 
@@ -2478,10 +2473,7 @@
         <div class="right-column">
 
 
-          <div class="section-label calendar-heading">
-            Calendar
-          </div>
-
+          <!-- CALENDAR -->
 
           <section class="content-card calendar-card">
 
@@ -2545,6 +2537,8 @@
 
 
 
+          <!-- UPCOMING -->
+
           <section class="rotation-list-section">
 
             <div class="section-label">
@@ -2559,6 +2553,8 @@
           </section>
 
 
+
+          <!-- PAST -->
 
           <section class="rotation-list-section">
 
@@ -2630,6 +2626,8 @@
       </div>
 
 
+
+      <!-- VIEW MODE -->
 
       <div
         id="eventDetailsView"
@@ -2755,6 +2753,8 @@
       </div>
 
 
+
+      <!-- EDIT MODE -->
 
       <div
         id="eventEditView"
@@ -3134,7 +3134,7 @@
           "Aug 17 – Sep 13, 2026",
 
         contacts:
-          "Course Director: Dr. David Gass\nCourse Coordinator / First Day Contact: Alexis Miller",
+          "Course Director: Dr. David Gass\nCourse Coordinator: Alexis Miller",
 
         location:
           "Medical Center Plaza",
