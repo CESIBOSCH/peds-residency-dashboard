@@ -53,32 +53,57 @@ frame.addEventListener('load',()=>{
       text-transform:uppercase!important;
     }
 
+    /* Compact reference block — no separator rules */
     .rotation-reference{
-      margin-top:13px!important;
-      padding:10px 0!important;
+      margin-top:15px!important;
+      padding:0!important;
       display:block!important;
-      border-top:1px solid #F0ECE6!important;
-      border-bottom:1px solid #F0ECE6!important;
+      border:0!important;
     }
-    .reference-location{display:flex!important;align-items:baseline!important;gap:7px!important;margin:0 0 7px!important;min-width:0!important}
+    .reference-location{
+      display:flex!important;
+      align-items:baseline!important;
+      gap:7px!important;
+      margin:0 0 10px!important;
+      min-width:0!important;
+    }
     .reference-location .label{flex:none!important}
     .reference-location .editable{margin:0!important;padding:0!important;font-size:11px!important;min-width:0!important}
 
-    .reference-contacts{display:block!important;margin:0!important}
-    .reference-contacts .contact{display:grid!important;grid-template-columns:auto minmax(0,1fr)!important;column-gap:7px!important;row-gap:1px!important;align-items:baseline!important;margin:5px 0 0!important;min-width:0!important}
-    .reference-contacts .role{grid-column:1/-1!important;font-size:8px!important;margin:0!important;padding:0!important}
-    .reference-contacts .name{grid-column:1!important;font-size:10.5px!important;margin:0!important;padding:0!important;white-space:nowrap!important}
-    .reference-contacts a{grid-column:2!important;margin:0!important;padding:0!important;font-size:10px!important;min-width:0!important;max-width:100%!important;overflow-wrap:anywhere!important;word-break:break-word!important;white-space:normal!important}
-    #alexisPhone{grid-column:2!important}
+    .reference-contacts{
+      display:grid!important;
+      grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+      gap:12px!important;
+      margin:0!important;
+      align-items:start!important;
+    }
+    .reference-contacts .contact{display:block!important;margin:0!important;min-width:0!important}
+    .reference-contacts .role{font-size:8px!important;margin:0 0 3px!important;padding:0!important}
+    .reference-contacts .name{font-size:10.5px!important;margin:0 0 2px!important;padding:0!important;white-space:normal!important}
+    .reference-contacts a{
+      display:block!important;
+      margin:0!important;
+      padding:0!important;
+      font-size:9.5px!important;
+      line-height:1.35!important;
+      min-width:0!important;
+      max-width:100%!important;
+      overflow-wrap:anywhere!important;
+      word-break:break-word!important;
+      white-space:normal!important;
+    }
+    #alexisPhone{margin-top:2px!important}
 
-    .reference-syllabus{margin-top:7px!important;display:flex!important;align-items:center!important;gap:4px!important}
+    .reference-syllabus{margin-top:10px!important;display:flex!important;align-items:center!important;gap:0!important}
     .reference-syllabus a{font-size:10px!important}
+    #editSyllabus{display:none!important}
 
-    .rotation-assignments{margin-top:14px!important;padding-top:0!important;border-top:0!important}
+    .rotation-assignments{margin-top:18px!important;padding-top:0!important;border:0!important}
     .priority-grid{display:block!important}
-    .priority-panel{margin-top:16px!important}
-    .notes-priority{margin-top:18px!important}
-    .encounters-secondary{margin-top:18px!important;padding-top:12px!important;border-top:1px solid #F0ECE6!important}
+    .priority-panel{margin-top:20px!important}
+    .priority-panel+ .priority-panel{margin-top:21px!important}
+    .notes-priority{margin-top:22px!important}
+    .encounters-secondary{margin-top:22px!important;padding-top:0!important;border:0!important}
 
     .notes-tools{display:none!important}
     .notes{margin-top:7px!important;min-height:120px!important;font-size:12px!important}
