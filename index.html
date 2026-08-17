@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
   <meta charset="UTF-8">
 
   <meta
@@ -14,11 +13,8 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
 
-
   <style>
-
     :root {
-
       --bg-app: #FAF9F5;
       --bg-surface: #FFFFFF;
 
@@ -32,32 +28,21 @@
       --soft-terracotta: #FBF4F1;
 
       --border-light: #E5E0D8;
-
     }
-
 
     * {
       box-sizing: border-box;
     }
 
-
     html,
     body {
-
       margin: 0;
-
       min-height: 100%;
-
     }
 
-
     body {
-
-      background:
-        var(--bg-app);
-
-      color:
-        var(--text-charcoal);
+      background: var(--bg-app);
+      color: var(--text-charcoal);
 
       font-family:
         -apple-system,
@@ -65,28 +50,22 @@
         "Segoe UI",
         Roboto,
         sans-serif;
-
     }
-
 
     button {
       font: inherit;
     }
-
 
     a {
       color: inherit;
     }
 
 
-
     /* =========================================
-       COLLAPSIBLE LEFT NAVIGATION
-       UNCHANGED
+       LEFT NAVIGATION
     ========================================= */
 
     .left-navigation {
-
       position: fixed;
 
       top: 0;
@@ -108,19 +87,13 @@
         width
         0.22s
         ease;
-
     }
-
 
     .left-navigation.open {
-
       width: 245px;
-
     }
 
-
     .nav-top {
-
       display: flex;
 
       align-items: center;
@@ -128,12 +101,9 @@
       gap: 15px;
 
       white-space: nowrap;
-
     }
 
-
     .menu-button {
-
       width: 42px;
       height: 42px;
 
@@ -159,23 +129,17 @@
       font-size: 24px;
 
       line-height: 1;
-
     }
 
-
     .menu-button:hover {
-
       background:
         #F5F2EC;
 
       color:
         var(--accent-terracotta);
-
     }
 
-
     .nav-brand {
-
       opacity: 0;
 
       pointer-events: none;
@@ -197,20 +161,14 @@
         opacity
         0.15s
         ease;
-
     }
-
 
     .left-navigation.open
     .nav-brand {
-
       opacity: 1;
-
     }
 
-
     .nav-links {
-
       margin-top: 27px;
 
       opacity: 0;
@@ -227,25 +185,19 @@
         transform
         0.18s
         ease;
-
     }
-
 
     .left-navigation.open
     .nav-links {
-
       opacity: 1;
 
       pointer-events: auto;
 
       transform:
         translateX(0);
-
     }
 
-
     .menu-link {
-
       display: block;
 
       width: max-content;
@@ -271,27 +223,19 @@
         color
         0.15s
         ease;
-
     }
-
 
     .menu-link:hover {
-
       color:
         var(--accent-terracotta);
-
     }
 
-
     .menu-link.active {
-
       color:
         var(--accent-terracotta);
 
       font-weight: 600;
-
     }
-
 
 
     /* =========================================
@@ -299,7 +243,6 @@
     ========================================= */
 
     .page-shell {
-
       margin-left: 88px;
 
       padding:
@@ -311,20 +254,14 @@
         margin-left
         0.22s
         ease;
-
     }
-
 
     body.nav-open
     .page-shell {
-
       margin-left: 245px;
-
     }
 
-
     .page-content {
-
       width: 100%;
 
       max-width: 1320px;
@@ -332,12 +269,9 @@
       margin:
         0
         auto;
-
     }
 
-
     .page-title {
-
       margin:
         4px
         0
@@ -359,12 +293,9 @@
       text-transform: uppercase;
 
       white-space: nowrap;
-
     }
 
-
     .section-label {
-
       color:
         var(--accent-sage);
 
@@ -375,12 +306,9 @@
       letter-spacing: 0.16em;
 
       text-transform: uppercase;
-
     }
 
-
     .card {
-
       background:
         var(--bg-surface);
 
@@ -390,17 +318,14 @@
         var(--border-light);
 
       border-radius: 12px;
-
     }
 
 
-
     /* =========================================
-       MAIN HOME LAYOUT
+       HOME LAYOUT
     ========================================= */
 
     .home-layout {
-
       display: grid;
 
       grid-template-columns:
@@ -410,27 +335,19 @@
       gap: 22px;
 
       align-items: start;
-
     }
-
 
     .home-main {
-
       min-width: 0;
-
     }
 
-
     .home-sidebar {
-
       display: flex;
 
       flex-direction: column;
 
       gap: 14px;
-
     }
-
 
 
     /* =========================================
@@ -438,14 +355,10 @@
     ========================================= */
 
     .quick-section {
-
       margin-bottom: 16px;
-
     }
 
-
     .quick-grid {
-
       display: grid;
 
       grid-template-columns:
@@ -457,12 +370,9 @@
       gap: 9px;
 
       margin-top: 9px;
-
     }
 
-
     .quick-link {
-
       min-height: 116px;
 
       display: flex;
@@ -503,12 +413,9 @@
         box-shadow
         0.15s
         ease;
-
     }
 
-
     .quick-link:hover {
-
       transform:
         translateY(-1px);
 
@@ -525,13 +432,10 @@
           50,
           0.05
         );
-
     }
-
 
     .resource-icon,
     .atrium-tree {
-
       width: 42px;
       height: 42px;
 
@@ -553,34 +457,25 @@
         #71806C;
 
       overflow: hidden;
-
     }
 
-
     .resource-icon {
-
       font-size: 12px;
 
       font-weight: 700;
 
       line-height: 1;
-
     }
 
-
     .resource-icon svg {
-
       width: 22px;
       height: 22px;
 
       stroke:
         #71806C;
-
     }
 
-
     .logo-epic {
-
       font-size: 11px;
 
       font-weight: 800;
@@ -588,12 +483,9 @@
       font-style: italic;
 
       letter-spacing: -0.05em;
-
     }
 
-
     .logo-oe {
-
       font-family:
         Georgia,
         serif;
@@ -603,9 +495,18 @@
       font-weight: 500;
 
       letter-spacing: -0.07em;
-
     }
 
+    .quick-title {
+      color:
+        var(--text-charcoal);
+
+      font-size: 11px;
+
+      font-weight: 650;
+
+      line-height: 1.25;
+    }
 
 
     /* =========================================
@@ -613,17 +514,13 @@
     ========================================= */
 
     .canvas-logo {
-
       position: relative;
 
       width: 27px;
       height: 27px;
-
     }
 
-
     .canvas-dot {
-
       position: absolute;
 
       left: 50%;
@@ -646,52 +543,41 @@
       transform-origin:
         2.5px
         2.5px;
-
     }
-
 
     .canvas-dot:nth-child(1) {
       transform: rotate(0deg) translateY(-10px);
     }
 
-
     .canvas-dot:nth-child(2) {
       transform: rotate(45deg) translateY(-10px);
     }
-
 
     .canvas-dot:nth-child(3) {
       transform: rotate(90deg) translateY(-10px);
     }
 
-
     .canvas-dot:nth-child(4) {
       transform: rotate(135deg) translateY(-10px);
     }
-
 
     .canvas-dot:nth-child(5) {
       transform: rotate(180deg) translateY(-10px);
     }
 
-
     .canvas-dot:nth-child(6) {
       transform: rotate(225deg) translateY(-10px);
     }
-
 
     .canvas-dot:nth-child(7) {
       transform: rotate(270deg) translateY(-10px);
     }
 
-
     .canvas-dot:nth-child(8) {
       transform: rotate(315deg) translateY(-10px);
     }
 
-
     .canvas-center {
-
       position: absolute;
 
       left: 50%;
@@ -712,12 +598,9 @@
         #71806C;
 
       border-radius: 50%;
-
     }
 
-
     .atrium-tree svg {
-
       width: 30px;
       height: 30px;
 
@@ -731,23 +614,7 @@
       stroke-linecap: round;
 
       stroke-linejoin: round;
-
     }
-
-
-    .quick-title {
-
-      color:
-        var(--text-charcoal);
-
-      font-size: 11px;
-
-      font-weight: 650;
-
-      line-height: 1.25;
-
-    }
-
 
 
     /* =========================================
@@ -755,18 +622,14 @@
     ========================================= */
 
     .rotation-card {
-
       padding:
         18px
         20px;
 
       margin-top: 15px;
-
     }
 
-
     .rotation-layout {
-
       display: grid;
 
       grid-template-columns:
@@ -785,19 +648,13 @@
       gap: 0;
 
       margin-top: 14px;
-
     }
-
 
     .rotation-primary {
-
       padding-right: 20px;
-
     }
 
-
     .rotation-column {
-
       padding:
         0
         18px;
@@ -806,36 +663,27 @@
         1px
         solid
         var(--border-light);
-
     }
 
-
     .rotation-title {
-
       color:
         var(--accent-terracotta);
 
       font-size: 20px;
 
       font-weight: 650;
-
     }
 
-
     .rotation-dates {
-
       margin-top: 5px;
 
       color:
         var(--text-charcoal);
 
       font-size: 11px;
-
     }
 
-
     .detail-heading {
-
       margin-bottom: 6px;
 
       color:
@@ -848,24 +696,18 @@
       letter-spacing: 0.08em;
 
       text-transform: uppercase;
-
     }
 
-
     .detail-value {
-
       color:
         var(--text-charcoal);
 
       font-size: 10px;
 
       line-height: 1.55;
-
     }
 
-
     .rotation-actions {
-
       display: flex;
 
       justify-content: flex-end;
@@ -875,12 +717,9 @@
       gap: 22px;
 
       margin-top: 14px;
-
     }
 
-
     .rotation-actions a {
-
       color:
         var(--accent-terracotta);
 
@@ -889,18 +728,14 @@
       font-size: 10px;
 
       font-weight: 550;
-
     }
 
 
-
     /* =========================================
-       LOWER LEFT ROW
-       CHAOS + IT SUPPORT
+       LOWER LEFT
     ========================================= */
 
     .lower-left-row {
-
       display: grid;
 
       grid-template-columns:
@@ -910,9 +745,7 @@
       gap: 14px;
 
       margin-top: 14px;
-
     }
-
 
 
     /* =========================================
@@ -920,7 +753,6 @@
     ========================================= */
 
     .chaos-card {
-
       position: relative;
 
       min-height: 112px;
@@ -940,12 +772,9 @@
         18px;
 
       overflow: hidden;
-
     }
 
-
     .chaos-creature {
-
       height: 82px;
 
       display: flex;
@@ -962,12 +791,9 @@
       filter:
         saturate(0.72)
         sepia(0.08);
-
     }
 
-
     .chaos-label {
-
       margin-bottom: 7px;
 
       color:
@@ -980,12 +806,9 @@
       letter-spacing: 0.18em;
 
       text-transform: uppercase;
-
     }
 
-
     .chaos-message {
-
       max-width: 470px;
 
       color:
@@ -1001,12 +824,9 @@
       font-style: italic;
 
       line-height: 1.45;
-
     }
 
-
     .chaos-name {
-
       margin-top: 7px;
 
       color:
@@ -1015,12 +835,9 @@
       font-size: 9px;
 
       font-weight: 600;
-
     }
 
-
     .chaos-sparkle {
-
       position: absolute;
 
       color:
@@ -1029,25 +846,17 @@
       opacity: 0.75;
 
       font-size: 12px;
-
     }
-
 
     .sparkle-one {
-
       top: 16px;
       left: 25px;
-
     }
-
 
     .sparkle-two {
-
       bottom: 17px;
       left: 92px;
-
     }
-
 
 
     /* =========================================
@@ -1055,16 +864,12 @@
     ========================================= */
 
     .support-card {
-
       padding:
         17px
         18px;
-
     }
 
-
     .support-content {
-
       display: flex;
 
       flex-direction: column;
@@ -1077,23 +882,17 @@
         var(--text-gray);
 
       font-size: 10px;
-
     }
 
-
     .support-item {
-
       display: flex;
 
       align-items: center;
 
       gap: 9px;
-
     }
 
-
     .support-icon {
-
       width: 28px;
       height: 28px;
 
@@ -1111,20 +910,15 @@
 
       color:
         #71806C;
-
     }
 
-
     .support-icon svg {
-
       width: 15px;
       height: 15px;
 
       stroke:
         #71806C;
-
     }
-
 
 
     /* =========================================
@@ -1132,17 +926,13 @@
     ========================================= */
 
     .calendar-card {
-
       padding:
         18px
         18px
         16px;
-
     }
 
-
     .calendar-header {
-
       display: flex;
 
       align-items: center;
@@ -1151,32 +941,22 @@
       gap: 10px;
 
       margin-top: 9px;
-
       margin-bottom: 13px;
-
     }
 
-
     .calendar-month {
-
       font-size: 14px;
 
       font-weight: 650;
-
     }
 
-
     .calendar-controls {
-
       display: flex;
 
       gap: 5px;
-
     }
 
-
     .calendar-button {
-
       min-width: 30px;
 
       height: 29px;
@@ -1208,21 +988,15 @@
       font-size: 11px;
 
       text-decoration: none;
-
     }
-
 
     .calendar-button:hover {
-
       background:
         var(--bg-app);
-
     }
-
 
     .calendar-weekdays,
     .calendar-grid {
-
       display: grid;
 
       grid-template-columns:
@@ -1230,12 +1004,9 @@
           7,
           1fr
         );
-
     }
 
-
     .calendar-weekday {
-
       padding:
         4px
         0
@@ -1251,12 +1022,9 @@
       font-weight: 650;
 
       letter-spacing: 0.07em;
-
     }
 
-
     .mini-day {
-
       position: relative;
 
       height: 28px;
@@ -1270,20 +1038,14 @@
         var(--text-charcoal);
 
       font-size: 10px;
-
     }
-
 
     .mini-day.muted {
-
       color:
         #A6ADB7;
-
     }
 
-
     .mini-day.today {
-
       width: 25px;
       height: 25px;
 
@@ -1298,12 +1060,9 @@
         white;
 
       font-weight: 650;
-
     }
 
-
     .mini-day.has-event::after {
-
       content: "";
 
       position: absolute;
@@ -1317,12 +1076,14 @@
 
       background:
         var(--accent-terracotta);
-
     }
 
+    .mini-day.today.has-event::after {
+      background:
+        white;
+    }
 
     .calendar-link {
-
       display: inline-block;
 
       margin-top: 11px;
@@ -1335,9 +1096,7 @@
       font-size: 11px;
 
       font-weight: 550;
-
     }
-
 
 
     /* =========================================
@@ -1345,16 +1104,12 @@
     ========================================= */
 
     .week-card {
-
       padding:
         18px
         20px;
-
     }
 
-
     .week-row {
-
       display: grid;
 
       grid-template-columns:
@@ -1371,19 +1126,13 @@
         1px
         solid
         var(--border-light);
-
     }
-
 
     .week-row:last-of-type {
-
       border-bottom: 0;
-
     }
 
-
     .week-date {
-
       color:
         var(--accent-sage);
 
@@ -1394,32 +1143,24 @@
       line-height: 1.45;
 
       text-transform: uppercase;
-
     }
 
-
     .week-event-title {
-
       font-size: 11px;
 
       font-weight: 650;
 
       line-height: 1.4;
-
     }
 
-
     .week-event-detail {
-
       margin-top: 3px;
 
       color:
         var(--text-gray);
 
       font-size: 10px;
-
     }
-
 
 
     /* =========================================
@@ -1431,188 +1172,135 @@
     ) {
 
       .quick-grid {
-
         grid-template-columns:
           repeat(
             4,
             minmax(0, 1fr)
           );
-
       }
 
     }
-
 
     @media (
       max-width: 1000px
     ) {
 
       .home-layout {
-
         grid-template-columns:
           1fr;
-
       }
 
-
       .home-sidebar {
-
         display: grid;
 
         grid-template-columns:
           1fr
           1fr;
-
       }
 
-
       .rotation-layout {
-
         grid-template-columns:
           1fr
           1fr;
-
       }
 
-
       .rotation-column {
-
         border-left: 0;
 
         padding:
           10px
           0;
-
       }
 
     }
-
 
     @media (
       max-width: 760px
     ) {
 
       .left-navigation {
-
         width: 68px;
 
         padding:
           18px
           12px;
-
       }
-
 
       .left-navigation.open {
-
         width: 225px;
-
       }
 
-
       .page-shell {
-
         margin-left: 68px;
 
         padding:
           18px
           16px
           40px;
-
       }
-
 
       body.nav-open
       .page-shell {
-
         margin-left: 68px;
-
       }
 
-
       .quick-grid {
-
         grid-template-columns:
           repeat(
             2,
             minmax(0, 1fr)
           );
-
       }
-
 
       .home-sidebar {
-
         grid-template-columns:
           1fr;
-
       }
-
 
       .rotation-layout {
-
         grid-template-columns:
           1fr;
-
       }
 
-
       .rotation-column {
-
         border-top:
           1px
           solid
           var(--border-light);
-
       }
 
-
       .lower-left-row {
-
         grid-template-columns:
           1fr;
-
       }
 
     }
-
 
     @media (
       max-width: 480px
     ) {
 
       .quick-grid {
-
         grid-template-columns:
           1fr;
-
       }
 
-
       .chaos-card {
-
         grid-template-columns:
           78px
           minmax(0, 1fr);
-
       }
 
-
       .chaos-creature {
-
         font-size: 46px;
-
       }
 
     }
-
   </style>
-
 </head>
 
 
 <body>
-
 
   <!-- =========================================
        NAVIGATION
@@ -1632,7 +1320,6 @@
       >
         ☰
       </button>
-
 
       <a
         href="index.html"
@@ -1686,7 +1373,6 @@
   </aside>
 
 
-
   <!-- =========================================
        MAIN PAGE
   ========================================== -->
@@ -1694,7 +1380,6 @@
   <main class="page-shell">
 
     <div class="page-content">
-
 
       <h1 class="page-title">
         Home Stretch
@@ -1739,7 +1424,6 @@
                     fill="none"
                     stroke-width="1.8"
                   >
-
                     <rect
                       x="3"
                       y="5"
@@ -1751,18 +1435,15 @@
                     <path
                       d="M4 7l8 6 8-6"
                     ></path>
-
                   </svg>
 
                 </div>
-
 
                 <div class="quick-title">
                   Outlook
                 </div>
 
               </a>
-
 
 
               <!-- Epic -->
@@ -1783,13 +1464,11 @@
                   Epic
                 </div>
 
-
                 <div class="quick-title">
                   Epic
                 </div>
 
               </a>
-
 
 
               <!-- Canvas -->
@@ -1804,7 +1483,6 @@
                 <div class="resource-icon">
 
                   <div class="canvas-logo">
-
                     <span class="canvas-dot"></span>
                     <span class="canvas-dot"></span>
                     <span class="canvas-dot"></span>
@@ -1815,18 +1493,15 @@
                     <span class="canvas-dot"></span>
 
                     <span class="canvas-center"></span>
-
                   </div>
 
                 </div>
-
 
                 <div class="quick-title">
                   Canvas
                 </div>
 
               </a>
-
 
 
               <!-- OpenEvidence -->
@@ -1847,13 +1522,11 @@
                   OE
                 </div>
 
-
                 <div class="quick-title">
                   OpenEvidence
                 </div>
 
               </a>
-
 
 
               <!-- MDCalc -->
@@ -1904,13 +1577,11 @@
 
                 </div>
 
-
                 <div class="quick-title">
                   MDCalc
                 </div>
 
               </a>
-
 
 
               <!-- PeopleSoft -->
@@ -1961,13 +1632,11 @@
 
                 </div>
 
-
                 <div class="quick-title">
                   PeopleSoft
                 </div>
 
               </a>
-
 
 
               <!-- LiveWELL Care -->
@@ -2005,21 +1674,20 @@
 
                 </div>
 
-
                 <div class="quick-title">
                   LiveWELL Care
                 </div>
 
               </a>
 
-
             </div>
 
           </section>
 
 
-
-          <!-- Current Rotation -->
+          <!-- =====================================
+               CURRENT ROTATION
+          ====================================== -->
 
           <section class="card rotation-card">
 
@@ -2030,15 +1698,20 @@
 
             <div class="rotation-layout">
 
-
               <div class="rotation-primary">
 
-                <div class="rotation-title">
-                  FM AI
+                <div
+                  id="currentRotationTitle"
+                  class="rotation-title"
+                >
+                  Loading…
                 </div>
 
-                <div class="rotation-dates">
-                  Through August 16, 2026
+                <div
+                  id="currentRotationDates"
+                  class="rotation-dates"
+                >
+                  Checking schedule…
                 </div>
 
               </div>
@@ -2050,14 +1723,11 @@
                   Next Rotation
                 </div>
 
-                <div class="detail-value">
-
-                  Pediatrics Hematology / Oncology
-
-                  <br>
-
-                  Begins August 17
-
+                <div
+                  id="nextRotation"
+                  class="detail-value"
+                >
+                  —
                 </div>
 
               </div>
@@ -2065,18 +1735,18 @@
 
               <div class="rotation-column">
 
-                <div class="detail-heading">
-                  Next Known Contact
+                <div
+                  id="contactHeading"
+                  class="detail-heading"
+                >
+                  Current Contact
                 </div>
 
-                <div class="detail-value">
-
-                  Dr. David Gass
-
-                  <br>
-
-                  Course Director
-
+                <div
+                  id="currentRotationContact"
+                  class="detail-value"
+                >
+                  —
                 </div>
 
               </div>
@@ -2084,22 +1754,21 @@
 
               <div class="rotation-column">
 
-                <div class="detail-heading">
-                  Next Location
+                <div
+                  id="locationHeading"
+                  class="detail-heading"
+                >
+                  Current Location
                 </div>
 
-                <div class="detail-value">
-
-                  Medical Center Plaza
-
-                  <br>
-
-                  8:00 AM–5:00 PM
-
+                <div
+                  id="currentRotationLocation"
+                  class="detail-value"
+                >
+                  —
                 </div>
 
               </div>
-
 
             </div>
 
@@ -2111,10 +1780,13 @@
               </a>
 
               <a
-                href="4PED32 - Pediatric Hematology-Oncology Syllabus 2026.2027Final.pdf"
+                id="currentRotationSyllabus"
+                href="#"
                 target="_blank"
+                rel="noopener noreferrer"
+                hidden
               >
-                Next rotation syllabus →
+                Rotation syllabus →
               </a>
 
             </div>
@@ -2122,8 +1794,9 @@
           </section>
 
 
-
-          <!-- Chaos Card + IT Support -->
+          <!-- =====================================
+               CHAOS + IT SUPPORT
+          ====================================== -->
 
           <div class="lower-left-row">
 
@@ -2185,7 +1858,6 @@
             </section>
 
 
-
             <!-- IT Support -->
 
             <section class="card support-card">
@@ -2197,7 +1869,6 @@
 
               <div class="support-content">
 
-
                 <div class="support-item">
 
                   <div class="support-icon">
@@ -2207,7 +1878,6 @@
                       fill="none"
                       stroke-width="1.8"
                     >
-
                       <path
                         d="
                           M5 4
@@ -2220,7 +1890,6 @@
                           3 3
                         "
                       ></path>
-
                     </svg>
 
                   </div>
@@ -2264,17 +1933,13 @@
 
                 </div>
 
-
               </div>
 
             </section>
 
-
           </div>
 
-
         </div>
-
 
 
         <!-- =====================================
@@ -2295,30 +1960,37 @@
 
             <div class="calendar-header">
 
-              <div class="calendar-month">
-                August 2026
+              <div
+                id="miniCalendarMonth"
+                class="calendar-month"
+              >
               </div>
 
 
               <div class="calendar-controls">
 
                 <button
+                  id="miniCalendarPrev"
                   class="calendar-button"
                   type="button"
+                  aria-label="Previous month"
                 >
                   ‹
                 </button>
 
-                <a
-                  href="schedule.html"
-                  class="calendar-button"
-                >
-                  Today
-                </a>
-
                 <button
+                  id="miniCalendarToday"
                   class="calendar-button"
                   type="button"
+                >
+                  Today
+                </button>
+
+                <button
+                  id="miniCalendarNext"
+                  class="calendar-button"
+                  type="button"
+                  aria-label="Next month"
                 >
                   ›
                 </button>
@@ -2341,56 +2013,10 @@
             </div>
 
 
-            <div class="calendar-grid">
-
-              <div class="mini-day muted">26</div>
-              <div class="mini-day muted">27</div>
-              <div class="mini-day muted">28</div>
-              <div class="mini-day muted">29</div>
-              <div class="mini-day muted">30</div>
-              <div class="mini-day muted">31</div>
-              <div class="mini-day">1</div>
-
-              <div class="mini-day">2</div>
-              <div class="mini-day">3</div>
-              <div class="mini-day">4</div>
-              <div class="mini-day">5</div>
-              <div class="mini-day">6</div>
-              <div class="mini-day">7</div>
-              <div class="mini-day">8</div>
-
-              <div class="mini-day">9</div>
-              <div class="mini-day">10</div>
-              <div class="mini-day">11</div>
-              <div class="mini-day">12</div>
-              <div class="mini-day">13</div>
-              <div class="mini-day">14</div>
-              <div class="mini-day">15</div>
-
-              <div class="mini-day today">16</div>
-              <div class="mini-day has-event">17</div>
-              <div class="mini-day">18</div>
-              <div class="mini-day">19</div>
-              <div class="mini-day">20</div>
-              <div class="mini-day">21</div>
-              <div class="mini-day">22</div>
-
-              <div class="mini-day">23</div>
-              <div class="mini-day">24</div>
-              <div class="mini-day">25</div>
-              <div class="mini-day has-event">26</div>
-              <div class="mini-day">27</div>
-              <div class="mini-day">28</div>
-              <div class="mini-day">29</div>
-
-              <div class="mini-day">30</div>
-              <div class="mini-day">31</div>
-              <div class="mini-day muted">1</div>
-              <div class="mini-day muted">2</div>
-              <div class="mini-day muted">3</div>
-              <div class="mini-day muted">4</div>
-              <div class="mini-day muted">5</div>
-
+            <div
+              id="miniCalendarGrid"
+              class="calendar-grid"
+            >
             </div>
 
 
@@ -2404,7 +2030,6 @@
           </div>
 
 
-
           <!-- Coming Up -->
 
           <div class="card week-card">
@@ -2414,83 +2039,72 @@
             </div>
 
 
-            <div class="week-row">
+            <div id="comingUpList">
 
-              <div class="week-date">
+              <div class="week-row">
 
-                Mon
-
-                <br>
-
-                Aug 17
-
-              </div>
-
-
-              <div>
-
-                <div class="week-event-title">
-                  Pediatrics Hematology / Oncology begins
+                <div class="week-date">
+                  MON
+                  <br>
+                  AUG 17
                 </div>
 
-                <div class="week-event-detail">
-                  Block 6
-                </div>
+                <div>
 
-              </div>
+                  <div class="week-event-title">
+                    Pediatrics Hematology / Oncology begins
+                  </div>
 
-            </div>
+                  <div class="week-event-detail">
+                    Block 6
+                  </div>
 
-
-            <div class="week-row">
-
-              <div class="week-date">
-
-                Mon
-
-                <br>
-
-                Aug 17
-
-              </div>
-
-
-              <div>
-
-                <div class="week-event-title">
-                  Meeting with Dr. Gass
-                </div>
-
-                <div class="week-event-detail">
-                  8:30 AM
                 </div>
 
               </div>
 
-            </div>
 
+              <div class="week-row">
 
-            <div class="week-row">
+                <div class="week-date">
+                  MON
+                  <br>
+                  AUG 17
+                </div>
 
-              <div class="week-date">
+                <div>
 
-                Mon
+                  <div class="week-event-title">
+                    Meeting with Dr. Gass
+                  </div>
 
-                <br>
+                  <div class="week-event-detail">
+                    8:30 AM
+                  </div>
 
-                Aug 17
+                </div>
 
               </div>
 
 
-              <div>
+              <div class="week-row">
 
-                <div class="week-event-title">
-                  Block 7 Drop/Add Deadline
+                <div class="week-date">
+                  MON
+                  <br>
+                  AUG 17
                 </div>
 
-                <div class="week-event-detail">
-                  Academic deadline
+                <div>
+
+                  <div class="week-event-title">
+                    Block 7 Drop/Add Deadline
+                  </div>
+
+                  <div class="week-event-detail">
+                    Academic deadline
+                  </div>
+
                 </div>
 
               </div>
@@ -2507,17 +2121,13 @@
 
           </div>
 
-
         </aside>
 
-
       </div>
-
 
     </div>
 
   </main>
-
 
 
   <!-- =========================================
@@ -2525,6 +2135,10 @@
   ========================================== -->
 
   <script>
+
+    /* =========================================
+       NAVIGATION
+    ========================================= */
 
     const leftNavigation =
       document.getElementById(
@@ -2587,107 +2201,295 @@
       );
 
 
+    /* =========================================
+       DATE HELPERS
+    ========================================= */
+
+    function parseLocalDate(
+      dateString
+    ) {
+
+      const [
+        year,
+        month,
+        day
+      ] =
+        dateString
+          .split('-')
+          .map(
+            Number
+          );
+
+
+      return new Date(
+        year,
+        month - 1,
+        day
+      );
+
+    }
+
+
+    function startOfDay(
+      date
+    ) {
+
+      return new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+      );
+
+    }
+
+
+    function dateKey(
+      date
+    ) {
+
+      const year =
+        date.getFullYear();
+
+
+      const month =
+        String(
+          date.getMonth() + 1
+        )
+          .padStart(
+            2,
+            '0'
+          );
+
+
+      const day =
+        String(
+          date.getDate()
+        )
+          .padStart(
+            2,
+            '0'
+          );
+
+
+      return `${year}-${month}-${day}`;
+
+    }
+
+
+    function sameDate(
+      first,
+      second
+    ) {
+
+      return (
+        first.getFullYear() ===
+          second.getFullYear() &&
+        first.getMonth() ===
+          second.getMonth() &&
+        first.getDate() ===
+          second.getDate()
+      );
+
+    }
+
+
+    function formatLongDate(
+      date
+    ) {
+
+      return date
+        .toLocaleDateString(
+          'en-US',
+          {
+            month:
+              'long',
+
+            day:
+              'numeric',
+
+            year:
+              'numeric'
+          }
+        );
+
+    }
+
+
+    function formatShortDate(
+      date
+    ) {
+
+      return date
+        .toLocaleDateString(
+          'en-US',
+          {
+            month:
+              'long',
+
+            day:
+              'numeric'
+          }
+        );
+
+    }
+
 
     /* =========================================
-       DAILY CHAOS CARD
+       DAILY CHAOS
     ========================================= */
 
     const chaosCards = [
 
       {
-        creature: '🦆',
-        name: 'Administrative Duck',
+        creature:
+          '🦆',
+
+        name:
+          'Administrative Duck',
+
         message:
           'Lists? Check. Plans? Questionable. Vibes? Unbothered.'
       },
 
       {
-        creature: '🦝',
-        name: 'Overcaffeinated Raccoon',
+        creature:
+          '🦝',
+
+        name:
+          'Overcaffeinated Raccoon',
+
         message:
           'Powered by caffeine, stubbornness, and several tabs I refuse to close.'
       },
 
       {
-        creature: '🐸',
-        name: 'Rainy Day Frog',
+        creature:
+          '🐸',
+
+        name:
+          'Rainy Day Frog',
+
         message:
           'You do not have to conquer the day. Existing successfully is acceptable.'
       },
 
       {
-        creature: '🦔',
-        name: 'Blanket Hedgehog',
+        creature:
+          '🦔',
+
+        name:
+          'Blanket Hedgehog',
+
         message:
           'Do one thing. Pretend that was the plan.'
       },
 
       {
-        creature: '🐦',
-        name: 'Parking Lot Pigeon',
+        creature:
+          '🐦',
+
+        name:
+          'Parking Lot Pigeon',
+
         message:
           'No map. No strategy. Somehow still arriving where I need to be.'
       },
 
       {
-        creature: '🐀',
-        name: 'Competent Little Rat',
+        creature:
+          '🐀',
+
+        name:
+          'Competent Little Rat',
+
         message:
           'Suspiciously productive today. We will not investigate further.'
       },
 
       {
-        creature: '🐿️',
-        name: 'Inbox Squirrel',
+        creature:
+          '🐿️',
+
+        name:
+          'Inbox Squirrel',
+
         message:
           'I have hidden twelve tasks in twelve different places for safekeeping.'
       },
 
       {
-        creature: '🦦',
-        name: 'Floating Otter',
+        creature:
+          '🦦',
+
+        name:
+          'Floating Otter',
+
         message:
           'Today we are conserving energy and calling it clinical judgment.'
       },
 
       {
-        creature: '🐌',
-        name: 'Deadline Snail',
+        creature:
+          '🐌',
+
+        name:
+          'Deadline Snail',
+
         message:
           'Moving forward is moving forward. Please stop timing me.'
       },
 
       {
-        creature: '🪿',
-        name: 'Supervising Goose',
+        creature:
+          '🪿',
+
+        name:
+          'Supervising Goose',
+
         message:
           'I have no authority here, but I do have several strong opinions.'
       },
 
       {
-        creature: '🐈',
-        name: 'Hospital Cat',
+        creature:
+          '🐈',
+
+        name:
+          'Hospital Cat',
+
         message:
           'Present. Observant. Emotionally unavailable until after lunch.'
       },
 
       {
-        creature: '🦥',
-        name: 'Strategic Sloth',
+        creature:
+          '🦥',
+
+        name:
+          'Strategic Sloth',
+
         message:
           'Efficiency is simply choosing which things will not be happening today.'
       },
 
       {
-        creature: '🐧',
-        name: 'Professional Penguin',
+        creature:
+          '🐧',
+
+        name:
+          'Professional Penguin',
+
         message:
           'Dressed appropriately. Internally improvising.'
       },
 
       {
-        creature: '🐁',
-        name: 'Tiny Clipboard Mouse',
+        creature:
+          '🐁',
+
+        name:
+          'Tiny Clipboard Mouse',
+
         message:
           'I wrote it down, which means the situation is officially under control.'
       }
@@ -2747,8 +2549,758 @@
       .textContent =
         `Today's creature: ${chaosCard.name}`;
 
-  </script>
 
+    /* =========================================
+       ROTATION DETAILS
+
+       Rotation dates/names are loaded automatically
+       from schedule.html.
+
+       This object only stores extra display information
+       that schedule.html does not contain.
+    ========================================= */
+
+    const rotationDetails = {
+
+      'FM AI': {
+
+        displayName:
+          'FM AI',
+
+        contact:
+          'Family Medicine',
+
+        location:
+          'See schedule for location'
+      },
+
+
+      'Peds Heme/Onc': {
+
+        displayName:
+          'Pediatrics Hematology / Oncology',
+
+        contact:
+          'Dr. David Gass<br>Course Director',
+
+        location:
+          'Medical Center Plaza<br>8:00 AM–5:00 PM',
+
+        syllabus:
+          '4PED32 - Pediatric Hematology-Oncology Syllabus 2026.2027Final.pdf'
+      },
+
+
+      'Pediatrics Hematology / Oncology': {
+
+        displayName:
+          'Pediatrics Hematology / Oncology',
+
+        contact:
+          'Dr. David Gass<br>Course Director',
+
+        location:
+          'Medical Center Plaza<br>8:00 AM–5:00 PM',
+
+        syllabus:
+          '4PED32 - Pediatric Hematology-Oncology Syllabus 2026.2027Final.pdf'
+      }
+
+    ];
+
+
+    /*
+      The line above deliberately gets corrected below.
+
+      Using Object.assign makes this tolerant of browsers
+      while keeping the configuration readable.
+    */
+
+
+    const rotationExtra =
+      Object.assign(
+        {},
+        {
+          'FM AI': {
+            displayName:
+              'FM AI',
+
+            contact:
+              'Family Medicine',
+
+            location:
+              'See schedule for location'
+          },
+
+          'Peds Heme/Onc': {
+            displayName:
+              'Pediatrics Hematology / Oncology',
+
+            contact:
+              'Dr. David Gass<br>Course Director',
+
+            location:
+              'Medical Center Plaza<br>8:00 AM–5:00 PM',
+
+            syllabus:
+              '4PED32 - Pediatric Hematology-Oncology Syllabus 2026.2027Final.pdf'
+          },
+
+          'Pediatrics Hematology / Oncology': {
+            displayName:
+              'Pediatrics Hematology / Oncology',
+
+            contact:
+              'Dr. David Gass<br>Course Director',
+
+            location:
+              'Medical Center Plaza<br>8:00 AM–5:00 PM',
+
+            syllabus:
+              '4PED32 - Pediatric Hematology-Oncology Syllabus 2026.2027Final.pdf'
+          }
+        }
+      );
+
+
+    /* =========================================
+       LOAD ROTATIONS FROM SCHEDULE.HTML
+    ========================================= */
+
+    let homeRotations =
+      [];
+
+
+    let homeEventDates =
+      new Set();
+
+
+    async function loadScheduleData() {
+
+      try {
+
+        const response =
+          await fetch(
+            `schedule.html?_=${Date.now()}`,
+            {
+              cache:
+                'no-store'
+            }
+          );
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            `Schedule request failed: ${response.status}`
+          );
+
+        }
+
+
+        const source =
+          await response.text();
+
+
+        /*
+          Example matched from schedule.html:
+
+          seedRangeEvent(
+            'rotation-peds-heme-onc',
+            'Peds Heme/Onc',
+            '2026-08-17',
+            '2026-09-13',
+            'rotation'
+          );
+        */
+
+        const rotationRegex =
+          /seedRangeEvent\s*\(\s*['"][^'"]+['"]\s*,\s*['"]([^'"]+)['"]\s*,\s*['"](\d{4}-\d{2}-\d{2})['"]\s*,\s*['"](\d{4}-\d{2}-\d{2})['"]\s*,\s*['"]rotation['"]\s*\)/g;
+
+
+        let match;
+
+
+        while (
+          (
+            match =
+              rotationRegex.exec(
+                source
+              )
+          ) !== null
+        ) {
+
+          homeRotations
+            .push(
+              {
+                name:
+                  match[1],
+
+                start:
+                  parseLocalDate(
+                    match[2]
+                  ),
+
+                end:
+                  parseLocalDate(
+                    match[3]
+                  )
+              }
+            );
+
+        }
+
+
+        homeRotations
+          .sort(
+            (
+              first,
+              second
+            ) =>
+              first.start -
+              second.start
+          );
+
+
+        /*
+          Grab ISO dates from the schedule page so the
+          mini-calendar can display event dots.
+
+          This includes deadlines, rotation starts,
+          meetings and other schedule dates.
+        */
+
+        const isoDateRegex =
+          /['"](\d{4}-\d{2}-\d{2})['"]/g;
+
+
+        while (
+          (
+            match =
+              isoDateRegex.exec(
+                source
+              )
+          ) !== null
+        ) {
+
+          homeEventDates
+            .add(
+              match[1]
+            );
+
+        }
+
+
+        renderCurrentRotation();
+
+        renderMiniCalendar();
+
+      }
+      catch (
+        error
+      ) {
+
+        console.error(
+          'Unable to load schedule.html:',
+          error
+        );
+
+
+        /*
+          Safe fallback for the current block.
+          The page still works even if schedule.html
+          cannot be fetched for some reason.
+        */
+
+        homeRotations = [
+
+          {
+            name:
+              'FM AI',
+
+            start:
+              parseLocalDate(
+                '2026-07-20'
+              ),
+
+            end:
+              parseLocalDate(
+                '2026-08-16'
+              )
+          },
+
+          {
+            name:
+              'Peds Heme/Onc',
+
+            start:
+              parseLocalDate(
+                '2026-08-17'
+              ),
+
+            end:
+              parseLocalDate(
+                '2026-09-13'
+              )
+          }
+
+        ];
+
+
+        homeEventDates =
+          new Set(
+            [
+              '2026-08-17',
+              '2026-08-26'
+            ]
+          );
+
+
+        renderCurrentRotation();
+
+        renderMiniCalendar();
+
+      }
+
+    }
+
+
+    /* =========================================
+       CURRENT ROTATION
+    ========================================= */
+
+    function renderCurrentRotation() {
+
+      const today =
+        startOfDay(
+          new Date()
+        );
+
+
+      const currentRotation =
+        homeRotations
+          .find(
+            rotation =>
+              today >=
+                rotation.start &&
+              today <=
+                rotation.end
+          );
+
+
+      const nextRotation =
+        homeRotations
+          .find(
+            rotation =>
+              rotation.start >
+                today
+          );
+
+
+      const title =
+        document.getElementById(
+          'currentRotationTitle'
+        );
+
+
+      const dates =
+        document.getElementById(
+          'currentRotationDates'
+        );
+
+
+      const next =
+        document.getElementById(
+          'nextRotation'
+        );
+
+
+      const contact =
+        document.getElementById(
+          'currentRotationContact'
+        );
+
+
+      const location =
+        document.getElementById(
+          'currentRotationLocation'
+        );
+
+
+      const syllabus =
+        document.getElementById(
+          'currentRotationSyllabus'
+        );
+
+
+      if (
+        !currentRotation
+      ) {
+
+        title.textContent =
+          'No active rotation';
+
+
+        dates.textContent =
+          'See full schedule';
+
+
+        contact.textContent =
+          '—';
+
+
+        location.textContent =
+          '—';
+
+
+        syllabus.hidden =
+          true;
+
+      }
+      else {
+
+        const details =
+          rotationExtra[
+            currentRotation.name
+          ] ||
+          {};
+
+
+        title.textContent =
+          details.displayName ||
+          currentRotation.name;
+
+
+        dates.textContent =
+          `${formatLongDate(
+            currentRotation.start
+          )} – ${formatLongDate(
+            currentRotation.end
+          )}`;
+
+
+        contact.innerHTML =
+          details.contact ||
+          'See full schedule';
+
+
+        location.innerHTML =
+          details.location ||
+          'See full schedule';
+
+
+        if (
+          details.syllabus
+        ) {
+
+          syllabus.href =
+            details.syllabus;
+
+
+          syllabus.hidden =
+            false;
+
+        }
+        else {
+
+          syllabus.hidden =
+            true;
+
+        }
+
+      }
+
+
+      if (
+        nextRotation
+      ) {
+
+        const nextDetails =
+          rotationExtra[
+            nextRotation.name
+          ] ||
+          {};
+
+
+        next.innerHTML =
+          `${
+            nextDetails.displayName ||
+            nextRotation.name
+          }<br>Begins ${
+            formatShortDate(
+              nextRotation.start
+            )
+          }`;
+
+      }
+      else {
+
+        next.textContent =
+          'No upcoming rotation';
+
+      }
+
+    }
+
+
+    /* =========================================
+       MINI CALENDAR
+    ========================================= */
+
+    const miniCalendarMonth =
+      document.getElementById(
+        'miniCalendarMonth'
+      );
+
+
+    const miniCalendarGrid =
+      document.getElementById(
+        'miniCalendarGrid'
+      );
+
+
+    const currentRealDate =
+      new Date();
+
+
+    let miniCalendarDate =
+      new Date(
+        currentRealDate.getFullYear(),
+        currentRealDate.getMonth(),
+        1
+      );
+
+
+    function renderMiniCalendar() {
+
+      miniCalendarGrid.innerHTML =
+        '';
+
+
+      miniCalendarMonth.textContent =
+        miniCalendarDate
+          .toLocaleDateString(
+            'en-US',
+            {
+              month:
+                'long',
+
+              year:
+                'numeric'
+            }
+          );
+
+
+      const year =
+        miniCalendarDate
+          .getFullYear();
+
+
+      const month =
+        miniCalendarDate
+          .getMonth();
+
+
+      const firstDay =
+        new Date(
+          year,
+          month,
+          1
+        );
+
+
+      const gridStart =
+        new Date(
+          year,
+          month,
+          1 -
+            firstDay.getDay()
+        );
+
+
+      const today =
+        new Date();
+
+
+      for (
+        let index = 0;
+        index < 42;
+        index++
+      ) {
+
+        const day =
+          new Date(
+            gridStart
+          );
+
+
+        day.setDate(
+          gridStart.getDate() +
+          index
+        );
+
+
+        const element =
+          document.createElement(
+            'div'
+          );
+
+
+        element.className =
+          'mini-day';
+
+
+        element.textContent =
+          day.getDate();
+
+
+        if (
+          day.getMonth() !==
+            month
+        ) {
+
+          element
+            .classList
+            .add(
+              'muted'
+            );
+
+        }
+
+
+        if (
+          sameDate(
+            day,
+            today
+          )
+        ) {
+
+          element
+            .classList
+            .add(
+              'today'
+            );
+
+        }
+
+
+        if (
+          homeEventDates
+            .has(
+              dateKey(
+                day
+              )
+            )
+        ) {
+
+          element
+            .classList
+            .add(
+              'has-event'
+            );
+
+        }
+
+
+        miniCalendarGrid
+          .appendChild(
+            element
+          );
+
+      }
+
+    }
+
+
+    document
+      .getElementById(
+        'miniCalendarPrev'
+      )
+      .addEventListener(
+        'click',
+        () => {
+
+          miniCalendarDate =
+            new Date(
+              miniCalendarDate
+                .getFullYear(),
+
+              miniCalendarDate
+                .getMonth() -
+                1,
+
+              1
+            );
+
+
+          renderMiniCalendar();
+
+        }
+      );
+
+
+    document
+      .getElementById(
+        'miniCalendarNext'
+      )
+      .addEventListener(
+        'click',
+        () => {
+
+          miniCalendarDate =
+            new Date(
+              miniCalendarDate
+                .getFullYear(),
+
+              miniCalendarDate
+                .getMonth() +
+                1,
+
+              1
+            );
+
+
+          renderMiniCalendar();
+
+        }
+      );
+
+
+    document
+      .getElementById(
+        'miniCalendarToday'
+      )
+      .addEventListener(
+        'click',
+        () => {
+
+          const today =
+            new Date();
+
+
+          miniCalendarDate =
+            new Date(
+              today.getFullYear(),
+              today.getMonth(),
+              1
+            );
+
+
+          renderMiniCalendar();
+
+        }
+      );
+
+
+    /* =========================================
+       INITIALIZE
+    ========================================= */
+
+    renderMiniCalendar();
+
+    loadScheduleData();
+
+  </script>
 
 </body>
 
