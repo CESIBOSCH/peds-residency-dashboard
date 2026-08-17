@@ -19,75 +19,118 @@ frame.addEventListener('load',()=>{
 
   const style=doc.createElement('style');
   style.textContent=`
-    /* COLLAPSED PREVIEW */
+    /* Keep the collapsed preview proportions we already approved. */
     .grid:not(.expanded){grid-template-columns:420px minmax(0,1fr)!important;gap:26px!important}
-    .rotation{padding:21px 23px!important}
-    .rotation-head{align-items:flex-start!important}
+    .rotation{padding:21px 23px!important;position:relative!important}
     .rotation-title{font-size:22px!important;line-height:1.28!important}
     .rotation-dates{font-size:13px!important;line-height:1.45!important}
     .expand{flex:0 0 auto!important;width:auto!important;min-width:0!important;height:30px!important;padding:0 11px!important;margin:0!important;border:1px solid var(--border)!important;border-radius:7px!important;background:#fff!important;color:var(--muted)!important;font-size:11px!important;font-weight:500!important;letter-spacing:0!important;text-transform:none!important;line-height:28px!important;box-shadow:none!important}
     .expand:hover{background:#FAF9F5!important;color:var(--terracotta)!important}
     .rotation .label,.rotation .priority-panel>.label,.rotation .notes-priority>.label,.rotation .encounters-secondary>.label{color:var(--sage)!important;font-size:11.5px!important;font-weight:600!important;letter-spacing:.14em!important;text-transform:uppercase!important}
-    .rotation-reference{margin-top:18px!important;padding:0!important;display:block!important;border:0!important}
-    .reference-location{display:block!important;margin:0 0 13px!important;min-width:0!important}
+    .rotation-reference{margin-top:18px!important;padding:0!important;border:0!important}
     .reference-location .label{display:none!important}
-    .reference-location .editable{margin:0!important;padding:0!important;font-size:12.5px!important;min-width:0!important}
+    .reference-location .editable{margin:0!important;padding:0!important;font-size:12.5px!important}
     .reference-contacts{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:18px!important;margin:0!important;align-items:start!important}
-    .reference-contacts .contact{display:block!important;margin:0!important;min-width:0!important}
+    .reference-contacts .contact{display:flex!important;flex-direction:column!important;align-items:flex-start!important;min-width:0!important;margin:0!important}
     .reference-contacts .role{font-size:9px!important;margin:0 0 4px!important;padding:0!important}
-    .reference-contacts .name{font-size:12px!important;margin:0 0 3px!important;padding:0!important;white-space:normal!important}
-    .reference-contacts a{display:block!important;margin:0!important;padding:0!important;font-size:11px!important;line-height:1.38!important;min-width:0!important;max-width:100%!important;overflow-wrap:anywhere!important;word-break:normal!important;white-space:normal!important}
-    #alexisPhone{margin-top:3px!important}
+    .reference-contacts .name{font-size:12px!important;margin:0 0 3px!important;padding:0!important}
+    .reference-contacts a{display:block!important;margin:0!important;padding:0!important;font-size:11px!important;line-height:1.35!important;text-decoration:none!important}
+    #alexisPhone{margin:1px 0 0!important;padding:0!important;line-height:1.25!important}
     .reference-syllabus{margin-top:13px!important;display:flex!important;align-items:center!important;gap:0!important}
     .reference-syllabus a{font-size:11.5px!important}
     #editSyllabus{display:none!important}
     .rotation-assignments{margin-top:23px!important;padding-top:0!important;border:0!important}
     .priority-grid{display:block!important}
-    .priority-panel{margin-top:24px!important}
-    .priority-panel+ .priority-panel{margin-top:25px!important}
-    .notes-priority{margin-top:27px!important}
+    .priority-panel{margin-top:24px!important;border:0!important}
+    .priority-panel+.priority-panel{margin-top:25px!important}
+    .notes-priority{margin-top:27px!important;border:0!important}
     .encounters-secondary{margin-top:27px!important;padding-top:0!important;border:0!important}
     .notes-tools{display:none!important}
     .notes{margin-top:9px!important;min-height:155px!important;font-size:13px!important;line-height:1.5!important}
     .row{grid-template-columns:18px minmax(0,1fr) 18px!important;gap:8px!important}
     .row input[type=text],.resource-item a{font-size:12.5px!important;line-height:1.4!important}
     .add{font-size:11.5px!important;margin-top:8px!important}
-    .encounters-secondary .encounter,.encounters-secondary input{font-size:11.5px!important}
+    .rotation hr{display:none!important}
 
-    /* EXPANDED WORKSPACE PREVIEW */
+    /* Wrapper exists only to make expanded mode predictable; in collapsed mode it disappears from layout. */
+    .expanded-top,.meta-row{display:contents}
+
+    /* Expanded workspace */
     .grid.expanded{grid-template-columns:minmax(0,1fr) 300px!important;gap:24px!important}
-    .grid.expanded .rotation{position:relative!important;display:grid!important;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr)!important;column-gap:34px!important;row-gap:0!important;padding:26px 28px!important}
-    .grid.expanded .rotation-head{grid-column:1!important;grid-row:1!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;align-self:start!important;display:block!important;text-align:left!important}
+    .grid.expanded .rotation{
+      display:grid!important;
+      grid-template-columns:minmax(0,1fr) minmax(0,.9fr)!important;
+      column-gap:34px!important;
+      row-gap:0!important;
+      padding:26px 28px!important;
+    }
+    .grid.expanded .expanded-top{
+      grid-column:1/-1!important;
+      display:grid!important;
+      grid-template-columns:minmax(330px,1fr) minmax(560px,1.15fr)!important;
+      column-gap:38px!important;
+      align-items:start!important;
+      position:relative!important;
+      margin:0!important;
+      padding:0!important;
+    }
+    .grid.expanded .rotation-head{
+      grid-column:1!important;
+      grid-row:1!important;
+      display:block!important;
+      margin:0!important;
+      padding:0!important;
+      border:0!important;
+      box-shadow:none!important;
+      text-align:left!important;
+      min-width:0!important;
+    }
     .grid.expanded .rotation-head>div{margin:0!important;padding:0!important;text-align:left!important}
     .grid.expanded .rotation-head .label,.grid.expanded .rotation-title,.grid.expanded .rotation-dates{margin-left:0!important;padding-left:0!important;text-align:left!important}
-    .grid.expanded .rotation-head .expand{position:absolute!important;top:26px!important;right:28px!important;z-index:2!important}
     .grid.expanded .rotation-title{font-size:24px!important;line-height:1.25!important;margin-top:8px!important}
-    .grid.expanded .rotation-dates{font-size:13px!important;margin-top:7px!important;margin-bottom:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
-    .grid.expanded .rotation-dates::after,.grid.expanded .rotation-dates::before{display:none!important;content:none!important}
-    .grid.expanded .rotation-reference{display:contents!important;border:0!important}
-    .grid.expanded .reference-location{grid-column:1!important;grid-row:2!important;margin:7px 0 0!important;padding:0!important;display:block!important;align-self:start!important;justify-self:start!important;text-align:left!important;border:0!important}
-    .grid.expanded .reference-location .label{display:none!important}
-    .grid.expanded .reference-location .editable{font-size:13px!important;font-weight:500!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;text-align:left!important}
-    .grid.expanded .reference-contacts{grid-column:2!important;grid-row:1 / span 2!important;display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.12fr)!important;gap:18px!important;margin:3px 92px 0 0!important;align-self:start!important;max-width:none!important;min-width:0!important}
-    .grid.expanded .reference-contacts .contact{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:0!important;margin:0!important;min-width:0!important;text-align:left!important}
-    .grid.expanded .reference-contacts .role{font-size:9px!important;margin:0 0 5px!important;padding:0!important;text-align:left!important}
-    .grid.expanded .reference-contacts .name{font-size:12.5px!important;line-height:1.35!important;margin:0 0 3px!important;padding:0!important;text-align:left!important;white-space:nowrap!important}
-    .grid.expanded .reference-contacts a{font-size:11.2px!important;line-height:1.35!important;margin:0!important;padding:0!important;text-align:left!important;white-space:nowrap!important;overflow:visible!important;word-break:normal!important;overflow-wrap:normal!important;max-width:none!important}
-    .grid.expanded #alexisPhone{margin:0!important;padding:0!important;display:block!important;line-height:1.15!important;transform:translateY(-1px)!important}
-    .grid.expanded .reference-syllabus{grid-column:1!important;grid-row:2!important;justify-self:start!important;align-self:start!important;margin:7px 0 0 178px!important;padding:0!important;display:flex!important;align-items:center!important;gap:8px!important;border:0!important}
-    .grid.expanded .reference-syllabus::before{content:'·';color:#B8B5AE;font-size:14px;line-height:1}
-    .grid.expanded .reference-syllabus a{font-size:11.5px!important;letter-spacing:.11em!important}
-    .grid.expanded #editSyllabus{display:none!important}
-    .grid.expanded .rotation-assignments{grid-column:1!important;grid-row:3!important;margin:22px 0 0!important;padding:0!important;border:0!important}
+    .grid.expanded .rotation-dates{font-size:13px!important;margin:7px 0 0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+    .grid.expanded .rotation-head .expand{position:absolute!important;top:0!important;right:0!important;z-index:3!important}
+
+    .grid.expanded .rotation-reference{display:contents!important;margin:0!important;padding:0!important;border:0!important}
+    .grid.expanded .meta-row{
+      grid-column:1!important;
+      grid-row:2!important;
+      display:flex!important;
+      align-items:center!important;
+      gap:16px!important;
+      margin-top:8px!important;
+      min-width:0!important;
+    }
+    .grid.expanded .reference-location{margin:0!important;padding:0!important;min-width:0!important}
+    .grid.expanded .reference-location .editable{font-size:13px!important;font-weight:500!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;text-align:left!important;white-space:nowrap!important}
+    .grid.expanded .reference-syllabus{margin:0!important;padding:0!important;display:flex!important;align-items:center!important;gap:0!important;border:0!important}
+    .grid.expanded .reference-syllabus::before{content:'·';color:#B8B5AE;font-size:14px;margin-right:10px}
+    .grid.expanded .reference-syllabus a{font-size:11.5px!important;letter-spacing:.11em!important;white-space:nowrap!important}
+
+    .grid.expanded .reference-contacts{
+      grid-column:2!important;
+      grid-row:1 / span 2!important;
+      display:grid!important;
+      grid-template-columns:minmax(255px,1fr) minmax(285px,1.08fr)!important;
+      gap:24px!important;
+      margin:2px 112px 0 0!important;
+      padding:0!important;
+      min-width:0!important;
+      align-self:start!important;
+    }
+    .grid.expanded .reference-contacts .contact{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:0!important;min-width:0!important;margin:0!important;padding:0!important;text-align:left!important}
+    .grid.expanded .reference-contacts .role{font-size:9px!important;margin:0 0 5px!important;padding:0!important;white-space:nowrap!important}
+    .grid.expanded .reference-contacts .name{font-size:12.5px!important;line-height:1.3!important;margin:0 0 3px!important;padding:0!important;white-space:nowrap!important}
+    .grid.expanded .reference-contacts a{font-size:11.2px!important;line-height:1.28!important;margin:0!important;padding:0!important;white-space:nowrap!important;overflow:visible!important;max-width:none!important;word-break:normal!important;overflow-wrap:normal!important}
+    .grid.expanded #alexisPhone{display:block!important;margin:1px 0 0!important;padding:0!important;line-height:1.2!important;white-space:nowrap!important}
+
+    .grid.expanded .rotation-assignments{grid-column:1!important;grid-row:2!important;margin:24px 0 0!important;padding:0!important;border:0!important}
     .grid.expanded .priority-grid{display:contents!important}
-    .grid.expanded .concepts-panel{grid-column:1!important;grid-row:4!important;margin:24px 0 0!important}
-    .grid.expanded .resources-panel{grid-column:2!important;grid-row:3!important;margin:22px 0 0!important;padding:0!important;border:0!important}
-    .grid.expanded .notes-priority{grid-column:2!important;grid-row:4!important;margin:24px 0 0!important}
+    .grid.expanded .concepts-panel{grid-column:1!important;grid-row:3!important;margin:24px 0 0!important}
+    .grid.expanded .resources-panel{grid-column:2!important;grid-row:2!important;margin:24px 0 0!important;padding:0!important;border:0!important}
+    .grid.expanded .notes-priority{grid-column:2!important;grid-row:3!important;margin:24px 0 0!important}
     .grid.expanded .notes{min-height:190px!important;margin-top:9px!important}
-    .grid.expanded .encounters-secondary{grid-column:1/-1!important;grid-row:5!important;margin:28px 0 0!important;padding-top:0!important;border:0!important}
-    .grid.expanded .rotation .label,.grid.expanded .priority-panel>.label,.grid.expanded .notes-priority>.label,.grid.expanded .encounters-secondary>.label{font-size:11.5px!important}
-    .grid.expanded .row input[type=text],.grid.expanded .resource-item a{font-size:12.5px!important}
-    .grid.expanded .add{font-size:11.5px!important}
+    .grid.expanded .encounters-secondary{grid-column:1/-1!important;grid-row:4!important;margin:28px 0 0!important;padding:0!important;border:0!important}
   `;
   doc.head.appendChild(style);
 
@@ -98,14 +141,40 @@ frame.addEventListener('load',()=>{
   const priorityGrid=rotation?.querySelector('.priority-grid');
   const notes=rotation?.querySelector('.notes-priority');
   const encounters=rotation?.querySelector('.encounters-secondary');
+
   if(rotation&&head&&reference&&assignments&&priorityGrid&&notes&&encounters){
     const panels=[...priorityGrid.querySelectorAll('.priority-panel')];
     const concepts=panels.find(p=>p.textContent.includes('Concepts to Review'));
     const resources=panels.find(p=>p.textContent.includes('Helpful Resources'));
     if(concepts)concepts.classList.add('concepts-panel');
     if(resources)resources.classList.add('resources-panel');
-    rotation.insertBefore(reference,head.nextSibling);
-    rotation.insertBefore(assignments,reference.nextSibling);
+
+    // Make Alexis's phone part of Alexis's contact block, so it can never float away from her email.
+    const contacts=[...reference.querySelectorAll('.contact')];
+    const phone=doc.getElementById('alexisPhone');
+    if(phone&&contacts[1]&&!contacts[1].contains(phone)) contacts[1].appendChild(phone);
+
+    // Group location + syllabus into one compact metadata row.
+    const location=reference.querySelector('.reference-location');
+    const syllabus=reference.querySelector('.reference-syllabus');
+    let meta=reference.querySelector('.meta-row');
+    if(location&&syllabus&&!meta){
+      meta=doc.createElement('div');
+      meta.className='meta-row';
+      reference.insertBefore(meta,location);
+      meta.append(location,syllabus);
+    }
+
+    // Group only the header/reference region so expanded layout cannot collide with the work sections below.
+    let top=rotation.querySelector('.expanded-top');
+    if(!top){
+      top=doc.createElement('div');
+      top.className='expanded-top';
+      rotation.insertBefore(top,head);
+      top.append(head,reference);
+    }
+
+    rotation.insertBefore(assignments,top.nextSibling);
     priorityGrid.innerHTML='';
     if(resources)priorityGrid.appendChild(resources);
     if(concepts)priorityGrid.appendChild(concepts);
@@ -113,10 +182,33 @@ frame.addEventListener('load',()=>{
     rotation.insertBefore(notes,priorityGrid.nextSibling);
     rotation.insertBefore(encounters,notes.nextSibling);
   }
+
   const notesBox=doc.getElementById('notes');
-  if(notesBox){notesBox.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&['b','i','u'].includes(e.key.toLowerCase())){e.preventDefault();doc.execCommand({b:'bold',i:'italic',u:'underline'}[e.key.toLowerCase()],false,null);notesBox.dispatchEvent(new Event('input',{bubbles:true}));}});}
-  const fixFeedbackLink=()=>{[...doc.querySelectorAll('#assignments .row')].forEach(row=>{const input=row.querySelector('input[type="text"]');if(input&&input.value.trim()==='Mid-Rotation Feedback Form'){input.style.cursor='pointer';input.style.color='var(--text)';input.title='Click to open Mid-Rotation Feedback Form';input.onclick=e=>{e.preventDefault();e.stopPropagation();window.open('MS4%20-%20Common%20Mid-Rotation%20Feedback%20Form%20%281%29.pdf','_blank');};}});};
-  fixFeedbackLink();setTimeout(fixFeedbackLink,300);
+  if(notesBox){
+    notesBox.addEventListener('keydown',e=>{
+      if((e.metaKey||e.ctrlKey)&&['b','i','u'].includes(e.key.toLowerCase())){
+        e.preventDefault();
+        doc.execCommand({b:'bold',i:'italic',u:'underline'}[e.key.toLowerCase()],false,null);
+        notesBox.dispatchEvent(new Event('input',{bubbles:true}));
+      }
+    });
+  }
+
+  const fixFeedbackLink=()=>{
+    [...doc.querySelectorAll('#assignments .row')].forEach(row=>{
+      const input=row.querySelector('input[type="text"]');
+      if(input&&input.value.trim()==='Mid-Rotation Feedback Form'){
+        input.style.cursor='pointer';
+        input.title='Click to open Mid-Rotation Feedback Form';
+        input.onclick=e=>{
+          e.preventDefault();e.stopPropagation();
+          window.open('MS4%20-%20Common%20Mid-Rotation%20Feedback%20Form%20%281%29.pdf','_blank');
+        };
+      }
+    });
+  };
+  fixFeedbackLink();
+  setTimeout(fixFeedbackLink,300);
 });
 </script>
 </body>
