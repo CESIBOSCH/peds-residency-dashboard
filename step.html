@@ -1,673 +1,1560 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
   <title>Step & Study | Fourth Year</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
+
   <style>
+
     :root {
+
       --bg-app: #FAF9F5;
       --bg-surface: #FFFFFF;
+
       --text-charcoal: #2D3132;
       --text-gray: #6B7280;
+
       --accent-terracotta: #C86D51;
       --accent-sage: #8E9B88;
+
       --border-light: #E5E0D8;
+
       --soft-sage: #EEF1EB;
       --soft-terracotta: #FBF4F1;
+
     }
+
 
     * {
       box-sizing: border-box;
     }
 
+
+    html,
     body {
+
       margin: 0;
-      background: var(--bg-app);
-      color: var(--text-charcoal);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+      min-height: 100%;
+
     }
+
+
+    body {
+
+      background:
+        var(--bg-app);
+
+      color:
+        var(--text-charcoal);
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        sans-serif;
+
+    }
+
+
+    button,
+    input {
+
+      font: inherit;
+
+    }
+
 
     a {
+
       color: inherit;
+
     }
 
-    .site-rail {
+
+
+    /* =====================================================
+       COLLAPSED / EXPANDED LEFT NAVIGATION
+    ===================================================== */
+
+
+    .left-navigation {
+
       position: fixed;
+
       top: 0;
       left: 0;
-      width: 170px;
+
+      width: 88px;
       height: 100vh;
-      padding: 28px 18px;
-      z-index: 30;
-      background: var(--bg-app);
-    }
 
-    .site-rail-inner {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    /* Transparent menu */
-    .menu-overlay {
-      position: fixed;
-      inset: 0;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 40;
-    }
-
-    .menu-overlay.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .menu-panel {
-      position: fixed;
-      top: 76px;
-      left: 22px;
       z-index: 50;
 
-      opacity: 0;
-      transform: translateY(-8px);
-      pointer-events: none;
+      padding:
+        28px
+        18px;
+
+      background:
+        var(--bg-app);
 
       transition:
-        opacity 0.18s ease,
-        transform 0.18s ease;
+        width
+        0.22s
+        ease;
+
     }
 
-    .menu-panel.open {
+
+    .left-navigation.open {
+
+      width: 245px;
+
+    }
+
+
+    .nav-top {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 15px;
+
+      white-space: nowrap;
+
+    }
+
+
+    .menu-button {
+
+      width: 42px;
+      height: 42px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      flex-shrink: 0;
+
+      border: 0;
+
+      border-radius: 9px;
+
+      background:
+        transparent;
+
+      color:
+        var(--text-charcoal);
+
+      cursor: pointer;
+
+      font-size: 24px;
+
+      line-height: 1;
+
+    }
+
+
+    .menu-button:hover {
+
+      background:
+        #F5F2EC;
+
+      color:
+        var(--accent-terracotta);
+
+    }
+
+
+    .nav-brand {
+
+      opacity: 0;
+
+      pointer-events: none;
+
+      color:
+        var(--accent-sage);
+
+      font-size: 14px;
+
+      font-weight: 600;
+
+      letter-spacing: 0.20em;
+
+      text-transform: uppercase;
+
+      transition:
+        opacity
+        0.15s
+        ease;
+
+    }
+
+
+    .left-navigation.open
+    .nav-brand {
+
       opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
+
     }
 
-    .menu-close-row {
-      display: none;
+
+    .nav-links {
+
+      margin-top: 27px;
+
+      opacity: 0;
+
+      pointer-events: none;
+
+      transform:
+        translateX(-5px);
+
+      transition:
+        opacity
+        0.18s
+        ease,
+        transform
+        0.18s
+        ease;
+
     }
+
+
+    .left-navigation.open
+    .nav-links {
+
+      opacity: 1;
+
+      pointer-events: auto;
+
+      transform:
+        translateX(0);
+
+    }
+
 
     .menu-link {
+
       display: block;
+
       width: max-content;
 
-      padding: 5px 0;
-      margin: 0;
+      padding:
+        7px
+        0;
+
+      color:
+        var(--accent-sage);
 
       text-decoration: none;
 
-      color: var(--accent-sage);
-
       font-size: 13px;
+
       font-weight: 500;
 
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.15em;
 
-      transition: color 0.15s ease;
+      text-transform: uppercase;
+
+      transition:
+        color
+        0.15s
+        ease;
+
     }
+
 
     .menu-link:hover {
-      color: var(--accent-terracotta);
+
+      color:
+        var(--accent-terracotta);
+
     }
+
 
     .menu-link.active {
-      color: var(--accent-terracotta);
+
+      color:
+        var(--accent-terracotta);
+
       font-weight: 600;
+
     }
+
+
+
+    /* =====================================================
+       PAGE
+    ===================================================== */
+
 
     .page-shell {
-  margin-left: 210px;
-  padding: 26px 28px 40px;
-}
+
+      margin-left: 92px;
+
+      padding:
+        27px
+        30px
+        40px;
+
+      transition:
+        margin-left
+        0.22s
+        ease;
+
+    }
+
+
+    body.menu-open
+    .page-shell {
+
+      margin-left: 255px;
+
+    }
+
+
+    .content-shell {
+
+      width: 100%;
+
+      max-width: 1320px;
+
+      margin:
+        0
+        auto;
+
+    }
+
+
+    .page-title {
+
+      margin:
+        4px
+        0
+        30px;
+
+      text-align: center;
+
+      color:
+        var(--accent-sage);
+
+      font-size: 34px;
+
+      font-weight: 300;
+
+      line-height: 1;
+
+      letter-spacing: 0.105em;
+
+      text-transform: uppercase;
+
+      white-space: nowrap;
+
+    }
+
+
+
+    /* =====================================================
+       STEP & STUDY CARDS
+    ===================================================== */
+
 
     .compact-card {
-      background: white;
-      border: 1px solid var(--border-light);
+
+      background:
+        white;
+
+      border:
+        1px
+        solid
+        var(--border-light);
+
       border-radius: 12px;
+
     }
+
 
     .resource-card {
-  background: white;
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
 
-  padding: 8px 11px;
-  min-height: 54px;
+      background:
+        white;
 
-  display: flex;
-  align-items: center;
+      border:
+        1px
+        solid
+        var(--border-light);
 
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
-}
-    .resource-card:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(45, 49, 50, 0.05);
+      border-radius: 12px;
+
+      padding:
+        8px
+        11px;
+
+      min-height: 54px;
+
+      display: flex;
+
+      align-items: center;
+
+      transition:
+        transform
+        0.15s
+        ease,
+        box-shadow
+        0.15s
+        ease;
+
     }
 
+
+    .resource-card:hover {
+
+      transform:
+        translateY(-1px);
+
+      box-shadow:
+        0
+        4px
+        14px
+        rgba(
+          45,
+          49,
+          50,
+          0.05
+        );
+
+    }
+
+
     .resource-icon {
+
       width: 28px;
       height: 28px;
 
       border-radius: 50%;
 
-      background: var(--soft-sage);
-      color: #71806C;
+      background:
+        var(--soft-sage);
+
+      color:
+        #71806C;
 
       display: flex;
+
       align-items: center;
       justify-content: center;
 
       flex-shrink: 0;
 
       font-size: 12px;
+
       font-weight: 600;
+
     }
+
 
     .resource-title {
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 1.2;
-  text-decoration: none;
-}
 
-    .resource-title:hover {
-      color: var(--accent-terracotta);
+      font-weight: 600;
+
+      font-size: 12px;
+
+      line-height: 1.2;
+
+      text-decoration: none;
+
     }
 
+
+    .resource-title:hover {
+
+      color:
+        var(--accent-terracotta);
+
+    }
+
+
     .field-input {
+
       width: 100%;
 
-      border: 1px solid var(--border-light);
-      background: white;
+      border:
+        1px
+        solid
+        var(--border-light);
+
+      background:
+        white;
 
       border-radius: 7px;
 
-      padding: 7px 9px;
+      padding:
+        7px
+        9px;
 
-      color: var(--text-charcoal);
+      color:
+        var(--text-charcoal);
+
       font-size: 13px;
 
       outline: none;
+
     }
+
 
     .field-input:focus {
-      border-color: var(--accent-sage);
+
+      border-color:
+        var(--accent-sage);
+
     }
+
+
+
+    /* =====================================================
+       CALENDAR
+    ===================================================== */
+
 
     .calendar-wrap {
+
       width: 100%;
+
       max-width: 960px;
+
       margin-left: auto;
+
     }
 
+
     .calendar-day {
+
       min-height: 66px;
 
-      background: white;
+      background:
+        white;
 
       padding: 5px;
 
-      border-right: 1px solid var(--border-light);
-      border-bottom: 1px solid var(--border-light);
+      border-right:
+        1px
+        solid
+        var(--border-light);
+
+      border-bottom:
+        1px
+        solid
+        var(--border-light);
 
       overflow: hidden;
+
       cursor: pointer;
+
     }
+
 
     .calendar-day:nth-child(7n) {
+
       border-right: 0;
+
     }
+
 
     .calendar-date {
+
       font-size: 10px;
-      color: var(--text-charcoal);
+
+      color:
+        var(--text-charcoal);
+
     }
+
 
     .calendar-date.muted {
-      color: #A6ADB7;
+
+      color:
+        #A6ADB7;
+
     }
 
+
     .calendar-event {
+
       margin-top: 3px;
 
-      padding: 3px 5px;
+      padding:
+        3px
+        5px;
 
-      background: var(--soft-terracotta);
-      color: #A95036;
+      background:
+        var(--soft-terracotta);
+
+      color:
+        #A95036;
 
       border-radius: 4px;
 
       font-size: 8px;
+
       line-height: 1.2;
 
       cursor: pointer;
 
       white-space: nowrap;
+
       overflow: hidden;
+
       text-overflow: ellipsis;
+
     }
+
 
     .calendar-event:hover {
-      background: #F5E5DE;
+
+      background:
+        #F5E5DE;
+
     }
 
+
+
+    /* =====================================================
+       EVENT MODAL
+    ===================================================== */
+
+
     .modal-overlay {
+
       position: fixed;
+
       inset: 0;
 
-      background: rgba(45, 49, 50, 0.30);
+      background:
+        rgba(
+          45,
+          49,
+          50,
+          0.30
+        );
 
       display: none;
+
       align-items: center;
       justify-content: center;
 
       z-index: 100;
 
       padding: 20px;
+
     }
+
 
     .modal-overlay.open {
+
       display: flex;
+
     }
 
-    @media (max-width: 1000px) {
-      .site-rail {
-        width: 100%;
-        height: auto;
 
-        position: sticky;
 
-        padding: 16px 18px;
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
 
-        background: rgba(250, 249, 245, 0.96);
-      }
 
-      .page-shell {
-        margin-left: 0;
-        padding: 20px;
-      }
+    @media (
+      max-width: 1000px
+    ) {
 
       .calendar-wrap {
+
         max-width: none;
+
       }
 
-      .menu-panel {
-        top: 64px;
-        left: 20px;
-      }
     }
+
+
+    @media (
+      max-width: 700px
+    ) {
+
+      .left-navigation {
+
+        width: 68px;
+
+        padding:
+          18px
+          12px;
+
+      }
+
+
+      .left-navigation.open {
+
+        width: 225px;
+
+      }
+
+
+      .page-shell {
+
+        margin-left: 72px;
+
+        padding:
+          20px
+          16px
+          40px;
+
+      }
+
+
+      body.menu-open
+      .page-shell {
+
+        margin-left: 72px;
+
+      }
+
+
+      .page-title {
+
+        font-size: 28px;
+
+      }
+
+    }
+
   </style>
+
 </head>
+
 
 <body>
 
-  <!-- Fixed left navigation -->
-  <div class="site-rail">
-    <div class="site-rail-inner">
+
+  <!-- =====================================================
+       LEFT NAVIGATION
+  ====================================================== -->
+
+  <aside
+    id="leftNavigation"
+    class="left-navigation"
+  >
+
+    <div class="nav-top">
+
 
       <button
         id="menuButton"
-        class="w-11 h-11 flex items-center justify-center rounded-lg text-[#2D3132] hover:bg-[#F5F2EC] hover:text-[#C86D51]"
+        class="menu-button"
         aria-label="Open menu"
+        aria-expanded="false"
       >
-        <span class="text-2xl leading-none">☰</span>
+        ☰
       </button>
+
+
+      <div class="nav-brand">
+
+        Fourth Year
+
+      </div>
+
+
+    </div>
+
+
+    <nav class="nav-links">
+
 
       <a
         href="index.html"
-        class="text-sm font-semibold tracking-[0.18em] uppercase text-[#8E9B88] no-underline whitespace-nowrap"
+        class="menu-link"
       >
-        Fourth Year
-      </a>
-
-    </div>
-  </div>
-
-  <div id="menuOverlay" class="menu-overlay"></div>
-
-  <!-- Transparent text menu -->
-  <aside id="menuPanel" class="menu-panel">
-
-    <nav>
-      <a href="index.html" class="menu-link">
         Home
       </a>
 
-      <a href="step.html" class="menu-link active">
+
+      <a
+        href="step.html"
+        class="menu-link active"
+      >
         Step & Study
       </a>
 
-      <a href="programs.html" class="menu-link">
+
+      <a
+        href="programs.html"
+        class="menu-link"
+      >
         Program Explorer
       </a>
 
-      
 
-      <a href="application.html" class="menu-link">
+      <a
+        href="application.html"
+        class="menu-link"
+      >
         Application Tracker
       </a>
 
-      <a href="schedule.html" class="menu-link">
+
+      <a
+        href="schedule.html"
+        class="menu-link"
+      >
         4th Year Schedule
       </a>
+
+
     </nav>
+
 
   </aside>
 
+
+
+  <!-- =====================================================
+       PAGE
+  ====================================================== -->
+
   <main class="page-shell">
 
-    <!-- Match Program Explorer title -->
-    <header class="flex items-center justify-center pt-2 pb-5">
-      <h1 class="text-[28px] md:text-[34px] font-light uppercase tracking-[0.10em] text-[#8A9484] leading-none whitespace-nowrap">
+
+    <div class="content-shell">
+
+
+      <h1 class="page-title">
+
         Step & Study
+
       </h1>
-    </header>
 
-    <!-- Top layout -->
-    <section class="grid grid-cols-1 xl:grid-cols-[360px_1fr] gap-5 items-start mb-6">
 
-      <!-- Left information stack -->
-      <div class="space-y-3 xl:pt-[26px]">
 
-        <!-- Tutoring -->
-        <a
-          href="http://meet.google.com/nks-mrig-aac"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="compact-card px-4 py-3 flex items-center gap-3 no-underline hover:border-[#CFC8BD]"
-        >
-          <div class="resource-icon">
-            ◫
-          </div>
+      <!-- =================================================
+           TOP LAYOUT
+      ================================================== -->
 
-          <div>
+      <section
+        class="
+          grid
+          grid-cols-1
+          xl:grid-cols-[360px_1fr]
+          gap-5
+          items-start
+          mb-6
+        "
+      >
 
-            <div class="text-[9px] uppercase tracking-[0.15em] text-[#8A9484] font-semibold mb-1">
-              Tutoring
+
+        <!-- ===============================================
+             LEFT INFORMATION STACK
+        ================================================ -->
+
+        <div class="space-y-3 xl:pt-[26px]">
+
+
+          <!-- Tutoring -->
+
+          <a
+            href="http://meet.google.com/nks-mrig-aac"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="
+              compact-card
+              px-4
+              py-3
+              flex
+              items-center
+              gap-3
+              no-underline
+              hover:border-[#CFC8BD]
+            "
+          >
+
+
+            <div class="resource-icon">
+
+              ◫
+
             </div>
 
-            <div class="resource-title text-[#C86D51]">
-              Google Meet with Quinton
-            </div>
-
-          </div>
-
-        </a>
-
-        <!-- Step information -->
-        <div class="compact-card p-4">
-
-          <div class="text-[9px] uppercase tracking-[0.15em] text-[#8A9484] font-semibold mb-3">
-            Step 2 CK
-          </div>
-
-          <div class="space-y-3">
 
             <div>
 
-              <div class="text-[9px] uppercase tracking-[0.12em] text-[#6B7280] mb-1">
-                Test Date
+
+              <div
+                class="
+                  text-[9px]
+                  uppercase
+                  tracking-[0.15em]
+                  text-[#8A9484]
+                  font-semibold
+                  mb-1
+                "
+              >
+                Tutoring
               </div>
 
-              <input
-                id="testDateInput"
-                type="date"
-                class="field-input"
+
+              <div
+                class="
+                  resource-title
+                  text-[#C86D51]
+                "
               >
+                Google Meet with Quinton
+              </div>
+
 
             </div>
 
-            <div>
 
-              <div class="text-[9px] uppercase tracking-[0.12em] text-[#6B7280] mb-1">
-                Location
-              </div>
+          </a>
 
-              <input
-                id="testLocationInput"
-                type="text"
-                class="field-input"
-                placeholder="Testing center / city"
-              >
 
-            </div>
 
-          </div>
+          <!-- Step Information -->
 
-        </div>
+          <div class="compact-card p-4">
 
-        <!-- Registration -->
-        <div class="compact-card px-4 py-3">
 
-          <div class="text-[9px] uppercase tracking-[0.15em] text-[#8A9484] font-semibold mb-2">
-            Registration
-          </div>
-
-          <div class="space-y-2 text-sm">
-
-            <a
-              id="permitLink"
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-[#C86D51] hover:underline"
+            <div
+              class="
+                text-[9px]
+                uppercase
+                tracking-[0.15em]
+                text-[#8A9484]
+                font-semibold
+                mb-3
+              "
             >
-              Step 2 Permit
-            </a>
+              Step 2 CK
+            </div>
 
-            <div>
+
+            <div class="space-y-3">
+
+
+              <div>
+
+
+                <div
+                  class="
+                    text-[9px]
+                    uppercase
+                    tracking-[0.12em]
+                    text-[#6B7280]
+                    mb-1
+                  "
+                >
+                  Test Date
+                </div>
+
+
+                <input
+                  id="testDateInput"
+                  type="date"
+                  class="field-input"
+                >
+
+
+              </div>
+
+
+
+              <div>
+
+
+                <div
+                  class="
+                    text-[9px]
+                    uppercase
+                    tracking-[0.12em]
+                    text-[#6B7280]
+                    mb-1
+                  "
+                >
+                  Location
+                </div>
+
+
+                <input
+                  id="testLocationInput"
+                  type="text"
+                  class="field-input"
+                  placeholder="Testing center / city"
+                >
+
+
+              </div>
+
+
+            </div>
+
+
+          </div>
+
+
+
+          <!-- Registration -->
+
+          <div class="compact-card px-4 py-3">
+
+
+            <div
+              class="
+                text-[9px]
+                uppercase
+                tracking-[0.15em]
+                text-[#8A9484]
+                font-semibold
+                mb-2
+              "
+            >
+              Registration
+            </div>
+
+
+            <div class="space-y-2 text-sm">
+
 
               <a
-                href="https://proscheduler.prometric.com/"
+                id="permitLink"
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="text-[#C86D51] hover:underline"
+                class="
+                  text-[#C86D51]
+                  hover:underline
+                "
               >
-                Prometric ProScheduler
+                Step 2 Permit
               </a>
 
+
+              <div>
+
+
+                <a
+                  href="https://proscheduler.prometric.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="
+                    text-[#C86D51]
+                    hover:underline
+                  "
+                >
+                  Prometric ProScheduler
+                </a>
+
+
+              </div>
+
+
             </div>
 
+
           </div>
+
+
+
+          <!-- Study Plan -->
+
+          <a
+            href="https://docs.google.com/document/d/15E_kfjKDZaL_Vm8utvSpwm4sfnWiFhkUuGAJfl-mE1o/edit?tab=t.0#heading=h.9lx0w2ux4k0o"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="
+              compact-card
+              px-4
+              py-3
+              flex
+              items-center
+              gap-3
+              no-underline
+              hover:border-[#CFC8BD]
+            "
+          >
+
+
+            <div class="resource-icon">
+
+              ▤
+
+            </div>
+
+
+            <div>
+
+
+              <div
+                class="
+                  text-[9px]
+                  uppercase
+                  tracking-[0.15em]
+                  text-[#8A9484]
+                  font-semibold
+                  mb-1
+                "
+              >
+                Study Plan
+              </div>
+
+
+              <div
+                class="
+                  resource-title
+                  text-[#C86D51]
+                "
+              >
+                Study / Tutoring Google Doc
+              </div>
+
+
+            </div>
+
+
+          </a>
+
 
         </div>
 
-        <!-- Google Doc moved here -->
-        <a
-          href="https://docs.google.com/document/d/15E_kfjKDZaL_Vm8utvSpwm4sfnWiFhkUuGAJfl-mE1o/edit?tab=t.0#heading=h.9lx0w2ux4k0o"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="compact-card px-4 py-3 flex items-center gap-3 no-underline hover:border-[#CFC8BD]"
-        >
 
-          <div class="resource-icon">
-            ▤
-          </div>
 
-          <div>
+        <!-- ===============================================
+             CALENDAR
+        ================================================ -->
 
-            <div class="text-[9px] uppercase tracking-[0.15em] text-[#8A9484] font-semibold mb-1">
-              Study Plan
-            </div>
+        <div class="calendar-wrap">
 
-            <div class="resource-title text-[#C86D51]">
-              Study / Tutoring Google Doc
-            </div>
-
-          </div>
-
-        </a>
-
-      </div>
-
-      <!-- Calendar -->
-      <div class="calendar-wrap">
-
-        <div class="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8A9484] mb-2">
-          Calendar
-        </div>
-
-        <div class="bg-white border border-[#E5E0D8] rounded-xl overflow-hidden">
-
-          <div class="flex items-center justify-between px-4 py-3 border-b border-[#E5E0D8]">
-
-            <h2
-              id="calendarMonthLabel"
-              class="text-sm font-medium tracking-wide"
-            ></h2>
-
-            <div class="flex gap-1.5">
-
-              <button
-                id="previousMonthButton"
-                class="px-2.5 py-1 border border-[#E5E0D8] rounded-md text-sm hover:bg-[#FAF9F5]"
-              >
-                ‹
-              </button>
-
-              <button
-                id="todayButton"
-                class="px-2.5 py-1 border border-[#E5E0D8] rounded-md text-xs hover:bg-[#FAF9F5]"
-              >
-                Today
-              </button>
-
-              <button
-                id="nextMonthButton"
-                class="px-2.5 py-1 border border-[#E5E0D8] rounded-md text-sm hover:bg-[#FAF9F5]"
-              >
-                ›
-              </button>
-
-            </div>
-
-          </div>
-
-          <div class="grid grid-cols-7 text-center text-[9px] font-semibold tracking-wide text-[#6B7280] border-b border-[#E5E0D8]">
-
-            <div class="py-2">SUN</div>
-            <div class="py-2">MON</div>
-            <div class="py-2">TUE</div>
-            <div class="py-2">WED</div>
-            <div class="py-2">THU</div>
-            <div class="py-2">FRI</div>
-            <div class="py-2">SAT</div>
-
-          </div>
 
           <div
-            id="calendarGrid"
-            class="grid grid-cols-7"
-          ></div>
+            class="
+              text-[10px]
+              font-semibold
+              uppercase
+              tracking-[0.16em]
+              text-[#8A9484]
+              mb-2
+            "
+          >
+            Calendar
+          </div>
+
+
+          <div
+            class="
+              bg-white
+              border
+              border-[#E5E0D8]
+              rounded-xl
+              overflow-hidden
+            "
+          >
+
+
+            <div
+              class="
+                flex
+                items-center
+                justify-between
+                px-4
+                py-3
+                border-b
+                border-[#E5E0D8]
+              "
+            >
+
+
+              <h2
+                id="calendarMonthLabel"
+                class="
+                  text-sm
+                  font-medium
+                  tracking-wide
+                "
+              ></h2>
+
+
+              <div class="flex gap-1.5">
+
+
+                <button
+                  id="previousMonthButton"
+                  class="
+                    px-2.5
+                    py-1
+                    border
+                    border-[#E5E0D8]
+                    rounded-md
+                    text-sm
+                    hover:bg-[#FAF9F5]
+                  "
+                >
+                  ‹
+                </button>
+
+
+                <button
+                  id="todayButton"
+                  class="
+                    px-2.5
+                    py-1
+                    border
+                    border-[#E5E0D8]
+                    rounded-md
+                    text-xs
+                    hover:bg-[#FAF9F5]
+                  "
+                >
+                  Today
+                </button>
+
+
+                <button
+                  id="nextMonthButton"
+                  class="
+                    px-2.5
+                    py-1
+                    border
+                    border-[#E5E0D8]
+                    rounded-md
+                    text-sm
+                    hover:bg-[#FAF9F5]
+                  "
+                >
+                  ›
+                </button>
+
+
+              </div>
+
+
+            </div>
+
+
+
+            <div
+              class="
+                grid
+                grid-cols-7
+                text-center
+                text-[9px]
+                font-semibold
+                tracking-wide
+                text-[#6B7280]
+                border-b
+                border-[#E5E0D8]
+              "
+            >
+
+              <div class="py-2">SUN</div>
+              <div class="py-2">MON</div>
+              <div class="py-2">TUE</div>
+              <div class="py-2">WED</div>
+              <div class="py-2">THU</div>
+              <div class="py-2">FRI</div>
+              <div class="py-2">SAT</div>
+
+            </div>
+
+
+
+            <div
+              id="calendarGrid"
+              class="
+                grid
+                grid-cols-7
+              "
+            ></div>
+
+
+          </div>
+
 
         </div>
 
-      </div>
 
-    </section>
+      </section>
 
-    <!-- Smaller study-resource row -->
-    <section class="w-full max-w-[1180px]">
 
-      <div class="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8A9484] mb-2">
-        Study Resources
-      </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2">
+      <!-- =================================================
+           STUDY RESOURCES
+      ================================================== -->
 
-        <a
-          href="https://www.uworld.com/app/index.html#/login/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="resource-card flex items-center gap-2 no-underline"
+      <section
+        class="
+          w-full
+          max-w-[1180px]
+        "
+      >
+
+
+        <div
+          class="
+            text-[10px]
+            font-semibold
+            uppercase
+            tracking-[0.16em]
+            text-[#8A9484]
+            mb-2
+          "
         >
-          <div class="resource-icon">U</div>
-          <div class="resource-title">UWorld</div>
-        </a>
+          Study Resources
+        </div>
 
-        <a
-          href="https://next.amboss.com/us/learning"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="resource-card flex items-center gap-2 no-underline"
+
+        <div
+          class="
+            grid
+            grid-cols-1
+            sm:grid-cols-2
+            lg:grid-cols-3
+            xl:grid-cols-5
+            gap-2
+          "
         >
-          <div class="resource-icon">△</div>
-          <div class="resource-title">AMBOSS</div>
-        </a>
 
-        <a
-          href="https://www.mynbme.org/s/login/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="resource-card flex items-center gap-2 no-underline"
-        >
-          <div class="resource-icon text-[9px]">NBME</div>
-          <div class="resource-title">MyNBME</div>
-        </a>
 
-        <a
-          href="https://www.usmle.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="resource-card flex items-center gap-2 no-underline"
-        >
-          <div class="resource-icon">▣</div>
-          <div class="resource-title">USMLE</div>
-        </a>
+          <a
+            href="https://www.uworld.com/app/index.html#/login/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="
+              resource-card
+              flex
+              items-center
+              gap-2
+              no-underline
+            "
+          >
 
-        <a
-          href="https://app.ankihub.net/explore/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="resource-card flex items-center gap-2 no-underline"
-        >
-          <div class="resource-icon">☆</div>
-          <div class="resource-title">AnkiHub</div>
-        </a>
+            <div class="resource-icon">
+              U
+            </div>
 
-      </div>
+            <div class="resource-title">
+              UWorld
+            </div>
 
-    </section>
+          </a>
+
+
+
+          <a
+            href="https://next.amboss.com/us/learning"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="
+              resource-card
+              flex
+              items-center
+              gap-2
+              no-underline
+            "
+          >
+
+            <div class="resource-icon">
+              △
+            </div>
+
+            <div class="resource-title">
+              AMBOSS
+            </div>
+
+          </a>
+
+
+
+          <a
+            href="https://www.mynbme.org/s/login/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="
+              resource-card
+              flex
+              items-center
+              gap-2
+              no-underline
+            "
+          >
+
+            <div
+              class="
+                resource-icon
+                text-[9px]
+              "
+            >
+              NBME
+            </div>
+
+            <div class="resource-title">
+              MyNBME
+            </div>
+
+          </a>
+
+
+
+          <a
+            href="https://www.usmle.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="
+              resource-card
+              flex
+              items-center
+              gap-2
+              no-underline
+            "
+          >
+
+            <div class="resource-icon">
+              ▣
+            </div>
+
+            <div class="resource-title">
+              USMLE
+            </div>
+
+          </a>
+
+
+
+          <a
+            href="https://app.ankihub.net/explore/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="
+              resource-card
+              flex
+              items-center
+              gap-2
+              no-underline
+            "
+          >
+
+            <div class="resource-icon">
+              ☆
+            </div>
+
+            <div class="resource-title">
+              AnkiHub
+            </div>
+
+          </a>
+
+
+        </div>
+
+
+      </section>
+
+
+    </div>
+
 
   </main>
 
-  <!-- Event modal -->
-  <div id="eventModal" class="modal-overlay">
 
-    <div class="bg-white border border-[#E5E0D8] rounded-xl p-6 w-full max-w-md shadow-xl">
 
-      <div class="flex justify-between items-center mb-5">
+  <!-- =====================================================
+       EVENT MODAL
+  ====================================================== -->
+
+  <div
+    id="eventModal"
+    class="modal-overlay"
+  >
+
+
+    <div
+      class="
+        bg-white
+        border
+        border-[#E5E0D8]
+        rounded-xl
+        p-6
+        w-full
+        max-w-md
+        shadow-xl
+      "
+    >
+
+
+      <div
+        class="
+          flex
+          justify-between
+          items-center
+          mb-5
+        "
+      >
+
 
         <h2 class="font-semibold">
+
           Calendar Event
+
         </h2>
+
 
         <button
           id="closeEventModalButton"
-          class="text-xl text-[#6B7280]"
+          class="
+            text-xl
+            text-[#6B7280]
+          "
         >
           ×
         </button>
 
+
       </div>
+
+
 
       <input
         id="eventIdInput"
         type="hidden"
       >
 
+
+
       <div class="mb-4">
 
-        <label class="block text-[9px] uppercase tracking-wide text-[#6B7280] mb-1.5">
+
+        <label
+          class="
+            block
+            text-[9px]
+            uppercase
+            tracking-wide
+            text-[#6B7280]
+            mb-1.5
+          "
+        >
           Event
         </label>
+
 
         <input
           id="eventTitleInput"
@@ -676,13 +1563,27 @@
           placeholder="e.g. NBME 12"
         >
 
+
       </div>
+
+
 
       <div class="mb-4">
 
-        <label class="block text-[9px] uppercase tracking-wide text-[#6B7280] mb-1.5">
+
+        <label
+          class="
+            block
+            text-[9px]
+            uppercase
+            tracking-wide
+            text-[#6B7280]
+            mb-1.5
+          "
+        >
           Date
         </label>
+
 
         <input
           id="eventDateInput"
@@ -690,13 +1591,27 @@
           class="field-input"
         >
 
+
       </div>
+
+
 
       <div class="mb-5">
 
-        <label class="block text-[9px] uppercase tracking-wide text-[#6B7280] mb-1.5">
+
+        <label
+          class="
+            block
+            text-[9px]
+            uppercase
+            tracking-wide
+            text-[#6B7280]
+            mb-1.5
+          "
+        >
           Location
         </label>
+
 
         <input
           id="eventLocationInput"
@@ -705,87 +1620,143 @@
           placeholder="Hospital, address, Zoom, etc."
         >
 
+
       </div>
+
+
 
       <div class="flex justify-between">
 
+
         <button
           id="deleteEventButton"
-          class="text-sm text-[#6B7280] hover:text-[#C86D51]"
+          class="
+            text-sm
+            text-[#6B7280]
+            hover:text-[#C86D51]
+          "
         >
           Delete
         </button>
 
+
         <button
           id="saveEventButton"
-          class="px-4 py-2 bg-[#C86D51] text-white rounded-lg text-sm"
+          class="
+            px-4
+            py-2
+            bg-[#C86D51]
+            text-white
+            rounded-lg
+            text-sm
+          "
         >
           Save event
         </button>
 
+
       </div>
+
 
     </div>
 
+
   </div>
 
+
+
   <script>
-    /* Navigation */
+
+
+    /* =====================================================
+       NAVIGATION
+    ===================================================== */
+
+
+    const leftNavigation =
+      document.getElementById(
+        'leftNavigation'
+      );
+
 
     const menuButton =
-      document.getElementById('menuButton');
-
-    const menuPanel =
-      document.getElementById('menuPanel');
-
-    const menuOverlay =
-      document.getElementById('menuOverlay');
+      document.getElementById(
+        'menuButton'
+      );
 
 
-    function openMenu() {
-      menuPanel.classList.add('open');
-      menuOverlay.classList.add('open');
+    function toggleMenu() {
+
+      const opening =
+        !leftNavigation
+          .classList
+          .contains(
+            'open'
+          );
+
+
+      leftNavigation
+        .classList
+        .toggle(
+          'open',
+          opening
+        );
+
+
+      document.body
+        .classList
+        .toggle(
+          'menu-open',
+          opening
+        );
+
+
+      menuButton
+        .setAttribute(
+          'aria-expanded',
+          opening
+            ? 'true'
+            : 'false'
+        );
+
+
+      menuButton.textContent =
+        opening
+          ? '×'
+          : '☰';
+
     }
 
 
-    function closeMenu() {
-      menuPanel.classList.remove('open');
-      menuOverlay.classList.remove('open');
-    }
+    menuButton
+      .addEventListener(
+        'click',
+        toggleMenu
+      );
 
 
-    menuButton.addEventListener(
-      'click',
-      () => {
 
-        if (
-          menuPanel.classList.contains('open')
-        ) {
-          closeMenu();
-        } else {
-          openMenu();
-        }
+    /* =====================================================
+       STEP DETAILS
+    ===================================================== */
 
-      }
-    );
-
-
-    menuOverlay.addEventListener(
-      'click',
-      closeMenu
-    );
-
-
-    /* Step details */
 
     const testDateInput =
-      document.getElementById('testDateInput');
+      document.getElementById(
+        'testDateInput'
+      );
+
 
     const testLocationInput =
-      document.getElementById('testLocationInput');
+      document.getElementById(
+        'testLocationInput'
+      );
+
 
     const permitLink =
-      document.getElementById('permitLink');
+      document.getElementById(
+        'permitLink'
+      );
 
 
     testDateInput.value =
@@ -813,43 +1784,52 @@
 
     } else {
 
-      permitLink.addEventListener(
-        'click',
-        event => {
-          event.preventDefault();
-        }
-      );
+      permitLink
+        .addEventListener(
+          'click',
+          event => {
+
+            event.preventDefault();
+
+          }
+        );
 
     }
 
 
-    testDateInput.addEventListener(
-      'change',
-      () => {
+    testDateInput
+      .addEventListener(
+        'change',
+        () => {
 
-        localStorage.setItem(
-          'fourthYearStepTestDate',
-          testDateInput.value
-        );
+          localStorage.setItem(
+            'fourthYearStepTestDate',
+            testDateInput.value
+          );
 
-      }
-    );
-
-
-    testLocationInput.addEventListener(
-      'input',
-      () => {
-
-        localStorage.setItem(
-          'fourthYearStepLocation',
-          testLocationInput.value
-        );
-
-      }
-    );
+        }
+      );
 
 
-    /* Shared calendar */
+    testLocationInput
+      .addEventListener(
+        'input',
+        () => {
+
+          localStorage.setItem(
+            'fourthYearStepLocation',
+            testLocationInput.value
+          );
+
+        }
+      );
+
+
+
+    /* =====================================================
+       SHARED CALENDAR
+    ===================================================== */
+
 
     const CALENDAR_STORAGE_KEY =
       'fourthYearSharedCalendarEvents';
@@ -945,6 +1925,7 @@
       );
 
 
+
     function saveCalendarEvents() {
 
       localStorage.setItem(
@@ -957,7 +1938,10 @@
     }
 
 
-    function formatDateKey(date) {
+
+    function formatDateKey(
+      date
+    ) {
 
       const year =
         date.getFullYear();
@@ -966,7 +1950,8 @@
       const month =
         String(
           date.getMonth() + 1
-        ).padStart(
+        )
+        .padStart(
           2,
           '0'
         );
@@ -975,7 +1960,8 @@
       const day =
         String(
           date.getDate()
-        ).padStart(
+        )
+        .padStart(
           2,
           '0'
         );
@@ -984,6 +1970,7 @@
       return `${year}-${month}-${day}`;
 
     }
+
 
 
     function renderCalendar() {
@@ -1028,7 +2015,8 @@
           year,
           month,
           1 -
-          firstDayOfMonth.getDay()
+          firstDayOfMonth
+            .getDay()
         );
 
 
@@ -1045,8 +2033,10 @@
 
 
         cellDate.setDate(
-          firstVisibleDate.getDate()
-          + index
+          firstVisibleDate
+            .getDate()
+          +
+          index
         );
 
 
@@ -1085,9 +2075,11 @@
           !== month
         ) {
 
-          dateLabel.classList.add(
-            'muted'
-          );
+          dateLabel
+            .classList
+            .add(
+              'muted'
+            );
 
         }
 
@@ -1098,79 +2090,87 @@
 
 
         const eventsForDay =
-          calendarEvents.filter(
-            event =>
-              event.date
-              === dateKey
+          calendarEvents
+            .filter(
+              event =>
+                event.date
+                === dateKey
+            );
+
+
+        eventsForDay
+          .forEach(
+            event => {
+
+              const eventElement =
+                document
+                  .createElement(
+                    'div'
+                  );
+
+
+              eventElement.className =
+                'calendar-event';
+
+
+              eventElement.textContent =
+                event.title;
+
+
+              eventElement.title =
+                event.location
+                  ? `${event.title} — ${event.location}`
+                  : event.title;
+
+
+              eventElement
+                .addEventListener(
+                  'click',
+                  clickEvent => {
+
+                    clickEvent
+                      .stopPropagation();
+
+
+                    openEventModal(
+                      event
+                    );
+
+                  }
+                );
+
+
+              day.appendChild(
+                eventElement
+              );
+
+            }
           );
 
 
-        eventsForDay.forEach(
-          event => {
+        day
+          .addEventListener(
+            'click',
+            () => {
 
-            const eventElement =
-              document.createElement(
-                'div'
-              );
+              openEventModal({
+                date:
+                  dateKey
+              });
 
-
-            eventElement.className =
-              'calendar-event';
-
-
-            eventElement.textContent =
-              event.title;
+            }
+          );
 
 
-            eventElement.title =
-              event.location
-                ? `${event.title} — ${event.location}`
-                : event.title;
-
-
-            eventElement.addEventListener(
-              'click',
-              clickEvent => {
-
-                clickEvent
-                  .stopPropagation();
-
-
-                openEventModal(
-                  event
-                );
-
-              }
-            );
-
-
-            day.appendChild(
-              eventElement
-            );
-
-          }
-        );
-
-
-        day.addEventListener(
-          'click',
-          () => {
-
-            openEventModal({
-              date: dateKey
-            });
-
-          }
-        );
-
-
-        calendarGrid.appendChild(
-          day
-        );
+        calendarGrid
+          .appendChild(
+            day
+          );
 
       }
 
     }
+
 
 
     function openEventModal(
@@ -1221,6 +2221,7 @@
     }
 
 
+
     function closeEventModal() {
 
       eventModal
@@ -1230,6 +2231,7 @@
         );
 
     }
+
 
 
     saveEventButton
@@ -1258,7 +2260,9 @@
             !title ||
             !date
           ) {
+
             return;
+
           }
 
 
@@ -1314,11 +2318,14 @@
 
 
           saveCalendarEvents();
+
           closeEventModal();
+
           renderCalendar();
 
         }
       );
+
 
 
     deleteEventButton
@@ -1332,7 +2339,9 @@
 
 
           if (!eventId) {
+
             return;
+
           }
 
 
@@ -1346,11 +2355,14 @@
 
 
           saveCalendarEvents();
+
           closeEventModal();
+
           renderCalendar();
 
         }
       );
+
 
 
     closeEventModalButton
@@ -1358,6 +2370,7 @@
         'click',
         closeEventModal
       );
+
 
 
     eventModal
@@ -1378,6 +2391,7 @@
       );
 
 
+
     previousMonthButton
       .addEventListener(
         'click',
@@ -1385,6 +2399,7 @@
 
           currentCalendarDate =
             new Date(
+
               currentCalendarDate
                 .getFullYear(),
 
@@ -1392,6 +2407,7 @@
                 .getMonth() - 1,
 
               1
+
             );
 
 
@@ -1399,6 +2415,7 @@
 
         }
       );
+
 
 
     nextMonthButton
@@ -1408,6 +2425,7 @@
 
           currentCalendarDate =
             new Date(
+
               currentCalendarDate
                 .getFullYear(),
 
@@ -1415,6 +2433,7 @@
                 .getMonth() + 1,
 
               1
+
             );
 
 
@@ -1422,6 +2441,7 @@
 
         }
       );
+
 
 
     todayButton
@@ -1439,8 +2459,13 @@
       );
 
 
+
     renderCalendar();
+
+
   </script>
 
+
 </body>
+
 </html>
