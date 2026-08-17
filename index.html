@@ -463,16 +463,16 @@
 
     .quick-link {
 
-      min-height: 132px;
+      min-height: 116px;
 
       display: flex;
 
       flex-direction: column;
 
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
 
-      gap: 7px;
+      gap: 8px;
 
       padding:
         13px
@@ -605,6 +605,7 @@
       letter-spacing: -0.07em;
 
     }
+
 
 
     /* =========================================
@@ -744,18 +745,6 @@
       font-weight: 650;
 
       line-height: 1.25;
-
-    }
-
-
-    .quick-subtitle {
-
-      color:
-        var(--text-gray);
-
-      font-size: 9px;
-
-      line-height: 1.35;
 
     }
 
@@ -1627,7 +1616,6 @@
 
   <!-- =========================================
        NAVIGATION
-       UNCHANGED
   ========================================== -->
 
   <aside
@@ -1678,8 +1666,6 @@
       >
         Program Explorer
       </a>
-
-      
 
       <a
         href="application.html"
@@ -1775,10 +1761,6 @@
                   Outlook
                 </div>
 
-                <div class="quick-subtitle">
-                  Email
-                </div>
-
               </a>
 
 
@@ -1804,10 +1786,6 @@
 
                 <div class="quick-title">
                   Epic
-                </div>
-
-                <div class="quick-subtitle">
-                  Wake Health
                 </div>
 
               </a>
@@ -1847,10 +1825,6 @@
                   Canvas
                 </div>
 
-                <div class="quick-subtitle">
-                  WFU School of Medicine
-                </div>
-
               </a>
 
 
@@ -1876,10 +1850,6 @@
 
                 <div class="quick-title">
                   OpenEvidence
-                </div>
-
-                <div class="quick-subtitle">
-                  Clinical evidence
                 </div>
 
               </a>
@@ -1939,10 +1909,6 @@
                   MDCalc
                 </div>
 
-                <div class="quick-subtitle">
-                  Clinical calculators
-                </div>
-
               </a>
 
 
@@ -2000,15 +1966,11 @@
                   PeopleSoft
                 </div>
 
-                <div class="quick-subtitle">
-                  WFU BMC
-                </div>
-
               </a>
 
 
 
-              <!-- Doctor Appointment -->
+              <!-- LiveWELL Care -->
 
               <a
                 href="https://my.atriumhealth.org/myatriumhealth/openscheduling/standalone?dept=1020732000,1025602000,1023072000,1020722000,1020132001,1025952000,1025492000,1025342008,10120162000,1029612017,1028922000&vt=158093"
@@ -2029,41 +1991,15 @@
                       r="12"
                     ></circle>
 
-                    <path
-                      d="M15 26V8"
-                    ></path>
-
-                    <path
-                      d="M15 11L10 7"
-                    ></path>
-
-                    <path
-                      d="M15 11L20 7"
-                    ></path>
-
-                    <path
-                      d="M15 15L8 11"
-                    ></path>
-
-                    <path
-                      d="M15 15L22 11"
-                    ></path>
-
-                    <path
-                      d="M15 19L7 15"
-                    ></path>
-
-                    <path
-                      d="M15 19L23 15"
-                    ></path>
-
-                    <path
-                      d="M15 23L9 20"
-                    ></path>
-
-                    <path
-                      d="M15 23L21 20"
-                    ></path>
+                    <path d="M15 26V8"></path>
+                    <path d="M15 11L10 7"></path>
+                    <path d="M15 11L20 7"></path>
+                    <path d="M15 15L8 11"></path>
+                    <path d="M15 15L22 11"></path>
+                    <path d="M15 19L7 15"></path>
+                    <path d="M15 19L23 15"></path>
+                    <path d="M15 23L9 20"></path>
+                    <path d="M15 23L21 20"></path>
 
                   </svg>
 
@@ -2071,11 +2007,7 @@
 
 
                 <div class="quick-title">
-                  Make a Doctor's Appointment
-                </div>
-
-                <div class="quick-subtitle">
-                  Atrium Health
+                  LiveWELL Care
                 </div>
 
               </a>
@@ -2398,33 +2330,13 @@
 
             <div class="calendar-weekdays">
 
-              <div class="calendar-weekday">
-                SUN
-              </div>
-
-              <div class="calendar-weekday">
-                MON
-              </div>
-
-              <div class="calendar-weekday">
-                TUE
-              </div>
-
-              <div class="calendar-weekday">
-                WED
-              </div>
-
-              <div class="calendar-weekday">
-                THU
-              </div>
-
-              <div class="calendar-weekday">
-                FRI
-              </div>
-
-              <div class="calendar-weekday">
-                SAT
-              </div>
+              <div class="calendar-weekday">SUN</div>
+              <div class="calendar-weekday">MON</div>
+              <div class="calendar-weekday">TUE</div>
+              <div class="calendar-weekday">WED</div>
+              <div class="calendar-weekday">THU</div>
+              <div class="calendar-weekday">FRI</div>
+              <div class="calendar-weekday">SAT</div>
 
             </div>
 
@@ -2613,11 +2525,6 @@
   ========================================== -->
 
   <script>
-
-    /* =========================================
-       NAVIGATION
-       UNCHANGED
-    ========================================= */
 
     const leftNavigation =
       document.getElementById(
