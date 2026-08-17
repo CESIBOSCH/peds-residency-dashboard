@@ -92,12 +92,16 @@
 
       z-index: 50;
 
-      padding: 28px 18px;
+      padding:
+        28px
+        18px;
 
       background: var(--bg-app);
 
       transition:
-        width 0.22s ease;
+        width
+        0.22s
+        ease;
     }
 
 
@@ -159,7 +163,9 @@
       text-transform: uppercase;
 
       transition:
-        opacity 0.15s ease;
+        opacity
+        0.15s
+        ease;
     }
 
 
@@ -174,11 +180,16 @@
       opacity: 0;
       pointer-events: none;
 
-      transform: translateX(-5px);
+      transform:
+        translateX(-5px);
 
       transition:
-        opacity 0.18s ease,
-        transform 0.18s ease;
+        opacity
+        0.18s
+        ease,
+        transform
+        0.18s
+        ease;
     }
 
 
@@ -186,7 +197,8 @@
       opacity: 1;
       pointer-events: auto;
 
-      transform: translateX(0);
+      transform:
+        translateX(0);
     }
 
 
@@ -195,7 +207,9 @@
 
       width: max-content;
 
-      padding: 7px 0;
+      padding:
+        7px
+        0;
 
       color: var(--accent-sage);
 
@@ -208,7 +222,9 @@
       text-transform: uppercase;
 
       transition:
-        color 0.15s ease;
+        color
+        0.15s
+        ease;
     }
 
 
@@ -237,7 +253,9 @@
         42px;
 
       transition:
-        margin-left 0.22s ease;
+        margin-left
+        0.22s
+        ease;
     }
 
 
@@ -250,7 +268,9 @@
       width: 100%;
       max-width: 1320px;
 
-      margin: 0 auto;
+      margin:
+        0
+        auto;
     }
 
 
@@ -301,7 +321,7 @@
 
 
     /* =====================================================
-       PRIMARY LAYOUT
+       MAIN TWO-COLUMN LAYOUT
     ===================================================== */
 
     .primary-layout {
@@ -317,18 +337,22 @@
     }
 
 
-    .calendar-column {
+    .left-column,
+    .right-column {
       min-width: 0;
     }
 
 
 
     /* =====================================================
-       ROTATION DETAIL CARD
+       CURRENT ROTATION
     ===================================================== */
 
     .rotation-card {
-      padding: 17px 18px 18px;
+      padding:
+        17px
+        18px
+        18px;
     }
 
 
@@ -403,7 +427,9 @@
       text-decoration: none;
 
       transition:
-        color 0.15s ease;
+        color
+        0.15s
+        ease;
     }
 
 
@@ -412,10 +438,6 @@
       text-decoration: underline;
     }
 
-
-    /*
-      Syllabus itself is now the link.
-    */
 
     .syllabus-heading-link {
       display: inline-block;
@@ -493,17 +515,12 @@
     }
 
 
-    /*
-      Two aligned columns now:
-      brief note + attending
-    */
-
     .encounter-grid {
       display: grid;
 
       grid-template-columns:
         minmax(0, 2fr)
-        minmax(110px, 1fr);
+        minmax(105px, 1fr);
 
       gap: 8px;
 
@@ -648,6 +665,107 @@
       color: var(--accent-sage);
 
       font-size: 8px;
+    }
+
+
+
+    /* =====================================================
+       QUICK LINKS UNDER CURRENT ROTATION
+    ===================================================== */
+
+    .quick-links-card {
+      margin-top: 12px;
+
+      padding:
+        13px
+        14px;
+    }
+
+
+    .quick-links-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+      gap: 7px;
+
+      margin-top: 9px;
+    }
+
+
+    .quick-link {
+      min-width: 0;
+      min-height: 61px;
+
+      display: flex;
+      flex-direction: column;
+
+      align-items: center;
+      justify-content: center;
+
+      gap: 5px;
+
+      padding:
+        7px
+        5px;
+
+      border:
+        1px
+        solid
+        #E9E4DD;
+
+      border-radius: 8px;
+
+      background: #FCFBF8;
+
+      text-decoration: none;
+
+      transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        transform 0.15s ease;
+    }
+
+
+    .quick-link:hover {
+      background: white;
+
+      border-color: #D4CDC3;
+
+      transform:
+        translateY(-1px);
+    }
+
+
+    .quick-link-icon {
+      width: 25px;
+      height: 25px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      background: var(--soft-sage);
+
+      color: #758170;
+
+      font-size: 7px;
+      font-weight: 700;
+    }
+
+
+    .quick-link-name {
+      color: #4E5251;
+
+      font-size: 8.5px;
+      font-weight: 600;
+
+      text-align: center;
+
+      line-height: 1.15;
     }
 
 
@@ -832,7 +950,7 @@
 
 
 
-    /* single-day event */
+    /* SINGLE-DAY EVENTS */
 
     .calendar-event {
       order: 50;
@@ -860,43 +978,48 @@
 
       white-space: nowrap;
       text-overflow: ellipsis;
+
+      transition:
+        background 0.15s ease,
+        color 0.15s ease;
     }
 
 
     .calendar-event:hover {
-      background: #F5EFEA;
+      background: #EEE7E0;
+      color: #343736;
     }
 
 
-    /*
-      Drop/add deadlines are deliberately quieter and smaller.
-    */
+
+    /* DROP / ADD */
 
     .calendar-event.deadline-event {
       order: 99;
 
       margin-top: auto;
 
-      padding: 0;
+      padding:
+        2px
+        4px;
 
-      background: transparent;
+      background: #EEF1EB;
 
-      color: #899185;
+      color: #6E786A;
 
-      font-size: 6.25px;
-      font-weight: 500;
+      border-radius: 4px;
 
-      line-height: 1.05;
+      font-size: 6.8px;
+      font-weight: 600;
 
-      border-radius: 0;
-
-      opacity: 0.9;
+      line-height: 1.1;
     }
 
 
     .calendar-event.deadline-event:hover {
-      color: #697564;
-      background: transparent;
+      background: #E1E6DD;
+
+      color: #5D6759;
     }
 
 
@@ -936,6 +1059,10 @@
       white-space: nowrap;
 
       z-index: 2;
+
+      transition:
+        background 0.15s ease,
+        color 0.15s ease;
     }
 
 
@@ -971,9 +1098,25 @@
     }
 
 
+    /*
+      Rotation bars now darken just like other events.
+    */
+
+    .calendar-range.rotation-range:hover {
+      background: #E8DED7;
+      color: #8C4D3A;
+    }
+
+
     .calendar-range.break-range {
       background: var(--soft-sage);
       color: #65715F;
+    }
+
+
+    .calendar-range.break-range:hover {
+      background: #DDE3D9;
+      color: #586353;
     }
 
 
@@ -983,120 +1126,31 @@
     }
 
 
+    .calendar-range.match-range:hover {
+      background: #DDE3D9;
+      color: #586353;
+    }
+
+
     .calendar-range.transition-range {
       background: #F2EFE8;
       color: #7A746A;
     }
 
 
-
-    /* =====================================================
-       COMPACT SCHOOL UTILITIES
-    ===================================================== */
-
-    .calendar-tools {
-      width: min(470px, 100%);
-
-      display: grid;
-
-      grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-
-      gap: 7px;
-
-      margin:
-        10px
-        auto
-        0;
-    }
-
-
-    .school-link {
-      min-width: 0;
-      height: 39px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      gap: 7px;
-
-      padding:
-        6px
-        10px;
-
-      background:
-        rgba(255, 255, 255, 0.72);
-
-      border:
-        1px
-        solid
-        #E8E3DC;
-
-      border-radius: 8px;
-
-      color: var(--text-charcoal);
-
-      text-decoration: none;
-
-      transition:
-        background 0.15s ease,
-        border-color 0.15s ease,
-        transform 0.15s ease;
-    }
-
-
-    .school-link:hover {
-      background: white;
-
-      border-color: #D4CDC3;
-
-      transform: translateY(-1px);
-    }
-
-
-    .school-icon {
-      width: 22px;
-      height: 22px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      flex-shrink: 0;
-
-      border-radius: 6px;
-
-      background: #F0F2ED;
-
-      color: #74806F;
-
-      font-size: 7px;
-      font-weight: 700;
-
-      letter-spacing: 0.02em;
-    }
-
-
-    .school-name {
-      min-width: 0;
-
-      color: #505453;
-
-      font-size: 9.5px;
-      font-weight: 600;
-
-      white-space: nowrap;
+    .calendar-range.transition-range:hover {
+      background: #E4DED4;
+      color: #666057;
     }
 
 
 
     /* =====================================================
-       ROTATION ARCHIVE / UPCOMING
+       ROTATION LISTS UNDER CALENDAR
     ===================================================== */
 
     .rotation-list-section {
-      margin-top: 24px;
+      margin-top: 20px;
     }
 
 
@@ -1106,7 +1160,7 @@
       grid-template-columns:
         repeat(2, minmax(0, 1fr));
 
-      gap: 10px;
+      gap: 9px;
 
       margin-top: 9px;
     }
@@ -1138,8 +1192,8 @@
       gap: 12px;
 
       padding:
-        13px
-        14px;
+        12px
+        13px;
 
       border: 0;
 
@@ -1183,12 +1237,15 @@
       font-size: 15px;
 
       transition:
-        transform 0.18s ease;
+        transform
+        0.18s
+        ease;
     }
 
 
     .expandable-rotation.open .expand-icon {
-      transform: rotate(180deg);
+      transform:
+        rotate(180deg);
     }
 
 
@@ -1212,69 +1269,59 @@
     }
 
 
-    .rotation-action-row {
-      display: flex;
-      justify-content: flex-end;
 
-      margin-top: 12px;
+    /* =====================================================
+       INLINE EDITING
+    ===================================================== */
+
+    .inline-editable {
+      position: relative;
+
+      border-radius: 4px;
+
+      cursor: text;
+
+      transition:
+        background 0.15s ease;
     }
 
 
-    .edit-details-button {
-      padding: 0;
-
-      border: 0;
-
-      background: transparent;
-
-      color: var(--accent-terracotta);
-
-      cursor: pointer;
-
-      font-size: 9px;
-      font-weight: 600;
+    .inline-editable:hover {
+      background: #FAF7F2;
     }
 
 
-    .editable-rotation-form {
-      display: none;
+    .inline-editable:hover::after {
+      content: " double-click to edit";
 
-      margin-top: 12px;
+      margin-left: 5px;
 
-      padding: 11px;
+      color: #A9A49D;
 
-      border:
-        1px
-        solid
-        var(--border-light);
+      font-size: 7px;
+      font-weight: 400;
 
-      border-radius: 8px;
-
-      background: #FCFBF8;
+      letter-spacing: 0;
+      text-transform: none;
     }
 
 
-    .editable-rotation-form.open {
-      display: block;
+    .inline-editable.rotation-name-editable:hover::after {
+      color: #C7A093;
     }
 
 
-    .edit-field-group + .edit-field-group {
-      margin-top: 9px;
-    }
-
-
-    .edit-field {
+    .inline-editor {
       width: 100%;
 
       padding:
-        7px
-        8px;
+        5px
+        7px;
 
       border:
         1px
         solid
-        var(--border-light);
+        var(--accent-sage);
 
       border-radius: 6px;
 
@@ -1288,25 +1335,10 @@
     }
 
 
-    textarea.edit-field {
-      min-height: 58px;
+    textarea.inline-editor {
+      min-height: 60px;
 
       resize: vertical;
-    }
-
-
-    .edit-field:focus {
-      border-color: var(--accent-sage);
-    }
-
-
-    .edit-form-actions {
-      display: flex;
-      justify-content: flex-end;
-
-      gap: 8px;
-
-      margin-top: 10px;
     }
 
 
@@ -1646,6 +1678,215 @@
 
 
     /* =====================================================
+       CUSTOM DATE PICKER
+    ===================================================== */
+
+    .date-picker-field {
+      position: relative;
+    }
+
+
+    .date-display-button {
+      width: 100%;
+
+      min-height: 39px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 8px;
+
+      padding:
+        8px
+        10px;
+
+      border:
+        1px
+        solid
+        var(--border-light);
+
+      border-radius: 7px;
+
+      background: white;
+
+      color: var(--text-charcoal);
+
+      cursor: pointer;
+
+      text-align: left;
+
+      font-size: 11px;
+    }
+
+
+    .date-display-button:hover,
+    .date-display-button.open {
+      border-color: var(--accent-sage);
+    }
+
+
+    .date-display-icon {
+      color: var(--accent-sage);
+
+      font-size: 12px;
+    }
+
+
+    .date-picker-popover {
+      position: absolute;
+
+      top:
+        calc(100% + 6px);
+
+      left: 0;
+
+      z-index: 130;
+
+      width: 245px;
+
+      display: none;
+
+      padding: 11px;
+
+      border:
+        1px
+        solid
+        var(--border-light);
+
+      border-radius: 10px;
+
+      background: white;
+
+      box-shadow:
+        0
+        12px
+        30px
+        rgba(45, 49, 50, 0.12);
+    }
+
+
+    .date-picker-popover.open {
+      display: block;
+    }
+
+
+    .picker-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 5px;
+
+      margin-bottom: 8px;
+    }
+
+
+    .picker-month-label {
+      color: var(--text-charcoal);
+
+      font-size: 10px;
+      font-weight: 650;
+    }
+
+
+    .picker-nav {
+      width: 25px;
+      height: 25px;
+
+      border:
+        1px
+        solid
+        var(--border-light);
+
+      border-radius: 6px;
+
+      background: white;
+
+      cursor: pointer;
+
+      font-size: 11px;
+    }
+
+
+    .picker-nav:hover {
+      background: var(--soft-sage);
+    }
+
+
+    .picker-weekdays,
+    .picker-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(7, 1fr);
+    }
+
+
+    .picker-weekday {
+      padding:
+        3px
+        0
+        5px;
+
+      text-align: center;
+
+      color: var(--text-gray);
+
+      font-size: 6.5px;
+      font-weight: 700;
+    }
+
+
+    .picker-day {
+      width: 29px;
+      height: 28px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      justify-self: center;
+
+      border: 0;
+      border-radius: 50%;
+
+      background: transparent;
+
+      color: var(--text-charcoal);
+
+      cursor: pointer;
+
+      font-size: 9px;
+    }
+
+
+    .picker-day:hover {
+      background: var(--soft-sage);
+    }
+
+
+    .picker-day.muted {
+      color: #B5B9BF;
+    }
+
+
+    .picker-day.selected {
+      background: var(--accent-terracotta);
+
+      color: white;
+    }
+
+
+    .picker-day.today:not(.selected) {
+      color: var(--accent-terracotta);
+
+      font-weight: 700;
+    }
+
+
+
+    /* =====================================================
        RESPONSIVE
     ===================================================== */
 
@@ -1653,13 +1894,8 @@
 
       .primary-layout {
         grid-template-columns:
-          310px
+          300px
           minmax(0, 1fr);
-      }
-
-
-      .rotation-list {
-        grid-template-columns: 1fr;
       }
 
     }
@@ -1702,11 +1938,6 @@
       }
 
 
-      .calendar-tools {
-        width: 100%;
-      }
-
-
       .encounter-grid {
         grid-template-columns: 1fr;
       }
@@ -1714,9 +1945,9 @@
     }
 
 
-    @media (max-width: 560px) {
+    @media (max-width: 600px) {
 
-      .calendar-tools {
+      .rotation-list {
         grid-template-columns: 1fr;
       }
 
@@ -1753,7 +1984,9 @@
 <body>
 
 
-  <!-- LEFT NAVIGATION -->
+  <!-- =====================================================
+       LEFT NAVIGATION
+  ====================================================== -->
 
   <aside
     id="leftNavigation"
@@ -1771,6 +2004,7 @@
         ☰
       </button>
 
+
       <div class="nav-brand">
         Fourth Year
       </div>
@@ -1780,23 +2014,38 @@
 
     <nav class="nav-links">
 
-      <a href="index.html" class="menu-link">
+      <a
+        href="index.html"
+        class="menu-link"
+      >
         Home
       </a>
 
-      <a href="step.html" class="menu-link">
+      <a
+        href="step.html"
+        class="menu-link"
+      >
         Step & Study
       </a>
 
-      <a href="programs.html" class="menu-link">
+      <a
+        href="programs.html"
+        class="menu-link"
+      >
         Program Explorer
       </a>
 
-      <a href="application.html" class="menu-link">
+      <a
+        href="application.html"
+        class="menu-link"
+      >
         Application Tracker
       </a>
 
-      <a href="schedule.html" class="menu-link active">
+      <a
+        href="schedule.html"
+        class="menu-link active"
+      >
         4th Year Schedule
       </a>
 
@@ -1806,7 +2055,9 @@
 
 
 
-  <!-- PAGE -->
+  <!-- =====================================================
+       PAGE
+  ====================================================== -->
 
   <main class="page-shell">
 
@@ -1819,250 +2070,334 @@
 
 
 
-      <!-- CURRENT ROTATION + CALENDAR -->
-
       <section class="primary-layout">
 
 
-        <!-- CURRENT ROTATION -->
+        <!-- =================================================
+             LEFT COLUMN
+        ================================================== -->
 
-        <article class="content-card rotation-card">
-
-
-          <div class="section-label">
-            Current Rotation
-          </div>
+        <div class="left-column">
 
 
-          <div class="rotation-title">
-            Pediatrics Hematology / Oncology
-          </div>
+          <!-- CURRENT ROTATION -->
 
+          <article class="content-card rotation-card">
 
-          <div class="rotation-dates">
-            Block 6 · Aug 17, 2026 – Sep 13, 2026
-          </div>
-
-
-
-          <section class="rotation-section">
 
             <div class="section-label">
-              Contacts
+              Current Rotation
             </div>
 
 
-            <div class="contact-entry">
+            <div class="rotation-title">
+              Pediatrics Hematology / Oncology
+            </div>
 
-              <div class="detail-label">
-                Course Director
+
+            <div class="rotation-dates">
+              Block 6 · Aug 17, 2026 – Sep 13, 2026
+            </div>
+
+
+
+            <section class="rotation-section">
+
+              <div class="section-label">
+                Contacts
+              </div>
+
+
+              <div class="contact-entry">
+
+                <div class="detail-label">
+                  Course Director
+                </div>
+
+                <div class="detail-name">
+                  Dr. David Gass
+                </div>
+
+                <a
+                  href="mailto:david.gass@advocatehealth.org"
+                  class="detail-link"
+                >
+                  david.gass@advocatehealth.org
+                </a>
+
+              </div>
+
+
+              <div class="contact-entry">
+
+                <div class="detail-label">
+                  Course Coordinator / First Day Contact
+                </div>
+
+                <div class="detail-name">
+                  Alexis Miller
+                </div>
+
+                <a
+                  href="mailto:alexis.miller@advocatehealth.org"
+                  class="detail-link"
+                >
+                  alexis.miller@advocatehealth.org
+                </a>
+
+                <br>
+
+                <a
+                  href="tel:+13365802500"
+                  class="detail-link"
+                >
+                  336-580-2500
+                </a>
+
+              </div>
+
+            </section>
+
+
+
+            <section class="rotation-section">
+
+              <div class="section-label">
+                Location
               </div>
 
               <div class="detail-name">
-                Dr. David Gass
+                Medical Center Plaza
               </div>
 
-              <a
-                href="mailto:david.gass@advocatehealth.org"
-                class="detail-link"
-              >
-                david.gass@advocatehealth.org
-              </a>
-
-            </div>
+            </section>
 
 
-            <div class="contact-entry">
 
-              <div class="detail-label">
-                Course Coordinator / First Day Contact
+            <section class="rotation-section">
+
+              <div class="section-label">
+                Schedule
               </div>
 
-              <div class="detail-name">
-                Alexis Miller
+              <div class="detail-text">
+                Monday–Friday · 8:00 AM–5:00 PM
+                No scheduled weekend clinical time
               </div>
 
-              <a
-                href="mailto:alexis.miller@advocatehealth.org"
-                class="detail-link"
-              >
-                alexis.miller@advocatehealth.org
-              </a>
+            </section>
 
-              <br>
+
+
+            <section class="rotation-section">
 
               <a
-                href="tel:+13365802500"
-                class="detail-link"
-              >
-                336-580-2500
-              </a>
-
-            </div>
-
-          </section>
-
-
-
-          <section class="rotation-section">
-
-            <div class="section-label">
-              Location
-            </div>
-
-            <div class="detail-name">
-              Medical Center Plaza
-            </div>
-
-          </section>
-
-
-
-          <section class="rotation-section">
-
-            <div class="section-label">
-              Schedule
-            </div>
-
-            <div class="detail-text">
-              Monday–Friday · 8:00 AM–5:00 PM
-              No scheduled weekend clinical time
-            </div>
-
-          </section>
-
-
-
-          <section class="rotation-section">
-
-            <a
-              href="4PED32%20-%20Pediatric%20Hematology-Oncology%20Syllabus%202026.2027Final.pdf"
-              class="syllabus-heading-link"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Syllabus
-            </a>
-
-          </section>
-
-
-
-          <section class="rotation-section">
-
-            <div class="section-label">
-              Tasks / Assignments
-            </div>
-
-
-            <label class="task-row">
-
-              <input
-                type="checkbox"
-                data-task-id="mid-rotation-feedback"
-              >
-
-              <a
-                href="MS4%20-%20Common%20Mid-Rotation%20Feedback%20Form%20%281%29.pdf"
-                class="detail-link"
+                href="4PED32%20-%20Pediatric%20Hematology-Oncology%20Syllabus%202026.2027Final.pdf"
+                class="syllabus-heading-link"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Mid-Rotation Feedback Form
+                Syllabus
               </a>
 
-            </label>
+            </section>
 
 
-            <label class="task-row">
 
-              <input
-                type="checkbox"
-                data-task-id="journal-presentation"
+            <section class="rotation-section">
+
+              <div class="section-label">
+                Tasks / Assignments
+              </div>
+
+
+              <label class="task-row">
+
+                <input
+                  type="checkbox"
+                  data-task-id="mid-rotation-feedback"
+                >
+
+                <a
+                  href="MS4%20-%20Common%20Mid-Rotation%20Feedback%20Form%20%281%29.pdf"
+                  class="detail-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Mid-Rotation Feedback Form
+                </a>
+
+              </label>
+
+
+              <label class="task-row">
+
+                <input
+                  type="checkbox"
+                  data-task-id="journal-presentation"
+                >
+
+                <span>
+                  15-minute Journal Article Presentation
+                </span>
+
+              </label>
+
+
+              <label class="task-row">
+
+                <input
+                  type="checkbox"
+                  data-task-id="course-evaluation"
+                >
+
+                <a
+                  href="https://waketrack.wakehealth.edu/students/authenticated/dashboard"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="detail-link"
+                >
+                  End of Course Evaluation
+                </a>
+
+              </label>
+
+            </section>
+
+
+
+            <section class="rotation-section">
+
+              <div class="section-label">
+                Meaningful Encounters
+              </div>
+
+              <div
+                id="currentEncounterList"
+                class="encounter-list"
+                data-rotation-id="peds-heme-onc"
+              ></div>
+
+              <button
+                type="button"
+                class="add-encounter-button"
+                data-add-encounter="peds-heme-onc"
+              >
+                + Add encounter
+              </button>
+
+            </section>
+
+
+
+            <section class="rotation-section">
+
+              <div class="section-label">
+                Notes
+              </div>
+
+              <textarea
+                id="currentRotationNotes"
+                class="rotation-notes"
+                data-rotation-notes="peds-heme-onc"
+                placeholder="Rotation reminders, presentation ideas, logistics, things to follow up on..."
+              ></textarea>
+
+              <div
+                class="save-status"
+                data-notes-status="peds-heme-onc"
+              ></div>
+
+            </section>
+
+
+          </article>
+
+
+
+          <!-- QUICK LINKS -->
+
+          <section class="content-card quick-links-card">
+
+            <div class="section-label">
+              Quick Links
+            </div>
+
+
+            <div class="quick-links-grid">
+
+
+              <a
+                href="https://ahw-psweb-lx-01.medctr.ad.wfubmc.edu:8042/psp/cppro/?cmd=login"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="quick-link"
               >
 
-              <span>
-                15-minute Journal Article Presentation
-              </span>
+                <span class="quick-link-icon">
+                  PS
+                </span>
 
-            </label>
+                <span class="quick-link-name">
+                  PeopleSoft
+                </span>
+
+              </a>
 
 
-            <label class="task-row">
-
-              <input
-                type="checkbox"
-                data-task-id="course-evaluation"
+              <a
+                href="https://wfusm.instructure.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="quick-link"
               >
+
+                <span class="quick-link-icon">
+                  C
+                </span>
+
+                <span class="quick-link-name">
+                  Canvas
+                </span>
+
+              </a>
+
 
               <a
                 href="https://waketrack.wakehealth.edu/students/authenticated/dashboard"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="detail-link"
+                class="quick-link"
               >
-                End of Course Evaluation
+
+                <span class="quick-link-icon">
+                  WT
+                </span>
+
+                <span class="quick-link-name">
+                  WakeTrack
+                </span>
+
               </a>
 
-            </label>
 
-          </section>
-
-
-
-          <section class="rotation-section">
-
-            <div class="section-label">
-              Meaningful Encounters
             </div>
 
-            <div
-              id="currentEncounterList"
-              class="encounter-list"
-              data-rotation-id="peds-heme-onc"
-            ></div>
-
-            <button
-              type="button"
-              class="add-encounter-button"
-              data-add-encounter="peds-heme-onc"
-            >
-              + Add encounter
-            </button>
-
           </section>
 
 
-
-          <section class="rotation-section">
-
-            <div class="section-label">
-              Notes
-            </div>
-
-            <textarea
-              id="currentRotationNotes"
-              class="rotation-notes"
-              data-rotation-notes="peds-heme-onc"
-              placeholder="Rotation reminders, presentation ideas, logistics, things to follow up on..."
-            ></textarea>
-
-            <div
-              class="save-status"
-              data-notes-status="peds-heme-onc"
-            ></div>
-
-          </section>
-
-
-        </article>
+        </div>
 
 
 
-        <!-- CALENDAR COLUMN -->
+        <!-- =================================================
+             RIGHT COLUMN
+        ================================================== -->
 
-        <div class="calendar-column">
+        <div class="right-column">
 
+
+          <!-- CALENDAR -->
 
           <div class="section-label calendar-heading">
             Calendar
@@ -2131,41 +2466,35 @@
 
 
 
-          <!-- SCHOOL UTILITIES -->
+          <!-- UPCOMING -->
 
-          <section class="calendar-tools">
+          <section class="rotation-list-section">
 
-            <a
-              href="https://ahw-psweb-lx-01.medctr.ad.wfubmc.edu:8042/psp/cppro/?cmd=login"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="school-link"
-            >
-              <span class="school-icon">PS</span>
-              <span class="school-name">PeopleSoft</span>
-            </a>
+            <div class="section-label">
+              Upcoming Rotations
+            </div>
 
+            <div
+              id="upcomingRotationList"
+              class="rotation-list"
+            ></div>
 
-            <a
-              href="https://wfusm.instructure.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="school-link"
-            >
-              <span class="school-icon">C</span>
-              <span class="school-name">Canvas</span>
-            </a>
+          </section>
 
 
-            <a
-              href="https://waketrack.wakehealth.edu/students/authenticated/dashboard"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="school-link"
-            >
-              <span class="school-icon">WT</span>
-              <span class="school-name">WakeTrack</span>
-            </a>
+
+          <!-- PAST -->
+
+          <section class="rotation-list-section">
+
+            <div class="section-label">
+              Past Rotations
+            </div>
+
+            <div
+              id="pastRotationList"
+              class="rotation-list"
+            ></div>
 
           </section>
 
@@ -2176,47 +2505,15 @@
       </section>
 
 
-
-      <!-- UPCOMING ROTATIONS -->
-
-      <section class="rotation-list-section">
-
-        <div class="section-label">
-          Upcoming Rotations
-        </div>
-
-        <div
-          id="upcomingRotationList"
-          class="rotation-list"
-        ></div>
-
-      </section>
-
-
-
-      <!-- PAST ROTATIONS -->
-
-      <section class="rotation-list-section">
-
-        <div class="section-label">
-          Past Rotations
-        </div>
-
-        <div
-          id="pastRotationList"
-          class="rotation-list"
-        ></div>
-
-      </section>
-
-
     </div>
 
   </main>
 
 
 
-  <!-- EVENT MODAL -->
+  <!-- =====================================================
+       EVENT MODAL
+  ====================================================== -->
 
   <div
     id="eventModal"
@@ -2338,6 +2635,7 @@
 
           </div>
 
+
         </div>
 
 
@@ -2368,7 +2666,7 @@
 
 
 
-      <!-- EDIT / ADD MODE -->
+      <!-- EDIT MODE -->
 
       <div
         id="eventEditView"
@@ -2411,34 +2709,87 @@
 
           <div class="event-field-group field-row">
 
-            <div>
+
+            <!-- CUSTOM START DATE -->
+
+            <div
+              class="date-picker-field"
+              data-date-picker="start"
+            >
 
               <div class="mini-label">
                 Start Date
               </div>
 
+              <button
+                id="eventDateButton"
+                type="button"
+                class="date-display-button"
+              >
+
+                <span id="eventDateDisplay">
+                  Select date
+                </span>
+
+                <span class="date-display-icon">
+                  ◫
+                </span>
+
+              </button>
+
               <input
                 id="eventDateInput"
-                class="event-field"
-                type="date"
+                type="hidden"
               >
+
+              <div
+                id="startDatePicker"
+                class="date-picker-popover"
+              ></div>
 
             </div>
 
 
-            <div>
+
+            <!-- CUSTOM END DATE -->
+
+            <div
+              class="date-picker-field"
+              data-date-picker="end"
+            >
 
               <div class="mini-label">
                 End Date
               </div>
 
-              <input
-                id="eventEndDateInput"
-                class="event-field"
-                type="date"
+              <button
+                id="eventEndDateButton"
+                type="button"
+                class="date-display-button"
               >
 
+                <span id="eventEndDateDisplay">
+                  Select date
+                </span>
+
+                <span class="date-display-icon">
+                  ◫
+                </span>
+
+              </button>
+
+              <input
+                id="eventEndDateInput"
+                type="hidden"
+              >
+
+              <div
+                id="endDatePicker"
+                class="date-picker-popover"
+              ></div>
+
             </div>
+
 
           </div>
 
@@ -2667,9 +3018,11 @@
       'fourthYearRotationTasks';
 
 
+
     const rotationDefaults = {
 
       "peds-heme-onc": {
+
         name:
           "Pediatrics Hematology / Oncology",
 
@@ -2693,10 +3046,12 @@
 
         tasks:
           "Mid-Rotation Feedback Form\n15-minute Journal Article Presentation\nEnd of Course Evaluation"
+
       },
 
 
       "geri-pal": {
+
         name:
           "Geri Pal",
 
@@ -2711,10 +3066,12 @@
         schedule: "",
         syllabus: "",
         tasks: ""
+
       },
 
 
       "picu": {
+
         name:
           "PICU",
 
@@ -2729,10 +3086,12 @@
         schedule: "",
         syllabus: "",
         tasks: ""
+
       },
 
 
       "interview": {
+
         name:
           "Flex – Interview Block",
 
@@ -2747,10 +3106,12 @@
         schedule: "",
         syllabus: "",
         tasks: ""
+
       },
 
 
       "mfm": {
+
         name:
           "Outpatient MFM",
 
@@ -2765,10 +3126,12 @@
         schedule: "",
         syllabus: "",
         tasks: ""
+
       },
 
 
       "child-protection": {
+
         name:
           "Child Protection",
 
@@ -2783,10 +3146,12 @@
         schedule: "",
         syllabus: "",
         tasks: ""
+
       },
 
 
       "global-health": {
+
         name:
           "Global Health Spain",
 
@@ -2801,10 +3166,12 @@
         schedule: "",
         syllabus: "",
         tasks: ""
+
       },
 
 
       "peds-ai": {
+
         name:
           "Peds AI",
 
@@ -2819,10 +3186,12 @@
         schedule: "",
         syllabus: "",
         tasks: ""
+
       },
 
 
       "fm-ai": {
+
         name:
           "Family Medicine AI",
 
@@ -2837,9 +3206,11 @@
         schedule: "",
         syllabus: "",
         tasks: ""
+
       }
 
     };
+
 
 
     let storedRotationDetails =
@@ -2866,22 +3237,27 @@
       );
 
 
+
     function getRotationData(
       rotationId
     ) {
 
       return {
+
         ...rotationDefaults[
           rotationId
         ],
+
         ...(
           storedRotationDetails[
             rotationId
           ] || {}
         )
+
       };
 
     }
+
 
 
     function saveRotationDetails() {
@@ -2896,6 +3272,7 @@
     }
 
 
+
     function saveEncounters() {
 
       localStorage.setItem(
@@ -2906,6 +3283,7 @@
       );
 
     }
+
 
 
     function saveRotationNotes() {
@@ -3116,7 +3494,8 @@
 
 
             if (
-              entries.length === 0
+              entries.length ===
+              0
             ) {
 
               const empty =
@@ -3134,14 +3513,16 @@
                 'No encounters saved yet.';
 
 
-              container.appendChild(
-                empty
-              );
+              container
+                .appendChild(
+                  empty
+                );
 
 
               return;
 
             }
+
 
 
             entries.forEach(
@@ -3219,20 +3600,21 @@
                   .forEach(
                     input => {
 
-                      input.addEventListener(
-                        'input',
-                        () => {
+                      input
+                        .addEventListener(
+                          'input',
+                          () => {
 
-                          updateEncounter(
-                            rotationId,
-                            encounter.id,
-                            input.dataset
-                              .encounterField,
-                            input.value
-                          );
+                            updateEncounter(
+                              rotationId,
+                              encounter.id,
+                              input.dataset
+                                .encounterField,
+                              input.value
+                            );
 
-                        }
-                      );
+                          }
+                        );
 
                     }
                   );
@@ -3459,7 +3841,7 @@
 
 
     /* =====================================================
-       EXPANDABLE ROTATIONS
+       INLINE-EDITABLE ROTATIONS
     ===================================================== */
 
     const upcomingRotationIds = [
@@ -3491,21 +3873,304 @@
 
 
       return cleaned ||
-        'Add details when available.';
+        'Add details when available';
 
     }
 
 
 
-    function updateRotationSyllabusHeading(
-      article,
-      syllabus
+    function saveRotationField(
+      rotationId,
+      field,
+      value
     ) {
+
+      storedRotationDetails[
+        rotationId
+      ] = {
+
+        ...(
+          storedRotationDetails[
+            rotationId
+          ] || {}
+        ),
+
+        [
+          field
+        ]:
+          value
+
+      };
+
+
+      saveRotationDetails();
+
+    }
+
+
+
+    function beginInlineEdit(
+      element,
+      rotationId,
+      field,
+      multiline = false
+    ) {
+
+      if (
+        element.dataset
+          .editing ===
+          'true'
+      ) {
+
+        return;
+
+      }
+
+
+      element.dataset.editing =
+        'true';
+
+
+      const currentData =
+        getRotationData(
+          rotationId
+        );
+
+
+      const currentValue =
+        currentData[
+          field
+        ] || '';
+
+
+      const editor =
+        document
+          .createElement(
+            multiline
+              ? 'textarea'
+              : 'input'
+          );
+
+
+      editor.className =
+        'inline-editor';
+
+
+      if (!multiline) {
+
+        editor.type =
+          'text';
+
+      }
+
+
+      editor.value =
+        currentValue;
+
+
+      const originalContent =
+        element.innerHTML;
+
+
+      element.innerHTML =
+        '';
+
+
+      element.appendChild(
+        editor
+      );
+
+
+      editor.focus();
+
+
+      if (
+        !multiline
+      ) {
+
+        editor.select();
+
+      }
+
+
+
+      let finished =
+        false;
+
+
+
+      function finish(
+        shouldSave
+      ) {
+
+        if (
+          finished
+        ) {
+
+          return;
+
+        }
+
+
+        finished =
+          true;
+
+
+        const value =
+          editor.value
+            .trim();
+
+
+        if (
+          shouldSave
+        ) {
+
+          saveRotationField(
+            rotationId,
+            field,
+            value
+          );
+
+
+          element.textContent =
+            detailDisplay(
+              value
+            );
+
+        } else {
+
+          element.innerHTML =
+            originalContent;
+
+        }
+
+
+        element.dataset.editing =
+          'false';
+
+      }
+
+
+
+      editor
+        .addEventListener(
+          'blur',
+          () => {
+
+            finish(
+              true
+            );
+
+          }
+        );
+
+
+      editor
+        .addEventListener(
+          'keydown',
+          event => {
+
+            if (
+              event.key ===
+              'Escape'
+            ) {
+
+              event.preventDefault();
+
+              finish(
+                false
+              );
+
+            }
+
+
+            if (
+              !multiline &&
+              event.key ===
+              'Enter'
+            ) {
+
+              event.preventDefault();
+
+              editor.blur();
+
+            }
+
+
+            if (
+              multiline &&
+              event.key ===
+              'Enter' &&
+              (
+                event.metaKey ||
+                event.ctrlKey
+              )
+            ) {
+
+              event.preventDefault();
+
+              editor.blur();
+
+            }
+
+          }
+        );
+
+    }
+
+
+
+    function makeEditable(
+      element,
+      rotationId,
+      field,
+      multiline = false
+    ) {
+
+      element
+        .classList
+        .add(
+          'inline-editable'
+        );
+
+
+      element
+        .addEventListener(
+          'dblclick',
+          event => {
+
+            event.stopPropagation();
+
+
+            beginInlineEdit(
+              element,
+              rotationId,
+              field,
+              multiline
+            );
+
+          }
+        );
+
+    }
+
+
+
+    function updateRotationSyllabus(
+      article,
+      rotationId
+    ) {
+
+      const data =
+        getRotationData(
+          rotationId
+        );
+
 
       const container =
         article
           .querySelector(
-            '[data-syllabus-heading]'
+            '[data-syllabus-container]'
           );
 
 
@@ -3514,9 +4179,7 @@
 
 
       if (
-        String(
-          syllabus || ''
-        ).trim()
+        data.syllabus
       ) {
 
         const link =
@@ -3527,7 +4190,7 @@
 
 
         link.href =
-          syllabus;
+          data.syllabus;
 
 
         link.target =
@@ -3552,24 +4215,74 @@
 
       } else {
 
-        const label =
+        const editable =
           document
             .createElement(
               'div'
             );
 
 
-        label.className =
+        editable.className =
           'section-label';
 
 
-        label.textContent =
+        editable.textContent =
           'Syllabus';
 
 
         container.appendChild(
-          label
+          editable
         );
+
+
+        const empty =
+          document
+            .createElement(
+              'div'
+            );
+
+
+        empty.className =
+          'detail-text';
+
+
+        empty.textContent =
+          'Add details when available';
+
+
+        container.appendChild(
+          empty
+        );
+
+
+        makeEditable(
+          empty,
+          rotationId,
+          'syllabus',
+          false
+        );
+
+
+        empty
+          .addEventListener(
+            'blur',
+            () => {
+
+              setTimeout(
+                () => {
+
+                  updateRotationSyllabus(
+                    article,
+                    rotationId
+                  );
+
+                },
+                50
+              );
+
+            },
+            true
+          );
 
       }
 
@@ -3598,11 +4311,6 @@
         'expandable-rotation';
 
 
-      article.dataset
-        .rotationCard =
-          rotationId;
-
-
       article.innerHTML = `
 
         <button
@@ -3612,12 +4320,35 @@
 
           <div>
 
-            <div class="expandable-name">
-              ${data.name}
+            <div
+              class="expandable-name"
+              data-field-display="name"
+            >
+              ${detailDisplay(
+                data.name
+              )}
             </div>
 
             <div class="expandable-meta">
-              ${data.block} · ${data.dates}
+
+              <span
+                data-field-display="block"
+              >
+                ${detailDisplay(
+                  data.block
+                )}
+              </span>
+
+              ·
+
+              <span
+                data-field-display="dates"
+              >
+                ${detailDisplay(
+                  data.dates
+                )}
+              </span>
+
             </div>
 
           </div>
@@ -3640,10 +4371,12 @@
 
             <div
               class="detail-text"
-              data-display-field="contacts"
-            >${detailDisplay(
-              data.contacts
-            )}</div>
+              data-field-display="contacts"
+            >
+              ${detailDisplay(
+                data.contacts
+              )}
+            </div>
 
           </section>
 
@@ -3656,10 +4389,12 @@
 
             <div
               class="detail-text"
-              data-display-field="location"
-            >${detailDisplay(
-              data.location
-            )}</div>
+              data-field-display="location"
+            >
+              ${detailDisplay(
+                data.location
+              )}
+            </div>
 
           </section>
 
@@ -3672,17 +4407,21 @@
 
             <div
               class="detail-text"
-              data-display-field="schedule"
-            >${detailDisplay(
-              data.schedule
-            )}</div>
+              data-field-display="schedule"
+            >
+              ${detailDisplay(
+                data.schedule
+              )}
+            </div>
 
           </section>
 
 
           <section class="rotation-section">
 
-            <div data-syllabus-heading></div>
+            <div
+              data-syllabus-container
+            ></div>
 
           </section>
 
@@ -3695,130 +4434,14 @@
 
             <div
               class="detail-text"
-              data-display-field="tasks"
-            >${detailDisplay(
-              data.tasks
-            )}</div>
+              data-field-display="tasks"
+            >
+              ${detailDisplay(
+                data.tasks
+              )}
+            </div>
 
           </section>
-
-
-          <div class="rotation-action-row">
-
-            <button
-              type="button"
-              class="edit-details-button"
-            >
-              Edit rotation details
-            </button>
-
-          </div>
-
-
-          <div class="editable-rotation-form">
-
-            <div class="edit-field-group">
-
-              <div class="mini-label">
-                Contacts
-              </div>
-
-              <textarea
-                class="edit-field"
-                data-edit-field="contacts"
-                placeholder="Names, roles, emails, phone numbers..."
-              >${data.contacts || ''}</textarea>
-
-            </div>
-
-
-            <div class="edit-field-group">
-
-              <div class="mini-label">
-                Location
-              </div>
-
-              <input
-                class="edit-field"
-                data-edit-field="location"
-                type="text"
-                value="${escapeHtmlAttribute(
-                  data.location
-                )}"
-                placeholder="Clinic, hospital, room..."
-              >
-
-            </div>
-
-
-            <div class="edit-field-group">
-
-              <div class="mini-label">
-                Schedule
-              </div>
-
-              <textarea
-                class="edit-field"
-                data-edit-field="schedule"
-                placeholder="Days, hours, call expectations..."
-              >${data.schedule || ''}</textarea>
-
-            </div>
-
-
-            <div class="edit-field-group">
-
-              <div class="mini-label">
-                Syllabus URL / File
-              </div>
-
-              <input
-                class="edit-field"
-                data-edit-field="syllabus"
-                type="text"
-                value="${escapeHtmlAttribute(
-                  data.syllabus
-                )}"
-                placeholder="Paste URL or repository filename"
-              >
-
-            </div>
-
-
-            <div class="edit-field-group">
-
-              <div class="mini-label">
-                Tasks / Assignments
-              </div>
-
-              <textarea
-                class="edit-field"
-                data-edit-field="tasks"
-                placeholder="One task per line..."
-              >${data.tasks || ''}</textarea>
-
-            </div>
-
-
-            <div class="edit-form-actions">
-
-              <button
-                type="button"
-                class="secondary-button cancel-rotation-edit"
-              >
-                Cancel
-              </button>
-
-              <button
-                type="button"
-                class="save-button save-rotation-edit"
-              >
-                Save details
-              </button>
-
-            </div>
-
-          </div>
 
 
           <section class="rotation-section">
@@ -3876,73 +4499,30 @@
           );
 
 
-      const editForm =
-        article
-          .querySelector(
-            '.editable-rotation-form'
-          );
 
-
-
-      /*
-        Important fix:
-        collapsing a rotation always closes the
-        editing form too, returning the card to
-        its original compact height.
-      */
-
-      header.addEventListener(
-        'click',
-        () => {
-
-          const isCurrentlyOpen =
-            article
-              .classList
-              .contains(
-                'open'
-              );
-
-
-          if (
-            isCurrentlyOpen
-          ) {
-
-            editForm
-              .classList
-              .remove(
-                'open'
-              );
-
-          }
-
-
-          article
-            .classList
-            .toggle(
-              'open'
-            );
-
-        }
-      );
-
-
-
-      updateRotationSyllabusHeading(
-        article,
-        data.syllabus
-      );
-
-
-
-      article
-        .querySelector(
-          '.edit-details-button'
-        )
+      header
         .addEventListener(
           'click',
-          () => {
+          event => {
 
-            editForm
+            /*
+              Clicking an inline editor should not
+              collapse the card.
+            */
+
+            if (
+              event.target
+                .closest(
+                  '.inline-editor'
+                )
+            ) {
+
+              return;
+
+            }
+
+
+            article
               .classList
               .toggle(
                 'open'
@@ -3953,151 +4533,92 @@
 
 
 
-      article
-        .querySelector(
-          '.cancel-rotation-edit'
-        )
-        .addEventListener(
-          'click',
-          () => {
-
-            const current =
-              getRotationData(
-                rotationId
-              );
+      const name =
+        article
+          .querySelector(
+            '[data-field-display="name"]'
+          );
 
 
-            editForm
-              .querySelectorAll(
-                '[data-edit-field]'
-              )
-              .forEach(
-                field => {
-
-                  field.value =
-                    current[
-                      field.dataset
-                        .editField
-                    ] || '';
-
-                }
-              );
-
-
-            editForm
-              .classList
-              .remove(
-                'open'
-              );
-
-          }
+      name
+        .classList
+        .add(
+          'rotation-name-editable'
         );
 
 
-
-      article
-        .querySelector(
-          '.save-rotation-edit'
-        )
-        .addEventListener(
-          'click',
-          () => {
-
-            const updated =
-              {};
+      makeEditable(
+        name,
+        rotationId,
+        'name',
+        false
+      );
 
 
-            editForm
-              .querySelectorAll(
-                '[data-edit-field]'
-              )
-              .forEach(
-                field => {
-
-                  updated[
-                    field.dataset
-                      .editField
-                  ] =
-                    field.value
-                      .trim();
-
-                }
-              );
+      makeEditable(
+        article.querySelector(
+          '[data-field-display="block"]'
+        ),
+        rotationId,
+        'block',
+        false
+      );
 
 
-            storedRotationDetails[
-              rotationId
-            ] = {
-              ...(
-                storedRotationDetails[
-                  rotationId
-                ] || {}
-              ),
-              ...updated
-            };
+      makeEditable(
+        article.querySelector(
+          '[data-field-display="dates"]'
+        ),
+        rotationId,
+        'dates',
+        false
+      );
 
 
-            saveRotationDetails();
+      makeEditable(
+        article.querySelector(
+          '[data-field-display="contacts"]'
+        ),
+        rotationId,
+        'contacts',
+        true
+      );
 
 
-            article
-              .querySelector(
-                '[data-display-field="contacts"]'
-              )
-              .textContent =
-                detailDisplay(
-                  updated.contacts
-                );
+      makeEditable(
+        article.querySelector(
+          '[data-field-display="location"]'
+        ),
+        rotationId,
+        'location',
+        false
+      );
 
 
-            article
-              .querySelector(
-                '[data-display-field="location"]'
-              )
-              .textContent =
-                detailDisplay(
-                  updated.location
-                );
+      makeEditable(
+        article.querySelector(
+          '[data-field-display="schedule"]'
+        ),
+        rotationId,
+        'schedule',
+        true
+      );
 
 
-            article
-              .querySelector(
-                '[data-display-field="schedule"]'
-              )
-              .textContent =
-                detailDisplay(
-                  updated.schedule
-                );
+      makeEditable(
+        article.querySelector(
+          '[data-field-display="tasks"]'
+        ),
+        rotationId,
+        'tasks',
+        true
+      );
 
 
-            article
-              .querySelector(
-                '[data-display-field="tasks"]'
-              )
-              .textContent =
-                detailDisplay(
-                  updated.tasks
-                );
-
-
-            updateRotationSyllabusHeading(
-              article,
-              updated.syllabus
-            );
-
-
-            /*
-              Editing closes automatically after save.
-            */
-
-            editForm
-              .classList
-              .remove(
-                'open'
-              );
-
-          }
-        );
+      updateRotationSyllabus(
+        article,
+        rotationId
+      );
 
 
       return article;
@@ -4109,17 +4630,15 @@
     function renderRotationLists() {
 
       const upcoming =
-        document
-          .getElementById(
-            'upcomingRotationList'
-          );
+        document.getElementById(
+          'upcomingRotationList'
+        );
 
 
       const past =
-        document
-          .getElementById(
-            'pastRotationList'
-          );
+        document.getElementById(
+          'pastRotationList'
+        );
 
 
       upcoming.innerHTML =
@@ -4195,6 +4714,7 @@
       );
 
 
+
     function saveCalendarEvents() {
 
       localStorage.setItem(
@@ -4218,7 +4738,8 @@
 
       const month =
         String(
-          date.getMonth() + 1
+          date.getMonth() +
+          1
         )
         .padStart(
           2,
@@ -4282,18 +4803,22 @@
     ) {
 
       const exists =
-        calendarEvents.some(
-          existing =>
-            existing.id ===
-            event.id
-        );
+        calendarEvents
+          .some(
+            existing =>
+              existing.id ===
+              event.id
+          );
 
 
-      if (!exists) {
+      if (
+        !exists
+      ) {
 
-        calendarEvents.push(
-          event
-        );
+        calendarEvents
+          .push(
+            event
+          );
 
       }
 
@@ -4304,9 +4829,10 @@
     function migrateOldSeededRanges() {
 
       if (
-        localStorage.getItem(
-          RANGE_MIGRATION_KEY
-        )
+        localStorage
+          .getItem(
+            RANGE_MIGRATION_KEY
+          )
       ) {
 
         return;
@@ -4345,14 +4871,16 @@
 
               const id =
                 String(
-                  event.id || ''
+                  event.id ||
+                  ''
                 );
 
 
               return !prefixes
                 .some(
                   prefix =>
-                    id === prefix ||
+                    id ===
+                      prefix ||
                     id.startsWith(
                       `${prefix}-`
                     )
@@ -4362,10 +4890,11 @@
           );
 
 
-      localStorage.setItem(
-        RANGE_MIGRATION_KEY,
-        'done'
-      );
+      localStorage
+        .setItem(
+          RANGE_MIGRATION_KEY,
+          'done'
+        );
 
     }
 
@@ -4419,42 +4948,76 @@
 
 
 
+      /* DROP / ADD DEADLINES */
+
       [
+
         {
-          id: 'y4-block-7-drop-add',
-          title: 'Block 7 Drop/Add Deadline',
-          date: '2026-08-17'
+          id:
+            'y4-block-7-drop-add',
+
+          title:
+            'Block 7 Drop/Add Deadline',
+
+          date:
+            '2026-08-17'
         },
 
         {
-          id: 'y4-block-8-drop-add',
-          title: 'Block 8 Drop/Add Deadline',
-          date: '2026-09-14'
+          id:
+            'y4-block-8-drop-add',
+
+          title:
+            'Block 8 Drop/Add Deadline',
+
+          date:
+            '2026-09-14'
         },
 
         {
-          id: 'y4-block-9-drop-add',
-          title: 'Block 9 Drop/Add Deadline',
-          date: '2026-10-12'
+          id:
+            'y4-block-9-drop-add',
+
+          title:
+            'Block 9 Drop/Add Deadline',
+
+          date:
+            '2026-10-12'
         },
 
         {
-          id: 'y4-block-10-drop-add',
-          title: 'Block 10 Drop/Add Deadline',
-          date: '2026-11-09'
+          id:
+            'y4-block-10-drop-add',
+
+          title:
+            'Block 10 Drop/Add Deadline',
+
+          date:
+            '2026-11-09'
         },
 
         {
-          id: 'y4-block-11-drop-add',
-          title: 'Block 11 Drop/Add Deadline',
-          date: '2026-12-22'
+          id:
+            'y4-block-11-drop-add',
+
+          title:
+            'Block 11 Drop/Add Deadline',
+
+          date:
+            '2026-12-22'
         },
 
         {
-          id: 'y4-block-12-drop-add',
-          title: 'Block 12 Drop/Add Deadline',
-          date: '2026-12-31'
+          id:
+            'y4-block-12-drop-add',
+
+          title:
+            'Block 12 Drop/Add Deadline',
+
+          date:
+            '2026-12-31'
         }
+
       ]
       .forEach(
         deadline => {
@@ -4490,6 +5053,8 @@
       );
 
 
+
+      /* ROTATIONS */
 
       seedRangeEvent(
         'rotation-peds-ai',
@@ -4573,6 +5138,8 @@
 
 
 
+      /* BREAKS */
+
       seedRangeEvent(
         'labor-day',
         'Labor Day',
@@ -4645,6 +5212,8 @@
       );
 
 
+
+      /* MEETING */
 
       seedEvent({
 
@@ -4898,7 +5467,8 @@
 
 
         const weekday =
-          cellDate.getDay();
+          cellDate
+            .getDay();
 
 
         const dayCell =
@@ -5017,7 +5587,8 @@
 
                 if (
                   isActualStart ||
-                  weekday === 0
+                  weekday ===
+                    0
                 ) {
 
                   range
@@ -5031,7 +5602,8 @@
 
                 if (
                   isActualEnd ||
-                  weekday === 6
+                  weekday ===
+                    6
                 ) {
 
                   range
@@ -5045,7 +5617,8 @@
 
                 if (
                   isActualStart ||
-                  weekday === 0
+                  weekday ===
+                    0
                 ) {
 
                   range.textContent =
@@ -5063,20 +5636,21 @@
                   event.title;
 
 
-                range.addEventListener(
-                  'click',
-                  clickEvent => {
+                range
+                  .addEventListener(
+                    'click',
+                    clickEvent => {
 
-                    clickEvent
-                      .stopPropagation();
+                      clickEvent
+                        .stopPropagation();
 
 
-                    openExistingEvent(
-                      event.id
-                    );
+                      openExistingEvent(
+                        event.id
+                      );
 
-                  }
-                );
+                    }
+                  );
 
 
                 dayCell.appendChild(
@@ -5120,9 +5694,11 @@
                   !event.allDay &&
                   event.startTime
                 )
-                  ? `${formatTime(
-                      event.startTime
-                    )} · `
+                  ? `${
+                      formatTime(
+                        event.startTime
+                      )
+                    } · `
                   : '';
 
 
@@ -5134,20 +5710,21 @@
                 event.title;
 
 
-              eventElement.addEventListener(
-                'click',
-                clickEvent => {
+              eventElement
+                .addEventListener(
+                  'click',
+                  clickEvent => {
 
-                  clickEvent
-                    .stopPropagation();
+                    clickEvent
+                      .stopPropagation();
 
 
-                  openExistingEvent(
-                    event.id
-                  );
+                    openExistingEvent(
+                      event.id
+                    );
 
-                }
-              );
+                  }
+                );
 
 
               dayCell.appendChild(
@@ -5159,16 +5736,17 @@
 
 
 
-        dayCell.addEventListener(
-          'click',
-          () => {
+        dayCell
+          .addEventListener(
+            'click',
+            () => {
 
-            openNewEvent(
-              dateKey
-            );
+              openNewEvent(
+                dateKey
+              );
 
-          }
-        );
+            }
+          );
 
 
         calendarGrid.appendChild(
@@ -5252,7 +5830,7 @@
 
 
     /* =====================================================
-       EVENT MODAL
+       EVENT MODAL REFERENCES
     ===================================================== */
 
     const eventModal =
@@ -5312,6 +5890,42 @@
     const eventEndDateInput =
       document.getElementById(
         'eventEndDateInput'
+      );
+
+
+    const eventDateButton =
+      document.getElementById(
+        'eventDateButton'
+      );
+
+
+    const eventEndDateButton =
+      document.getElementById(
+        'eventEndDateButton'
+      );
+
+
+    const eventDateDisplay =
+      document.getElementById(
+        'eventDateDisplay'
+      );
+
+
+    const eventEndDateDisplay =
+      document.getElementById(
+        'eventEndDateDisplay'
+      );
+
+
+    const startDatePicker =
+      document.getElementById(
+        'startDatePicker'
+      );
+
+
+    const endDatePicker =
+      document.getElementById(
+        'endDatePicker'
       );
 
 
@@ -5428,12 +6042,674 @@
 
 
 
+    /* =====================================================
+       CUSTOM DATE PICKERS
+    ===================================================== */
+
+    let pickerMonths = {
+
+      start:
+        new Date(),
+
+      end:
+        new Date()
+
+    };
+
+
+
+    function closeDatePickers() {
+
+      startDatePicker
+        .classList
+        .remove(
+          'open'
+        );
+
+
+      endDatePicker
+        .classList
+        .remove(
+          'open'
+        );
+
+
+      eventDateButton
+        .classList
+        .remove(
+          'open'
+        );
+
+
+      eventEndDateButton
+        .classList
+        .remove(
+          'open'
+        );
+
+    }
+
+
+
+    function shortDateLabel(
+      dateKey
+    ) {
+
+      if (
+        !dateKey
+      ) {
+
+        return 'Select date';
+
+      }
+
+
+      return new Intl
+        .DateTimeFormat(
+          'en-US',
+          {
+            month:
+              'short',
+
+            day:
+              'numeric',
+
+            year:
+              'numeric'
+          }
+        )
+        .format(
+          parseDateKey(
+            dateKey
+          )
+        );
+
+    }
+
+
+
+    function updateDateDisplays() {
+
+      eventDateDisplay.textContent =
+        shortDateLabel(
+          eventDateInput.value
+        );
+
+
+      eventEndDateDisplay.textContent =
+        shortDateLabel(
+          eventEndDateInput.value
+        );
+
+    }
+
+
+
+    function renderDatePicker(
+      type
+    ) {
+
+      const container =
+        type ===
+          'start'
+          ? startDatePicker
+          : endDatePicker;
+
+
+      const input =
+        type ===
+          'start'
+          ? eventDateInput
+          : eventEndDateInput;
+
+
+      const pickerMonth =
+        pickerMonths[
+          type
+        ];
+
+
+      const year =
+        pickerMonth
+          .getFullYear();
+
+
+      const month =
+        pickerMonth
+          .getMonth();
+
+
+      const first =
+        new Date(
+          year,
+          month,
+          1
+        );
+
+
+      const gridStart =
+        new Date(
+          year,
+          month,
+          1 -
+          first.getDay()
+        );
+
+
+      container.innerHTML =
+        '';
+
+
+      const toolbar =
+        document
+          .createElement(
+            'div'
+          );
+
+
+      toolbar.className =
+        'picker-toolbar';
+
+
+      const previous =
+        document
+          .createElement(
+            'button'
+          );
+
+
+      previous.type =
+        'button';
+
+
+      previous.className =
+        'picker-nav';
+
+
+      previous.textContent =
+        '‹';
+
+
+
+      const monthLabel =
+        document
+          .createElement(
+            'div'
+          );
+
+
+      monthLabel.className =
+        'picker-month-label';
+
+
+      monthLabel.textContent =
+        new Intl
+          .DateTimeFormat(
+            'en-US',
+            {
+              month:
+                'long',
+
+              year:
+                'numeric'
+            }
+          )
+          .format(
+            pickerMonth
+          );
+
+
+
+      const next =
+        document
+          .createElement(
+            'button'
+          );
+
+
+      next.type =
+        'button';
+
+
+      next.className =
+        'picker-nav';
+
+
+      next.textContent =
+        '›';
+
+
+
+      toolbar.appendChild(
+        previous
+      );
+
+
+      toolbar.appendChild(
+        monthLabel
+      );
+
+
+      toolbar.appendChild(
+        next
+      );
+
+
+      container.appendChild(
+        toolbar
+      );
+
+
+
+      const weekdays =
+        document
+          .createElement(
+            'div'
+          );
+
+
+      weekdays.className =
+        'picker-weekdays';
+
+
+      [
+        'S',
+        'M',
+        'T',
+        'W',
+        'T',
+        'F',
+        'S'
+      ]
+      .forEach(
+        label => {
+
+          const day =
+            document
+              .createElement(
+                'div'
+              );
+
+
+          day.className =
+            'picker-weekday';
+
+
+          day.textContent =
+            label;
+
+
+          weekdays.appendChild(
+            day
+          );
+
+        }
+      );
+
+
+      container.appendChild(
+        weekdays
+      );
+
+
+
+      const grid =
+        document
+          .createElement(
+            'div'
+          );
+
+
+      grid.className =
+        'picker-grid';
+
+
+      const todayKey =
+        formatDateKey(
+          new Date()
+        );
+
+
+      for (
+        let i = 0;
+        i < 42;
+        i++
+      ) {
+
+        const date =
+          addDays(
+            gridStart,
+            i
+          );
+
+
+        const dateKey =
+          formatDateKey(
+            date
+          );
+
+
+        const button =
+          document
+            .createElement(
+              'button'
+            );
+
+
+        button.type =
+          'button';
+
+
+        button.className =
+          'picker-day';
+
+
+        button.textContent =
+          date.getDate();
+
+
+        if (
+          date.getMonth() !==
+          month
+        ) {
+
+          button
+            .classList
+            .add(
+              'muted'
+            );
+
+        }
+
+
+        if (
+          dateKey ===
+          todayKey
+        ) {
+
+          button
+            .classList
+            .add(
+              'today'
+            );
+
+        }
+
+
+        if (
+          dateKey ===
+          input.value
+        ) {
+
+          button
+            .classList
+            .add(
+              'selected'
+            );
+
+        }
+
+
+        button
+          .addEventListener(
+            'click',
+            event => {
+
+              event.stopPropagation();
+
+
+              input.value =
+                dateKey;
+
+
+              if (
+                type ===
+                  'start' &&
+                (
+                  !eventEndDateInput
+                    .value ||
+                  eventEndDateInput
+                    .value <
+                    dateKey
+                )
+              ) {
+
+                eventEndDateInput.value =
+                  dateKey;
+
+              }
+
+
+              updateDateDisplays();
+
+              closeDatePickers();
+
+            }
+          );
+
+
+        grid.appendChild(
+          button
+        );
+
+      }
+
+
+      container.appendChild(
+        grid
+      );
+
+
+
+      previous
+        .addEventListener(
+          'click',
+          event => {
+
+            event.stopPropagation();
+
+
+            pickerMonths[
+              type
+            ] =
+              new Date(
+                year,
+                month -
+                  1,
+                1
+              );
+
+
+            renderDatePicker(
+              type
+            );
+
+          }
+        );
+
+
+
+      next
+        .addEventListener(
+          'click',
+          event => {
+
+            event.stopPropagation();
+
+
+            pickerMonths[
+              type
+            ] =
+              new Date(
+                year,
+                month +
+                  1,
+                1
+              );
+
+
+            renderDatePicker(
+              type
+            );
+
+          }
+        );
+
+    }
+
+
+
+    function openDatePicker(
+      type
+    ) {
+
+      const input =
+        type ===
+          'start'
+          ? eventDateInput
+          : eventEndDateInput;
+
+
+      const button =
+        type ===
+          'start'
+          ? eventDateButton
+          : eventEndDateButton;
+
+
+      const picker =
+        type ===
+          'start'
+          ? startDatePicker
+          : endDatePicker;
+
+
+      const wasOpen =
+        picker
+          .classList
+          .contains(
+            'open'
+          );
+
+
+      closeDatePickers();
+
+
+      if (
+        wasOpen
+      ) {
+
+        return;
+
+      }
+
+
+      pickerMonths[
+        type
+      ] =
+        input.value
+          ? parseDateKey(
+              input.value
+            )
+          : new Date();
+
+
+      renderDatePicker(
+        type
+      );
+
+
+      picker
+        .classList
+        .add(
+          'open'
+        );
+
+
+      button
+        .classList
+        .add(
+          'open'
+        );
+
+    }
+
+
+
+    eventDateButton
+      .addEventListener(
+        'click',
+        event => {
+
+          event.stopPropagation();
+
+          openDatePicker(
+            'start'
+          );
+
+        }
+      );
+
+
+    eventEndDateButton
+      .addEventListener(
+        'click',
+        event => {
+
+          event.stopPropagation();
+
+          openDatePicker(
+            'end'
+          );
+
+        }
+      );
+
+
+    startDatePicker
+      .addEventListener(
+        'click',
+        event => {
+
+          event.stopPropagation();
+
+        }
+      );
+
+
+    endDatePicker
+      .addEventListener(
+        'click',
+        event => {
+
+          event.stopPropagation();
+
+        }
+      );
+
+
+    document
+      .addEventListener(
+        'click',
+        closeDatePickers
+      );
+
+
+
+    /* =====================================================
+       EVENT HELPERS
+    ===================================================== */
+
     function formatTime(
       timeString
     ) {
 
-      if (!timeString) {
+      if (
+        !timeString
+      ) {
+
         return '';
+
       }
 
 
@@ -5449,13 +6725,15 @@
 
 
       const suffix =
-        hours >= 12
+        hours >=
+          12
           ? 'PM'
           : 'AM';
 
 
       const hour =
-        hours % 12 ||
+        hours %
+          12 ||
         12;
 
 
@@ -5590,14 +6868,21 @@
       eventId
     ) {
 
+      closeDatePickers();
+
+
       const event =
         getEventById(
           eventId
         );
 
 
-      if (!event) {
+      if (
+        !event
+      ) {
+
         return;
+
       }
 
 
@@ -5646,26 +6931,24 @@
           event.endTime
         ) {
 
-          eventDetailsTime
-            .textContent =
-              `${
-                formatTime(
-                  event.startTime
-                )
-              } – ${
-                formatTime(
-                  event.endTime
-                )
-              }`;
+          eventDetailsTime.textContent =
+            `${
+              formatTime(
+                event.startTime
+              )
+            } – ${
+              formatTime(
+                event.endTime
+              )
+            }`;
 
         } else {
 
-          eventDetailsTime
-            .textContent =
-              formatTime(
-                event.startTime ||
-                event.endTime
-              );
+          eventDetailsTime.textContent =
+            formatTime(
+              event.startTime ||
+              event.endTime
+            );
 
         }
 
@@ -5683,9 +6966,8 @@
             'block';
 
 
-        eventDetailsLocation
-          .textContent =
-            event.location;
+        eventDetailsLocation.textContent =
+          event.location;
 
       } else {
 
@@ -5739,15 +7021,18 @@
     ) {
 
       eventIdInput.value =
-        event.id || '';
+        event.id ||
+        '';
 
 
       eventTitleInput.value =
-        event.title || '';
+        event.title ||
+        '';
 
 
       eventDateInput.value =
-        event.date || '';
+        event.date ||
+        '';
 
 
       eventEndDateInput.value =
@@ -5763,20 +7048,26 @@
 
 
       eventStartTimeInput.value =
-        event.startTime || '';
+        event.startTime ||
+        '';
 
 
       eventEndTimeInput.value =
-        event.endTime || '';
+        event.endTime ||
+        '';
 
 
       eventLocationInput.value =
-        event.location || '';
+        event.location ||
+        '';
 
 
       eventLinkInput.value =
-        event.link || '';
+        event.link ||
+        '';
 
+
+      updateDateDisplays();
 
       updateAllDayUI();
 
@@ -5787,6 +7078,9 @@
     function openNewEvent(
       dateKey
     ) {
+
+      closeDatePickers();
+
 
       activeEventId =
         null;
@@ -5804,8 +7098,11 @@
 
       populateEditForm({
 
-        id: '',
-        title: '',
+        id:
+          '',
+
+        title:
+          '',
 
         date:
           dateKey,
@@ -5816,10 +7113,17 @@
         allDay:
           true,
 
-        startTime: '',
-        endTime: '',
-        location: '',
-        link: ''
+        startTime:
+          '',
+
+        endTime:
+          '',
+
+        location:
+          '',
+
+        link:
+          ''
 
       });
 
@@ -5862,8 +7166,12 @@
         );
 
 
-      if (!event) {
+      if (
+        !event
+      ) {
+
         return;
+
       }
 
 
@@ -5894,6 +7202,9 @@
 
     function closeEventModal() {
 
+      closeDatePickers();
+
+
       eventModal
         .classList
         .remove(
@@ -5923,7 +7234,9 @@
             : 'grid';
 
 
-      if (allDay) {
+      if (
+        allDay
+      ) {
 
         eventStartTimeInput.value =
           '';
@@ -6090,7 +7403,9 @@
           };
 
 
-          if (existing) {
+          if (
+            existing
+          ) {
 
             const index =
               calendarEvents
@@ -6108,9 +7423,10 @@
 
           } else {
 
-            calendarEvents.push(
-              eventData
-            );
+            calendarEvents
+              .push(
+                eventData
+              );
 
           }
 
@@ -6145,8 +7461,12 @@
         );
 
 
-      if (!event) {
+      if (
+        !event
+      ) {
+
         return;
+
       }
 
 
@@ -6156,8 +7476,12 @@
         );
 
 
-      if (!confirmed) {
+      if (
+        !confirmed
+      ) {
+
         return;
+
       }
 
 
@@ -6226,7 +7550,7 @@
 
           if (
             event.key ===
-            'Escape' &&
+              'Escape' &&
             eventModal
               .classList
               .contains(
