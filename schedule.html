@@ -76,6 +76,19 @@
     }
 
 
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline:
+        2px
+        solid
+        rgba(142, 155, 136, 0.55);
+
+      outline-offset: 2px;
+    }
+
+
 
     /* =====================================================
        LEFT NAVIGATION
@@ -377,6 +390,40 @@
     }
 
 
+    .current-rotation-links {
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 6px 12px;
+
+      margin-top: 13px;
+
+      padding-bottom: 1px;
+    }
+
+
+    .current-rotation-link {
+      color: var(--accent-sage);
+
+      font-size: 9.5px;
+      font-weight: 600;
+
+      text-decoration: none;
+
+      transition:
+        color
+        0.15s
+        ease;
+    }
+
+
+    .current-rotation-link:hover {
+      color: var(--accent-terracotta);
+      text-decoration: underline;
+    }
+
+
     .rotation-section {
       margin-top: 18px;
     }
@@ -670,107 +717,6 @@
 
 
     /* =====================================================
-       QUICK LINKS UNDER CURRENT ROTATION
-    ===================================================== */
-
-    .quick-links-card {
-      margin-top: 12px;
-
-      padding:
-        13px
-        14px;
-    }
-
-
-    .quick-links-grid {
-      display: grid;
-
-      grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-
-      gap: 7px;
-
-      margin-top: 9px;
-    }
-
-
-    .quick-link {
-      min-width: 0;
-      min-height: 61px;
-
-      display: flex;
-      flex-direction: column;
-
-      align-items: center;
-      justify-content: center;
-
-      gap: 5px;
-
-      padding:
-        7px
-        5px;
-
-      border:
-        1px
-        solid
-        #E9E4DD;
-
-      border-radius: 8px;
-
-      background: #FCFBF8;
-
-      text-decoration: none;
-
-      transition:
-        background 0.15s ease,
-        border-color 0.15s ease,
-        transform 0.15s ease;
-    }
-
-
-    .quick-link:hover {
-      background: white;
-
-      border-color: #D4CDC3;
-
-      transform:
-        translateY(-1px);
-    }
-
-
-    .quick-link-icon {
-      width: 25px;
-      height: 25px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      border-radius: 50%;
-
-      background: var(--soft-sage);
-
-      color: #758170;
-
-      font-size: 7px;
-      font-weight: 700;
-    }
-
-
-    .quick-link-name {
-      color: #4E5251;
-
-      font-size: 8.5px;
-      font-weight: 600;
-
-      text-align: center;
-
-      line-height: 1.15;
-    }
-
-
-
-    /* =====================================================
        CALENDAR
     ===================================================== */
 
@@ -950,7 +896,9 @@
 
 
 
-    /* SINGLE-DAY EVENTS */
+    /* =====================================================
+       SINGLE DAY EVENTS
+    ===================================================== */
 
     .calendar-event {
       order: 50;
@@ -980,19 +928,26 @@
       text-overflow: ellipsis;
 
       transition:
-        background 0.15s ease,
-        color 0.15s ease;
+        background
+        0.15s
+        ease,
+        color
+        0.15s
+        ease;
     }
 
 
-    .calendar-event:hover {
+    .calendar-event:hover,
+    .calendar-event.event-highlighted {
       background: #EEE7E0;
       color: #343736;
     }
 
 
 
-    /* DROP / ADD */
+    /* =====================================================
+       DROP / ADD DEADLINES
+    ===================================================== */
 
     .calendar-event.deadline-event {
       order: 99;
@@ -1016,16 +971,16 @@
     }
 
 
-    .calendar-event.deadline-event:hover {
-      background: #E1E6DD;
-
-      color: #5D6759;
+    .calendar-event.deadline-event:hover,
+    .calendar-event.deadline-event.event-highlighted {
+      background: #DDE4D9;
+      color: #5C6757;
     }
 
 
 
     /* =====================================================
-       MULTI-DAY CALENDAR BARS
+       MULTI-DAY BARS
     ===================================================== */
 
     .calendar-range {
@@ -1061,8 +1016,12 @@
       z-index: 2;
 
       transition:
-        background 0.15s ease,
-        color 0.15s ease;
+        background
+        0.15s
+        ease,
+        color
+        0.15s
+        ease;
     }
 
 
@@ -1098,13 +1057,10 @@
     }
 
 
-    /*
-      Rotation bars now darken just like other events.
-    */
-
-    .calendar-range.rotation-range:hover {
-      background: #E8DED7;
-      color: #8C4D3A;
+    .calendar-range.rotation-range:hover,
+    .calendar-range.rotation-range.event-highlighted {
+      background: #E5D9D1;
+      color: #884A38;
     }
 
 
@@ -1114,9 +1070,10 @@
     }
 
 
-    .calendar-range.break-range:hover {
-      background: #DDE3D9;
-      color: #586353;
+    .calendar-range.break-range:hover,
+    .calendar-range.break-range.event-highlighted {
+      background: #D9E1D5;
+      color: #566151;
     }
 
 
@@ -1126,9 +1083,10 @@
     }
 
 
-    .calendar-range.match-range:hover {
-      background: #DDE3D9;
-      color: #586353;
+    .calendar-range.match-range:hover,
+    .calendar-range.match-range.event-highlighted {
+      background: #D9E1D5;
+      color: #566151;
     }
 
 
@@ -1138,15 +1096,16 @@
     }
 
 
-    .calendar-range.transition-range:hover {
-      background: #E4DED4;
-      color: #666057;
+    .calendar-range.transition-range:hover,
+    .calendar-range.transition-range.event-highlighted {
+      background: #E2DCD1;
+      color: #625D54;
     }
 
 
 
     /* =====================================================
-       ROTATION LISTS UNDER CALENDAR
+       ROTATION LISTS
     ===================================================== */
 
     .rotation-list-section {
@@ -1163,11 +1122,15 @@
       gap: 9px;
 
       margin-top: 9px;
+
+      align-items: start;
     }
 
 
     .expandable-rotation {
       min-width: 0;
+
+      align-self: start;
 
       background: white;
 
@@ -1271,7 +1234,7 @@
 
 
     /* =====================================================
-       INLINE EDITING
+       INLINE ROTATION EDITING
     ===================================================== */
 
     .inline-editable {
@@ -1282,7 +1245,9 @@
       cursor: text;
 
       transition:
-        background 0.15s ease;
+        background
+        0.15s
+        ease;
     }
 
 
@@ -1292,7 +1257,8 @@
 
 
     .inline-editable:hover::after {
-      content: " double-click to edit";
+      content:
+        " double-click to edit";
 
       margin-left: 5px;
 
@@ -1373,7 +1339,7 @@
 
     .event-modal {
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
 
       max-height:
         calc(100vh - 40px);
@@ -1678,6 +1644,113 @@
 
 
     /* =====================================================
+       ATTACHMENTS
+    ===================================================== */
+
+    .attachment-editor-list {
+      display: flex;
+      flex-direction: column;
+
+      gap: 8px;
+
+      margin-top: 9px;
+    }
+
+
+    .attachment-editor-row {
+      display: grid;
+
+      grid-template-columns:
+        minmax(100px, 0.8fr)
+        minmax(0, 1.5fr)
+        auto;
+
+      gap: 7px;
+
+      align-items: end;
+
+      padding:
+        9px;
+
+      border:
+        1px
+        solid
+        var(--border-light);
+
+      border-radius: 7px;
+
+      background: white;
+    }
+
+
+    .attachment-remove {
+      height: 34px;
+
+      padding:
+        0
+        7px;
+
+      border: 0;
+
+      background: transparent;
+
+      color: var(--text-gray);
+
+      cursor: pointer;
+
+      font-size: 9px;
+    }
+
+
+    .attachment-remove:hover {
+      color: var(--accent-terracotta);
+    }
+
+
+    .add-attachment-button {
+      margin-top: 9px;
+
+      padding: 0;
+
+      border: 0;
+
+      background: transparent;
+
+      color: var(--accent-terracotta);
+
+      cursor: pointer;
+
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+
+    .attachment-detail-list {
+      display: flex;
+      flex-direction: column;
+
+      gap: 5px;
+    }
+
+
+    .attachment-detail-link {
+      width: max-content;
+      max-width: 100%;
+
+      color: var(--accent-terracotta);
+
+      font-size: 11px;
+      text-decoration: none;
+    }
+
+
+    .attachment-detail-link:hover {
+      text-decoration: underline;
+    }
+
+
+
+    /* =====================================================
        CUSTOM DATE PICKER
     ===================================================== */
 
@@ -1873,14 +1946,12 @@
 
     .picker-day.selected {
       background: var(--accent-terracotta);
-
       color: white;
     }
 
 
     .picker-day.today:not(.selected) {
       color: var(--accent-terracotta);
-
       font-weight: 700;
     }
 
@@ -1938,7 +2009,8 @@
       }
 
 
-      .encounter-grid {
+      .encounter-grid,
+      .attachment-editor-row {
         grid-template-columns: 1fr;
       }
 
@@ -2080,8 +2152,6 @@
         <div class="left-column">
 
 
-          <!-- CURRENT ROTATION -->
-
           <article class="content-card rotation-card">
 
 
@@ -2097,6 +2167,42 @@
 
             <div class="rotation-dates">
               Block 6 · Aug 17, 2026 – Sep 13, 2026
+            </div>
+
+
+            <!-- SIMPLE QUICK LINKS -->
+
+            <div class="current-rotation-links">
+
+              <a
+                href="https://ahw-psweb-lx-01.medctr.ad.wfubmc.edu:8042/psp/cppro/?cmd=login"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="current-rotation-link"
+              >
+                PeopleSoft
+              </a>
+
+
+              <a
+                href="https://wfusm.instructure.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="current-rotation-link"
+              >
+                Canvas
+              </a>
+
+
+              <a
+                href="https://waketrack.wakehealth.edu/students/authenticated/dashboard"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="current-rotation-link"
+              >
+                WakeTrack
+              </a>
+
             </div>
 
 
@@ -2273,7 +2379,6 @@
               </div>
 
               <div
-                id="currentEncounterList"
                 class="encounter-list"
                 data-rotation-id="peds-heme-onc"
               ></div>
@@ -2297,7 +2402,6 @@
               </div>
 
               <textarea
-                id="currentRotationNotes"
                 class="rotation-notes"
                 data-rotation-notes="peds-heme-onc"
                 placeholder="Rotation reminders, presentation ideas, logistics, things to follow up on..."
@@ -2314,78 +2418,6 @@
           </article>
 
 
-
-          <!-- QUICK LINKS -->
-
-          <section class="content-card quick-links-card">
-
-            <div class="section-label">
-              Quick Links
-            </div>
-
-
-            <div class="quick-links-grid">
-
-
-              <a
-                href="https://ahw-psweb-lx-01.medctr.ad.wfubmc.edu:8042/psp/cppro/?cmd=login"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="quick-link"
-              >
-
-                <span class="quick-link-icon">
-                  PS
-                </span>
-
-                <span class="quick-link-name">
-                  PeopleSoft
-                </span>
-
-              </a>
-
-
-              <a
-                href="https://wfusm.instructure.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="quick-link"
-              >
-
-                <span class="quick-link-icon">
-                  C
-                </span>
-
-                <span class="quick-link-name">
-                  Canvas
-                </span>
-
-              </a>
-
-
-              <a
-                href="https://waketrack.wakehealth.edu/students/authenticated/dashboard"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="quick-link"
-              >
-
-                <span class="quick-link-icon">
-                  WT
-                </span>
-
-                <span class="quick-link-name">
-                  WakeTrack
-                </span>
-
-              </a>
-
-
-            </div>
-
-          </section>
-
-
         </div>
 
 
@@ -2396,8 +2428,6 @@
 
         <div class="right-column">
 
-
-          <!-- CALENDAR -->
 
           <div class="section-label calendar-heading">
             Calendar
@@ -2466,8 +2496,6 @@
 
 
 
-          <!-- UPCOMING -->
-
           <section class="rotation-list-section">
 
             <div class="section-label">
@@ -2482,8 +2510,6 @@
           </section>
 
 
-
-          <!-- PAST -->
 
           <section class="rotation-list-section">
 
@@ -2636,6 +2662,23 @@
           </div>
 
 
+          <div
+            id="eventDetailsAttachmentsRow"
+            class="event-detail-row"
+          >
+
+            <div class="event-detail-label">
+              Attachments
+            </div>
+
+            <div
+              id="eventDetailsAttachments"
+              class="attachment-detail-list"
+            ></div>
+
+          </div>
+
+
         </div>
 
 
@@ -2710,12 +2753,7 @@
           <div class="event-field-group field-row">
 
 
-            <!-- CUSTOM START DATE -->
-
-            <div
-              class="date-picker-field"
-              data-date-picker="start"
-            >
+            <div class="date-picker-field">
 
               <div class="mini-label">
                 Start Date
@@ -2751,12 +2789,7 @@
 
 
 
-            <!-- CUSTOM END DATE -->
-
-            <div
-              class="date-picker-field"
-              data-date-picker="end"
-            >
+            <div class="date-picker-field">
 
               <div class="mini-label">
                 End Date
@@ -2890,6 +2923,31 @@
 
 
 
+        <!-- ATTACHMENTS -->
+
+        <div class="event-edit-section">
+
+          <div class="section-label">
+            Attachments
+          </div>
+
+          <div
+            id="attachmentEditorList"
+            class="attachment-editor-list"
+          ></div>
+
+          <button
+            id="addAttachmentButton"
+            type="button"
+            class="add-attachment-button"
+          >
+            + Add attachment
+          </button>
+
+        </div>
+
+
+
         <div class="modal-actions">
 
           <button
@@ -2999,7 +3057,7 @@
 
 
     /* =====================================================
-       ROTATION DATA
+       ROTATION STORAGE
     ===================================================== */
 
     const ROTATION_STORAGE_KEY =
@@ -3093,7 +3151,7 @@
       "interview": {
 
         name:
-          "Flex – Interview Block",
+          "Interview Block",
 
         block:
           "Block 9",
@@ -3300,7 +3358,7 @@
 
 
     /* =====================================================
-       MEANINGFUL ENCOUNTERS
+       ENCOUNTERS
     ===================================================== */
 
     function ensureEncounterArray(
@@ -3347,11 +3405,8 @@
             .toString(16)
             .slice(2),
 
-        note:
-          '',
-
-        attending:
-          ''
+        note: '',
+        attending: ''
 
       });
 
@@ -3745,7 +3800,9 @@
                       );
 
 
-                  if (status) {
+                  if (
+                    status
+                  ) {
 
                     status.textContent =
                       'Saved';
@@ -3783,7 +3840,7 @@
 
 
     /* =====================================================
-       TASK CHECKBOXES
+       TASKS
     ===================================================== */
 
     const taskState =
@@ -3841,7 +3898,7 @@
 
 
     /* =====================================================
-       INLINE-EDITABLE ROTATIONS
+       ROTATION INLINE EDITING
     ===================================================== */
 
     const upcomingRotationIds = [
@@ -3956,7 +4013,9 @@
         'inline-editor';
 
 
-      if (!multiline) {
+      if (
+        !multiline
+      ) {
 
         editor.type =
           'text';
@@ -4139,6 +4198,7 @@
           'dblclick',
           event => {
 
+            event.preventDefault();
             event.stopPropagation();
 
 
@@ -4178,6 +4238,26 @@
         '';
 
 
+      const label =
+        document
+          .createElement(
+            'div'
+          );
+
+
+      label.className =
+        'section-label';
+
+
+      label.textContent =
+        'Syllabus';
+
+
+      container.appendChild(
+        label
+      );
+
+
       if (
         data.syllabus
       ) {
@@ -4202,11 +4282,11 @@
 
 
         link.className =
-          'syllabus-heading-link';
+          'detail-link';
 
 
         link.textContent =
-          'Syllabus';
+          'Open syllabus →';
 
 
         container.appendChild(
@@ -4214,26 +4294,6 @@
         );
 
       } else {
-
-        const editable =
-          document
-            .createElement(
-              'div'
-            );
-
-
-        editable.className =
-          'section-label';
-
-
-        editable.textContent =
-          'Syllabus';
-
-
-        container.appendChild(
-          editable
-        );
-
 
         const empty =
           document
@@ -4261,28 +4321,6 @@
           'syllabus',
           false
         );
-
-
-        empty
-          .addEventListener(
-            'blur',
-            () => {
-
-              setTimeout(
-                () => {
-
-                  updateRotationSyllabus(
-                    article,
-                    rotationId
-                  );
-
-                },
-                50
-              );
-
-            },
-            true
-          );
 
       }
 
@@ -4313,9 +4351,10 @@
 
       article.innerHTML = `
 
-        <button
-          type="button"
+        <div
           class="expandable-header"
+          role="button"
+          tabindex="0"
         >
 
           <div>
@@ -4357,7 +4396,7 @@
             ⌄
           </div>
 
-        </button>
+        </div>
 
 
         <div class="expandable-body">
@@ -4500,33 +4539,84 @@
 
 
 
+      function toggleRotationCard(
+        event
+      ) {
+
+        if (
+          event.target
+            .closest(
+              '.inline-editor'
+            )
+        ) {
+
+          return;
+
+        }
+
+
+        if (
+          event.target
+            .closest(
+              '.inline-editable'
+            ) &&
+          event.detail >
+            1
+        ) {
+
+          return;
+
+        }
+
+
+        article
+          .classList
+          .toggle(
+            'open'
+          );
+
+      }
+
+
+
       header
         .addEventListener(
           'click',
+          toggleRotationCard
+        );
+
+
+      header
+        .addEventListener(
+          'keydown',
           event => {
 
-            /*
-              Clicking an inline editor should not
-              collapse the card.
-            */
-
             if (
-              event.target
-                .closest(
-                  '.inline-editor'
-                )
+              event.key ===
+                'Enter' ||
+              event.key ===
+                ' '
             ) {
 
-              return;
+              if (
+                event.target !==
+                header
+              ) {
+
+                return;
+
+              }
+
+
+              event.preventDefault();
+
+              article
+                .classList
+                .toggle(
+                  'open'
+                );
 
             }
-
-
-            article
-              .classList
-              .toggle(
-                'open'
-              );
 
           }
         );
@@ -4738,8 +4828,7 @@
 
       const month =
         String(
-          date.getMonth() +
-          1
+          date.getMonth() + 1
         )
         .padStart(
           2,
@@ -4816,9 +4905,13 @@
       ) {
 
         calendarEvents
-          .push(
-            event
-          );
+          .push({
+
+            attachments: [],
+
+            ...event
+
+          });
 
       }
 
@@ -4911,7 +5004,6 @@
       seedEvent({
 
         id,
-
         title,
 
         date:
@@ -4922,17 +5014,11 @@
         allDay:
           true,
 
-        startTime:
-          '',
-
-        endTime:
-          '',
-
-        location:
-          '',
-
-        link:
-          '',
+        startTime: '',
+        endTime: '',
+        location: '',
+        link: '',
+        attachments: [],
 
         type
 
@@ -4948,10 +5034,7 @@
 
 
 
-      /* DROP / ADD DEADLINES */
-
       [
-
         {
           id:
             'y4-block-7-drop-add',
@@ -5032,17 +5115,11 @@
             allDay:
               true,
 
-            startTime:
-              '',
-
-            endTime:
-              '',
-
-            location:
-              '',
-
-            link:
-              '',
+            startTime: '',
+            endTime: '',
+            location: '',
+            link: '',
+            attachments: [],
 
             type:
               'deadline'
@@ -5053,8 +5130,6 @@
       );
 
 
-
-      /* ROTATIONS */
 
       seedRangeEvent(
         'rotation-peds-ai',
@@ -5103,7 +5178,7 @@
 
       seedRangeEvent(
         'rotation-interview',
-        'Flex – Interview Block',
+        'Interview Block',
         '2026-11-09',
         '2026-12-06',
         'rotation'
@@ -5137,8 +5212,6 @@
       );
 
 
-
-      /* BREAKS */
 
       seedRangeEvent(
         'labor-day',
@@ -5213,8 +5286,6 @@
 
 
 
-      /* MEETING */
-
       seedEvent({
 
         id:
@@ -5241,13 +5312,31 @@
         location:
           '3rd Floor Medical Center Plaza',
 
-        link:
-          '',
+        link: '',
+
+        attachments: [],
 
         type:
           'meeting'
 
       });
+
+
+      calendarEvents =
+        calendarEvents.map(
+          event => ({
+
+            attachments:
+              Array.isArray(
+                event.attachments
+              )
+                ? event.attachments
+                : [],
+
+            ...event
+
+          })
+        );
 
 
       saveCalendarEvents();
@@ -5257,7 +5346,7 @@
 
 
     /* =====================================================
-       CALENDAR RENDERING
+       CALENDAR
     ===================================================== */
 
     let currentCalendarDate =
@@ -5389,6 +5478,75 @@
 
 
 
+    function highlightCalendarEvent(
+      eventId,
+      active
+    ) {
+
+      document
+        .querySelectorAll(
+          `[data-calendar-event-id="${CSS.escape(
+            eventId
+          )}"]`
+        )
+        .forEach(
+          element => {
+
+            element
+              .classList
+              .toggle(
+                'event-highlighted',
+                active
+              );
+
+          }
+        );
+
+    }
+
+
+
+    function attachCalendarHover(
+      element,
+      eventId
+    ) {
+
+      element.dataset
+        .calendarEventId =
+          eventId;
+
+
+      element
+        .addEventListener(
+          'mouseenter',
+          () => {
+
+            highlightCalendarEvent(
+              eventId,
+              true
+            );
+
+          }
+        );
+
+
+      element
+        .addEventListener(
+          'mouseleave',
+          () => {
+
+            highlightCalendarEvent(
+              eventId,
+              false
+            );
+
+          }
+        );
+
+    }
+
+
+
     function renderCalendar() {
 
       calendarGrid.innerHTML =
@@ -5436,8 +5594,7 @@
           year,
           month,
           1 -
-          monthStart
-            .getDay()
+          monthStart.getDay()
         );
 
 
@@ -5467,8 +5624,7 @@
 
 
         const weekday =
-          cellDate
-            .getDay();
+          cellDate.getDay();
 
 
         const dayCell =
@@ -5573,6 +5729,12 @@
                   }`;
 
 
+                attachCalendarHover(
+                  range,
+                  event.id
+                );
+
+
                 const isActualStart =
                   dateKey ===
                   event.date;
@@ -5587,8 +5749,7 @@
 
                 if (
                   isActualStart ||
-                  weekday ===
-                    0
+                  weekday === 0
                 ) {
 
                   range
@@ -5602,8 +5763,7 @@
 
                 if (
                   isActualEnd ||
-                  weekday ===
-                    6
+                  weekday === 6
                 ) {
 
                   range
@@ -5617,8 +5777,7 @@
 
                 if (
                   isActualStart ||
-                  weekday ===
-                    0
+                  weekday === 0
                 ) {
 
                   range.textContent =
@@ -5673,6 +5832,12 @@
 
               eventElement.className =
                 'calendar-event';
+
+
+              attachCalendarHover(
+                eventElement,
+                event.id
+              );
 
 
               if (
@@ -6007,6 +6172,30 @@
       );
 
 
+    const eventDetailsAttachments =
+      document.getElementById(
+        'eventDetailsAttachments'
+      );
+
+
+    const eventDetailsAttachmentsRow =
+      document.getElementById(
+        'eventDetailsAttachmentsRow'
+      );
+
+
+    const attachmentEditorList =
+      document.getElementById(
+        'attachmentEditorList'
+      );
+
+
+    const addAttachmentButton =
+      document.getElementById(
+        'addAttachmentButton'
+      );
+
+
     const editEventButton =
       document.getElementById(
         'editEventButton'
@@ -6041,9 +6230,371 @@
       null;
 
 
+    let workingAttachments =
+      [];
+
+
 
     /* =====================================================
-       CUSTOM DATE PICKERS
+       ATTACHMENTS
+    ===================================================== */
+
+    function newAttachment() {
+
+      return {
+
+        id:
+          Date.now()
+            .toString()
+          +
+          Math.random()
+            .toString(16)
+            .slice(2),
+
+        name: '',
+        url: ''
+
+      };
+
+    }
+
+
+
+    function renderAttachmentEditor() {
+
+      attachmentEditorList.innerHTML =
+        '';
+
+
+      if (
+        workingAttachments.length ===
+        0
+      ) {
+
+        const empty =
+          document
+            .createElement(
+              'div'
+            );
+
+
+        empty.className =
+          'text-[9px] text-[#8A8F91]';
+
+
+        empty.textContent =
+          'No attachments added.';
+
+
+        attachmentEditorList
+          .appendChild(
+            empty
+          );
+
+
+        return;
+
+      }
+
+
+
+      workingAttachments
+        .forEach(
+          attachment => {
+
+            const row =
+              document
+                .createElement(
+                  'div'
+                );
+
+
+            row.className =
+              'attachment-editor-row';
+
+
+            row.innerHTML = `
+
+              <div>
+
+                <div class="mini-label">
+                  Name
+                </div>
+
+                <input
+                  type="text"
+                  class="event-field"
+                  data-attachment-name
+                  value="${escapeHtmlAttribute(
+                    attachment.name
+                  )}"
+                  placeholder="Journal article"
+                >
+
+              </div>
+
+
+              <div>
+
+                <div class="mini-label">
+                  Link / File Path
+                </div>
+
+                <input
+                  type="text"
+                  class="event-field"
+                  data-attachment-url
+                  value="${escapeHtmlAttribute(
+                    attachment.url
+                  )}"
+                  placeholder="document.pdf or https://..."
+                >
+
+              </div>
+
+
+              <button
+                type="button"
+                class="attachment-remove"
+              >
+                Remove
+              </button>
+
+            `;
+
+
+
+            row
+              .querySelector(
+                '[data-attachment-name]'
+              )
+              .addEventListener(
+                'input',
+                event => {
+
+                  attachment.name =
+                    event.target.value;
+
+                }
+              );
+
+
+            row
+              .querySelector(
+                '[data-attachment-url]'
+              )
+              .addEventListener(
+                'input',
+                event => {
+
+                  attachment.url =
+                    event.target.value;
+
+                }
+              );
+
+
+            row
+              .querySelector(
+                '.attachment-remove'
+              )
+              .addEventListener(
+                'click',
+                () => {
+
+                  workingAttachments =
+                    workingAttachments
+                      .filter(
+                        item =>
+                          item.id !==
+                          attachment.id
+                      );
+
+
+                  renderAttachmentEditor();
+
+                }
+              );
+
+
+            attachmentEditorList
+              .appendChild(
+                row
+              );
+
+          }
+        );
+
+    }
+
+
+
+    addAttachmentButton
+      .addEventListener(
+        'click',
+        () => {
+
+          workingAttachments
+            .push(
+              newAttachment()
+            );
+
+
+          renderAttachmentEditor();
+
+        }
+      );
+
+
+
+    function normalizeAttachmentUrl(
+      url
+    ) {
+
+      const value =
+        String(
+          url || ''
+        )
+        .trim();
+
+
+      if (
+        !value
+      ) {
+
+        return '#';
+
+      }
+
+
+      if (
+        value.startsWith(
+          'http://'
+        ) ||
+        value.startsWith(
+          'https://'
+        ) ||
+        value.startsWith(
+          '/'
+        ) ||
+        value.startsWith(
+          './'
+        ) ||
+        value.startsWith(
+          '../'
+        )
+      ) {
+
+        return value;
+
+      }
+
+
+      return value;
+
+    }
+
+
+
+    function renderEventDetailAttachments(
+      event
+    ) {
+
+      const attachments =
+        Array.isArray(
+          event.attachments
+        )
+          ? event.attachments
+          : [];
+
+
+      const usable =
+        attachments.filter(
+          attachment =>
+            String(
+              attachment.url ||
+              ''
+            ).trim()
+        );
+
+
+      eventDetailsAttachments.innerHTML =
+        '';
+
+
+      if (
+        usable.length ===
+        0
+      ) {
+
+        eventDetailsAttachmentsRow
+          .style
+          .display =
+            'none';
+
+
+        return;
+
+      }
+
+
+      eventDetailsAttachmentsRow
+        .style
+        .display =
+          'block';
+
+
+      usable
+        .forEach(
+          attachment => {
+
+            const link =
+              document
+                .createElement(
+                  'a'
+                );
+
+
+            link.href =
+              normalizeAttachmentUrl(
+                attachment.url
+              );
+
+
+            link.target =
+              '_blank';
+
+
+            link.rel =
+              'noopener noreferrer';
+
+
+            link.className =
+              'attachment-detail-link';
+
+
+            link.textContent =
+              `${
+                attachment.name
+                  .trim() ||
+                'Attachment'
+              } →`;
+
+
+            eventDetailsAttachments
+              .appendChild(
+                link
+              );
+
+          }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       DATE PICKER
     ===================================================== */
 
     let pickerMonths = {
@@ -6466,10 +7017,8 @@
                 type ===
                   'start' &&
                 (
-                  !eventEndDateInput
-                    .value ||
-                  eventEndDateInput
-                    .value <
+                  !eventEndDateInput.value ||
+                  eventEndDateInput.value <
                     dateKey
                 )
               ) {
@@ -6725,15 +7274,13 @@
 
 
       const suffix =
-        hours >=
-          12
+        hours >= 12
           ? 'PM'
           : 'AM';
 
 
       const hour =
-        hours %
-          12 ||
+        hours % 12 ||
         12;
 
 
@@ -7003,6 +7550,11 @@
       }
 
 
+      renderEventDetailAttachments(
+        event
+      );
+
+
       showEventView();
 
 
@@ -7067,6 +7619,20 @@
         '';
 
 
+      workingAttachments =
+        Array.isArray(
+          event.attachments
+        )
+          ? event.attachments.map(
+              attachment => ({
+                ...attachment
+              })
+            )
+          : [];
+
+
+      renderAttachmentEditor();
+
       updateDateDisplays();
 
       updateAllDayUI();
@@ -7098,11 +7664,8 @@
 
       populateEditForm({
 
-        id:
-          '',
-
-        title:
-          '',
+        id: '',
+        title: '',
 
         date:
           dateKey,
@@ -7113,17 +7676,11 @@
         allDay:
           true,
 
-        startTime:
-          '',
-
-        endTime:
-          '',
-
-        location:
-          '',
-
-        link:
-          ''
+        startTime: '',
+        endTime: '',
+        location: '',
+        link: '',
+        attachments: []
 
       });
 
@@ -7347,6 +7904,35 @@
               : null;
 
 
+          const cleanedAttachments =
+            workingAttachments
+              .map(
+                attachment => ({
+
+                  id:
+                    attachment.id ||
+                    newAttachment().id,
+
+                  name:
+                    String(
+                      attachment.name ||
+                      ''
+                    ).trim(),
+
+                  url:
+                    String(
+                      attachment.url ||
+                      ''
+                    ).trim()
+
+                })
+              )
+              .filter(
+                attachment =>
+                  attachment.url
+              );
+
+
           const eventData = {
 
             id:
@@ -7373,14 +7959,12 @@
             startTime:
               allDay
                 ? ''
-                : eventStartTimeInput
-                    .value,
+                : eventStartTimeInput.value,
 
             endTime:
               allDay
                 ? ''
-                : eventEndTimeInput
-                    .value,
+                : eventEndTimeInput.value,
 
             location:
               eventLocationInput
@@ -7391,6 +7975,9 @@
               eventLinkInput
                 .value
                 .trim(),
+
+            attachments:
+              cleanedAttachments,
 
             type:
               existing
