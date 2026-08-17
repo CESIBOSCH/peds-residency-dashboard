@@ -19,6 +19,7 @@ frame.addEventListener('load',()=>{
 
   const style=doc.createElement('style');
   style.textContent=`
+    /* COLLAPSED PREVIEW */
     .grid:not(.expanded){grid-template-columns:420px minmax(0,1fr)!important;gap:26px!important}
     .rotation{padding:21px 23px!important}
     .rotation-head{align-items:flex-start!important}
@@ -52,6 +53,54 @@ frame.addEventListener('load',()=>{
     .row input[type=text],.resource-item a{font-size:12.5px!important;line-height:1.4!important}
     .add{font-size:11.5px!important;margin-top:8px!important}
     .encounters-secondary .encounter,.encounters-secondary input{font-size:11.5px!important}
+
+    /* EXPANDED WORKSPACE PREVIEW */
+    .grid.expanded{grid-template-columns:minmax(0,1fr) 300px!important;gap:24px!important}
+    .grid.expanded .rotation{
+      display:grid!important;
+      grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr)!important;
+      column-gap:30px!important;
+      row-gap:0!important;
+      padding:26px 28px!important;
+    }
+    .grid.expanded .rotation-head{grid-column:1/-1!important;margin:0!important;padding:0!important;border:0!important}
+    .grid.expanded .rotation-title{font-size:24px!important;line-height:1.25!important}
+    .grid.expanded .rotation-dates{font-size:13px!important;margin-top:6px!important}
+
+    .grid.expanded .rotation-reference{
+      grid-column:1/-1!important;
+      display:grid!important;
+      grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto!important;
+      grid-template-areas:
+        "location location location"
+        "contacts contacts syllabus"!important;
+      column-gap:24px!important;
+      row-gap:12px!important;
+      align-items:start!important;
+      margin:5px 0 0!important;
+      padding:0 0 20px!important;
+      border:0!important;
+    }
+    .grid.expanded .reference-location{grid-area:location!important;margin:0!important;display:block!important}
+    .grid.expanded .reference-location .label{display:none!important}
+    .grid.expanded .reference-location .editable{font-size:13px!important;font-weight:500!important;margin:0!important;padding:0!important}
+    .grid.expanded .reference-contacts{grid-area:contacts!important;display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:28px!important;max-width:700px!important;margin:0!important}
+    .grid.expanded .reference-contacts .role{font-size:9px!important}
+    .grid.expanded .reference-contacts .name{font-size:12.5px!important}
+    .grid.expanded .reference-contacts a{font-size:11.5px!important}
+    .grid.expanded .reference-syllabus{grid-area:syllabus!important;align-self:start!important;justify-self:end!important;margin:0!important;padding-top:2px!important}
+
+    .grid.expanded .rotation-assignments{grid-column:1!important;margin:0!important;padding:18px 0 0!important;border-top:1px solid #F0ECE6!important}
+    .grid.expanded .priority-grid{display:contents!important}
+    .grid.expanded .concepts-panel{grid-column:1!important;margin:24px 0 0!important}
+    .grid.expanded .resources-panel{grid-column:2!important;grid-row:3!important;margin:0!important;padding:18px 0 0!important;border-top:1px solid #F0ECE6!important}
+    .grid.expanded .notes-priority{grid-column:2!important;margin:24px 0 0!important}
+    .grid.expanded .notes{min-height:190px!important;margin-top:9px!important}
+    .grid.expanded .encounters-secondary{grid-column:1/-1!important;margin:28px 0 0!important;padding-top:18px!important;border-top:1px solid #F0ECE6!important}
+
+    .grid.expanded .rotation .label,.grid.expanded .priority-panel>.label,.grid.expanded .notes-priority>.label,.grid.expanded .encounters-secondary>.label{font-size:11.5px!important}
+    .grid.expanded .row input[type=text],.grid.expanded .resource-item a{font-size:12.5px!important}
+    .grid.expanded .add{font-size:11.5px!important}
   `;
   doc.head.appendChild(style);
 
@@ -67,6 +116,9 @@ frame.addEventListener('load',()=>{
     const panels=[...priorityGrid.querySelectorAll('.priority-panel')];
     const concepts=panels.find(p=>p.textContent.includes('Concepts to Review'));
     const resources=panels.find(p=>p.textContent.includes('Helpful Resources'));
+    if(concepts)concepts.classList.add('concepts-panel');
+    if(resources)resources.classList.add('resources-panel');
+
     rotation.insertBefore(reference,head.nextSibling);
     rotation.insertBefore(assignments,reference.nextSibling);
     priorityGrid.innerHTML='';
