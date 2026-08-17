@@ -351,19 +351,14 @@
 
 
     .left-column,
-.right-column {
-  min-width: 0;
-}
+    .right-column {
+      min-width: 0;
+    }
 
-/*
-  The utility links sit above Current Rotation on the left.
-  This drops the calendar by the same amount so the top
-  edges of the two white cards line up.
-*/
 
-.right-column {
-  padding-top: 28px;
-}
+    .right-column {
+      padding-top: 28px;
+    }
 
 
 
@@ -372,64 +367,51 @@
     ===================================================== */
 
     .school-utility {
-  min-height: 18px;
+      min-height: 18px;
 
-  display: flex;
-  align-items: center;
+      display: flex;
+      align-items: center;
 
-  padding:
-    0
-    18px;
+      padding:
+        0
+        18px;
 
-  margin:
-    0
-    0
-    10px;
-}
-
-
-.school-utility-links {
-  display: flex;
-  align-items: center;
-
-  flex-wrap: wrap;
-
-  gap: 22px;
-}
+      margin:
+        0
+        0
+        10px;
+    }
 
 
-.school-utility-link {
-  color: #7C8580;
+    .school-utility-links {
+      display: flex;
+      align-items: center;
 
-  font-size: 10px;
-  font-weight: 450;
+      flex-wrap: wrap;
 
-  letter-spacing: 0.035em;
-
-  text-decoration: none;
-
-  transition:
-    color
-    0.15s
-    ease;
-}
+      gap: 22px;
+    }
 
 
-.school-utility-link:hover {
-  color: var(--accent-terracotta);
-}
+    .school-utility-link {
+      color: #727B76;
+
+      font-size: 10px;
+      font-weight: 500;
+
+      letter-spacing: 0.035em;
+
+      text-decoration: none;
+
+      transition:
+        color
+        0.15s
+        ease;
+    }
 
 
-    .school-utility-link:not(:last-child)::after {
-      content: "·";
-
-      position: absolute;
-
-      right: -11px;
-
-      color: #C8C4BD;
-
-      pointer-events: none;
+    .school-utility-link:hover {
+      color: var(--accent-terracotta);
     }
 
 
@@ -467,14 +449,13 @@
     }
 
 
-    /*
-      Reduced from 18px.
-      This is the main change eliminating the large
-      vertical gaps throughout the Current Rotation card.
-    */
-
     .rotation-section {
-      margin-top: 13px;
+      margin-top: 12px;
+    }
+
+
+    .compact-detail-section {
+      margin-top: 11px;
     }
 
 
@@ -490,15 +471,15 @@
 
 
     .detail-name {
-  margin-top: 2px;
+      margin-top: 2px;
 
-  color: var(--text-charcoal);
+      color: var(--text-charcoal);
 
-  font-size: 9px;
-  font-weight: 500;
+      font-size: 9px;
+      font-weight: 500;
 
-  line-height: 1.35;
-}
+      line-height: 1.35;
+    }
 
 
     .detail-text {
@@ -508,9 +489,15 @@
 
       font-size: 11px;
       font-weight: 400;
-      line-height: 1.45;
+
+      line-height: 1.4;
 
       white-space: pre-line;
+    }
+
+
+    .compact-detail-section .detail-text {
+      margin-top: 0;
     }
 
 
@@ -2023,8 +2010,9 @@
     @media (max-width: 850px) {
 
       .right-column {
-  padding-top: 0;
-}
+        padding-top: 0;
+      }
+
 
       .left-navigation,
       .left-navigation.open {
@@ -2108,10 +2096,6 @@
 <body>
 
 
-  <!-- =====================================================
-       LEFT NAVIGATION
-  ====================================================== -->
-
   <aside
     id="leftNavigation"
     class="left-navigation"
@@ -2138,38 +2122,23 @@
 
     <nav class="nav-links">
 
-      <a
-        href="index.html"
-        class="menu-link"
-      >
+      <a href="index.html" class="menu-link">
         Home
       </a>
 
-      <a
-        href="step.html"
-        class="menu-link"
-      >
+      <a href="step.html" class="menu-link">
         Step & Study
       </a>
 
-      <a
-        href="programs.html"
-        class="menu-link"
-      >
+      <a href="programs.html" class="menu-link">
         Program Explorer
       </a>
 
-      <a
-        href="application.html"
-        class="menu-link"
-      >
+      <a href="application.html" class="menu-link">
         Application Tracker
       </a>
 
-      <a
-        href="schedule.html"
-        class="menu-link active"
-      >
+      <a href="schedule.html" class="menu-link active">
         4th Year Schedule
       </a>
 
@@ -2178,10 +2147,6 @@
   </aside>
 
 
-
-  <!-- =====================================================
-       PAGE
-  ====================================================== -->
 
   <main class="page-shell">
 
@@ -2197,14 +2162,8 @@
       <section class="primary-layout">
 
 
-        <!-- =================================================
-             LEFT COLUMN
-        ================================================== -->
-
         <div class="left-column">
 
-
-          <!-- UTILITY LINKS -->
 
           <section class="school-utility">
 
@@ -2244,8 +2203,6 @@
           </section>
 
 
-
-          <!-- CURRENT ROTATION -->
 
           <article class="content-card rotation-card">
 
@@ -2325,7 +2282,7 @@
 
 
 
-            <section class="rotation-section">
+            <section class="rotation-section compact-detail-section">
 
               <div class="section-label">
                 Location
@@ -2339,16 +2296,14 @@
 
 
 
-            <section class="rotation-section">
+            <section class="rotation-section compact-detail-section">
 
               <div class="section-label">
                 Schedule
               </div>
 
-              <div class="detail-text">
-                Monday–Friday · 8:00 AM–5:00 PM
-                No scheduled weekend clinical time
-              </div>
+              <div class="detail-text">Monday–Friday · 8:00 AM–5:00 PM
+No scheduled weekend clinical time</div>
 
             </section>
 
@@ -2481,14 +2436,8 @@
 
 
 
-        <!-- =================================================
-             RIGHT COLUMN
-        ================================================== -->
-
         <div class="right-column">
 
-
-          <!-- CALENDAR -->
 
           <section class="content-card calendar-card">
 
@@ -2552,8 +2501,6 @@
 
 
 
-          <!-- UPCOMING -->
-
           <section class="rotation-list-section">
 
             <div class="section-label">
@@ -2568,8 +2515,6 @@
           </section>
 
 
-
-          <!-- PAST -->
 
           <section class="rotation-list-section">
 
@@ -2596,10 +2541,6 @@
   </main>
 
 
-
-  <!-- =====================================================
-       EVENT MODAL
-  ====================================================== -->
 
   <div
     id="eventModal"
@@ -2641,8 +2582,6 @@
       </div>
 
 
-
-      <!-- VIEW MODE -->
 
       <div
         id="eventDetailsView"
@@ -2768,8 +2707,6 @@
       </div>
 
 
-
-      <!-- EDIT MODE -->
 
       <div
         id="eventEditView"
@@ -3047,10 +2984,6 @@
 
   <script>
 
-    /* =====================================================
-       NAVIGATION
-    ===================================================== */
-
     const leftNavigation =
       document.getElementById(
         'leftNavigation'
@@ -3113,10 +3046,6 @@
       );
 
 
-
-    /* =====================================================
-       ROTATION STORAGE
-    ===================================================== */
 
     const ROTATION_STORAGE_KEY =
       'fourthYearRotationDetailsV2';
@@ -3414,10 +3343,6 @@
     }
 
 
-
-    /* =====================================================
-       ENCOUNTERS
-    ===================================================== */
 
     function ensureEncounterArray(
       rotationId
@@ -3792,10 +3717,6 @@
 
 
 
-    /* =====================================================
-       NOTES
-    ===================================================== */
-
     function initializeNotes() {
 
       const legacyNotes =
@@ -3897,10 +3818,6 @@
 
 
 
-    /* =====================================================
-       TASKS
-    ===================================================== */
-
     const taskState =
       JSON.parse(
         localStorage.getItem(
@@ -3954,10 +3871,6 @@
       );
 
 
-
-    /* =====================================================
-       ROTATION INLINE EDITING
-    ===================================================== */
 
     const upcomingRotationIds = [
       'geri-pal',
@@ -4842,10 +4755,6 @@
 
 
 
-    /* =====================================================
-       CALENDAR STORAGE
-    ===================================================== */
-
     const CALENDAR_STORAGE_KEY =
       'fourthYearSharedCalendarEvents';
 
@@ -5402,10 +5311,6 @@
     }
 
 
-
-    /* =====================================================
-       CALENDAR
-    ===================================================== */
 
     let currentCalendarDate =
       new Date();
@@ -6052,10 +5957,6 @@
 
 
 
-    /* =====================================================
-       EVENT MODAL REFERENCES
-    ===================================================== */
-
     const eventModal =
       document.getElementById(
         'eventModal'
@@ -6292,10 +6193,6 @@
       [];
 
 
-
-    /* =====================================================
-       ATTACHMENTS
-    ===================================================== */
 
     function newAttachment() {
 
@@ -6613,10 +6510,6 @@
     }
 
 
-
-    /* =====================================================
-       DATE PICKER
-    ===================================================== */
 
     let pickerMonths = {
 
@@ -7265,10 +7158,6 @@
       );
 
 
-
-    /* =====================================================
-       EVENT HELPERS
-    ===================================================== */
 
     function formatTime(
       timeString
@@ -8174,10 +8063,6 @@
       );
 
 
-
-    /* =====================================================
-       INITIALIZE
-    ===================================================== */
 
     seedAcademicCalendar();
 
