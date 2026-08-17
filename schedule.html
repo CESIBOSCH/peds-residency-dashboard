@@ -358,12 +358,6 @@
     }
 
 
-    /*
-      Intentionally no divider lines between rotation sections.
-      This also keeps Syllabus visually consistent with
-      Location / Schedule / Tasks.
-    */
-
     .detail-label {
       color: var(--accent-sage);
 
@@ -419,12 +413,28 @@
     }
 
 
-    .syllabus-link {
-      margin-top: 5px;
+    /*
+      Syllabus itself is now the link.
+    */
 
-      color: var(--text-charcoal);
+    .syllabus-heading-link {
+      display: inline-block;
 
-      font-size: 11px;
+      color: var(--accent-sage);
+
+      font-size: 10px;
+      font-weight: 600;
+
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+
+      text-decoration: none;
+    }
+
+
+    .syllabus-heading-link:hover {
+      color: var(--accent-terracotta);
+      text-decoration: underline;
     }
 
 
@@ -483,15 +493,21 @@
     }
 
 
+    /*
+      Two aligned columns now:
+      brief note + attending
+    */
+
     .encounter-grid {
       display: grid;
 
       grid-template-columns:
-        0.8fr
-        1.5fr
-        1fr;
+        minmax(0, 2fr)
+        minmax(110px, 1fr);
 
-      gap: 7px;
+      gap: 8px;
+
+      align-items: end;
     }
 
 
@@ -515,6 +531,7 @@
 
     .mini-input {
       width: 100%;
+      height: 31px;
 
       padding:
         6px
@@ -851,6 +868,10 @@
     }
 
 
+    /*
+      Drop/add deadlines are deliberately quieter and smaller.
+    */
+
     .calendar-event.deadline-event {
       order: 99;
 
@@ -860,12 +881,22 @@
 
       background: transparent;
 
-      color: #B55B42;
+      color: #899185;
 
-      font-size: 7px;
+      font-size: 6.25px;
       font-weight: 500;
 
+      line-height: 1.05;
+
       border-radius: 0;
+
+      opacity: 0.9;
+    }
+
+
+    .calendar-event.deadline-event:hover {
+      color: #697564;
+      background: transparent;
     }
 
 
@@ -907,12 +938,6 @@
       z-index: 2;
     }
 
-
-    /*
-      Every week gets a visually finished bar:
-      Sunday = rounded left edge
-      Saturday = rounded right edge
-    */
 
     .calendar-range.week-left {
       margin-left: 0;
@@ -966,67 +991,73 @@
 
 
     /* =====================================================
-       COMPACT SCHOOL LINKS
+       COMPACT SCHOOL UTILITIES
     ===================================================== */
 
     .calendar-tools {
-      width: min(560px, 100%);
+      width: min(470px, 100%);
 
       display: grid;
 
       grid-template-columns:
         repeat(3, minmax(0, 1fr));
 
-      gap: 8px;
+      gap: 7px;
 
       margin:
         10px
-        0
-        0
-        auto;
+        auto
+        0;
     }
 
 
     .school-link {
       min-width: 0;
-      min-height: 43px;
+      height: 39px;
 
       display: flex;
       align-items: center;
+      justify-content: center;
 
-      gap: 8px;
+      gap: 7px;
 
       padding:
-        7px
-        9px;
+        6px
+        10px;
 
-      background: white;
+      background:
+        rgba(255, 255, 255, 0.72);
 
       border:
         1px
         solid
-        var(--border-light);
+        #E8E3DC;
 
-      border-radius: 9px;
+      border-radius: 8px;
+
+      color: var(--text-charcoal);
 
       text-decoration: none;
 
       transition:
+        background 0.15s ease,
         border-color 0.15s ease,
         transform 0.15s ease;
     }
 
 
     .school-link:hover {
-      border-color: #CBC4B9;
+      background: white;
+
+      border-color: #D4CDC3;
 
       transform: translateY(-1px);
     }
 
 
     .school-icon {
-      width: 27px;
-      height: 27px;
+      width: 22px;
+      height: 22px;
 
       display: flex;
       align-items: center;
@@ -1034,36 +1065,28 @@
 
       flex-shrink: 0;
 
-      border-radius: 50%;
+      border-radius: 6px;
 
-      background: var(--soft-sage);
+      background: #F0F2ED;
 
-      color: #71806C;
+      color: #74806F;
 
-      font-size: 8px;
+      font-size: 7px;
       font-weight: 700;
+
+      letter-spacing: 0.02em;
     }
 
 
     .school-name {
       min-width: 0;
-      flex: 1;
 
-      color: var(--text-charcoal);
+      color: #505453;
 
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 600;
 
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-
-    .school-arrow {
-      color: var(--text-gray);
-
-      font-size: 13px;
     }
 
 
@@ -1218,8 +1241,7 @@
 
       margin-top: 12px;
 
-      padding:
-        11px;
+      padding: 11px;
 
       border:
         1px
@@ -1268,6 +1290,7 @@
 
     textarea.edit-field {
       min-height: 58px;
+
       resize: vertical;
     }
 
@@ -1403,9 +1426,6 @@
     }
 
 
-
-    /* event details view */
-
     .event-details-card {
       padding:
         13px
@@ -1447,9 +1467,6 @@
       line-height: 1.45;
     }
 
-
-
-    /* event editing */
 
     .event-edit-section {
       padding:
@@ -1736,9 +1753,7 @@
 <body>
 
 
-  <!-- =====================================================
-       LEFT NAVIGATION
-  ====================================================== -->
+  <!-- LEFT NAVIGATION -->
 
   <aside
     id="leftNavigation"
@@ -1756,7 +1771,6 @@
         ☰
       </button>
 
-
       <div class="nav-brand">
         Fourth Year
       </div>
@@ -1766,42 +1780,23 @@
 
     <nav class="nav-links">
 
-      <a
-        href="index.html"
-        class="menu-link"
-      >
+      <a href="index.html" class="menu-link">
         Home
       </a>
 
-
-      <a
-        href="step.html"
-        class="menu-link"
-      >
+      <a href="step.html" class="menu-link">
         Step & Study
       </a>
 
-
-      <a
-        href="programs.html"
-        class="menu-link"
-      >
+      <a href="programs.html" class="menu-link">
         Program Explorer
       </a>
 
-
-      <a
-        href="application.html"
-        class="menu-link"
-      >
+      <a href="application.html" class="menu-link">
         Application Tracker
       </a>
 
-
-      <a
-        href="schedule.html"
-        class="menu-link active"
-      >
+      <a href="schedule.html" class="menu-link active">
         4th Year Schedule
       </a>
 
@@ -1811,9 +1806,7 @@
 
 
 
-  <!-- =====================================================
-       PAGE
-  ====================================================== -->
+  <!-- PAGE -->
 
   <main class="page-shell">
 
@@ -1826,9 +1819,7 @@
 
 
 
-      <!-- =================================================
-           CURRENT ROTATION + CALENDAR
-      ================================================== -->
+      <!-- CURRENT ROTATION + CALENDAR -->
 
       <section class="primary-layout">
 
@@ -1853,8 +1844,6 @@
           </div>
 
 
-
-          <!-- CONTACTS -->
 
           <section class="rotation-section">
 
@@ -1915,8 +1904,6 @@
 
 
 
-          <!-- LOCATION -->
-
           <section class="rotation-section">
 
             <div class="section-label">
@@ -1930,8 +1917,6 @@
           </section>
 
 
-
-          <!-- SCHEDULE -->
 
           <section class="rotation-section">
 
@@ -1948,28 +1933,20 @@
 
 
 
-          <!-- SYLLABUS -->
-
           <section class="rotation-section">
-
-            <div class="section-label">
-              Syllabus
-            </div>
 
             <a
               href="4PED32%20-%20Pediatric%20Hematology-Oncology%20Syllabus%202026.2027Final.pdf"
-              class="detail-link syllabus-link"
+              class="syllabus-heading-link"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Pediatric Hematology / Oncology Syllabus →
+              Syllabus
             </a>
 
           </section>
 
 
-
-          <!-- TASKS -->
 
           <section class="rotation-section">
 
@@ -2033,8 +2010,6 @@
 
 
 
-          <!-- MEANINGFUL ENCOUNTERS -->
-
           <section class="rotation-section">
 
             <div class="section-label">
@@ -2058,8 +2033,6 @@
           </section>
 
 
-
-          <!-- NOTES -->
 
           <section class="rotation-section">
 
@@ -2158,7 +2131,7 @@
 
 
 
-          <!-- COMPACT SCHOOL LINKS -->
+          <!-- SCHOOL UTILITIES -->
 
           <section class="calendar-tools">
 
@@ -2170,7 +2143,6 @@
             >
               <span class="school-icon">PS</span>
               <span class="school-name">PeopleSoft</span>
-              <span class="school-arrow">›</span>
             </a>
 
 
@@ -2182,7 +2154,6 @@
             >
               <span class="school-icon">C</span>
               <span class="school-name">Canvas</span>
-              <span class="school-arrow">›</span>
             </a>
 
 
@@ -2194,7 +2165,6 @@
             >
               <span class="school-icon">WT</span>
               <span class="school-name">WakeTrack</span>
-              <span class="school-arrow">›</span>
             </a>
 
           </section>
@@ -2207,9 +2177,7 @@
 
 
 
-      <!-- =================================================
-           UPCOMING ROTATIONS
-      ================================================== -->
+      <!-- UPCOMING ROTATIONS -->
 
       <section class="rotation-list-section">
 
@@ -2226,9 +2194,7 @@
 
 
 
-      <!-- =================================================
-           PAST ROTATIONS
-      ================================================== -->
+      <!-- PAST ROTATIONS -->
 
       <section class="rotation-list-section">
 
@@ -2250,9 +2216,7 @@
 
 
 
-  <!-- =====================================================
-       EVENT MODAL
-  ====================================================== -->
+  <!-- EVENT MODAL -->
 
   <div
     id="eventModal"
@@ -2374,7 +2338,6 @@
 
           </div>
 
-
         </div>
 
 
@@ -2418,8 +2381,6 @@
         >
 
 
-        <!-- BASIC -->
-
         <div class="event-edit-section">
 
           <div class="section-label">
@@ -2440,8 +2401,6 @@
         </div>
 
 
-
-        <!-- DATE / TIME -->
 
         <div class="event-edit-section">
 
@@ -2537,8 +2496,6 @@
         </div>
 
 
-
-        <!-- OPTIONAL DETAILS -->
 
         <div class="event-edit-section">
 
@@ -2749,20 +2706,11 @@
         dates:
           "Sep 28 – Oct 11, 2026",
 
-        contacts:
-          "",
-
-        location:
-          "",
-
-        schedule:
-          "",
-
-        syllabus:
-          "",
-
-        tasks:
-          ""
+        contacts: "",
+        location: "",
+        schedule: "",
+        syllabus: "",
+        tasks: ""
       },
 
 
@@ -2776,20 +2724,11 @@
         dates:
           "Oct 12 – Nov 8, 2026",
 
-        contacts:
-          "",
-
-        location:
-          "",
-
-        schedule:
-          "",
-
-        syllabus:
-          "",
-
-        tasks:
-          ""
+        contacts: "",
+        location: "",
+        schedule: "",
+        syllabus: "",
+        tasks: ""
       },
 
 
@@ -2803,20 +2742,11 @@
         dates:
           "Nov 9 – Dec 6, 2026",
 
-        contacts:
-          "",
-
-        location:
-          "",
-
-        schedule:
-          "",
-
-        syllabus:
-          "",
-
-        tasks:
-          ""
+        contacts: "",
+        location: "",
+        schedule: "",
+        syllabus: "",
+        tasks: ""
       },
 
 
@@ -2830,20 +2760,11 @@
         dates:
           "Dec 7, 2026 – Jan 17, 2027",
 
-        contacts:
-          "",
-
-        location:
-          "",
-
-        schedule:
-          "",
-
-        syllabus:
-          "",
-
-        tasks:
-          ""
+        contacts: "",
+        location: "",
+        schedule: "",
+        syllabus: "",
+        tasks: ""
       },
 
 
@@ -2857,20 +2778,11 @@
         dates:
           "Jan 19 – Feb 14, 2027",
 
-        contacts:
-          "",
-
-        location:
-          "",
-
-        schedule:
-          "",
-
-        syllabus:
-          "",
-
-        tasks:
-          ""
+        contacts: "",
+        location: "",
+        schedule: "",
+        syllabus: "",
+        tasks: ""
       },
 
 
@@ -2884,20 +2796,11 @@
         dates:
           "Feb 15 – Mar 14, 2027",
 
-        contacts:
-          "",
-
-        location:
-          "",
-
-        schedule:
-          "",
-
-        syllabus:
-          "",
-
-        tasks:
-          ""
+        contacts: "",
+        location: "",
+        schedule: "",
+        syllabus: "",
+        tasks: ""
       },
 
 
@@ -2911,20 +2814,11 @@
         dates:
           "Jun 22 – Jul 19, 2026",
 
-        contacts:
-          "",
-
-        location:
-          "",
-
-        schedule:
-          "",
-
-        syllabus:
-          "",
-
-        tasks:
-          ""
+        contacts: "",
+        location: "",
+        schedule: "",
+        syllabus: "",
+        tasks: ""
       },
 
 
@@ -2938,20 +2832,11 @@
         dates:
           "Jul 20 – Aug 16, 2026",
 
-        contacts:
-          "",
-
-        location:
-          "",
-
-        schedule:
-          "",
-
-        syllabus:
-          "",
-
-        tasks:
-          ""
+        contacts: "",
+        location: "",
+        schedule: "",
+        syllabus: "",
+        tasks: ""
       }
 
     };
@@ -3061,6 +2946,7 @@
     }
 
 
+
     function addEncounter(
       rotationId
     ) {
@@ -3083,9 +2969,6 @@
             .toString(16)
             .slice(2),
 
-        reference:
-          '',
-
         note:
           '',
 
@@ -3102,6 +2985,7 @@
       );
 
     }
+
 
 
     function removeEncounter(
@@ -3134,6 +3018,7 @@
       );
 
     }
+
 
 
     function updateEncounter(
@@ -3173,6 +3058,35 @@
       saveEncounters();
 
     }
+
+
+
+    function escapeHtmlAttribute(
+      value
+    ) {
+
+      return String(
+        value || ''
+      )
+      .replace(
+        /&/g,
+        '&amp;'
+      )
+      .replace(
+        /"/g,
+        '&quot;'
+      )
+      .replace(
+        /</g,
+        '&lt;'
+      )
+      .replace(
+        />/g,
+        '&gt;'
+      );
+
+    }
+
 
 
     function renderEncounterList(
@@ -3247,25 +3161,6 @@
                 card.innerHTML = `
 
                   <div class="encounter-grid">
-
-                    <div class="encounter-field">
-
-                      <div class="mini-label">
-                        Patient Reference
-                      </div>
-
-                      <input
-                        class="mini-input"
-                        type="text"
-                        value="${escapeHtmlAttribute(
-                          encounter.reference
-                        )}"
-                        placeholder="Deidentified shorthand"
-                        data-encounter-field="reference"
-                      >
-
-                    </div>
-
 
                     <div class="encounter-field">
 
@@ -3375,34 +3270,6 @@
 
 
 
-    function escapeHtmlAttribute(
-      value
-    ) {
-
-      return String(
-        value || ''
-      )
-      .replace(
-        /&/g,
-        '&amp;'
-      )
-      .replace(
-        /"/g,
-        '&quot;'
-      )
-      .replace(
-        /</g,
-        '&lt;'
-      )
-      .replace(
-        />/g,
-        '&gt;'
-      );
-
-    }
-
-
-
     document
       .addEventListener(
         'click',
@@ -3435,11 +3302,6 @@
     ===================================================== */
 
     function initializeNotes() {
-
-      /*
-        Preserve text from the original current-rotation
-        notes box if it already existed.
-      */
 
       const legacyNotes =
         localStorage.getItem(
@@ -3505,6 +3367,7 @@
 
                     status.textContent =
                       'Saved';
+
 
                     clearTimeout(
                       status._timer
@@ -3615,6 +3478,7 @@
     ];
 
 
+
     function detailDisplay(
       value
     ) {
@@ -3630,6 +3494,87 @@
         'Add details when available.';
 
     }
+
+
+
+    function updateRotationSyllabusHeading(
+      article,
+      syllabus
+    ) {
+
+      const container =
+        article
+          .querySelector(
+            '[data-syllabus-heading]'
+          );
+
+
+      container.innerHTML =
+        '';
+
+
+      if (
+        String(
+          syllabus || ''
+        ).trim()
+      ) {
+
+        const link =
+          document
+            .createElement(
+              'a'
+            );
+
+
+        link.href =
+          syllabus;
+
+
+        link.target =
+          '_blank';
+
+
+        link.rel =
+          'noopener noreferrer';
+
+
+        link.className =
+          'syllabus-heading-link';
+
+
+        link.textContent =
+          'Syllabus';
+
+
+        container.appendChild(
+          link
+        );
+
+      } else {
+
+        const label =
+          document
+            .createElement(
+              'div'
+            );
+
+
+        label.className =
+          'section-label';
+
+
+        label.textContent =
+          'Syllabus';
+
+
+        container.appendChild(
+          label
+        );
+
+      }
+
+    }
+
 
 
     function createRotationCard(
@@ -3737,11 +3682,7 @@
 
           <section class="rotation-section">
 
-            <div class="section-label">
-              Syllabus
-            </div>
-
-            <div data-syllabus-display></div>
+            <div data-syllabus-heading></div>
 
           </section>
 
@@ -3927,6 +3868,7 @@
       `;
 
 
+
       const header =
         article
           .querySelector(
@@ -3934,9 +3876,45 @@
           );
 
 
+      const editForm =
+        article
+          .querySelector(
+            '.editable-rotation-form'
+          );
+
+
+
+      /*
+        Important fix:
+        collapsing a rotation always closes the
+        editing form too, returning the card to
+        its original compact height.
+      */
+
       header.addEventListener(
         'click',
         () => {
+
+          const isCurrentlyOpen =
+            article
+              .classList
+              .contains(
+                'open'
+              );
+
+
+          if (
+            isCurrentlyOpen
+          ) {
+
+            editForm
+              .classList
+              .remove(
+                'open'
+              );
+
+          }
+
 
           article
             .classList
@@ -3948,17 +3926,12 @@
       );
 
 
-      updateSyllabusDisplay(
+
+      updateRotationSyllabusHeading(
         article,
         data.syllabus
       );
 
-
-      const editForm =
-        article
-          .querySelector(
-            '.editable-rotation-form'
-          );
 
 
       article
@@ -3977,6 +3950,7 @@
 
           }
         );
+
 
 
       article
@@ -4018,6 +3992,7 @@
 
           }
         );
+
 
 
       article
@@ -4105,11 +4080,15 @@
                 );
 
 
-            updateSyllabusDisplay(
+            updateRotationSyllabusHeading(
               article,
               updated.syllabus
             );
 
+
+            /*
+              Editing closes automatically after save.
+            */
 
             editForm
               .classList
@@ -4122,72 +4101,6 @@
 
 
       return article;
-
-    }
-
-
-
-    function updateSyllabusDisplay(
-      article,
-      syllabus
-    ) {
-
-      const container =
-        article
-          .querySelector(
-            '[data-syllabus-display]'
-          );
-
-
-      container.innerHTML =
-        '';
-
-
-      if (
-        !String(
-          syllabus || ''
-        ).trim()
-      ) {
-
-        container.innerHTML =
-          `<div class="detail-text">Add details when available.</div>`;
-
-        return;
-
-      }
-
-
-      const link =
-        document
-          .createElement(
-            'a'
-          );
-
-
-      link.href =
-        syllabus;
-
-
-      link.target =
-        '_blank';
-
-
-      link.rel =
-        'noopener noreferrer';
-
-
-      link.className =
-        'detail-link syllabus-link';
-
-
-      link.textContent =
-        'Open syllabus →';
-
-
-      container
-        .appendChild(
-          link
-        );
 
     }
 
@@ -4506,76 +4419,42 @@
 
 
 
-      /* drop/add deadlines */
-
       [
-
         {
-          id:
-            'y4-block-7-drop-add',
-
-          title:
-            'Block 7 Drop/Add Deadline',
-
-          date:
-            '2026-08-17'
+          id: 'y4-block-7-drop-add',
+          title: 'Block 7 Drop/Add Deadline',
+          date: '2026-08-17'
         },
 
         {
-          id:
-            'y4-block-8-drop-add',
-
-          title:
-            'Block 8 Drop/Add Deadline',
-
-          date:
-            '2026-09-14'
+          id: 'y4-block-8-drop-add',
+          title: 'Block 8 Drop/Add Deadline',
+          date: '2026-09-14'
         },
 
         {
-          id:
-            'y4-block-9-drop-add',
-
-          title:
-            'Block 9 Drop/Add Deadline',
-
-          date:
-            '2026-10-12'
+          id: 'y4-block-9-drop-add',
+          title: 'Block 9 Drop/Add Deadline',
+          date: '2026-10-12'
         },
 
         {
-          id:
-            'y4-block-10-drop-add',
-
-          title:
-            'Block 10 Drop/Add Deadline',
-
-          date:
-            '2026-11-09'
+          id: 'y4-block-10-drop-add',
+          title: 'Block 10 Drop/Add Deadline',
+          date: '2026-11-09'
         },
 
         {
-          id:
-            'y4-block-11-drop-add',
-
-          title:
-            'Block 11 Drop/Add Deadline',
-
-          date:
-            '2026-12-22'
+          id: 'y4-block-11-drop-add',
+          title: 'Block 11 Drop/Add Deadline',
+          date: '2026-12-22'
         },
 
         {
-          id:
-            'y4-block-12-drop-add',
-
-          title:
-            'Block 12 Drop/Add Deadline',
-
-          date:
-            '2026-12-31'
+          id: 'y4-block-12-drop-add',
+          title: 'Block 12 Drop/Add Deadline',
+          date: '2026-12-31'
         }
-
       ]
       .forEach(
         deadline => {
@@ -4611,8 +4490,6 @@
       );
 
 
-
-      /* rotations */
 
       seedRangeEvent(
         'rotation-peds-ai',
@@ -4696,8 +4573,6 @@
 
 
 
-      /* breaks / major dates */
-
       seedRangeEvent(
         'labor-day',
         'Labor Day',
@@ -4770,8 +4645,6 @@
       );
 
 
-
-      /* Dr. Gass meeting */
 
       seedEvent({
 
@@ -5142,12 +5015,6 @@
                   );
 
 
-                /*
-                  Round Sunday left edges and Saturday
-                  right edges, in addition to true
-                  beginning/end of the event.
-                */
-
                 if (
                   isActualStart ||
                   weekday === 0
@@ -5175,11 +5042,6 @@
 
                 }
 
-
-                /*
-                  Label at the real event start and again
-                  at the beginning of each new week.
-                */
 
                 if (
                   isActualStart ||
@@ -5942,11 +5804,8 @@
 
       populateEditForm({
 
-        id:
-          '',
-
-        title:
-          '',
+        id: '',
+        title: '',
 
         date:
           dateKey,
@@ -5957,17 +5816,10 @@
         allDay:
           true,
 
-        startTime:
-          '',
-
-        endTime:
-          '',
-
-        location:
-          '',
-
-        link:
-          ''
+        startTime: '',
+        endTime: '',
+        location: '',
+        link: ''
 
       });
 
@@ -6227,11 +6079,6 @@
                 .value
                 .trim(),
 
-            /*
-              Keep original event type if editing
-              a seeded academic event.
-            */
-
             type:
               existing
                 ? (
@@ -6370,7 +6217,6 @@
 
         }
       );
-
 
 
     document
