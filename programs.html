@@ -16,23 +16,57 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
+
     :root {
       --bg-app: #FAF9F5;
       --bg-surface: #FFFFFF;
       --text-charcoal: #2D3132;
       --text-gray: #6B7280;
       --accent-terracotta: #C86D51;
+      --accent-sage: #8E9B88;
       --accent-terracotta-soft: #FBF4F1;
       --border-light: #E5E0D8;
     }
 
+
+    * {
+      box-sizing: border-box;
+    }
+
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+
     body { 
       background-color: #FAF9F5; 
       color: #2D3132; 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+      padding-left: 88px;
+
+      transition:
+        padding-left
+        0.22s
+        ease;
     }
 
-    /* Tooltip */
+
+    body.menu-open {
+
+      padding-left: 245px;
+
+    }
+
+
+
+    /* =========================================
+       Tooltip
+    ========================================= */
+
     .leaflet-tooltip.custom-map-tooltip {
       background: #FFFFFF;
       border: 1px solid #E5E0D8;
@@ -44,7 +78,12 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
-    /* Custom Leaflet Popup Styling */
+
+
+    /* =========================================
+       Custom Leaflet Popup Styling
+    ========================================= */
+
     .leaflet-popup-content-wrapper {
       background: #FFFFFF;
       border: 1px solid #E5E0D8;
@@ -53,964 +92,3241 @@
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
       overflow: hidden;
     }
+
+
     .leaflet-popup-content {
       margin: 0 !important;
       width: 320px !important;
     }
+
+
     .leaflet-popup-tip {
       background: #FFFFFF;
     }
 
-    /* Custom Map Pins */
+
+
+    /* =========================================
+       Custom Map Pins
+    ========================================= */
+
     .custom-desert-pin {
-  width: 16px !important;
-  height: 21px !important;
-  background: transparent !important;
-  border: none !important;
-}
+      width: 16px !important;
+      height: 21px !important;
+      background: transparent !important;
+      border: none !important;
+    }
 
-.custom-desert-pin svg {
-  display: block;
-  width: 16px;
-  height: 21px;
-  overflow: visible;
-  transform-origin: 50% 100%;
-  transition: transform 0.15s ease;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.18));
-}
 
-.custom-desert-pin:hover svg {
-  transform: scale(1.1);
-}
+    .custom-desert-pin svg {
+      display: block;
+      width: 16px;
+      height: 21px;
+      overflow: visible;
+      transform-origin: 50% 100%;
+      transition: transform 0.15s ease;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.18));
+    }
 
-    /* Custom Scrollbars */
+
+    .custom-desert-pin:hover svg {
+      transform: scale(1.1);
+    }
+
+
+
+    /* =========================================
+       Custom Scrollbars
+    ========================================= */
+
     .custom-scroll::-webkit-scrollbar {
       width: 5px;
     }
+
+
     .custom-scroll::-webkit-scrollbar-thumb {
       background-color: #D3CDC4;
       border-radius: 4px;
     }
 
+
     input[type="checkbox"] {
       accent-color: #C86D51;
     }
-  /* Fourth Year hamburger navigation */
 
-.left-navigation {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 88px;
-  height: 100vh;
-  z-index: 9999;
-  padding: 28px 18px;
-  background: var(--bg-app);
-  transition: width 0.22s ease;
-}
 
-.left-navigation.open {
-  width: 245px;
-}
 
-.nav-top {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  white-space: nowrap;
-}
+    /* =====================================================
+       COLLAPSED / EXPANDED LEFT NAVIGATION
+    ===================================================== */
 
-.menu-button {
-  width: 42px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 0;
-  border-radius: 9px;
-  background: transparent;
-  color: var(--text-charcoal);
-  cursor: pointer;
-  font-size: 24px;
-  line-height: 1;
-}
+    .left-navigation {
 
-.menu-button:hover {
-  background: #F5F2EC;
-  color: var(--accent-terracotta);
-}
+      position: fixed;
 
-.nav-brand {
-  opacity: 0;
-  pointer-events: none;
-  color: #8E9B88;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.20em;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: opacity 0.15s ease;
-}
+      top: 0;
+      left: 0;
 
-.left-navigation.open .nav-brand {
-  opacity: 1;
-}
+      width: 88px;
+      height: 100vh;
 
-.nav-links {
-  margin-top: 27px;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateX(-5px);
-  transition: opacity 0.18s ease, transform 0.18s ease;
-}
+      z-index: 9999;
 
-.left-navigation.open .nav-links {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateX(0);
-}
+      padding:
+        28px
+        18px;
 
-.menu-link {
-  display: block;
-  width: max-content;
-  padding: 7px 0;
-  color: #8E9B88;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  transition: color 0.15s ease;
-}
+      background:
+        var(--bg-app);
 
-.menu-link:hover {
-  color: var(--accent-terracotta);
-}
+      transition:
+        width
+        0.22s
+        ease;
 
-.menu-link.active {
-  color: var(--accent-terracotta);
-  font-weight: 600;
-}
+    }
+
+
+    .left-navigation.open {
+
+      width: 245px;
+
+    }
+
+
+    .nav-top {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 15px;
+
+      white-space: nowrap;
+
+    }
+
+
+    .menu-button {
+
+      width: 42px;
+      height: 42px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      flex-shrink: 0;
+
+      border: 0;
+
+      border-radius: 9px;
+
+      background:
+        transparent;
+
+      color:
+        var(--text-charcoal);
+
+      cursor: pointer;
+
+      font-size: 24px;
+
+      line-height: 1;
+
+    }
+
+
+    .menu-button:hover {
+
+      background:
+        #F5F2EC;
+
+      color:
+        var(--accent-terracotta);
+
+    }
+
+
+    .nav-brand {
+
+      opacity: 0;
+
+      pointer-events: none;
+
+      color:
+        var(--accent-sage);
+
+      font-size: 14px;
+
+      font-weight: 600;
+
+      letter-spacing: 0.20em;
+
+      text-transform: uppercase;
+
+      transition:
+        opacity
+        0.15s
+        ease;
+
+    }
+
+
+    .left-navigation.open
+    .nav-brand {
+
+      opacity: 1;
+
+    }
+
+
+    .nav-links {
+
+      margin-top: 27px;
+
+      opacity: 0;
+
+      pointer-events: none;
+
+      transform:
+        translateX(-5px);
+
+      transition:
+        opacity
+        0.18s
+        ease,
+        transform
+        0.18s
+        ease;
+
+    }
+
+
+    .left-navigation.open
+    .nav-links {
+
+      opacity: 1;
+
+      pointer-events: auto;
+
+      transform:
+        translateX(0);
+
+    }
+
+
+    .menu-link {
+
+      display: block;
+
+      width: max-content;
+
+      padding:
+        7px
+        0;
+
+      color:
+        var(--accent-sage);
+
+      text-decoration: none;
+
+      font-size: 13px;
+
+      font-weight: 500;
+
+      letter-spacing: 0.15em;
+
+      text-transform: uppercase;
+
+      transition:
+        color
+        0.15s
+        ease;
+
+    }
+
+
+    .menu-link:hover {
+
+      color:
+        var(--accent-terracotta);
+
+    }
+
+
+    .menu-link.active {
+
+      color:
+        var(--accent-terracotta);
+
+      font-weight: 600;
+
+    }
+
+
+    @media (max-width: 700px) {
+
+      body {
+
+        padding-left: 68px;
+
+      }
+
+
+      body.menu-open {
+
+        padding-left: 68px;
+
+      }
+
+
+      .left-navigation {
+
+        width: 68px;
+
+        padding:
+          18px
+          12px;
+
+      }
+
+
+      .left-navigation.open {
+
+        width: 225px;
+
+      }
+
+    }
 
   </style>
 </head>
-<body class="h-screen w-screen flex flex-col pl-[88px] pr-4 md:pr-6 py-4 md:py-6 overflow-hidden gap-2">
 
-  <!-- Fourth Year Navigation -->
 
-<aside
-  id="leftNavigation"
-  class="left-navigation"
->
+<body class="h-screen w-screen flex flex-col pr-4 md:pr-6 py-4 md:py-6 overflow-hidden gap-2">
 
-  <div class="nav-top">
 
-    <button
-      id="menuButton"
-      class="menu-button"
-      aria-label="Open menu"
-    >
-      ☰
-    </button>
+  <!-- =====================================================
+       LEFT NAVIGATION
+  ====================================================== -->
 
-    <a
-      href="index.html"
-      class="nav-brand"
-    >
-      Fourth Year
-    </a>
+  <aside
+    id="leftNavigation"
+    class="left-navigation"
+  >
 
-  </div>
+    <div class="nav-top">
 
-  <nav class="nav-links">
+      <button
+        id="menuButton"
+        class="menu-button"
+        aria-label="Open menu"
+        aria-expanded="false"
+      >
+        ☰
+      </button>
 
-    <a
-      href="index.html"
-      class="menu-link"
-    >
-      Home
-    </a>
 
-    <a
-      href="step.html"
-      class="menu-link"
-    >
-      Step & Study
-    </a>
+      <div class="nav-brand">
 
-    <a
-      href="programs.html"
-      class="menu-link active"
-    >
-      Program Explorer
-    </a>
+        Fourth Year
 
-    <a
-      href="application.html"
-      class="menu-link"
-    >
-      Application Tracker
-    </a>
-
-    <a
-      href="schedule.html"
-      class="menu-link"
-    >
-      4th Year Schedule
-    </a>
-
-  </nav>
-
-</aside>
-  <!-- HEADER -->
-  <header class="w-full max-w-7xl mx-auto flex items-center justify-center shrink-0 pt-2 pb-4 md:pb-6">
-    <h1 class="text-[28px] md:text-[34px] font-light uppercase tracking-[0.16em] text-[#8A9484] leading-none whitespace-nowrap">Pediatrics Residencies</h1>
-  </header>
-
-  <!-- MAIN WRAPPER (CONTAINED HEIGHT) -->
-  <div class="w-full max-w-7xl mx-auto flex-1 flex flex-col md:flex-row gap-5 overflow-hidden">
-
-    <!-- SIDEBAR (UNIFIED SCROLLING) -->
-    <aside id="sidebar" class="w-full md:w-[280px] lg:w-[300px] bg-white border border-[#E5E0D8] rounded-xl flex flex-col shrink-0 shadow-sm overflow-y-auto custom-scroll h-full">
-      
-      <!-- Filters Panel Header -->
-      <div class="px-4 py-2.5 border-b border-[#E5E0D8] bg-[#FAF9F5] sticky top-0 z-25">
-        <h2 class="text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]">Filters & Search</h2>
       </div>
 
+    </div>
+
+
+    <nav class="nav-links">
+
+      <a
+        href="index.html"
+        class="menu-link"
+      >
+        Home
+      </a>
+
+
+      <a
+        href="step.html"
+        class="menu-link"
+      >
+        Step & Study
+      </a>
+
+
+      <a
+        href="programs.html"
+        class="menu-link active"
+      >
+        Program Explorer
+      </a>
+
+
+      <a
+        href="application.html"
+        class="menu-link"
+      >
+        Application Tracker
+      </a>
+
+
+      <a
+        href="schedule.html"
+        class="menu-link"
+      >
+        4th Year Schedule
+      </a>
+
+    </nav>
+
+  </aside>
+
+
+
+  <!-- HEADER -->
+
+  <header
+    class="w-full max-w-7xl mx-auto flex items-center justify-center shrink-0 pt-2 pb-4 md:pb-6"
+  >
+
+    <h1
+      class="text-[28px] md:text-[34px] font-light uppercase tracking-[0.16em] text-[#8A9484] leading-none whitespace-nowrap"
+    >
+      Pediatrics Residencies
+    </h1>
+
+  </header>
+
+
+
+  <!-- MAIN WRAPPER -->
+
+  <div
+    class="w-full max-w-7xl mx-auto flex-1 flex flex-col md:flex-row gap-5 overflow-hidden"
+  >
+
+
+    <!-- SIDEBAR -->
+
+    <aside
+      id="sidebar"
+      class="w-full md:w-[280px] lg:w-[300px] bg-white border border-[#E5E0D8] rounded-xl flex flex-col shrink-0 shadow-sm overflow-y-auto custom-scroll h-full"
+    >
+
+
+      <!-- Filters Panel Header -->
+
+      <div
+        class="px-4 py-2.5 border-b border-[#E5E0D8] bg-[#FAF9F5] sticky top-0 z-25"
+      >
+
+        <h2
+          class="text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]"
+        >
+          Filters & Search
+        </h2>
+
+      </div>
+
+
+
       <!-- Filters Section -->
-      <div class="p-3.5 border-b border-[#E5E0D8] space-y-3 bg-[#FFFFFF] shrink-0">
+
+      <div
+        class="p-3.5 border-b border-[#E5E0D8] space-y-3 bg-[#FFFFFF] shrink-0"
+      >
+
+
         <div class="space-y-1">
-          <label class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Search</label>
+
+          <label
+            class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]"
+          >
+            Search
+          </label>
+
           <input 
             type="text" 
             id="searchInput" 
             placeholder="Search program or city..." 
             class="w-full px-2.5 py-1.5 rounded-md border border-[#E5E0D8] placeholder-[#6B7280]/50 focus:outline-none focus:border-[#C86D51] text-xs transition bg-[#FAF9F5] text-[#2D3132]"
           />
+
         </div>
+
+
 
         <div class="space-y-2">
+
+
           <!-- State Filter -->
-          <div class="space-y-1 relative dropdown-container">
-            <div class="flex justify-between items-center">
-              <label class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">State</label>
-              <button type="button" id="resetStateBtn" class="text-[9px] text-[#6B7280] hover:text-[#C86D51] underline hidden">Clear</button>
+
+          <div
+            class="space-y-1 relative dropdown-container"
+          >
+
+            <div
+              class="flex justify-between items-center"
+            >
+
+              <label
+                class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]"
+              >
+                State
+              </label>
+
+              <button
+                type="button"
+                id="resetStateBtn"
+                class="text-[9px] text-[#6B7280] hover:text-[#C86D51] underline hidden"
+              >
+                Clear
+              </button>
+
             </div>
-            <button type="button" data-dropdown="state" class="dropdown-btn w-full px-2.5 py-1.5 rounded-md border border-[#E5E0D8] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-[#FAF9F5] text-[#2D3132]">
-              <span id="stateDropdownLabel" class="truncate">All States</span>
-              <span class="text-[8px] text-[#C86D51]">▼</span>
+
+
+            <button
+              type="button"
+              data-dropdown="state"
+              class="dropdown-btn w-full px-2.5 py-1.5 rounded-md border border-[#E5E0D8] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-[#FAF9F5] text-[#2D3132]"
+            >
+
+              <span
+                id="stateDropdownLabel"
+                class="truncate"
+              >
+                All States
+              </span>
+
+              <span
+                class="text-[8px] text-[#C86D51]"
+              >
+                ▼
+              </span>
+
             </button>
-            <div id="stateDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-[#E5E0D8] rounded-md shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
+
+
+            <div
+              id="stateDropdownMenu"
+              class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-[#E5E0D8] rounded-md shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"
+            ></div>
+
           </div>
+
+
 
           <!-- Setting Filter -->
-          <div class="space-y-1 relative dropdown-container">
-            <div class="flex justify-between items-center">
-              <label class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Setting</label>
-              <button type="button" id="resetSettingBtn" class="text-[9px] text-[#6B7280] hover:text-[#C86D51] underline hidden">Clear</button>
+
+          <div
+            class="space-y-1 relative dropdown-container"
+          >
+
+            <div
+              class="flex justify-between items-center"
+            >
+
+              <label
+                class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]"
+              >
+                Setting
+              </label>
+
+              <button
+                type="button"
+                id="resetSettingBtn"
+                class="text-[9px] text-[#6B7280] hover:text-[#C86D51] underline hidden"
+              >
+                Clear
+              </button>
+
             </div>
-            <button type="button" data-dropdown="setting" class="dropdown-btn w-full px-2.5 py-1.5 rounded-md border border-[#E5E0D8] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-[#FAF9F5] text-[#2D3132]">
-              <span id="settingDropdownLabel" class="truncate">All Settings</span>
-              <span class="text-[8px] text-[#C86D51]">▼</span>
+
+
+            <button
+              type="button"
+              data-dropdown="setting"
+              class="dropdown-btn w-full px-2.5 py-1.5 rounded-md border border-[#E5E0D8] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-[#FAF9F5] text-[#2D3132]"
+            >
+
+              <span
+                id="settingDropdownLabel"
+                class="truncate"
+              >
+                All Settings
+              </span>
+
+              <span
+                class="text-[8px] text-[#C86D51]"
+              >
+                ▼
+              </span>
+
             </button>
-            <div id="settingDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-[#E5E0D8] rounded-md shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
+
+
+            <div
+              id="settingDropdownMenu"
+              class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-[#E5E0D8] rounded-md shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"
+            ></div>
+
           </div>
+
+
 
           <!-- Competitiveness Filter -->
-          <div class="space-y-1 relative dropdown-container">
-            <div class="flex justify-between items-center">
-              <label class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Tier / Competitiveness</label>
-              <button type="button" id="resetCompetitivenessBtn" class="text-[9px] text-[#6B7280] hover:text-[#C86D51] underline hidden">Clear</button>
+
+          <div
+            class="space-y-1 relative dropdown-container"
+          >
+
+            <div
+              class="flex justify-between items-center"
+            >
+
+              <label
+                class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]"
+              >
+                Tier / Competitiveness
+              </label>
+
+              <button
+                type="button"
+                id="resetCompetitivenessBtn"
+                class="text-[9px] text-[#6B7280] hover:text-[#C86D51] underline hidden"
+              >
+                Clear
+              </button>
+
             </div>
-            <button type="button" data-dropdown="competitiveness" class="dropdown-btn w-full px-2.5 py-1.5 rounded-md border border-[#E5E0D8] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-[#FAF9F5] text-[#2D3132]">
-              <span id="competitivenessDropdownLabel" class="truncate">All Tiers</span>
-              <span class="text-[8px] text-[#C86D51]">▼</span>
+
+
+            <button
+              type="button"
+              data-dropdown="competitiveness"
+              class="dropdown-btn w-full px-2.5 py-1.5 rounded-md border border-[#E5E0D8] text-xs focus:outline-none flex justify-between items-center text-left hover:border-[#C86D51] bg-[#FAF9F5] text-[#2D3132]"
+            >
+
+              <span
+                id="competitivenessDropdownLabel"
+                class="truncate"
+              >
+                All Tiers
+              </span>
+
+              <span
+                class="text-[8px] text-[#C86D51]"
+              >
+                ▼
+              </span>
+
             </button>
-            <div id="competitivenessDropdownMenu" class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-[#E5E0D8] rounded-md shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"></div>
+
+
+            <div
+              id="competitivenessDropdownMenu"
+              class="dropdown-menu hidden absolute left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-[#E5E0D8] rounded-md shadow-lg z-50 p-2 space-y-1 text-xs custom-scroll"
+            ></div>
+
           </div>
+
         </div>
 
-        <!-- Perks -->
-        <div class="pt-1.5 border-t border-[#E5E0D8]">
-          <label class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280] block mb-1">Benefits</label>
-          <div class="grid grid-cols-2 gap-y-1 text-xs text-[#2D3132]">
-            <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51]">
-              <input type="checkbox" id="parkingFilter" class="rounded border-[#E5E0D8]"> Parking
+
+
+        <!-- Benefits -->
+
+        <div
+          class="pt-1.5 border-t border-[#E5E0D8]"
+        >
+
+          <label
+            class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280] block mb-1"
+          >
+            Benefits
+          </label>
+
+
+          <div
+            class="grid grid-cols-2 gap-y-1 text-xs text-[#2D3132]"
+          >
+
+            <label
+              class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51]"
+            >
+              <input
+                type="checkbox"
+                id="parkingFilter"
+                class="rounded border-[#E5E0D8]"
+              >
+              Parking
             </label>
-            <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51]">
-              <input type="checkbox" id="housingFilter" class="rounded border-[#E5E0D8]"> Housing
+
+
+            <label
+              class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51]"
+            >
+              <input
+                type="checkbox"
+                id="housingFilter"
+                class="rounded border-[#E5E0D8]"
+              >
+              Housing
             </label>
-            <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51]">
-              <input type="checkbox" id="mealFilter" class="rounded border-[#E5E0D8]"> Meals
+
+
+            <label
+              class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51]"
+            >
+              <input
+                type="checkbox"
+                id="mealFilter"
+                class="rounded border-[#E5E0D8]"
+              >
+              Meals
             </label>
-            <label class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51]">
-              <input type="checkbox" id="techFilter" class="rounded border-[#E5E0D8]"> Tech
+
+
+            <label
+              class="inline-flex items-center gap-1.5 cursor-pointer hover:text-[#C86D51]"
+            >
+              <input
+                type="checkbox"
+                id="techFilter"
+                class="rounded border-[#E5E0D8]"
+              >
+              Tech
             </label>
+
           </div>
+
         </div>
+
       </div>
 
-      <!-- Program List Panel Header (Collapsible) -->
-      <div id="programsHeader" class="px-4 py-2 border-b border-[#E5E0D8] bg-[#FAF9F5] sticky top-[33px] z-20 flex justify-between items-center cursor-pointer select-none hover:bg-[#F2ECE1] transition">
-        <h2 class="text-[10px] font-semibold uppercase tracking-wider text-[#6B7280]">Programs (<span id="programCount">0</span>)</h2>
-        <span id="programsToggleIcon" class="text-[10px] text-[#6B7280] transform transition-transform duration-200">▼</span>
+
+
+      <!-- Program List Panel Header -->
+
+      <div
+        id="programsHeader"
+        class="px-4 py-2 border-b border-[#E5E0D8] bg-[#FAF9F5] sticky top-[33px] z-20 flex justify-between items-center cursor-pointer select-none hover:bg-[#F2ECE1] transition"
+      >
+
+        <h2
+          class="text-[10px] font-semibold uppercase tracking-wider text-[#6B7280]"
+        >
+          Programs (<span id="programCount">0</span>)
+        </h2>
+
+
+        <span
+          id="programsToggleIcon"
+          class="text-[10px] text-[#6B7280] transform transition-transform duration-200"
+        >
+          ▼
+        </span>
+
       </div>
 
-      <!-- Program Cards Container -->
-      <div id="programList" class="p-3 space-y-2 bg-[#FFFFFF] flex-1"></div>
+
+
+      <!-- Program Cards -->
+
+      <div
+        id="programList"
+        class="p-3 space-y-2 bg-[#FFFFFF] flex-1"
+      ></div>
+
 
     </aside>
 
-    <!-- MAP CONTAINER (FRAMED FIT) -->
-    <main class="flex-1 rounded-xl border border-[#E5E0D8] overflow-hidden shadow-sm relative bg-white flex flex-col h-full">
-      <div id="map" class="w-full h-full flex-1"></div>
 
-      <!-- COMPACT PROGRAM PREVIEW BAR -->
-      <div id="previewBar" class="hidden absolute bottom-4 left-4 right-4 z-[1000] bg-white border border-[#E5E0D8] rounded-xl p-3 shadow-xl flex items-center justify-between gap-3 transition-all">
+
+    <!-- MAP -->
+
+    <main
+      class="flex-1 rounded-xl border border-[#E5E0D8] overflow-hidden shadow-sm relative bg-white flex flex-col h-full"
+    >
+
+      <div
+        id="map"
+        class="w-full h-full flex-1"
+      ></div>
+
+
+
+      <!-- PROGRAM PREVIEW BAR -->
+
+      <div
+        id="previewBar"
+        class="hidden absolute bottom-4 left-4 right-4 z-[1000] bg-white border border-[#E5E0D8] rounded-xl p-3 shadow-xl flex items-center justify-between gap-3 transition-all"
+      >
+
         <div class="truncate">
-          <div class="text-[9px] uppercase font-semibold text-[#C86D51]" id="previewLocation">Location</div>
-          <div class="text-xs font-medium text-[#2D3132] truncate" id="previewTitle">Program Name</div>
+
+          <div
+            class="text-[9px] uppercase font-semibold text-[#C86D51]"
+            id="previewLocation"
+          >
+            Location
+          </div>
+
+          <div
+            class="text-xs font-medium text-[#2D3132] truncate"
+            id="previewTitle"
+          >
+            Program Name
+          </div>
+
         </div>
-        <div class="flex items-center gap-2 shrink-0">
-          <button id="openFactSheetBtn" class="px-3 py-1.5 rounded-lg bg-[#C86D51] text-white text-xs font-medium hover:bg-[#b05b41] transition shadow-sm">View Full Fact Sheet</button>
-          <button id="closePreviewBtn" class="p-1 text-[#6B7280] hover:text-[#2D3132] text-xs">✕</button>
+
+
+        <div
+          class="flex items-center gap-2 shrink-0"
+        >
+
+          <button
+            id="openFactSheetBtn"
+            class="px-3 py-1.5 rounded-lg bg-[#C86D51] text-white text-xs font-medium hover:bg-[#b05b41] transition shadow-sm"
+          >
+            View Full Fact Sheet
+          </button>
+
+
+          <button
+            id="closePreviewBtn"
+            class="p-1 text-[#6B7280] hover:text-[#2D3132] text-xs"
+          >
+            ✕
+          </button>
+
         </div>
+
       </div>
+
+
     </main>
+
 
   </div>
 
+
+
   <script>
+
     let allPrograms = [];
-    let selectedFilters = { state: new Set(), setting: new Set(), competitiveness: new Set() };
+
+    let selectedFilters = {
+      state: new Set(),
+      setting: new Set(),
+      competitiveness: new Set()
+    };
+
     let map;
-    let markersMap = new Map();
-    let currentSelectedProgram = null;
-    let isProgramsCollapsed = false;
+
+    let markersMap =
+      new Map();
+
+    let currentSelectedProgram =
+      null;
+
+    let isProgramsCollapsed =
+      false;
+
+
 
     const airportLookup = {
-      "Phoenix, AZ": "PHX", "Los Angeles, CA": "LAX", "San Francisco, CA": "SFO",
-      "Oakland, CA": "OAK", "Sacramento, CA": "SMF", "San Diego, CA": "SAN",
-      "New Haven, CT": "BDL", "Denver, CO": "DEN", "Washington, DC": "DCA",
-      "Chicago, IL": "ORD", "Boston, MA": "BOS", "Baltimore, MD": "BWI",
-      "Ann Arbor, MI": "DTW", "Minneapolis, MN": "MSP", "St. Louis, MO": "STL",
-      "Chapel Hill, NC": "RDU", "Charlotte, NC": "CLT", "Philadelphia, PA": "PHL",
-      "Pittsburgh, PA": "PIT", "Seattle, WA": "SEA", "New York, NY": "JFK",
-      "Houston, TX": "IAH", "Dallas, TX": "DFW", "Atlanta, GA": "ATL",
-      "Oak Lawn, IL": "ORD", "Indianapolis, IN": "IND", "New Orleans, LA": "MSY",
-      "Portland, ME": "PWM", "Detroit, MI": "DTW", "Kansas City, MO": "MCI",
-      "Greenville, NC": "PGV", "Bronx, NY": "LGA", "Stony Brook, NY": "ISP",
-      "Cleveland, OH": "CLE", "Portland, OR": "PDX", "Nashville, TN": "BNA",
-      "Austin, TX": "AUS", "Salt Lake City, UT": "SLC", "Falls Church, VA": "DCA",
-      "Richmond, VA": "RIC", "Milwaukee, WI": "MKE"
+
+      "Phoenix, AZ": "PHX",
+      "Los Angeles, CA": "LAX",
+      "San Francisco, CA": "SFO",
+      "Oakland, CA": "OAK",
+      "Sacramento, CA": "SMF",
+      "San Diego, CA": "SAN",
+      "New Haven, CT": "BDL",
+      "Denver, CO": "DEN",
+      "Washington, DC": "DCA",
+      "Chicago, IL": "ORD",
+      "Boston, MA": "BOS",
+      "Baltimore, MD": "BWI",
+      "Ann Arbor, MI": "DTW",
+      "Minneapolis, MN": "MSP",
+      "St. Louis, MO": "STL",
+      "Chapel Hill, NC": "RDU",
+      "Charlotte, NC": "CLT",
+      "Philadelphia, PA": "PHL",
+      "Pittsburgh, PA": "PIT",
+      "Seattle, WA": "SEA",
+      "New York, NY": "JFK",
+      "Houston, TX": "IAH",
+      "Dallas, TX": "DFW",
+      "Atlanta, GA": "ATL",
+      "Oak Lawn, IL": "ORD",
+      "Indianapolis, IN": "IND",
+      "New Orleans, LA": "MSY",
+      "Portland, ME": "PWM",
+      "Detroit, MI": "DTW",
+      "Kansas City, MO": "MCI",
+      "Greenville, NC": "PGV",
+      "Bronx, NY": "LGA",
+      "Stony Brook, NY": "ISP",
+      "Cleveland, OH": "CLE",
+      "Portland, OR": "PDX",
+      "Nashville, TN": "BNA",
+      "Austin, TX": "AUS",
+      "Salt Lake City, UT": "SLC",
+      "Falls Church, VA": "DCA",
+      "Richmond, VA": "RIC",
+      "Milwaukee, WI": "MKE"
+
     };
+
+
 
     const cityCoordinates = {
-      "Phoenix, AZ": [33.4484, -112.0740], "Los Angeles, CA": [34.0522, -118.2437],
-      "San Francisco, CA": [37.7749, -122.4194], "Oakland, CA": [37.8044, -122.2712],
-      "Sacramento, CA": [38.5816, -121.4944], "San Diego, CA": [32.7157, -117.1611],
-      "New Haven, CT": [41.3083, -72.9279], "Denver, CO": [39.7392, -104.9903],
-      "Washington, DC": [38.9072, -77.0369], "Chicago, IL": [41.8781, -87.6298],
-      "Boston, MA": [42.3601, -71.0589], "Baltimore, MD": [39.2904, -76.6122],
-      "Ann Arbor, MI": [42.2808, -83.7430], "Minneapolis, MN": [44.9778, -93.2650],
-      "St. Louis, MO": [38.6270, -90.1994], "Chapel Hill, NC": [35.9132, -79.0558],
-      "Charlotte, NC": [35.2271, -80.8431], "Philadelphia, PA": [39.9526, -75.1652],
-      "Pittsburgh, PA": [40.4406, -79.9959], "Seattle, WA": [47.6062, -122.3321],
-      "Atlanta, GA": [33.7490, -84.3880], "Oak Lawn, IL": [41.7167, -87.7534],
-      "Indianapolis, IN": [39.7684, -86.1581], "New Orleans, LA": [29.9511, -90.0715],
-      "Portland, ME": [43.6591, -70.2568], "Detroit, MI": [42.3314, -83.0458],
-      "Kansas City, MO": [39.0997, -94.5786], "Greenville, NC": [35.6127, -77.3664],
-      "Bronx, NY": [40.8448, -73.8648], "Stony Brook, NY": [40.9135, -73.1287],
-      "Cleveland, OH": [41.4993, -81.6944], "Portland, OR": [45.5152, -122.6784],
-      "Nashville, TN": [36.1627, -86.7816], "Austin, TX": [30.2672, -97.7431],
-      "Salt Lake City, UT": [40.7608, -111.8910], "Falls Church, VA": [38.8823, -77.1711],
-      "Richmond, VA": [37.5407, -77.4360], "Milwaukee, WI": [43.0389, -87.9065]
+
+      "Phoenix, AZ": [33.4484, -112.0740],
+      "Los Angeles, CA": [34.0522, -118.2437],
+      "San Francisco, CA": [37.7749, -122.4194],
+      "Oakland, CA": [37.8044, -122.2712],
+      "Sacramento, CA": [38.5816, -121.4944],
+      "San Diego, CA": [32.7157, -117.1611],
+      "New Haven, CT": [41.3083, -72.9279],
+      "Denver, CO": [39.7392, -104.9903],
+      "Washington, DC": [38.9072, -77.0369],
+      "Chicago, IL": [41.8781, -87.6298],
+      "Boston, MA": [42.3601, -71.0589],
+      "Baltimore, MD": [39.2904, -76.6122],
+      "Ann Arbor, MI": [42.2808, -83.7430],
+      "Minneapolis, MN": [44.9778, -93.2650],
+      "St. Louis, MO": [38.6270, -90.1994],
+      "Chapel Hill, NC": [35.9132, -79.0558],
+      "Charlotte, NC": [35.2271, -80.8431],
+      "Philadelphia, PA": [39.9526, -75.1652],
+      "Pittsburgh, PA": [40.4406, -79.9959],
+      "Seattle, WA": [47.6062, -122.3321],
+      "Atlanta, GA": [33.7490, -84.3880],
+      "Oak Lawn, IL": [41.7167, -87.7534],
+      "Indianapolis, IN": [39.7684, -86.1581],
+      "New Orleans, LA": [29.9511, -90.0715],
+      "Portland, ME": [43.6591, -70.2568],
+      "Detroit, MI": [42.3314, -83.0458],
+      "Kansas City, MO": [39.0997, -94.5786],
+      "Greenville, NC": [35.6127, -77.3664],
+      "Bronx, NY": [40.8448, -73.8648],
+      "Stony Brook, NY": [40.9135, -73.1287],
+      "Cleveland, OH": [41.4993, -81.6944],
+      "Portland, OR": [45.5152, -122.6784],
+      "Nashville, TN": [36.1627, -86.7816],
+      "Austin, TX": [30.2672, -97.7431],
+      "Salt Lake City, UT": [40.7608, -111.8910],
+      "Falls Church, VA": [38.8823, -77.1711],
+      "Richmond, VA": [37.5407, -77.4360],
+      "Milwaukee, WI": [43.0389, -87.9065]
+
     };
 
-    function getVal(prog, keys) {
-      if (!prog) return 'N/A';
-      const keyList = Array.isArray(keys) ? keys : [keys];
-      for (let k of keyList) {
-        if (prog[k] !== undefined && prog[k] !== null && String(prog[k]).trim() !== '') {
-          return String(prog[k]).trim();
+
+
+    function getVal(
+      prog,
+      keys
+    ) {
+
+      if (!prog) {
+        return 'N/A';
+      }
+
+
+      const keyList =
+        Array.isArray(keys)
+          ? keys
+          : [keys];
+
+
+      for (
+        let k
+        of keyList
+      ) {
+
+        if (
+          prog[k] !== undefined &&
+          prog[k] !== null &&
+          String(
+            prog[k]
+          ).trim() !== ''
+        ) {
+
+          return String(
+            prog[k]
+          ).trim();
+
         }
+
       }
+
+
       return 'N/A';
+
     }
 
-    function isTrueValue(val) {
-      if (!val) return false;
-      const cleanVal = String(val).trim().toLowerCase();
-      return ['yes', 'true', '1', 'x', 'y'].includes(cleanVal);
-    }
 
-    function cleanSettingName(val) {
-      if (!val || val === 'N/A') return 'N/A';
-      let cleaned = val.trim();
-      if (cleaned === "CB/University Affiliated" || cleaned === "CB / University Affiliated") {
-        return "Community-Based Univ. Affiliated";
+
+    function isTrueValue(
+      val
+    ) {
+
+      if (!val) {
+        return false;
       }
-      return cleaned;
+
+
+      const cleanVal =
+        String(
+          val
+        )
+        .trim()
+        .toLowerCase();
+
+
+      return [
+        'yes',
+        'true',
+        '1',
+        'x',
+        'y'
+      ]
+      .includes(
+        cleanVal
+      );
+
     }
+
+
+
+    function cleanSettingName(
+      val
+    ) {
+
+      if (
+        !val ||
+        val === 'N/A'
+      ) {
+
+        return 'N/A';
+
+      }
+
+
+      let cleaned =
+        val.trim();
+
+
+      if (
+        cleaned ===
+          "CB/University Affiliated" ||
+        cleaned ===
+          "CB / University Affiliated"
+      ) {
+
+        return "Community-Based Univ. Affiliated";
+
+      }
+
+
+      return cleaned;
+
+    }
+
+
 
     function initMap() {
-      map = L.map('map', { zoomControl: false }).setView([39.8283, -98.5795], 4);
-      L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
-        subdomains: 'abcd',
-        attribution: '&copy; OpenStreetMap &copy; CARTO'
-      }).addTo(map);
+      map =
+        L.map(
+          'map',
+          {
+            zoomControl: false
+          }
+        )
+        .setView(
+          [
+            39.8283,
+            -98.5795
+          ],
+          4
+        );
+
+
+      L.control
+        .zoom({
+          position:
+            'bottomright'
+        })
+        .addTo(
+          map
+        );
+
+
+      L.tileLayer(
+        'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+        {
+          maxZoom: 19,
+          subdomains: 'abcd',
+          attribution:
+            '&copy; OpenStreetMap &copy; CARTO'
+        }
+      )
+      .addTo(
+        map
+      );
+
     }
 
-    function createInMapFactSheetPopup(prog) {
-      const city = getVal(prog, ['City', 'city']);
-      const state = getVal(prog, ['State', 'state']);
-      const cityStateKey = `${city}, ${state}`;
 
-      const website = getVal(prog, ['Website', 'website', 'URL', 'url']);
-      const programName = getVal(prog, ['Program', 'program', 'Name', 'name']);
 
-      const airport = airportLookup[cityStateKey] || (city !== 'N/A' ? `${city.substring(0,3).toUpperCase()} Airport` : 'N/A');
+    function createInMapFactSheetPopup(
+      prog
+    ) {
+
+      const city =
+        getVal(
+          prog,
+          [
+            'City',
+            'city'
+          ]
+        );
+
+
+      const state =
+        getVal(
+          prog,
+          [
+            'State',
+            'state'
+          ]
+        );
+
+
+      const cityStateKey =
+        `${city}, ${state}`;
+
+
+      const website =
+        getVal(
+          prog,
+          [
+            'Website',
+            'website',
+            'URL',
+            'url'
+          ]
+        );
+
+
+      const programName =
+        getVal(
+          prog,
+          [
+            'Program',
+            'program',
+            'Name',
+            'name'
+          ]
+        );
+
+
+      const airport =
+        airportLookup[
+          cityStateKey
+        ] ||
+        (
+          city !== 'N/A'
+            ? `${city.substring(0,3).toUpperCase()} Airport`
+            : 'N/A'
+        );
+
 
       let perksHTML = '';
+
+
       const perks = [
-        { label: 'Parking', val: getVal(prog, ['Free Parking', 'Parking', 'parking']) },
-        { label: 'Housing', val: getVal(prog, ['Housing Stipend', 'Housing', 'housing']) },
-        { label: 'Meals', val: getVal(prog, ['Meal Stipend', 'Meals', 'meals']) },
-        { label: 'Tech', val: getVal(prog, ['Tech Stipend', 'Tech', 'tech']) }
+
+        {
+          label: 'Parking',
+          val:
+            getVal(
+              prog,
+              [
+                'Free Parking',
+                'Parking',
+                'parking'
+              ]
+            )
+        },
+
+        {
+          label: 'Housing',
+          val:
+            getVal(
+              prog,
+              [
+                'Housing Stipend',
+                'Housing',
+                'housing'
+              ]
+            )
+        },
+
+        {
+          label: 'Meals',
+          val:
+            getVal(
+              prog,
+              [
+                'Meal Stipend',
+                'Meals',
+                'meals'
+              ]
+            )
+        },
+
+        {
+          label: 'Tech',
+          val:
+            getVal(
+              prog,
+              [
+                'Tech Stipend',
+                'Tech',
+                'tech'
+              ]
+            )
+        }
+
       ];
 
-      perks.forEach(p => {
-        if (isTrueValue(p.val)) {
-          perksHTML += `<span class="text-[9px] bg-[#EBF3ED] text-[#2D3132] border border-[#A8C5B0] px-1.5 py-0.5 rounded">✓ ${p.label}</span> `;
+
+      perks.forEach(
+        p => {
+
+          if (
+            isTrueValue(
+              p.val
+            )
+          ) {
+
+            perksHTML +=
+              `<span class="text-[9px] bg-[#EBF3ED] text-[#2D3132] border border-[#A8C5B0] px-1.5 py-0.5 rounded">✓ ${p.label}</span> `;
+
+          }
+
         }
-      });
-      if (!perksHTML) perksHTML = `<span class="text-[10px] text-[#6B7280] italic">Standard Benefits</span>`;
+      );
 
-      const classSize = getVal(prog, ['Class size', 'Class Size', 'class_size']);
-      const setting = cleanSettingName(getVal(prog, ['Setting', 'setting']));
-      const tier = getVal(prog, ['Competitiveness', 'Competitiveness Tier', 'Tier', 'tier']);
-      const stepScore = getVal(prog, ['Step Score Range', 'Step Score', 'step_score']);
 
-      const avgHours = getVal(prog, ['Hours/Week', 'Hours/week', 'Work Hours']);
-      const shiftLength = getVal(prog, ['Longest Shift', 'Shift Length']);
-      const daysOff = getVal(prog, ['Days Off/week', 'Days Off']);
-      const formatNegotiable = (value) => {
-  const cleaned = String(value)
-    .trim()
-    .toUpperCase()
-    .replace(/\s+/g, '');
+      if (!perksHTML) {
 
-  if (cleaned === 'N') return 'Negotiable';
+        perksHTML =
+          `<span class="text-[10px] text-[#6B7280] italic">Standard Benefits</span>`;
 
-  if (
-    cleaned === 'NX2' ||
-    cleaned === 'N×2' ||
-    cleaned === 'N*2' ||
-    cleaned === 'NEGOTIABLEX2' ||
-    cleaned === 'NEGOTIABLE×2' ||
-    cleaned === 'NEGOTIABLE*2'
-  ) {
-    return 'Negotiable / Negotiable';
-  }
+      }
 
-  return value;
-};
 
-const sickDays = formatNegotiable(getVal(prog, ['Sick Days']));
-const vacationDays = formatNegotiable(getVal(prog, ['Vacation Days']));
+      const classSize =
+        getVal(
+          prog,
+          [
+            'Class size',
+            'Class Size',
+            'class_size'
+          ]
+        );
 
-const rawFamilyLeave = getVal(prog, ['Family Leave Paid/Unpaid', 'Family Leave']);
-const familyLeaveParts = String(rawFamilyLeave).split('/').map(part => formatNegotiable(part.trim()));
-const paidLeave = familyLeaveParts.join(' / ');
 
-      const baseSalary = getVal(prog, ['Salary', 'Base Salary']);
-      const colSalary = getVal(prog, ['COL-Adjusted Salary', 'COL Salary']);
-      const stretchScore = getVal(prog, ['Salary Stretch', 'Stretch']);
+      const setting =
+        cleanSettingName(
+          getVal(
+            prog,
+            [
+              'Setting',
+              'setting'
+            ]
+          )
+        );
+
+
+      const tier =
+        getVal(
+          prog,
+          [
+            'Competitiveness',
+            'Competitiveness Tier',
+            'Tier',
+            'tier'
+          ]
+        );
+
+
+      const stepScore =
+        getVal(
+          prog,
+          [
+            'Step Score Range',
+            'Step Score',
+            'step_score'
+          ]
+        );
+
+
+      const avgHours =
+        getVal(
+          prog,
+          [
+            'Hours/Week',
+            'Hours/week',
+            'Work Hours'
+          ]
+        );
+
+
+      const shiftLength =
+        getVal(
+          prog,
+          [
+            'Longest Shift',
+            'Shift Length'
+          ]
+        );
+
+
+      const daysOff =
+        getVal(
+          prog,
+          [
+            'Days Off/week',
+            'Days Off'
+          ]
+        );
+
+
+
+      const formatNegotiable =
+        value => {
+
+          const cleaned =
+            String(
+              value
+            )
+            .trim()
+            .toUpperCase()
+            .replace(
+              /\s+/g,
+              ''
+            );
+
+
+          if (
+            cleaned === 'N'
+          ) {
+
+            return 'Negotiable';
+
+          }
+
+
+          if (
+            cleaned === 'NX2' ||
+            cleaned === 'N×2' ||
+            cleaned === 'N*2' ||
+            cleaned === 'NEGOTIABLEX2' ||
+            cleaned === 'NEGOTIABLE×2' ||
+            cleaned === 'NEGOTIABLE*2'
+          ) {
+
+            return 'Negotiable / Negotiable';
+
+          }
+
+
+          return value;
+
+        };
+
+
+      const sickDays =
+        formatNegotiable(
+          getVal(
+            prog,
+            ['Sick Days']
+          )
+        );
+
+
+      const vacationDays =
+        formatNegotiable(
+          getVal(
+            prog,
+            ['Vacation Days']
+          )
+        );
+
+
+      const rawFamilyLeave =
+        getVal(
+          prog,
+          [
+            'Family Leave Paid/Unpaid',
+            'Family Leave'
+          ]
+        );
+
+
+      const familyLeaveParts =
+        String(
+          rawFamilyLeave
+        )
+        .split('/')
+        .map(
+          part =>
+            formatNegotiable(
+              part.trim()
+            )
+        );
+
+
+      const paidLeave =
+        familyLeaveParts
+          .join(
+            ' / '
+          );
+
+
+      const baseSalary =
+        getVal(
+          prog,
+          [
+            'Salary',
+            'Base Salary'
+          ]
+        );
+
+
+      const colSalary =
+        getVal(
+          prog,
+          [
+            'COL-Adjusted Salary',
+            'COL Salary'
+          ]
+        );
+
+
+      const stretchScore =
+        getVal(
+          prog,
+          [
+            'Salary Stretch',
+            'Stretch'
+          ]
+        );
+
+
 
       return `
+
         <div class="p-3.5 space-y-3 font-sans max-h-[calc(100vh-120px)] overflow-y-auto custom-scroll bg-white">
-          
-          <!-- Header with Direct Web Link -->
+
+
           <div class="border-b border-[#E5E0D8] pb-2">
+
             <h3 class="font-medium text-xs text-[#2D3132] leading-snug">
-              ${website !== '#' && website !== 'N/A' ? `<a href="${website.startsWith('http') ? website : 'https://' + website}" target="_blank" rel="noopener noreferrer" class="text-[#C86D51] hover:underline flex items-center gap-1 font-semibold">${programName} <span class="text-[9px]">↗</span></a>` : `<span class="font-semibold">${programName}</span>`}
+
+              ${
+                website !== '#' &&
+                website !== 'N/A'
+
+                  ? `<a href="${website.startsWith('http') ? website : 'https://' + website}" target="_blank" rel="noopener noreferrer" class="text-[#C86D51] hover:underline flex items-center gap-1 font-semibold">${programName} <span class="text-[9px]">↗</span></a>`
+
+                  : `<span class="font-semibold">${programName}</span>`
+              }
+
             </h3>
-            <p class="text-[10px] text-[#6B7280] mt-0.5">${city !== 'N/A' ? city : ''}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state !== 'N/A' ? state : ''}</p>
+
+            <p class="text-[10px] text-[#6B7280] mt-0.5">
+              ${
+                city !== 'N/A'
+                  ? city
+                  : ''
+              }${
+                city !== 'N/A' &&
+                state !== 'N/A'
+                  ? ', '
+                  : ''
+              }${
+                state !== 'N/A'
+                  ? state
+                  : ''
+              }
+            </p>
+
           </div>
 
-          <!-- Section 1: Basics -->
+
+
           <div class="space-y-1">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Basics</span>
+
+            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">
+              Basics
+            </span>
+
             <div class="grid grid-cols-2 gap-1.5 text-[10px]">
+
               <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
                 <span class="text-[#6B7280] block text-[8px] uppercase">Location</span>
                 <span class="font-medium text-[#2D3132] truncate block">${city}, ${state}</span>
               </div>
+
               <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
                 <span class="text-[#6B7280] block text-[8px] uppercase">Nearest Airport</span>
                 <span class="font-semibold text-[#C86D51] truncate block">${airport}</span>
               </div>
+
               <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
                 <span class="text-[#6B7280] block text-[8px] uppercase">Setting</span>
                 <span class="font-medium text-[#2D3132] truncate block">${setting}</span>
               </div>
+
               <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
                 <span class="text-[#6B7280] block text-[8px] uppercase">Class Size</span>
                 <span class="font-medium text-[#2D3132]">${classSize}</span>
               </div>
+
             </div>
+
           </div>
 
-          <!-- Section 2: Application -->
+
+
           <div class="space-y-1">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Application</span>
+
+            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">
+              Application
+            </span>
+
             <div class="grid grid-cols-2 gap-1.5 text-[10px]">
+
               <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
                 <span class="text-[#6B7280] block text-[8px] uppercase">Tier / Category</span>
                 <span class="font-medium text-[#2D3132]">${tier}</span>
               </div>
+
               <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8]">
                 <span class="text-[#6B7280] block text-[8px] uppercase">Step Score Target</span>
                 <span class="font-medium text-[#2D3132]">${stepScore}</span>
               </div>
+
             </div>
+
           </div>
 
-          <!-- Section 3: Work & Leave -->
+
+
           <div class="space-y-1">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Work & Leave</span>
+
+            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">
+              Work & Leave
+            </span>
+
             <div class="bg-[#FAF9F5] p-2 rounded border border-[#E5E0D8] text-[10px] space-y-1">
+
               <div class="flex justify-between">
                 <span class="text-[#6B7280]">Avg Hours / Week:</span>
                 <span class="font-medium text-[#2D3132]">${avgHours}</span>
               </div>
+
               <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
                 <span class="text-[#6B7280]">Longest Shift:</span>
                 <span class="font-medium text-[#2D3132]">${shiftLength}</span>
               </div>
+
               <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
                 <span class="text-[#6B7280]">Avg Days Off / Wk:</span>
                 <span class="font-medium text-[#2D3132]">${daysOff}</span>
               </div>
+
               <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
                 <span class="text-[#6B7280]">Sick Days:</span>
                 <span class="font-medium text-[#2D3132]">${sickDays}</span>
               </div>
+
               <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
                 <span class="text-[#6B7280]">Vacation Days:</span>
                 <span class="font-medium text-[#2D3132]">${vacationDays}</span>
               </div>
+
               <div class="flex justify-between border-t border-[#E5E0D8]/60 pt-1">
                 <span class="text-[#6B7280]">Family Leave (Paid / Unpaid):</span>
                 <span class="font-medium text-[#2D3132]">${paidLeave}</span>
               </div>
+
             </div>
+
           </div>
 
-          <!-- Section 4: Compensation -->
+
+
           <div class="space-y-1">
-            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">Compensation</span>
+
+            <span class="text-[9px] font-semibold uppercase tracking-wider text-[#6B7280]">
+              Compensation
+            </span>
+
             <div class="grid grid-cols-3 gap-1 text-[9px]">
+
               <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
                 <span class="text-[#6B7280] block text-[7px] uppercase">Base Salary</span>
                 <span class="font-medium text-[#2D3132]">${baseSalary}</span>
               </div>
+
               <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
                 <span class="text-[#6B7280] block text-[7px] uppercase">COL Adjusted</span>
                 <span class="font-medium text-[#2D3132]">${colSalary}</span>
               </div>
+
               <div class="bg-[#FAF9F5] p-1.5 rounded border border-[#E5E0D8] text-center">
                 <span class="text-[#6B7280] block text-[7px] uppercase">Stretch Score</span>
                 <span class="font-semibold text-[#C86D51]">${stretchScore}</span>
               </div>
+
             </div>
+
           </div>
 
-          <!-- Perks -->
+
+
           <div class="pt-1 border-t border-[#E5E0D8]">
-            <span class="text-[9px] text-[#6B7280] uppercase font-semibold block mb-1">Key Perks</span>
-            <div class="flex flex-wrap gap-1">${perksHTML}</div>
+
+            <span class="text-[9px] text-[#6B7280] uppercase font-semibold block mb-1">
+              Key Perks
+            </span>
+
+            <div class="flex flex-wrap gap-1">
+              ${perksHTML}
+            </div>
+
           </div>
+
 
         </div>
+
       `;
+
     }
 
-    const desertIcon = L.divIcon({
-  className: 'custom-desert-pin',
-  html: `
-    <svg viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M12 1C5.9 1 1 5.9 1 12c0 8.2 11 19 11 19s11-10.8 11-19C23 5.9 18.1 1 12 1z"
-        fill="#8A9484"
-        stroke="#FFFFFF"
-        stroke-width="2"
-      />
-      <circle cx="12" cy="12" r="4" fill="#FAF9F5"/>
-    </svg>
-  `,
-  iconSize: [16, 21],
-iconAnchor: [8, 21],
-popupAnchor: [0, -21],
-tooltipAnchor: [0, -18]
-});
-    function createMapPins(programs) {
-      markersMap.forEach(marker => marker.remove());
-      markersMap.clear();
 
-      programs.forEach(prog => {
-        const programName = getVal(prog, ['Program', 'program', 'Name', 'name']);
-        const city = getVal(prog, ['City', 'city']);
-        const state = getVal(prog, ['State', 'state']);
-        const cityStateKey = `${city}, ${state}`;
 
-        let lat = parseFloat(prog['Latitude'] || prog['lat'] || prog['LAT']);
-        let lng = parseFloat(prog['Longitude'] || prog['lng'] || prog['LNG']);
+    const desertIcon =
+      L.divIcon({
 
-        if ((isNaN(lat) || isNaN(lng)) && cityCoordinates[cityStateKey]) {
-          [lat, lng] = cityCoordinates[cityStateKey];
-        }
+        className:
+          'custom-desert-pin',
 
-        if (!isNaN(lat) && !isNaN(lng)) {
-          const marker = L.marker([lat, lng], { icon: desertIcon }).addTo(map);
-          
-          marker.bindTooltip(`
-            <div class="font-sans">
-              <div class="font-semibold text-[#2D3132]">${programName}</div>
-              <div class="text-[10px] text-[#6B7280]">${city !== 'N/A' ? city : ''}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state !== 'N/A' ? state : ''}</div>
-            </div>
-          `, { className: 'custom-map-tooltip', direction: 'top', offset: [0, -5] });
+        html: `
 
-         marker.bindPopup(createInMapFactSheetPopup(prog), {
-  autoPan: true,
-  keepInView: true,
-  autoPanPaddingTopLeft: [30, 30],
-  autoPanPaddingBottomRight: [30, 30]
-});
-          markersMap.set(programName, marker);
-        }
-      });
-    }
+          <svg
+            viewBox="0 0 24 32"
+            xmlns="http://www.w3.org/2000/svg"
+          >
 
-    function renderSidebarList(programs) {
-      const listContainer = document.getElementById('programList');
-      const countSpan = document.getElementById('programCount');
-      countSpan.innerText = programs.length;
-      
-      listContainer.innerHTML = '';
+            <path
+              d="M12 1C5.9 1 1 5.9 1 12c0 8.2 11 19 11 19s11-10.8 11-19C23 5.9 18.1 1 12 1z"
+              fill="#8A9484"
+              stroke="#FFFFFF"
+              stroke-width="2"
+            />
 
-      if (programs.length === 0) {
-        listContainer.innerHTML = `<p class="text-xs text-[#6B7280] text-center py-6">No matching programs found.</p>`;
-        return;
-      }
+            <circle
+              cx="12"
+              cy="12"
+              r="4"
+              fill="#FAF9F5"
+            />
 
-      programs.forEach(prog => {
-        const programName = getVal(prog, ['Program', 'program', 'Name', 'name']);
-        const city = getVal(prog, ['City', 'city']);
-        const state = getVal(prog, ['State', 'state']);
-        const setting = cleanSettingName(getVal(prog, ['Setting', 'setting']));
+          </svg>
 
-        const card = document.createElement('div');
-        card.className = "p-3 rounded-lg border border-[#E5E0D8] bg-white shadow-xs hover:border-[#C86D51] transition group cursor-pointer";
-        
-        card.innerHTML = `
-          <div class="flex justify-between items-start gap-1">
-            <h3 class="font-medium text-xs leading-snug text-[#2D3132] group-hover:text-[#C86D51] transition-colors">${programName}</h3>
-          </div>
-          <p class="text-[10px] text-[#6B7280] mt-0.5">${city !== 'N/A' ? city : ''}${city !== 'N/A' && state !== 'N/A' ? ', ' : ''}${state !== 'N/A' ? state : ''}</p>
-          <div class="mt-2 pt-1.5 border-t border-[#FAF9F5] flex justify-between items-center text-[10px] text-[#6B7280]">
-            <span class="truncate text-[9px]">${setting}</span>
-            <span class="text-[#C86D51] font-medium text-[9px]">Select →</span>
-          </div>
-        `;
+        `,
 
-        card.addEventListener('click', () => {
-  const marker = markersMap.get(programName);
+        iconSize:
+          [16, 21],
 
-  if (marker) {
-    map.flyTo(marker.getLatLng(), 5, {
-      animate: true,
-      duration: 1.2
-    });
+        iconAnchor:
+          [8, 21],
 
-    setTimeout(() => {
-      marker.openPopup();
-    }, 1300);
-  }
-});
+        popupAnchor:
+          [0, -21],
 
-        listContainer.appendChild(card);
-      });
-    }
+        tooltipAnchor:
+          [0, -18]
 
-    function showProgramPreview(prog) {
-      currentSelectedProgram = prog;
-      const previewBar = document.getElementById('previewBar');
-      const title = document.getElementById('previewTitle');
-      const location = document.getElementById('previewLocation');
-
-      title.innerText = getVal(prog, ['Program', 'program', 'Name', 'name']);
-      location.innerText = `${getVal(prog, ['City', 'city'])}, ${getVal(prog, ['State', 'state'])}`;
-      previewBar.classList.remove('hidden');
-    }
-
-    document.getElementById('openFactSheetBtn').addEventListener('click', () => {
-      if (currentSelectedProgram) {
-        const programName = getVal(currentSelectedProgram, ['Program', 'program', 'Name', 'name']);
-        const marker = markersMap.get(programName);
-        if (marker) {
-          map.setView(marker.getLatLng(), 8, { animate: true });
-          marker.openPopup();
-        }
-      }
-    });
-
-    document.getElementById('closePreviewBtn').addEventListener('click', () => {
-      document.getElementById('previewBar').classList.add('hidden');
-    });
-
-    function buildMultiSelectDropdown(type, values, placeholder) {
-      const menu = document.getElementById(`${type}DropdownMenu`);
-      menu.innerHTML = '';
-
-      Array.from(values).sort().forEach(val => {
-        const displayVal = type === 'setting' ? cleanSettingName(val) : val;
-        const label = document.createElement('label');
-        label.className = "flex items-center gap-2 px-1.5 py-1 hover:bg-[#FBF4F1] rounded cursor-pointer text-stone-700 transition";
-        label.innerHTML = `
-          <input type="checkbox" value="${val}" data-type="${type}" class="filter-checkbox rounded border-[#E5E0D8]">
-          <span class="text-xs">${displayVal}</span>
-        `;
-        menu.appendChild(label);
       });
 
-      menu.querySelectorAll('.filter-checkbox').forEach(cb => {
-        cb.addEventListener('change', (e) => {
-          const filterType = e.target.getAttribute('data-type');
-          if (e.target.checked) {
-            selectedFilters[filterType].add(e.target.value);
-          } else {
-            selectedFilters[filterType].delete(e.target.value);
-          }
-          updateDropdownLabel(filterType, placeholder);
-          applyFilters();
-        });
-      });
-    }
 
-    function updateDropdownLabel(type, placeholder) {
-      const label = document.getElementById(`${type}DropdownLabel`);
-      const resetBtn = document.getElementById(`reset${type.charAt(0).toUpperCase() + type.slice(1)}Btn`);
-      const count = selectedFilters[type].size;
 
-      if (count === 0) {
-        label.innerText = placeholder;
-        resetBtn.classList.add('hidden');
-      } else if (count === 1) {
-        const val = Array.from(selectedFilters[type])[0];
-        label.innerText = type === 'setting' ? cleanSettingName(val) : val;
-        resetBtn.classList.remove('hidden');
-      } else {
-        label.innerText = `${count} Selected`;
-        resetBtn.classList.remove('hidden');
-      }
-    }
+    function createMapPins(
+      programs
+    ) {
 
-    function setupDropdownControls() {
-      document.querySelectorAll('.dropdown-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const targetType = btn.getAttribute('data-dropdown');
-          const targetMenu = document.getElementById(`${targetType}DropdownMenu`);
-          
-          document.querySelectorAll('.dropdown-menu').forEach(m => {
-            if (m !== targetMenu) m.classList.add('hidden');
-          });
-          targetMenu.classList.toggle('hidden');
-        });
-      });
-
-      document.addEventListener('click', () => {
-        document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden'));
-      });
-
-      ['state', 'setting', 'competitiveness'].forEach(type => {
-        const placeholders = { state: 'All States', setting: 'All Settings', competitiveness: 'All Tiers' };
-        const resetBtn = document.getElementById(`reset${type.charAt(0).toUpperCase() + type.slice(1)}Btn`);
-        resetBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          selectedFilters[type].clear();
-          const menu = document.getElementById(`${type}DropdownMenu`);
-          menu.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-          updateDropdownLabel(type, placeholders[type]);
-          applyFilters();
-        });
-      });
-    }
-
-    function populateDropdowns(data) {
-      const sets = { state: new Set(), setting: new Set(), competitiveness: new Set() };
-
-      data.forEach(prog => {
-        const st = prog['State'] || prog['state'];
-        const set = prog['Setting'] || prog['setting'];
-        const comp = prog['Competitiveness'] || prog['Tier'] || prog['tier'];
-
-        if (st && String(st).trim() !== '') sets.state.add(String(st).trim());
-        if (set && String(set).trim() !== '') sets.setting.add(String(set).trim());
-        if (comp && String(comp).trim() !== '') sets.competitiveness.add(String(comp).trim());
-      });
-
-      buildMultiSelectDropdown('state', sets.state, 'All States');
-      buildMultiSelectDropdown('setting', sets.setting, 'All Settings');
-      buildMultiSelectDropdown('competitiveness', sets.competitiveness, 'All Tiers');
-    }
-
-    function applyFilters() {
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-
-      const requireParking = document.getElementById('parkingFilter').checked;
-      const requireHousing = document.getElementById('housingFilter').checked;
-      const requireMeals = document.getElementById('mealFilter').checked;
-      const requireTech = document.getElementById('techFilter').checked;
-
-      const filtered = allPrograms.filter(prog => {
-        const programName = getVal(prog, ['Program', 'program', 'Name', 'name']).toLowerCase();
-        const city = getVal(prog, ['City', 'city']).toLowerCase();
-        const state = getVal(prog, ['State', 'state']);
-        const setting = getVal(prog, ['Setting', 'setting']);
-        const comp = getVal(prog, ['Competitiveness', 'Tier', 'tier']);
-
-        if (searchTerm && !programName.includes(searchTerm) && !city.includes(searchTerm) && !state.toLowerCase().includes(searchTerm)) {
-          return false;
-        }
-
-        if (selectedFilters.state.size > 0 && !selectedFilters.state.has(state)) {
-          return false;
-        }
-
-        if (selectedFilters.setting.size > 0 && !selectedFilters.setting.has(setting)) {
-          return false;
-        }
-
-        if (selectedFilters.competitiveness.size > 0 && !selectedFilters.competitiveness.has(comp)) {
-          return false;
-        }
-
-        if (requireParking && !isTrueValue(getVal(prog, ['Free Parking', 'Parking']))) return false;
-        if (requireHousing && !isTrueValue(getVal(prog, ['Housing Stipend', 'Housing']))) return false;
-        if (requireMeals && !isTrueValue(getVal(prog, ['Meal Stipend', 'Meals']))) return false;
-        if (requireTech && !isTrueValue(getVal(prog, ['Tech Stipend', 'Tech']))) return false;
-
-        return true;
-      });
-
-      renderSidebarList(filtered);
-      createMapPins(filtered);
-    }
-
-    function initEventListeners() {
-      document.getElementById('searchInput').addEventListener('input', applyFilters);
-
-      ['parkingFilter', 'housingFilter', 'mealFilter', 'techFilter'].forEach(id => {
-        document.getElementById(id).addEventListener('change', applyFilters);
-      });
-
-      const programsHeader = document.getElementById('programsHeader');
-      const programList = document.getElementById('programList');
-      const toggleIcon = document.getElementById('programsToggleIcon');
-      const sidebar = document.getElementById('sidebar');
-
-      programsHeader.addEventListener('click', () => {
-        isProgramsCollapsed = !isProgramsCollapsed;
-        if (isProgramsCollapsed) {
-          programList.style.display = 'none';
-          toggleIcon.style.transform = 'rotate(-90deg)';
-          sidebar.style.backgroundColor = '#FFFFFF';
-        } else {
-          programList.style.display = 'block';
-          toggleIcon.style.transform = 'rotate(0deg)';
-          sidebar.style.backgroundColor = '';
-        }
-      });
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      initMap();
-      setupDropdownControls();
-      initEventListeners();
-
-      Papa.parse('programs.csv', {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        complete: function(results) {
-          allPrograms = results.data;
-          populateDropdowns(allPrograms);
-          applyFilters();
-        },
-        error: function(err) {
-          console.warn("Could not load programs.csv automatically. Please ensure CSV is present or use local server.", err);
-        }
-      });
-    });
-  </script>
-
-  <!-- Fourth Year Navigation Script -->
-
-<script>
-
-  const leftNavigation =
-    document.getElementById(
-      'leftNavigation'
-    );
-
-  const menuButton =
-    document.getElementById(
-      'menuButton'
-    );
-
-  function toggleMenu() {
-
-    const opening =
-      !leftNavigation
-        .classList
-        .contains(
-          'open'
+      markersMap
+        .forEach(
+          marker =>
+            marker.remove()
         );
 
-    leftNavigation
-      .classList
-      .toggle(
-        'open',
-        opening
+
+      markersMap.clear();
+
+
+      programs.forEach(
+        prog => {
+
+          const programName =
+            getVal(
+              prog,
+              [
+                'Program',
+                'program',
+                'Name',
+                'name'
+              ]
+            );
+
+
+          const city =
+            getVal(
+              prog,
+              [
+                'City',
+                'city'
+              ]
+            );
+
+
+          const state =
+            getVal(
+              prog,
+              [
+                'State',
+                'state'
+              ]
+            );
+
+
+          const cityStateKey =
+            `${city}, ${state}`;
+
+
+          let lat =
+            parseFloat(
+              prog['Latitude'] ||
+              prog['lat'] ||
+              prog['LAT']
+            );
+
+
+          let lng =
+            parseFloat(
+              prog['Longitude'] ||
+              prog['lng'] ||
+              prog['LNG']
+            );
+
+
+          if (
+            (
+              isNaN(lat) ||
+              isNaN(lng)
+            ) &&
+            cityCoordinates[
+              cityStateKey
+            ]
+          ) {
+
+            [
+              lat,
+              lng
+            ] =
+              cityCoordinates[
+                cityStateKey
+              ];
+
+          }
+
+
+          if (
+            !isNaN(lat) &&
+            !isNaN(lng)
+          ) {
+
+            const marker =
+              L.marker(
+                [
+                  lat,
+                  lng
+                ],
+                {
+                  icon:
+                    desertIcon
+                }
+              )
+              .addTo(
+                map
+              );
+
+
+            marker.bindTooltip(
+              `
+
+                <div class="font-sans">
+
+                  <div class="font-semibold text-[#2D3132]">
+                    ${programName}
+                  </div>
+
+                  <div class="text-[10px] text-[#6B7280]">
+                    ${
+                      city !== 'N/A'
+                        ? city
+                        : ''
+                    }${
+                      city !== 'N/A' &&
+                      state !== 'N/A'
+                        ? ', '
+                        : ''
+                    }${
+                      state !== 'N/A'
+                        ? state
+                        : ''
+                    }
+                  </div>
+
+                </div>
+
+              `,
+              {
+                className:
+                  'custom-map-tooltip',
+
+                direction:
+                  'top',
+
+                offset:
+                  [0, -5]
+              }
+            );
+
+
+            marker.bindPopup(
+              createInMapFactSheetPopup(
+                prog
+              ),
+              {
+                autoPan:
+                  true,
+
+                keepInView:
+                  true,
+
+                autoPanPaddingTopLeft:
+                  [30, 30],
+
+                autoPanPaddingBottomRight:
+                  [30, 30]
+              }
+            );
+
+
+            markersMap.set(
+              programName,
+              marker
+            );
+
+          }
+
+        }
       );
 
-    menuButton.textContent =
-      opening
-        ? '×'
-        : '☰';
+    }
 
-    menuButton.setAttribute(
-      'aria-label',
-      opening
-        ? 'Close menu'
-        : 'Open menu'
-    );
 
-  }
 
-  menuButton
-    .addEventListener(
-      'click',
-      toggleMenu
-    );
+    function renderSidebarList(
+      programs
+    ) {
 
-</script>
+      const listContainer =
+        document.getElementById(
+          'programList'
+        );
+
+
+      const countSpan =
+        document.getElementById(
+          'programCount'
+        );
+
+
+      countSpan.innerText =
+        programs.length;
+
+
+      listContainer.innerHTML =
+        '';
+
+
+      if (
+        programs.length === 0
+      ) {
+
+        listContainer.innerHTML =
+          `<p class="text-xs text-[#6B7280] text-center py-6">No matching programs found.</p>`;
+
+        return;
+
+      }
+
+
+      programs.forEach(
+        prog => {
+
+          const programName =
+            getVal(
+              prog,
+              [
+                'Program',
+                'program',
+                'Name',
+                'name'
+              ]
+            );
+
+
+          const city =
+            getVal(
+              prog,
+              [
+                'City',
+                'city'
+              ]
+            );
+
+
+          const state =
+            getVal(
+              prog,
+              [
+                'State',
+                'state'
+              ]
+            );
+
+
+          const setting =
+            cleanSettingName(
+              getVal(
+                prog,
+                [
+                  'Setting',
+                  'setting'
+                ]
+              )
+            );
+
+
+          const card =
+            document.createElement(
+              'div'
+            );
+
+
+          card.className =
+            "p-3 rounded-lg border border-[#E5E0D8] bg-white shadow-xs hover:border-[#C86D51] transition group cursor-pointer";
+
+
+          card.innerHTML = `
+
+            <div class="flex justify-between items-start gap-1">
+
+              <h3 class="font-medium text-xs leading-snug text-[#2D3132] group-hover:text-[#C86D51] transition-colors">
+                ${programName}
+              </h3>
+
+            </div>
+
+            <p class="text-[10px] text-[#6B7280] mt-0.5">
+              ${
+                city !== 'N/A'
+                  ? city
+                  : ''
+              }${
+                city !== 'N/A' &&
+                state !== 'N/A'
+                  ? ', '
+                  : ''
+              }${
+                state !== 'N/A'
+                  ? state
+                  : ''
+              }
+            </p>
+
+            <div class="mt-2 pt-1.5 border-t border-[#FAF9F5] flex justify-between items-center text-[10px] text-[#6B7280]">
+
+              <span class="truncate text-[9px]">
+                ${setting}
+              </span>
+
+              <span class="text-[#C86D51] font-medium text-[9px]">
+                Select →
+              </span>
+
+            </div>
+
+          `;
+
+
+          card.addEventListener(
+            'click',
+            () => {
+
+              const marker =
+                markersMap.get(
+                  programName
+                );
+
+
+              if (marker) {
+
+                map.flyTo(
+                  marker.getLatLng(),
+                  5,
+                  {
+                    animate:
+                      true,
+
+                    duration:
+                      1.2
+                  }
+                );
+
+
+                setTimeout(
+                  () => {
+
+                    marker.openPopup();
+
+                  },
+                  1300
+                );
+
+              }
+
+            }
+          );
+
+
+          listContainer
+            .appendChild(
+              card
+            );
+
+        }
+      );
+
+    }
+
+
+
+    function showProgramPreview(
+      prog
+    ) {
+
+      currentSelectedProgram =
+        prog;
+
+
+      const previewBar =
+        document.getElementById(
+          'previewBar'
+        );
+
+
+      const title =
+        document.getElementById(
+          'previewTitle'
+        );
+
+
+      const location =
+        document.getElementById(
+          'previewLocation'
+        );
+
+
+      title.innerText =
+        getVal(
+          prog,
+          [
+            'Program',
+            'program',
+            'Name',
+            'name'
+          ]
+        );
+
+
+      location.innerText =
+        `${
+          getVal(
+            prog,
+            [
+              'City',
+              'city'
+            ]
+          )
+        }, ${
+          getVal(
+            prog,
+            [
+              'State',
+              'state'
+            ]
+          )
+        }`;
+
+
+      previewBar
+        .classList
+        .remove(
+          'hidden'
+        );
+
+    }
+
+
+
+    document
+      .getElementById(
+        'openFactSheetBtn'
+      )
+      .addEventListener(
+        'click',
+        () => {
+
+          if (
+            currentSelectedProgram
+          ) {
+
+            const programName =
+              getVal(
+                currentSelectedProgram,
+                [
+                  'Program',
+                  'program',
+                  'Name',
+                  'name'
+                ]
+              );
+
+
+            const marker =
+              markersMap.get(
+                programName
+              );
+
+
+            if (marker) {
+
+              map.setView(
+                marker.getLatLng(),
+                8,
+                {
+                  animate:
+                    true
+                }
+              );
+
+
+              marker.openPopup();
+
+            }
+
+          }
+
+        }
+      );
+
+
+
+    document
+      .getElementById(
+        'closePreviewBtn'
+      )
+      .addEventListener(
+        'click',
+        () => {
+
+          document
+            .getElementById(
+              'previewBar'
+            )
+            .classList
+            .add(
+              'hidden'
+            );
+
+        }
+      );
+
+
+
+    function buildMultiSelectDropdown(
+      type,
+      values,
+      placeholder
+    ) {
+
+      const menu =
+        document.getElementById(
+          `${type}DropdownMenu`
+        );
+
+
+      menu.innerHTML =
+        '';
+
+
+      Array
+        .from(
+          values
+        )
+        .sort()
+        .forEach(
+          val => {
+
+            const displayVal =
+              type === 'setting'
+                ? cleanSettingName(
+                    val
+                  )
+                : val;
+
+
+            const label =
+              document.createElement(
+                'label'
+              );
+
+
+            label.className =
+              "flex items-center gap-2 px-1.5 py-1 hover:bg-[#FBF4F1] rounded cursor-pointer text-stone-700 transition";
+
+
+            label.innerHTML = `
+
+              <input
+                type="checkbox"
+                value="${val}"
+                data-type="${type}"
+                class="filter-checkbox rounded border-[#E5E0D8]"
+              >
+
+              <span class="text-xs">
+                ${displayVal}
+              </span>
+
+            `;
+
+
+            menu.appendChild(
+              label
+            );
+
+          }
+        );
+
+
+      menu
+        .querySelectorAll(
+          '.filter-checkbox'
+        )
+        .forEach(
+          cb => {
+
+            cb.addEventListener(
+              'change',
+              e => {
+
+                const filterType =
+                  e.target
+                    .getAttribute(
+                      'data-type'
+                    );
+
+
+                if (
+                  e.target.checked
+                ) {
+
+                  selectedFilters[
+                    filterType
+                  ]
+                  .add(
+                    e.target.value
+                  );
+
+                } else {
+
+                  selectedFilters[
+                    filterType
+                  ]
+                  .delete(
+                    e.target.value
+                  );
+
+                }
+
+
+                updateDropdownLabel(
+                  filterType,
+                  placeholder
+                );
+
+
+                applyFilters();
+
+              }
+            );
+
+          }
+        );
+
+    }
+
+
+
+    function updateDropdownLabel(
+      type,
+      placeholder
+    ) {
+
+      const label =
+        document.getElementById(
+          `${type}DropdownLabel`
+        );
+
+
+      const resetBtn =
+        document.getElementById(
+          `reset${
+            type
+              .charAt(0)
+              .toUpperCase()
+            +
+            type.slice(1)
+          }Btn`
+        );
+
+
+      const count =
+        selectedFilters[
+          type
+        ]
+        .size;
+
+
+      if (
+        count === 0
+      ) {
+
+        label.innerText =
+          placeholder;
+
+
+        resetBtn
+          .classList
+          .add(
+            'hidden'
+          );
+
+      } else if (
+        count === 1
+      ) {
+
+        const val =
+          Array.from(
+            selectedFilters[
+              type
+            ]
+          )[0];
+
+
+        label.innerText =
+          type === 'setting'
+            ? cleanSettingName(
+                val
+              )
+            : val;
+
+
+        resetBtn
+          .classList
+          .remove(
+            'hidden'
+          );
+
+      } else {
+
+        label.innerText =
+          `${count} Selected`;
+
+
+        resetBtn
+          .classList
+          .remove(
+            'hidden'
+          );
+
+      }
+
+    }
+
+
+
+    function setupDropdownControls() {
+
+      document
+        .querySelectorAll(
+          '.dropdown-btn'
+        )
+        .forEach(
+          btn => {
+
+            btn.addEventListener(
+              'click',
+              e => {
+
+                e.stopPropagation();
+
+
+                const targetType =
+                  btn
+                    .getAttribute(
+                      'data-dropdown'
+                    );
+
+
+                const targetMenu =
+                  document
+                    .getElementById(
+                      `${targetType}DropdownMenu`
+                    );
+
+
+                document
+                  .querySelectorAll(
+                    '.dropdown-menu'
+                  )
+                  .forEach(
+                    m => {
+
+                      if (
+                        m !== targetMenu
+                      ) {
+
+                        m
+                          .classList
+                          .add(
+                            'hidden'
+                          );
+
+                      }
+
+                    }
+                  );
+
+
+                targetMenu
+                  .classList
+                  .toggle(
+                    'hidden'
+                  );
+
+              }
+            );
+
+          }
+        );
+
+
+      document
+        .addEventListener(
+          'click',
+          () => {
+
+            document
+              .querySelectorAll(
+                '.dropdown-menu'
+              )
+              .forEach(
+                m =>
+                  m
+                    .classList
+                    .add(
+                      'hidden'
+                    )
+              );
+
+          }
+        );
+
+
+      [
+        'state',
+        'setting',
+        'competitiveness'
+      ]
+      .forEach(
+        type => {
+
+          const placeholders = {
+            state:
+              'All States',
+            setting:
+              'All Settings',
+            competitiveness:
+              'All Tiers'
+          };
+
+
+          const resetBtn =
+            document
+              .getElementById(
+                `reset${
+                  type
+                    .charAt(0)
+                    .toUpperCase()
+                  +
+                  type.slice(1)
+                }Btn`
+              );
+
+
+          resetBtn
+            .addEventListener(
+              'click',
+              e => {
+
+                e.stopPropagation();
+
+
+                selectedFilters[
+                  type
+                ]
+                .clear();
+
+
+                const menu =
+                  document
+                    .getElementById(
+                      `${type}DropdownMenu`
+                    );
+
+
+                menu
+                  .querySelectorAll(
+                    'input[type="checkbox"]'
+                  )
+                  .forEach(
+                    cb =>
+                      cb.checked =
+                        false
+                  );
+
+
+                updateDropdownLabel(
+                  type,
+                  placeholders[
+                    type
+                  ]
+                );
+
+
+                applyFilters();
+
+              }
+            );
+
+        }
+      );
+
+    }
+
+
+
+    function populateDropdowns(
+      data
+    ) {
+
+      const sets = {
+
+        state:
+          new Set(),
+
+        setting:
+          new Set(),
+
+        competitiveness:
+          new Set()
+
+      };
+
+
+      data.forEach(
+        prog => {
+
+          const st =
+            prog['State'] ||
+            prog['state'];
+
+
+          const set =
+            prog['Setting'] ||
+            prog['setting'];
+
+
+          const comp =
+            prog['Competitiveness'] ||
+            prog['Tier'] ||
+            prog['tier'];
+
+
+          if (
+            st &&
+            String(
+              st
+            ).trim() !== ''
+          ) {
+
+            sets
+              .state
+              .add(
+                String(
+                  st
+                ).trim()
+              );
+
+          }
+
+
+          if (
+            set &&
+            String(
+              set
+            ).trim() !== ''
+          ) {
+
+            sets
+              .setting
+              .add(
+                String(
+                  set
+                ).trim()
+              );
+
+          }
+
+
+          if (
+            comp &&
+            String(
+              comp
+            ).trim() !== ''
+          ) {
+
+            sets
+              .competitiveness
+              .add(
+                String(
+                  comp
+                ).trim()
+              );
+
+          }
+
+        }
+      );
+
+
+      buildMultiSelectDropdown(
+        'state',
+        sets.state,
+        'All States'
+      );
+
+
+      buildMultiSelectDropdown(
+        'setting',
+        sets.setting,
+        'All Settings'
+      );
+
+
+      buildMultiSelectDropdown(
+        'competitiveness',
+        sets.competitiveness,
+        'All Tiers'
+      );
+
+    }
+
+
+
+    function applyFilters() {
+
+      const searchTerm =
+        document
+          .getElementById(
+            'searchInput'
+          )
+          .value
+          .toLowerCase()
+          .trim();
+
+
+      const requireParking =
+        document
+          .getElementById(
+            'parkingFilter'
+          )
+          .checked;
+
+
+      const requireHousing =
+        document
+          .getElementById(
+            'housingFilter'
+          )
+          .checked;
+
+
+      const requireMeals =
+        document
+          .getElementById(
+            'mealFilter'
+          )
+          .checked;
+
+
+      const requireTech =
+        document
+          .getElementById(
+            'techFilter'
+          )
+          .checked;
+
+
+      const filtered =
+        allPrograms
+          .filter(
+            prog => {
+
+              const programName =
+                getVal(
+                  prog,
+                  [
+                    'Program',
+                    'program',
+                    'Name',
+                    'name'
+                  ]
+                )
+                .toLowerCase();
+
+
+              const city =
+                getVal(
+                  prog,
+                  [
+                    'City',
+                    'city'
+                  ]
+                )
+                .toLowerCase();
+
+
+              const state =
+                getVal(
+                  prog,
+                  [
+                    'State',
+                    'state'
+                  ]
+                );
+
+
+              const setting =
+                getVal(
+                  prog,
+                  [
+                    'Setting',
+                    'setting'
+                  ]
+                );
+
+
+              const comp =
+                getVal(
+                  prog,
+                  [
+                    'Competitiveness',
+                    'Tier',
+                    'tier'
+                  ]
+                );
+
+
+              if (
+                searchTerm &&
+                !programName
+                  .includes(
+                    searchTerm
+                  ) &&
+                !city
+                  .includes(
+                    searchTerm
+                  ) &&
+                !state
+                  .toLowerCase()
+                  .includes(
+                    searchTerm
+                  )
+              ) {
+
+                return false;
+
+              }
+
+
+              if (
+                selectedFilters
+                  .state
+                  .size > 0 &&
+                !selectedFilters
+                  .state
+                  .has(
+                    state
+                  )
+              ) {
+
+                return false;
+
+              }
+
+
+              if (
+                selectedFilters
+                  .setting
+                  .size > 0 &&
+                !selectedFilters
+                  .setting
+                  .has(
+                    setting
+                  )
+              ) {
+
+                return false;
+
+              }
+
+
+              if (
+                selectedFilters
+                  .competitiveness
+                  .size > 0 &&
+                !selectedFilters
+                  .competitiveness
+                  .has(
+                    comp
+                  )
+              ) {
+
+                return false;
+
+              }
+
+
+              if (
+                requireParking &&
+                !isTrueValue(
+                  getVal(
+                    prog,
+                    [
+                      'Free Parking',
+                      'Parking'
+                    ]
+                  )
+                )
+              ) {
+
+                return false;
+
+              }
+
+
+              if (
+                requireHousing &&
+                !isTrueValue(
+                  getVal(
+                    prog,
+                    [
+                      'Housing Stipend',
+                      'Housing'
+                    ]
+                  )
+                )
+              ) {
+
+                return false;
+
+              }
+
+
+              if (
+                requireMeals &&
+                !isTrueValue(
+                  getVal(
+                    prog,
+                    [
+                      'Meal Stipend',
+                      'Meals'
+                    ]
+                  )
+                )
+              ) {
+
+                return false;
+
+              }
+
+
+              if (
+                requireTech &&
+                !isTrueValue(
+                  getVal(
+                    prog,
+                    [
+                      'Tech Stipend',
+                      'Tech'
+                    ]
+                  )
+                )
+              ) {
+
+                return false;
+
+              }
+
+
+              return true;
+
+            }
+          );
+
+
+      renderSidebarList(
+        filtered
+      );
+
+
+      createMapPins(
+        filtered
+      );
+
+    }
+
+
+
+    function initEventListeners() {
+
+      document
+        .getElementById(
+          'searchInput'
+        )
+        .addEventListener(
+          'input',
+          applyFilters
+        );
+
+
+      [
+        'parkingFilter',
+        'housingFilter',
+        'mealFilter',
+        'techFilter'
+      ]
+      .forEach(
+        id => {
+
+          document
+            .getElementById(
+              id
+            )
+            .addEventListener(
+              'change',
+              applyFilters
+            );
+
+        }
+      );
+
+
+      const programsHeader =
+        document
+          .getElementById(
+            'programsHeader'
+          );
+
+
+      const programList =
+        document
+          .getElementById(
+            'programList'
+          );
+
+
+      const toggleIcon =
+        document
+          .getElementById(
+            'programsToggleIcon'
+          );
+
+
+      const sidebar =
+        document
+          .getElementById(
+            'sidebar'
+          );
+
+
+      programsHeader
+        .addEventListener(
+          'click',
+          () => {
+
+            isProgramsCollapsed =
+              !isProgramsCollapsed;
+
+
+            if (
+              isProgramsCollapsed
+            ) {
+
+              programList
+                .style
+                .display =
+                  'none';
+
+
+              toggleIcon
+                .style
+                .transform =
+                  'rotate(-90deg)';
+
+
+              sidebar
+                .style
+                .backgroundColor =
+                  '#FFFFFF';
+
+            } else {
+
+              programList
+                .style
+                .display =
+                  'block';
+
+
+              toggleIcon
+                .style
+                .transform =
+                  'rotate(0deg)';
+
+
+              sidebar
+                .style
+                .backgroundColor =
+                  '';
+
+            }
+
+          }
+        );
+
+    }
+
+
+
+    window
+      .addEventListener(
+        'DOMContentLoaded',
+        () => {
+
+          initMap();
+
+          setupDropdownControls();
+
+          initEventListeners();
+
+
+          Papa.parse(
+            'programs.csv',
+            {
+
+              download:
+                true,
+
+              header:
+                true,
+
+              skipEmptyLines:
+                true,
+
+
+              complete:
+                function(
+                  results
+                ) {
+
+                  allPrograms =
+                    results.data;
+
+
+                  populateDropdowns(
+                    allPrograms
+                  );
+
+
+                  applyFilters();
+
+                },
+
+
+              error:
+                function(
+                  err
+                ) {
+
+                  console.warn(
+                    "Could not load programs.csv automatically. Please ensure CSV is present or use local server.",
+                    err
+                  );
+
+                }
+
+            }
+          );
+
+        }
+      );
+
+  </script>
+
+
+
+  <!-- =====================================================
+       NAVIGATION SCRIPT
+  ====================================================== -->
+
+  <script>
+
+    const leftNavigation =
+      document.getElementById(
+        'leftNavigation'
+      );
+
+
+    const menuButton =
+      document.getElementById(
+        'menuButton'
+      );
+
+
+    function toggleMenu() {
+
+      const opening =
+        !leftNavigation
+          .classList
+          .contains(
+            'open'
+          );
+
+
+      leftNavigation
+        .classList
+        .toggle(
+          'open',
+          opening
+        );
+
+
+      document.body
+        .classList
+        .toggle(
+          'menu-open',
+          opening
+        );
+
+
+      menuButton
+        .setAttribute(
+          'aria-expanded',
+          opening
+            ? 'true'
+            : 'false'
+        );
+
+
+      menuButton.textContent =
+        opening
+          ? '×'
+          : '☰';
+
+
+      menuButton
+        .setAttribute(
+          'aria-label',
+          opening
+            ? 'Close menu'
+            : 'Open menu'
+        );
+
+    }
+
+
+    menuButton
+      .addEventListener(
+        'click',
+        toggleMenu
+      );
+
+  </script>
+
+
 </body>
 </html>
