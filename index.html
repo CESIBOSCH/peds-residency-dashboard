@@ -52,7 +52,8 @@
         sans-serif;
     }
 
-    button {
+    button,
+    input {
       font: inherit;
     }
 
@@ -95,7 +96,6 @@
 
     .nav-top {
       display: flex;
-
       align-items: center;
 
       gap: 15px;
@@ -108,51 +108,39 @@
       height: 42px;
 
       display: flex;
-
       align-items: center;
       justify-content: center;
 
       flex-shrink: 0;
 
       border: 0;
-
       border-radius: 9px;
 
-      background:
-        transparent;
+      background: transparent;
 
-      color:
-        var(--text-charcoal);
+      color: var(--text-charcoal);
 
       cursor: pointer;
 
       font-size: 24px;
-
       line-height: 1;
     }
 
     .menu-button:hover {
-      background:
-        #F5F2EC;
-
-      color:
-        var(--accent-terracotta);
+      background: #F5F2EC;
+      color: var(--accent-terracotta);
     }
 
     .nav-brand {
       opacity: 0;
-
       pointer-events: none;
 
-      color:
-        var(--accent-sage);
+      color: var(--accent-sage);
 
       font-size: 14px;
-
       font-weight: 600;
 
       letter-spacing: 0.20em;
-
       text-transform: uppercase;
 
       text-decoration: none;
@@ -172,7 +160,6 @@
       margin-top: 27px;
 
       opacity: 0;
-
       pointer-events: none;
 
       transform:
@@ -190,7 +177,6 @@
     .left-navigation.open
     .nav-links {
       opacity: 1;
-
       pointer-events: auto;
 
       transform:
@@ -206,17 +192,14 @@
         7px
         0;
 
-      color:
-        var(--accent-sage);
+      color: var(--accent-sage);
 
       text-decoration: none;
 
       font-size: 13px;
-
       font-weight: 500;
 
       letter-spacing: 0.15em;
-
       text-transform: uppercase;
 
       transition:
@@ -226,14 +209,11 @@
     }
 
     .menu-link:hover {
-      color:
-        var(--accent-terracotta);
+      color: var(--accent-terracotta);
     }
 
     .menu-link.active {
-      color:
-        var(--accent-terracotta);
-
+      color: var(--accent-terracotta);
       font-weight: 600;
     }
 
@@ -263,7 +243,6 @@
 
     .page-content {
       width: 100%;
-
       max-width: 1320px;
 
       margin:
@@ -279,38 +258,31 @@
 
       text-align: center;
 
-      color:
-        var(--accent-sage);
+      color: var(--accent-sage);
 
       font-size: 34px;
-
       font-weight: 300;
 
       line-height: 1;
 
       letter-spacing: 0.105em;
-
       text-transform: uppercase;
 
       white-space: nowrap;
     }
 
     .section-label {
-      color:
-        var(--accent-sage);
+      color: var(--accent-sage);
 
       font-size: 10px;
-
       font-weight: 600;
 
       letter-spacing: 0.16em;
-
       text-transform: uppercase;
     }
 
     .card {
-      background:
-        var(--bg-surface);
+      background: var(--bg-surface);
 
       border:
         1px
@@ -322,7 +294,7 @@
 
 
     /* =========================================
-       HOME LAYOUT
+       MAIN HOME LAYOUT
     ========================================= */
 
     .home-layout {
@@ -343,7 +315,6 @@
 
     .home-sidebar {
       display: flex;
-
       flex-direction: column;
 
       gap: 14px;
@@ -376,7 +347,6 @@
       min-height: 116px;
 
       display: flex;
-
       flex-direction: column;
 
       align-items: center;
@@ -389,8 +359,7 @@
         7px
         11px;
 
-      background:
-        white;
+      background: white;
 
       border:
         1px
@@ -400,7 +369,6 @@
       border-radius: 12px;
 
       text-align: center;
-
       text-decoration: none;
 
       transition:
@@ -450,18 +418,15 @@
 
       border-radius: 50%;
 
-      background:
-        var(--soft-sage);
+      background: var(--soft-sage);
 
-      color:
-        #71806C;
+      color: #71806C;
 
       overflow: hidden;
     }
 
     .resource-icon {
       font-size: 12px;
-
       font-weight: 700;
 
       line-height: 1;
@@ -471,13 +436,11 @@
       width: 22px;
       height: 22px;
 
-      stroke:
-        #71806C;
+      stroke: #71806C;
     }
 
     .logo-epic {
       font-size: 11px;
-
       font-weight: 800;
 
       font-style: italic;
@@ -491,18 +454,15 @@
         serif;
 
       font-size: 20px;
-
       font-weight: 500;
 
       letter-spacing: -0.07em;
     }
 
     .quick-title {
-      color:
-        var(--text-charcoal);
+      color: var(--text-charcoal);
 
       font-size: 11px;
-
       font-weight: 650;
 
       line-height: 1.25;
@@ -537,8 +497,7 @@
 
       border-radius: 50%;
 
-      background:
-        #71806C;
+      background: #71806C;
 
       transform-origin:
         2.5px
@@ -604,15 +563,12 @@
       width: 30px;
       height: 30px;
 
-      stroke:
-        #71806C;
-
+      stroke: #71806C;
       fill: none;
 
       stroke-width: 1.55;
 
       stroke-linecap: round;
-
       stroke-linejoin: round;
     }
 
@@ -666,19 +622,16 @@
     }
 
     .rotation-title {
-      color:
-        var(--accent-terracotta);
+      color: var(--accent-terracotta);
 
       font-size: 20px;
-
       font-weight: 650;
     }
 
     .rotation-dates {
       margin-top: 5px;
 
-      color:
-        var(--text-charcoal);
+      color: var(--text-charcoal);
 
       font-size: 11px;
     }
@@ -686,21 +639,17 @@
     .detail-heading {
       margin-bottom: 6px;
 
-      color:
-        var(--accent-sage);
+      color: var(--accent-sage);
 
       font-size: 8px;
-
       font-weight: 650;
 
       letter-spacing: 0.08em;
-
       text-transform: uppercase;
     }
 
     .detail-value {
-      color:
-        var(--text-charcoal);
+      color: var(--text-charcoal);
 
       font-size: 10px;
 
@@ -711,7 +660,6 @@
       display: flex;
 
       justify-content: flex-end;
-
       flex-wrap: wrap;
 
       gap: 22px;
@@ -720,13 +668,11 @@
     }
 
     .rotation-actions a {
-      color:
-        var(--accent-terracotta);
+      color: var(--accent-terracotta);
 
       text-decoration: none;
 
       font-size: 10px;
-
       font-weight: 550;
     }
 
@@ -796,23 +742,19 @@
     .chaos-label {
       margin-bottom: 7px;
 
-      color:
-        var(--accent-sage);
+      color: var(--accent-sage);
 
       font-size: 9px;
-
       font-weight: 650;
 
       letter-spacing: 0.18em;
-
       text-transform: uppercase;
     }
 
     .chaos-message {
       max-width: 470px;
 
-      color:
-        var(--text-charcoal);
+      color: var(--text-charcoal);
 
       font-family:
         Georgia,
@@ -820,7 +762,6 @@
         serif;
 
       font-size: 15px;
-
       font-style: italic;
 
       line-height: 1.45;
@@ -829,19 +770,16 @@
     .chaos-name {
       margin-top: 7px;
 
-      color:
-        var(--accent-terracotta);
+      color: var(--accent-terracotta);
 
       font-size: 9px;
-
       font-weight: 600;
     }
 
     .chaos-sparkle {
       position: absolute;
 
-      color:
-        #D5A163;
+      color: #D5A163;
 
       opacity: 0.75;
 
@@ -871,15 +809,13 @@
 
     .support-content {
       display: flex;
-
       flex-direction: column;
 
       gap: 12px;
 
       margin-top: 12px;
 
-      color:
-        var(--text-gray);
+      color: var(--text-gray);
 
       font-size: 10px;
     }
@@ -905,19 +841,16 @@
 
       border-radius: 50%;
 
-      background:
-        var(--soft-sage);
+      background: var(--soft-sage);
 
-      color:
-        #71806C;
+      color: #71806C;
     }
 
     .support-icon svg {
       width: 15px;
       height: 15px;
 
-      stroke:
-        #71806C;
+      stroke: #71806C;
     }
 
 
@@ -946,7 +879,6 @@
 
     .calendar-month {
       font-size: 14px;
-
       font-weight: 650;
     }
 
@@ -958,7 +890,6 @@
 
     .calendar-button {
       min-width: 30px;
-
       height: 29px;
 
       display: flex;
@@ -977,11 +908,9 @@
 
       border-radius: 7px;
 
-      background:
-        white;
+      background: white;
 
-      color:
-        var(--text-charcoal);
+      color: var(--text-charcoal);
 
       cursor: pointer;
 
@@ -991,8 +920,7 @@
     }
 
     .calendar-button:hover {
-      background:
-        var(--bg-app);
+      background: var(--bg-app);
     }
 
     .calendar-weekdays,
@@ -1014,11 +942,9 @@
 
       text-align: center;
 
-      color:
-        var(--text-gray);
+      color: var(--text-gray);
 
       font-size: 8px;
-
       font-weight: 650;
 
       letter-spacing: 0.07em;
@@ -1034,15 +960,13 @@
       align-items: center;
       justify-content: center;
 
-      color:
-        var(--text-charcoal);
+      color: var(--text-charcoal);
 
       font-size: 10px;
     }
 
     .mini-day.muted {
-      color:
-        #A6ADB7;
+      color: #A6ADB7;
     }
 
     .mini-day.today {
@@ -1053,11 +977,9 @@
 
       border-radius: 50%;
 
-      background:
-        var(--accent-terracotta);
+      background: var(--accent-terracotta);
 
-      color:
-        white;
+      color: white;
 
       font-weight: 650;
     }
@@ -1074,13 +996,11 @@
 
       border-radius: 50%;
 
-      background:
-        var(--accent-terracotta);
+      background: var(--accent-terracotta);
     }
 
     .mini-day.today.has-event::after {
-      background:
-        white;
+      background: white;
     }
 
     .calendar-link {
@@ -1088,14 +1008,220 @@
 
       margin-top: 11px;
 
-      color:
-        var(--accent-terracotta);
+      color: var(--accent-terracotta);
 
       text-decoration: none;
 
       font-size: 11px;
-
       font-weight: 550;
+    }
+
+
+    /* =========================================
+       TO DO
+    ========================================= */
+
+    .todo-card {
+      padding:
+        18px
+        20px
+        17px;
+    }
+
+    .todo-list {
+      display: flex;
+      flex-direction: column;
+
+      gap: 9px;
+
+      margin-top: 13px;
+    }
+
+    .todo-row {
+      display: grid;
+
+      grid-template-columns:
+        18px
+        minmax(0, 1fr)
+        18px;
+
+      align-items: center;
+
+      gap: 9px;
+
+      min-height: 26px;
+    }
+
+    .todo-check {
+      appearance: none;
+      -webkit-appearance: none;
+
+      width: 15px;
+      height: 15px;
+
+      margin: 0;
+
+      border:
+        1.5px
+        solid
+        #AAB3A5;
+
+      border-radius: 50%;
+
+      background: white;
+
+      cursor: pointer;
+
+      transition:
+        background
+        0.15s
+        ease,
+        border-color
+        0.15s
+        ease;
+    }
+
+    .todo-check:hover {
+      border-color: var(--accent-sage);
+    }
+
+    .todo-check:checked {
+      border-color: var(--accent-sage);
+
+      background:
+        var(--accent-sage);
+    }
+
+    .todo-check:checked::after {
+      content: "✓";
+
+      display: block;
+
+      color: white;
+
+      text-align: center;
+
+      font-size: 10px;
+      font-weight: 700;
+
+      line-height: 12px;
+    }
+
+    .todo-input {
+      width: 100%;
+
+      padding:
+        3px
+        1px
+        5px;
+
+      border: 0;
+      border-bottom:
+        1px
+        solid
+        #DDD9D1;
+
+      outline: none;
+
+      background: transparent;
+
+      color: var(--text-charcoal);
+
+      font-size: 11px;
+
+      transition:
+        border-color
+        0.15s
+        ease;
+    }
+
+    .todo-input:focus {
+      border-bottom-color:
+        var(--accent-sage);
+    }
+
+    .todo-row.completed
+    .todo-input {
+      color: #9CA29E;
+
+      text-decoration:
+        line-through;
+    }
+
+    .todo-remove {
+      width: 18px;
+      height: 18px;
+
+      padding: 0;
+
+      border: 0;
+
+      background: transparent;
+
+      color: #B6B4AE;
+
+      cursor: pointer;
+
+      opacity: 0;
+
+      font-size: 15px;
+
+      line-height: 1;
+
+      transition:
+        opacity
+        0.15s
+        ease,
+        color
+        0.15s
+        ease;
+    }
+
+    .todo-row:hover
+    .todo-remove {
+      opacity: 1;
+    }
+
+    .todo-remove:hover {
+      color: var(--accent-terracotta);
+    }
+
+    .todo-footer {
+      display: flex;
+
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 10px;
+
+      margin-top: 13px;
+    }
+
+    .todo-add {
+      padding: 0;
+
+      border: 0;
+
+      background: transparent;
+
+      color: var(--accent-terracotta);
+
+      cursor: pointer;
+
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .todo-add:hover {
+      text-decoration: underline;
+    }
+
+    .todo-save-status {
+      color: #A1A79D;
+
+      font-size: 8px;
+
+      letter-spacing: 0.04em;
     }
 
 
@@ -1133,11 +1259,9 @@
     }
 
     .week-date {
-      color:
-        var(--accent-sage);
+      color: var(--accent-sage);
 
       font-size: 10px;
-
       font-weight: 650;
 
       line-height: 1.45;
@@ -1147,7 +1271,6 @@
 
     .week-event-title {
       font-size: 11px;
-
       font-weight: 650;
 
       line-height: 1.4;
@@ -1156,8 +1279,7 @@
     .week-event-detail {
       margin-top: 3px;
 
-      color:
-        var(--text-gray);
+      color: var(--text-gray);
 
       font-size: 10px;
     }
@@ -1296,11 +1418,14 @@
       }
 
     }
+
   </style>
+
 </head>
 
 
 <body>
+
 
   <!-- =========================================
        NAVIGATION
@@ -1320,6 +1445,7 @@
       >
         ☰
       </button>
+
 
       <a
         href="index.html"
@@ -1374,12 +1500,13 @@
 
 
   <!-- =========================================
-       MAIN PAGE
+       MAIN
   ========================================== -->
 
   <main class="page-shell">
 
     <div class="page-content">
+
 
       <h1 class="page-title">
         Home Stretch
@@ -1424,6 +1551,7 @@
                     fill="none"
                     stroke-width="1.8"
                   >
+
                     <rect
                       x="3"
                       y="5"
@@ -1435,6 +1563,7 @@
                     <path
                       d="M4 7l8 6 8-6"
                     ></path>
+
                   </svg>
 
                 </div>
@@ -1483,6 +1612,7 @@
                 <div class="resource-icon">
 
                   <div class="canvas-logo">
+
                     <span class="canvas-dot"></span>
                     <span class="canvas-dot"></span>
                     <span class="canvas-dot"></span>
@@ -1493,6 +1623,7 @@
                     <span class="canvas-dot"></span>
 
                     <span class="canvas-center"></span>
+
                   </div>
 
                 </div>
@@ -1639,7 +1770,7 @@
               </a>
 
 
-              <!-- LiveWELL Care -->
+              <!-- LiveWELL -->
 
               <a
                 href="https://my.atriumhealth.org/myatriumhealth/openscheduling/standalone?dept=1020732000,1025602000,1023072000,1020722000,1020132001,1025952000,1025492000,1025342008,10120162000,1029612017,1028922000&vt=158093"
@@ -1698,20 +1829,21 @@
 
             <div class="rotation-layout">
 
+
               <div class="rotation-primary">
 
                 <div
                   id="currentRotationTitle"
                   class="rotation-title"
                 >
-                  Loading…
+                  Pediatrics Hematology / Oncology
                 </div>
 
                 <div
                   id="currentRotationDates"
                   class="rotation-dates"
                 >
-                  Checking schedule…
+                  August 17, 2026 – September 13, 2026
                 </div>
 
               </div>
@@ -1727,7 +1859,7 @@
                   id="nextRotation"
                   class="detail-value"
                 >
-                  —
+                  See full schedule
                 </div>
 
               </div>
@@ -1735,10 +1867,7 @@
 
               <div class="rotation-column">
 
-                <div
-                  id="contactHeading"
-                  class="detail-heading"
-                >
+                <div class="detail-heading">
                   Current Contact
                 </div>
 
@@ -1746,7 +1875,9 @@
                   id="currentRotationContact"
                   class="detail-value"
                 >
-                  —
+                  Dr. David Gass
+                  <br>
+                  Course Director
                 </div>
 
               </div>
@@ -1754,10 +1885,7 @@
 
               <div class="rotation-column">
 
-                <div
-                  id="locationHeading"
-                  class="detail-heading"
-                >
+                <div class="detail-heading">
                   Current Location
                 </div>
 
@@ -1765,7 +1893,9 @@
                   id="currentRotationLocation"
                   class="detail-value"
                 >
-                  —
+                  Medical Center Plaza
+                  <br>
+                  8:00 AM–5:00 PM
                 </div>
 
               </div>
@@ -1781,10 +1911,9 @@
 
               <a
                 id="currentRotationSyllabus"
-                href="#"
+                href="4PED32 - Pediatric Hematology-Oncology Syllabus 2026.2027Final.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                hidden
               >
                 Rotation syllabus →
               </a>
@@ -1869,6 +1998,7 @@
 
               <div class="support-content">
 
+
                 <div class="support-item">
 
                   <div class="support-icon">
@@ -1878,6 +2008,7 @@
                       fill="none"
                       stroke-width="1.8"
                     >
+
                       <path
                         d="
                           M5 4
@@ -1890,6 +2021,7 @@
                           3 3
                         "
                       ></path>
+
                     </svg>
 
                   </div>
@@ -1949,7 +2081,9 @@
         <aside class="home-sidebar">
 
 
-          <!-- Calendar -->
+          <!-- =====================================
+               CALENDAR
+          ====================================== -->
 
           <div class="card calendar-card">
 
@@ -2030,7 +2164,49 @@
           </div>
 
 
-          <!-- Coming Up -->
+          <!-- =====================================
+               TO DO
+          ====================================== -->
+
+          <div class="card todo-card">
+
+            <div class="section-label">
+              To Do
+            </div>
+
+
+            <div
+              id="todoList"
+              class="todo-list"
+            >
+            </div>
+
+
+            <div class="todo-footer">
+
+              <button
+                id="addTodoButton"
+                class="todo-add"
+                type="button"
+              >
+                + Add task
+              </button>
+
+              <div
+                id="todoSaveStatus"
+                class="todo-save-status"
+              >
+                Autosaved
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- =====================================
+               COMING UP
+          ====================================== -->
 
           <div class="card week-card">
 
@@ -2039,72 +2215,83 @@
             </div>
 
 
-            <div id="comingUpList">
+            <div class="week-row">
 
-              <div class="week-row">
+              <div class="week-date">
 
-                <div class="week-date">
-                  MON
-                  <br>
-                  AUG 17
-                </div>
+                Mon
 
-                <div>
+                <br>
 
-                  <div class="week-event-title">
-                    Pediatrics Hematology / Oncology begins
-                  </div>
-
-                  <div class="week-event-detail">
-                    Block 6
-                  </div>
-
-                </div>
+                Aug 17
 
               </div>
 
 
-              <div class="week-row">
+              <div>
 
-                <div class="week-date">
-                  MON
-                  <br>
-                  AUG 17
+                <div class="week-event-title">
+                  Pediatrics Hematology / Oncology begins
                 </div>
 
-                <div>
-
-                  <div class="week-event-title">
-                    Meeting with Dr. Gass
-                  </div>
-
-                  <div class="week-event-detail">
-                    8:30 AM
-                  </div>
-
+                <div class="week-event-detail">
+                  Block 6
                 </div>
 
               </div>
 
+            </div>
 
-              <div class="week-row">
 
-                <div class="week-date">
-                  MON
-                  <br>
-                  AUG 17
+            <div class="week-row">
+
+              <div class="week-date">
+
+                Mon
+
+                <br>
+
+                Aug 17
+
+              </div>
+
+
+              <div>
+
+                <div class="week-event-title">
+                  Meeting with Dr. Gass
                 </div>
 
-                <div>
+                <div class="week-event-detail">
+                  8:30 AM
+                </div>
 
-                  <div class="week-event-title">
-                    Block 7 Drop/Add Deadline
-                  </div>
+              </div>
 
-                  <div class="week-event-detail">
-                    Academic deadline
-                  </div>
+            </div>
 
+
+            <div class="week-row">
+
+              <div class="week-date">
+
+                Mon
+
+                <br>
+
+                Aug 17
+
+              </div>
+
+
+              <div>
+
+                <div class="week-event-title">
+                  Block 7 Drop/Add Deadline
+                </div>
+
+                <div class="week-event-detail">
+                  Academic deadline
                 </div>
 
               </div>
@@ -2209,11 +2396,7 @@
       dateString
     ) {
 
-      const [
-        year,
-        month,
-        day
-      ] =
+      const parts =
         dateString
           .split('-')
           .map(
@@ -2222,9 +2405,9 @@
 
 
       return new Date(
-        year,
-        month - 1,
-        day
+        parts[0],
+        parts[1] - 1,
+        parts[2]
       );
 
     }
@@ -2551,16 +2734,48 @@
 
 
     /* =========================================
-       ROTATION DETAILS
+       ROTATIONS
 
-       Rotation dates/names are loaded automatically
-       from schedule.html.
-
-       This object only stores extra display information
-       that schedule.html does not contain.
+       These fallbacks mean the homepage works
+       immediately even before schedule.html loads.
     ========================================= */
 
-    const rotationDetails = {
+    let homeRotations = [
+
+      {
+        name:
+          'FM AI',
+
+        start:
+          parseLocalDate(
+            '2026-07-20'
+          ),
+
+        end:
+          parseLocalDate(
+            '2026-08-16'
+          )
+      },
+
+      {
+        name:
+          'Peds Heme/Onc',
+
+        start:
+          parseLocalDate(
+            '2026-08-17'
+          ),
+
+        end:
+          parseLocalDate(
+            '2026-09-13'
+          )
+      }
+
+    ];
+
+
+    const rotationExtra = {
 
       'FM AI': {
 
@@ -2571,7 +2786,7 @@
           'Family Medicine',
 
         location:
-          'See schedule for location'
+          'See full schedule'
       },
 
 
@@ -2606,263 +2821,16 @@
           '4PED32 - Pediatric Hematology-Oncology Syllabus 2026.2027Final.pdf'
       }
 
-    ];
-
-
-    /*
-      The line above deliberately gets corrected below.
-
-      Using Object.assign makes this tolerant of browsers
-      while keeping the configuration readable.
-    */
-
-
-    const rotationExtra =
-      Object.assign(
-        {},
-        {
-          'FM AI': {
-            displayName:
-              'FM AI',
-
-            contact:
-              'Family Medicine',
-
-            location:
-              'See schedule for location'
-          },
-
-          'Peds Heme/Onc': {
-            displayName:
-              'Pediatrics Hematology / Oncology',
-
-            contact:
-              'Dr. David Gass<br>Course Director',
-
-            location:
-              'Medical Center Plaza<br>8:00 AM–5:00 PM',
-
-            syllabus:
-              '4PED32 - Pediatric Hematology-Oncology Syllabus 2026.2027Final.pdf'
-          },
-
-          'Pediatrics Hematology / Oncology': {
-            displayName:
-              'Pediatrics Hematology / Oncology',
-
-            contact:
-              'Dr. David Gass<br>Course Director',
-
-            location:
-              'Medical Center Plaza<br>8:00 AM–5:00 PM',
-
-            syllabus:
-              '4PED32 - Pediatric Hematology-Oncology Syllabus 2026.2027Final.pdf'
-          }
-        }
-      );
-
-
-    /* =========================================
-       LOAD ROTATIONS FROM SCHEDULE.HTML
-    ========================================= */
-
-    let homeRotations =
-      [];
+    };
 
 
     let homeEventDates =
-      new Set();
-
-
-    async function loadScheduleData() {
-
-      try {
-
-        const response =
-          await fetch(
-            `schedule.html?_=${Date.now()}`,
-            {
-              cache:
-                'no-store'
-            }
-          );
-
-
-        if (!response.ok) {
-
-          throw new Error(
-            `Schedule request failed: ${response.status}`
-          );
-
-        }
-
-
-        const source =
-          await response.text();
-
-
-        /*
-          Example matched from schedule.html:
-
-          seedRangeEvent(
-            'rotation-peds-heme-onc',
-            'Peds Heme/Onc',
-            '2026-08-17',
-            '2026-09-13',
-            'rotation'
-          );
-        */
-
-        const rotationRegex =
-          /seedRangeEvent\s*\(\s*['"][^'"]+['"]\s*,\s*['"]([^'"]+)['"]\s*,\s*['"](\d{4}-\d{2}-\d{2})['"]\s*,\s*['"](\d{4}-\d{2}-\d{2})['"]\s*,\s*['"]rotation['"]\s*\)/g;
-
-
-        let match;
-
-
-        while (
-          (
-            match =
-              rotationRegex.exec(
-                source
-              )
-          ) !== null
-        ) {
-
-          homeRotations
-            .push(
-              {
-                name:
-                  match[1],
-
-                start:
-                  parseLocalDate(
-                    match[2]
-                  ),
-
-                end:
-                  parseLocalDate(
-                    match[3]
-                  )
-              }
-            );
-
-        }
-
-
-        homeRotations
-          .sort(
-            (
-              first,
-              second
-            ) =>
-              first.start -
-              second.start
-          );
-
-
-        /*
-          Grab ISO dates from the schedule page so the
-          mini-calendar can display event dots.
-
-          This includes deadlines, rotation starts,
-          meetings and other schedule dates.
-        */
-
-        const isoDateRegex =
-          /['"](\d{4}-\d{2}-\d{2})['"]/g;
-
-
-        while (
-          (
-            match =
-              isoDateRegex.exec(
-                source
-              )
-          ) !== null
-        ) {
-
-          homeEventDates
-            .add(
-              match[1]
-            );
-
-        }
-
-
-        renderCurrentRotation();
-
-        renderMiniCalendar();
-
-      }
-      catch (
-        error
-      ) {
-
-        console.error(
-          'Unable to load schedule.html:',
-          error
-        );
-
-
-        /*
-          Safe fallback for the current block.
-          The page still works even if schedule.html
-          cannot be fetched for some reason.
-        */
-
-        homeRotations = [
-
-          {
-            name:
-              'FM AI',
-
-            start:
-              parseLocalDate(
-                '2026-07-20'
-              ),
-
-            end:
-              parseLocalDate(
-                '2026-08-16'
-              )
-          },
-
-          {
-            name:
-              'Peds Heme/Onc',
-
-            start:
-              parseLocalDate(
-                '2026-08-17'
-              ),
-
-            end:
-              parseLocalDate(
-                '2026-09-13'
-              )
-          }
-
-        ];
-
-
-        homeEventDates =
-          new Set(
-            [
-              '2026-08-17',
-              '2026-08-26'
-            ]
-          );
-
-
-        renderCurrentRotation();
-
-        renderMiniCalendar();
-
-      }
-
-    }
+      new Set(
+        [
+          '2026-08-17',
+          '2026-08-26'
+        ]
+      );
 
 
     /* =========================================
@@ -2880,20 +2848,34 @@
       const currentRotation =
         homeRotations
           .find(
-            rotation =>
-              today >=
-                rotation.start &&
-              today <=
-                rotation.end
+            function (
+              rotation
+            ) {
+
+              return (
+                today >=
+                  rotation.start &&
+                today <=
+                  rotation.end
+              );
+
+            }
           );
 
 
       const nextRotation =
         homeRotations
           .find(
-            rotation =>
-              rotation.start >
+            function (
+              rotation
+            ) {
+
+              return (
+                rotation.start >
                 today
+              );
+
+            }
           );
 
 
@@ -2934,30 +2916,8 @@
 
 
       if (
-        !currentRotation
+        currentRotation
       ) {
-
-        title.textContent =
-          'No active rotation';
-
-
-        dates.textContent =
-          'See full schedule';
-
-
-        contact.textContent =
-          '—';
-
-
-        location.textContent =
-          '—';
-
-
-        syllabus.hidden =
-          true;
-
-      }
-      else {
 
         const details =
           rotationExtra[
@@ -2972,11 +2932,13 @@
 
 
         dates.textContent =
-          `${formatLongDate(
+          formatLongDate(
             currentRotation.start
-          )} – ${formatLongDate(
+          ) +
+          ' – ' +
+          formatLongDate(
             currentRotation.end
-          )}`;
+          );
 
 
         contact.innerHTML =
@@ -3009,6 +2971,28 @@
         }
 
       }
+      else {
+
+        title.textContent =
+          'No active rotation';
+
+
+        dates.textContent =
+          'See full schedule';
+
+
+        contact.textContent =
+          '—';
+
+
+        location.textContent =
+          '—';
+
+
+        syllabus.hidden =
+          true;
+
+      }
 
 
       if (
@@ -3023,20 +3007,172 @@
 
 
         next.innerHTML =
-          `${
+          (
             nextDetails.displayName ||
             nextRotation.name
-          }<br>Begins ${
-            formatShortDate(
-              nextRotation.start
-            )
-          }`;
+          ) +
+          '<br>Begins ' +
+          formatShortDate(
+            nextRotation.start
+          );
 
       }
       else {
 
         next.textContent =
-          'No upcoming rotation';
+          'See full schedule';
+
+      }
+
+    }
+
+
+    /* =========================================
+       READ FUTURE ROTATIONS FROM SCHEDULE.HTML
+    ========================================= */
+
+    async function loadScheduleData() {
+
+      try {
+
+        const response =
+          await fetch(
+            'schedule.html',
+            {
+              cache:
+                'no-store'
+            }
+          );
+
+
+        if (
+          !response.ok
+        ) {
+
+          return;
+
+        }
+
+
+        const source =
+          await response.text();
+
+
+        const rotationRegex =
+          /seedRangeEvent\s*\(\s*['"][^'"]+['"]\s*,\s*['"]([^'"]+)['"]\s*,\s*['"](\d{4}-\d{2}-\d{2})['"]\s*,\s*['"](\d{4}-\d{2}-\d{2})['"]\s*,\s*['"]rotation['"]\s*\)/g;
+
+
+        const foundRotations =
+          [];
+
+
+        let match;
+
+
+        while (
+          (
+            match =
+              rotationRegex.exec(
+                source
+              )
+          ) !== null
+        ) {
+
+          foundRotations
+            .push(
+              {
+                name:
+                  match[1],
+
+                start:
+                  parseLocalDate(
+                    match[2]
+                  ),
+
+                end:
+                  parseLocalDate(
+                    match[3]
+                  )
+              }
+            );
+
+        }
+
+
+        if (
+          foundRotations.length
+        ) {
+
+          foundRotations
+            .sort(
+              function (
+                first,
+                second
+              ) {
+
+                return (
+                  first.start -
+                  second.start
+                );
+
+              }
+            );
+
+
+          homeRotations =
+            foundRotations;
+
+        }
+
+
+        const foundEventDates =
+          new Set();
+
+
+        const isoDateRegex =
+          /['"](\d{4}-\d{2}-\d{2})['"]/g;
+
+
+        while (
+          (
+            match =
+              isoDateRegex.exec(
+                source
+              )
+          ) !== null
+        ) {
+
+          foundEventDates
+            .add(
+              match[1]
+            );
+
+        }
+
+
+        if (
+          foundEventDates.size
+        ) {
+
+          homeEventDates =
+            foundEventDates;
+
+        }
+
+
+        renderCurrentRotation();
+
+        renderMiniCalendar();
+
+      }
+      catch (
+        error
+      ) {
+
+        console.warn(
+          'Using homepage fallback schedule data.',
+          error
+        );
 
       }
 
@@ -3059,14 +3195,14 @@
       );
 
 
-    const currentRealDate =
+    const realToday =
       new Date();
 
 
     let miniCalendarDate =
       new Date(
-        currentRealDate.getFullYear(),
-        currentRealDate.getMonth(),
+        realToday.getFullYear(),
+        realToday.getMonth(),
         1
       );
 
@@ -3140,26 +3276,26 @@
         );
 
 
-        const element =
+        const dayElement =
           document.createElement(
             'div'
           );
 
 
-        element.className =
+        dayElement.className =
           'mini-day';
 
 
-        element.textContent =
+        dayElement.textContent =
           day.getDate();
 
 
         if (
           day.getMonth() !==
-            month
+          month
         ) {
 
-          element
+          dayElement
             .classList
             .add(
               'muted'
@@ -3175,7 +3311,7 @@
           )
         ) {
 
-          element
+          dayElement
             .classList
             .add(
               'today'
@@ -3193,7 +3329,7 @@
             )
         ) {
 
-          element
+          dayElement
             .classList
             .add(
               'has-event'
@@ -3204,7 +3340,7 @@
 
         miniCalendarGrid
           .appendChild(
-            element
+            dayElement
           );
 
       }
@@ -3218,7 +3354,7 @@
       )
       .addEventListener(
         'click',
-        () => {
+        function () {
 
           miniCalendarDate =
             new Date(
@@ -3245,7 +3381,7 @@
       )
       .addEventListener(
         'click',
-        () => {
+        function () {
 
           miniCalendarDate =
             new Date(
@@ -3272,7 +3408,7 @@
       )
       .addEventListener(
         'click',
-        () => {
+        function () {
 
           const today =
             new Date();
@@ -3293,14 +3429,487 @@
 
 
     /* =========================================
+       TO DO
+    ========================================= */
+
+    const TODO_STORAGE_KEY =
+      'homeStretchTodoItemsV1';
+
+
+    const todoList =
+      document.getElementById(
+        'todoList'
+      );
+
+
+    const todoSaveStatus =
+      document.getElementById(
+        'todoSaveStatus'
+      );
+
+
+    let todos =
+      [];
+
+
+    function newTodo() {
+
+      return {
+        id:
+          Date.now().toString() +
+          Math.random()
+            .toString(16)
+            .slice(2),
+
+        text:
+          '',
+
+        done:
+          false
+      };
+
+    }
+
+
+    function loadTodos() {
+
+      try {
+
+        const saved =
+          localStorage
+            .getItem(
+              TODO_STORAGE_KEY
+            );
+
+
+        if (
+          saved
+        ) {
+
+          const parsed =
+            JSON.parse(
+              saved
+            );
+
+
+          if (
+            Array.isArray(
+              parsed
+            )
+          ) {
+
+            todos =
+              parsed;
+
+          }
+
+        }
+
+      }
+      catch (
+        error
+      ) {
+
+        console.warn(
+          'Could not load saved tasks.',
+          error
+        );
+
+      }
+
+
+      if (
+        !todos.length
+      ) {
+
+        todos = [
+          newTodo()
+        ];
+
+      }
+
+    }
+
+
+    let saveStatusTimer;
+
+
+    function saveTodos() {
+
+      try {
+
+        localStorage
+          .setItem(
+            TODO_STORAGE_KEY,
+            JSON.stringify(
+              todos
+            )
+          );
+
+
+        todoSaveStatus.textContent =
+          'Saved';
+
+
+        clearTimeout(
+          saveStatusTimer
+        );
+
+
+        saveStatusTimer =
+          setTimeout(
+            function () {
+
+              todoSaveStatus.textContent =
+                'Autosaved';
+
+            },
+            900
+          );
+
+      }
+      catch (
+        error
+      ) {
+
+        todoSaveStatus.textContent =
+          'Unable to save';
+
+      }
+
+    }
+
+
+    function renderTodos(
+      focusId
+    ) {
+
+      todoList.innerHTML =
+        '';
+
+
+      todos
+        .forEach(
+          function (
+            todo
+          ) {
+
+            const row =
+              document.createElement(
+                'div'
+              );
+
+
+            row.className =
+              'todo-row';
+
+
+            if (
+              todo.done
+            ) {
+
+              row
+                .classList
+                .add(
+                  'completed'
+                );
+
+            }
+
+
+            const checkbox =
+              document.createElement(
+                'input'
+              );
+
+
+            checkbox.type =
+              'checkbox';
+
+
+            checkbox.className =
+              'todo-check';
+
+
+            checkbox.checked =
+              todo.done;
+
+
+            checkbox.setAttribute(
+              'aria-label',
+              'Complete task'
+            );
+
+
+            checkbox
+              .addEventListener(
+                'change',
+                function () {
+
+                  todo.done =
+                    checkbox.checked;
+
+
+                  saveTodos();
+
+                  renderTodos();
+
+                }
+              );
+
+
+            const input =
+              document.createElement(
+                'input'
+              );
+
+
+            input.type =
+              'text';
+
+
+            input.className =
+              'todo-input';
+
+
+            input.value =
+              todo.text;
+
+
+            input.placeholder =
+              '';
+
+
+            input.setAttribute(
+              'aria-label',
+              'Task'
+            );
+
+
+            input
+              .addEventListener(
+                'input',
+                function () {
+
+                  todo.text =
+                    input.value;
+
+
+                  saveTodos();
+
+                }
+              );
+
+
+            input
+              .addEventListener(
+                'keydown',
+                function (
+                  event
+                ) {
+
+                  if (
+                    event.key ===
+                    'Enter'
+                  ) {
+
+                    event.preventDefault();
+
+
+                    const nextTodo =
+                      newTodo();
+
+
+                    const currentIndex =
+                      todos
+                        .findIndex(
+                          function (
+                            item
+                          ) {
+
+                            return (
+                              item.id ===
+                              todo.id
+                            );
+
+                          }
+                        );
+
+
+                    todos
+                      .splice(
+                        currentIndex + 1,
+                        0,
+                        nextTodo
+                      );
+
+
+                    saveTodos();
+
+                    renderTodos(
+                      nextTodo.id
+                    );
+
+                  }
+
+                }
+              );
+
+
+            const remove =
+              document.createElement(
+                'button'
+              );
+
+
+            remove.type =
+              'button';
+
+
+            remove.className =
+              'todo-remove';
+
+
+            remove.textContent =
+              '×';
+
+
+            remove.setAttribute(
+              'aria-label',
+              'Remove task'
+            );
+
+
+            remove
+              .addEventListener(
+                'click',
+                function () {
+
+                  todos =
+                    todos
+                      .filter(
+                        function (
+                          item
+                        ) {
+
+                          return (
+                            item.id !==
+                            todo.id
+                          );
+
+                        }
+                      );
+
+
+                  if (
+                    !todos.length
+                  ) {
+
+                    todos = [
+                      newTodo()
+                    ];
+
+                  }
+
+
+                  saveTodos();
+
+                  renderTodos();
+
+                }
+              );
+
+
+            row
+              .appendChild(
+                checkbox
+              );
+
+
+            row
+              .appendChild(
+                input
+              );
+
+
+            row
+              .appendChild(
+                remove
+              );
+
+
+            todoList
+              .appendChild(
+                row
+              );
+
+
+            if (
+              focusId ===
+              todo.id
+            ) {
+
+              setTimeout(
+                function () {
+
+                  input.focus();
+
+                },
+                0
+              );
+
+            }
+
+          }
+        );
+
+    }
+
+
+    document
+      .getElementById(
+        'addTodoButton'
+      )
+      .addEventListener(
+        'click',
+        function () {
+
+          const todo =
+            newTodo();
+
+
+          todos
+            .push(
+              todo
+            );
+
+
+          saveTodos();
+
+          renderTodos(
+            todo.id
+          );
+
+        }
+      );
+
+
+    /* =========================================
        INITIALIZE
     ========================================= */
+
+    loadTodos();
+
+    renderTodos();
+
+    renderCurrentRotation();
 
     renderMiniCalendar();
 
     loadScheduleData();
 
   </script>
+
 
 </body>
 
