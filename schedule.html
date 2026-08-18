@@ -20,152 +20,73 @@ frame.addEventListener('load',()=>{
   const style=doc.createElement('style');
   style.textContent=`
     .nav{position:fixed!important;inset:0 auto 0 0!important;width:88px!important;height:100vh!important;z-index:50!important;padding:28px 18px!important;background:var(--bg)!important;transition:width .22s ease!important;overflow:hidden!important}
-    .nav.open{width:245px!important}
-    .nav-top{display:flex!important;align-items:center!important;gap:15px!important;white-space:nowrap!important}
+    .nav.open{width:245px!important}.nav-top{display:flex!important;align-items:center!important;gap:15px!important;white-space:nowrap!important}
     .menu{width:42px!important;height:42px!important;display:flex!important;align-items:center!important;justify-content:center!important;flex-shrink:0!important;padding:0!important;border:0!important;border-radius:0!important;outline:none!important;box-shadow:none!important;background:transparent!important;color:var(--terracotta)!important;cursor:pointer!important;font-size:24px!important;line-height:1!important;appearance:none!important;-webkit-appearance:none!important}
-    .menu:hover,.menu:active,.menu:focus,.menu:focus-visible{background:transparent!important;outline:none!important;box-shadow:none!important}
-    .nav.open .menu{color:var(--text)!important;background:transparent!important}
-    .nav-brand{opacity:0!important;pointer-events:none!important;color:var(--sage)!important;font-size:14px!important;font-weight:600!important;letter-spacing:.2em!important;text-transform:uppercase!important;text-decoration:none!important;transition:opacity .15s ease!important}
-    .nav.open .nav-brand{opacity:1!important;pointer-events:auto!important}
-    .links{display:block!important;margin-top:27px!important;opacity:0!important;pointer-events:none!important;transform:translateX(-5px)!important;transition:opacity .18s ease,transform .18s ease!important}
-    .nav.open .links{opacity:1!important;pointer-events:auto!important;transform:none!important}
-    .links a{display:block!important;width:max-content!important;padding:7px 0!important;color:var(--sage)!important;font-size:13px!important;font-weight:500!important;letter-spacing:.15em!important;text-transform:uppercase!important;text-decoration:none!important;white-space:nowrap!important}
-    .links a.active,.links a:hover{color:var(--terracotta)!important}
-    .links a.active{font-weight:600!important}
-    .page{margin-left:92px!important;transition:margin-left .22s ease!important}
-    body.nav-open .page{margin-left:249px!important}
+    .menu:hover,.menu:active,.menu:focus,.menu:focus-visible{background:transparent!important;outline:none!important;box-shadow:none!important}.nav.open .menu{color:var(--text)!important;background:transparent!important}
+    .nav-brand{opacity:0!important;pointer-events:none!important;color:var(--sage)!important;font-size:14px!important;font-weight:600!important;letter-spacing:.2em!important;text-transform:uppercase!important;text-decoration:none!important;transition:opacity .15s ease!important}.nav.open .nav-brand{opacity:1!important;pointer-events:auto!important}
+    .links{display:block!important;margin-top:27px!important;opacity:0!important;pointer-events:none!important;transform:translateX(-5px)!important;transition:opacity .18s ease,transform .18s ease!important}.nav.open .links{opacity:1!important;pointer-events:auto!important;transform:none!important}
+    .links a{display:block!important;width:max-content!important;padding:7px 0!important;color:var(--sage)!important;font-size:13px!important;font-weight:500!important;letter-spacing:.15em!important;text-transform:uppercase!important;text-decoration:none!important;white-space:nowrap!important}.links a.active,.links a:hover{color:var(--terracotta)!important}.links a.active{font-weight:600!important}
+    .page{margin-left:92px!important;transition:margin-left .22s ease!important}body.nav-open .page{margin-left:249px!important}
 
-    .grid:not(.expanded){grid-template-columns:420px minmax(0,1fr)!important;gap:26px!important}
-    .rotation{position:relative!important;padding:21px 23px!important}
-    .rotation-title{font-size:22px!important;line-height:1.28!important}
-    .rotation-dates{font-size:13px!important;line-height:1.45!important}
+    .grid:not(.expanded){grid-template-columns:420px minmax(0,1fr)!important;gap:26px!important}.rotation{position:relative!important;padding:21px 23px!important}.rotation-title{font-size:22px!important;line-height:1.28!important}.rotation-dates{font-size:13px!important;line-height:1.45!important}
     .expand{width:auto!important;min-width:0!important;height:30px!important;padding:0 11px!important;border:1px solid var(--border)!important;border-radius:7px!important;background:#fff!important;color:var(--muted)!important;font-size:11px!important;font-weight:500!important;line-height:28px!important;box-shadow:none!important}
     .rotation .label,.rotation .priority-panel>.label,.rotation .notes-priority>.label,.rotation .encounters-secondary>.label{color:var(--sage)!important;font-size:11.5px!important;font-weight:600!important;letter-spacing:.14em!important;text-transform:uppercase!important}
-    .rotation-reference{display:none!important}
-    .rotation-assignments{margin-top:23px!important;padding-top:0!important;border:0!important}
-    #addAssignment{display:none!important}
-    .priority-panel,.notes-priority,.encounters-secondary{border:0!important}
-    .priority-grid{display:block!important}
-    .priority-panel{margin-top:24px!important}
-    .priority-panel+.priority-panel{margin-top:25px!important}
-    .notes-priority{margin-top:27px!important}
-    .encounters-secondary{margin-top:27px!important;padding-top:0!important}
-    .notes-tools{display:none!important}
-    .notes{margin-top:9px!important;min-height:155px!important;font-size:13px!important;line-height:1.5!important}
-    .row{grid-template-columns:18px minmax(0,1fr) 18px!important;gap:8px!important}
-    .row input[type=text],.resource-item a{font-size:12.5px!important;line-height:1.4!important}
-    .add{font-size:11.5px!important;margin-top:8px!important}
-    .rotation hr{display:none!important}
-    #editSyllabus,.reference-syllabus,.syllabus{display:none!important}
+    .rotation-reference{display:none!important}.rotation-assignments{margin-top:23px!important;padding-top:0!important;border:0!important}#addAssignment{display:none!important}.priority-panel,.notes-priority,.encounters-secondary{border:0!important}.priority-grid{display:block!important}.priority-panel{margin-top:24px!important}.priority-panel+.priority-panel{margin-top:25px!important}.notes-priority{margin-top:27px!important}.encounters-secondary{margin-top:27px!important;padding-top:0!important}.notes-tools{display:none!important}.notes{margin-top:9px!important;min-height:155px!important;font-size:13px!important;line-height:1.5!important}.row{grid-template-columns:18px minmax(0,1fr) 18px!important;gap:8px!important}.row input[type=text],.resource-item a{font-size:12.5px!important;line-height:1.4!important}.add{font-size:11.5px!important;margin-top:8px!important}.rotation hr{display:none!important}#editSyllabus,.reference-syllabus,.syllabus{display:none!important}
 
-    .rotation-header-wrap{position:relative!important;margin:0!important;padding:0!important;border:0!important}
-    .rotation-header-collapse{position:absolute!important;top:0!important;right:0!important;z-index:3!important}
-    .rotation-header-meta{margin-top:14px!important;padding:0!important;border:0!important}
-    .rotation-header-meta .editable{margin:0!important;padding:0!important;font-size:12.5px!important;font-weight:500!important}
-    .rotation-header-contacts{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:18px!important;margin-top:14px!important}
-    .rotation-header-contacts .contact{display:flex!important;flex-direction:column!important;align-items:flex-start!important;min-width:0!important;margin:0!important;padding:0!important}
-    .rotation-header-contacts .role{font-size:9px!important;margin:0 0 4px!important;padding:0!important}
-    .rotation-header-contacts .name{font-size:12px!important;margin:0 0 3px!important;padding:0!important}
-    .rotation-header-contacts a{display:block!important;margin:0!important;padding:0!important;font-size:11px!important;line-height:1.28!important;text-decoration:none!important}
-    .rotation-header-contacts br{display:none!important}
-    .rotation-header-contacts #alexisPhone{margin:1px 0 0!important;padding:0!important;line-height:1.18!important}
+    .rotation-header-wrap{position:relative!important;margin:0!important;padding:0!important;border:0!important}.rotation-header-collapse{position:absolute!important;top:0!important;right:0!important;z-index:3!important}.rotation-header-meta{margin-top:14px!important;padding:0!important;border:0!important}.rotation-header-meta .editable{margin:0!important;padding:0!important;font-size:12.5px!important;font-weight:500!important}.rotation-header-contacts{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:18px!important;margin-top:14px!important}.rotation-header-contacts .contact{display:flex!important;flex-direction:column!important;align-items:flex-start!important;min-width:0!important;margin:0!important;padding:0!important}.rotation-header-contacts .role{font-size:9px!important;margin:0 0 4px!important;padding:0!important}.rotation-header-contacts .name{font-size:12px!important;margin:0 0 3px!important;padding:0!important}.rotation-header-contacts a{display:block!important;margin:0!important;padding:0!important;font-size:11px!important;line-height:1.28!important;text-decoration:none!important}.rotation-header-contacts br{display:none!important}.rotation-header-contacts #alexisPhone{margin:1px 0 0!important;padding:0!important;line-height:1.18!important}
+    .manage{font-size:12px!important;font-weight:650!important;letter-spacing:.01em!important}.grid.expanded .manage{font-size:12px!important}
 
-    .manage{font-size:12px!important;font-weight:650!important;letter-spacing:.01em!important}
-    .grid.expanded .manage{font-size:12px!important}
+    .grid.expanded{grid-template-columns:minmax(0,1fr) 300px!important;gap:24px!important;align-items:start!important}.grid.expanded .rotation{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,.9fr)!important;column-gap:42px!important;row-gap:0!important;padding:30px 30px 32px!important}.grid.expanded .rotation-header-wrap{grid-column:1/-1!important;display:grid!important;grid-template-columns:minmax(350px,1.08fr) minmax(450px,.98fr) auto!important;column-gap:30px!important;align-items:start!important;position:relative!important;margin:0 0 26px!important;padding:0!important;border:0!important}.grid.expanded .rotation-head{grid-column:1!important;grid-row:1!important;display:block!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;text-align:left!important;min-width:0!important}.grid.expanded .rotation-head>div{margin:0!important;padding:0!important;text-align:left!important}.grid.expanded .rotation-head .label,.grid.expanded .rotation-title,.grid.expanded .rotation-dates{margin-left:0!important;padding-left:0!important;text-align:left!important}.grid.expanded .rotation-title{margin-top:10px!important;font-size:24px!important;line-height:1.22!important}.grid.expanded .rotation-dates{margin:12px 0 0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;font-size:13px!important}.grid.expanded .rotation-header-collapse{grid-column:3!important;grid-row:1!important;position:static!important;justify-self:end!important;align-self:start!important;margin:0!important}.grid.expanded .rotation-header-meta{grid-column:1!important;grid-row:2!important;margin-top:12px!important;padding:0!important;border:0!important}.grid.expanded .rotation-header-meta .editable{margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;font-size:13px!important;font-weight:500!important;white-space:nowrap!important;text-align:left!important}.grid.expanded .rotation-header-contacts{grid-column:2!important;grid-row:1 / span 2!important;display:grid!important;grid-template-columns:minmax(205px,1fr) minmax(235px,1.08fr)!important;gap:24px!important;min-width:0!important;margin:4px 0 0!important;padding:0!important;align-self:start!important}.grid.expanded .rotation-header-contacts .contact{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:0!important;min-width:0!important;margin:0!important;padding:0!important}.grid.expanded .rotation-header-contacts .role{margin:0 0 7px!important;padding:0!important;font-size:9px!important;white-space:nowrap!important}.grid.expanded .rotation-header-contacts .name{margin:0 0 4px!important;padding:0!important;font-size:12.5px!important;line-height:1.28!important;white-space:nowrap!important}.grid.expanded .rotation-header-contacts a{margin:0!important;padding:0!important;font-size:11px!important;line-height:1.24!important;white-space:nowrap!important;overflow:visible!important;max-width:none!important;word-break:normal!important;overflow-wrap:normal!important}.grid.expanded .rotation-header-contacts #alexisPhone{margin:1px 0 0!important;padding:0!important;line-height:1.15!important;white-space:nowrap!important}.grid.expanded .rotation-assignments{grid-column:1!important;grid-row:2!important;margin:0!important;padding:0!important;border:0!important}.grid.expanded .priority-grid{display:contents!important}.grid.expanded .resources-panel{grid-column:2!important;grid-row:2!important;margin:0!important;padding:0!important;border:0!important}.grid.expanded .concepts-panel{grid-column:1!important;grid-row:3!important;margin:30px 0 0!important}.grid.expanded .notes-priority{grid-column:2!important;grid-row:3!important;margin:30px 0 0!important}.grid.expanded .notes{min-height:190px!important;margin-top:10px!important}.grid.expanded .encounters-secondary{grid-column:1/-1!important;grid-row:4!important;margin:30px 0 0!important;padding:0!important;border:0!important}
 
-    .grid.expanded{grid-template-columns:minmax(0,1fr) 300px!important;gap:24px!important;align-items:start!important}
-    .grid.expanded .rotation{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,.9fr)!important;column-gap:42px!important;row-gap:0!important;padding:30px 30px 32px!important}
-    .grid.expanded .rotation-header-wrap{grid-column:1/-1!important;display:grid!important;grid-template-columns:minmax(350px,1.08fr) minmax(450px,.98fr) auto!important;column-gap:30px!important;align-items:start!important;position:relative!important;margin:0 0 26px!important;padding:0!important;border:0!important}
-    .grid.expanded .rotation-head{grid-column:1!important;grid-row:1!important;display:block!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;text-align:left!important;min-width:0!important}
-    .grid.expanded .rotation-head>div{margin:0!important;padding:0!important;text-align:left!important}
-    .grid.expanded .rotation-head .label,.grid.expanded .rotation-title,.grid.expanded .rotation-dates{margin-left:0!important;padding-left:0!important;text-align:left!important}
-    .grid.expanded .rotation-title{margin-top:10px!important;font-size:24px!important;line-height:1.22!important}
-    .grid.expanded .rotation-dates{margin:12px 0 0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;font-size:13px!important}
-    .grid.expanded .rotation-header-collapse{grid-column:3!important;grid-row:1!important;position:static!important;justify-self:end!important;align-self:start!important;margin:0!important}
-    .grid.expanded .rotation-header-meta{grid-column:1!important;grid-row:2!important;margin-top:12px!important;padding:0!important;border:0!important}
-    .grid.expanded .rotation-header-meta .editable{margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;font-size:13px!important;font-weight:500!important;white-space:nowrap!important;text-align:left!important}
-    .grid.expanded .rotation-header-contacts{grid-column:2!important;grid-row:1 / span 2!important;display:grid!important;grid-template-columns:minmax(205px,1fr) minmax(235px,1.08fr)!important;gap:24px!important;min-width:0!important;margin:4px 0 0!important;padding:0!important;align-self:start!important}
-    .grid.expanded .rotation-header-contacts .contact{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:0!important;min-width:0!important;margin:0!important;padding:0!important}
-    .grid.expanded .rotation-header-contacts .role{margin:0 0 7px!important;padding:0!important;font-size:9px!important;white-space:nowrap!important}
-    .grid.expanded .rotation-header-contacts .name{margin:0 0 4px!important;padding:0!important;font-size:12.5px!important;line-height:1.28!important;white-space:nowrap!important}
-    .grid.expanded .rotation-header-contacts a{margin:0!important;padding:0!important;font-size:11px!important;line-height:1.24!important;white-space:nowrap!important;overflow:visible!important;max-width:none!important;word-break:normal!important;overflow-wrap:normal!important}
-    .grid.expanded .rotation-header-contacts #alexisPhone{margin:1px 0 0!important;padding:0!important;line-height:1.15!important;white-space:nowrap!important}
-    .grid.expanded .rotation-assignments{grid-column:1!important;grid-row:2!important;margin:0!important;padding:0!important;border:0!important}
-    .grid.expanded .priority-grid{display:contents!important}
-    .grid.expanded .resources-panel{grid-column:2!important;grid-row:2!important;margin:0!important;padding:0!important;border:0!important}
-    .grid.expanded .concepts-panel{grid-column:1!important;grid-row:3!important;margin:30px 0 0!important}
-    .grid.expanded .notes-priority{grid-column:2!important;grid-row:3!important;margin:30px 0 0!important}
-    .grid.expanded .notes{min-height:190px!important;margin-top:10px!important}
-    .grid.expanded .encounters-secondary{grid-column:1/-1!important;grid-row:4!important;margin:30px 0 0!important;padding:0!important;border:0!important}
+    /* Rotation archive cards */
+    .rotation-list{gap:12px!important}.rotation-mini{border:1px solid var(--border)!important;border-radius:13px!important;background:#fff!important;overflow:hidden!important;transition:box-shadow .15s ease,border-color .15s ease!important}.rotation-mini:hover{border-color:#D8D2C8!important}.rotation-mini>button{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;width:100%!important;padding:14px 16px!important;border:0!important;background:#fff!important;text-align:left!important;cursor:pointer!important}.rotation-mini>button::after{content:'⌄';color:var(--sage);font-size:15px;transition:transform .18s ease}.rotation-mini.open>button::after{transform:rotate(180deg)}.rotation-mini .body{display:none!important;padding:0 16px 16px!important;border-top:1px solid #F0ECE6!important}.rotation-mini.open{grid-column:1/-1!important;box-shadow:0 8px 22px rgba(45,49,50,.05)!important}.rotation-mini.open .body{display:block!important}.rotation-mini .rname{font-size:13px!important}.rotation-mini .rmeta{font-size:10px!important}
+    .rotation-detail-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px 28px;padding-top:15px}.rotation-detail-span{grid-column:1/-1}.rotation-detail-label{color:var(--sage);font-size:9px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;margin-bottom:6px}.rotation-detail-input,.rotation-detail-area{width:100%;border:1px solid var(--border);border-radius:8px;background:#FCFBF8;color:var(--text);outline:none;font:inherit}.rotation-detail-input{height:34px;padding:6px 8px;font-size:11px}.rotation-detail-area{min-height:74px;padding:8px 9px;resize:vertical;font-size:11px;line-height:1.45}.rotation-detail-input:focus,.rotation-detail-area:focus{border-color:var(--sage);background:#fff}.rotation-contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.rotation-contact-stack{display:grid;gap:7px}.rotation-detail-help{color:var(--muted);font-size:8.5px;margin-top:5px}.rotation-auto-note{color:var(--sage);font-size:9px;margin:5px 0 0}
 
-    @media(max-width:1500px){
-      .grid.expanded .rotation-header-wrap{grid-template-columns:minmax(320px,1fr) minmax(390px,.95fr) auto!important;column-gap:22px!important}
-      .grid.expanded .rotation-header-contacts{grid-template-columns:minmax(180px,1fr) minmax(210px,1fr)!important;gap:18px!important}
-      .grid.expanded .rotation-header-contacts a{font-size:10.5px!important}
-    }
+    @media(max-width:1500px){.grid.expanded .rotation-header-wrap{grid-template-columns:minmax(320px,1fr) minmax(390px,.95fr) auto!important;column-gap:22px!important}.grid.expanded .rotation-header-contacts{grid-template-columns:minmax(180px,1fr) minmax(210px,1fr)!important;gap:18px!important}.grid.expanded .rotation-header-contacts a{font-size:10.5px!important}}
   `;
   doc.head.appendChild(style);
 
-  const nav=doc.querySelector('.nav');
-  const menu=nav?.querySelector('.menu');
-  if(nav&&menu){
-    let navTop=nav.querySelector('.nav-top');
-    if(!navTop){navTop=doc.createElement('div');navTop.className='nav-top';nav.insertBefore(navTop,nav.firstChild);navTop.appendChild(menu)}
-    let brand=navTop.querySelector('.nav-brand');
-    if(!brand){brand=doc.createElement('a');brand.className='nav-brand';brand.href='index.html';brand.textContent='Fourth Year';navTop.appendChild(brand)}
-    [...nav.querySelectorAll('.links a')].forEach(link=>{const href=(link.getAttribute('href')||'').split('/').pop();link.classList.toggle('active',href==='schedule.html')});
-    const syncNav=()=>{const isOpen=nav.classList.contains('open');doc.body.classList.toggle('nav-open',isOpen);menu.textContent=isOpen?'×':'☰';menu.setAttribute('aria-label',isOpen?'Close menu':'Open menu')};
-    syncNav();new MutationObserver(syncNav).observe(nav,{attributes:true,attributeFilter:['class']});
-  }
+  const nav=doc.querySelector('.nav'),menu=nav?.querySelector('.menu');
+  if(nav&&menu){let navTop=nav.querySelector('.nav-top');if(!navTop){navTop=doc.createElement('div');navTop.className='nav-top';nav.insertBefore(navTop,nav.firstChild);navTop.appendChild(menu)}let brand=navTop.querySelector('.nav-brand');if(!brand){brand=doc.createElement('a');brand.className='nav-brand';brand.href='index.html';brand.textContent='Fourth Year';navTop.appendChild(brand)}[...nav.querySelectorAll('.links a')].forEach(link=>{const href=(link.getAttribute('href')||'').split('/').pop();link.classList.toggle('active',href==='schedule.html')});const syncNav=()=>{const isOpen=nav.classList.contains('open');doc.body.classList.toggle('nav-open',isOpen);menu.textContent=isOpen?'×':'☰';menu.setAttribute('aria-label',isOpen?'Close menu':'Open menu')};syncNav();new MutationObserver(syncNav).observe(nav,{attributes:true,attributeFilter:['class']})}
 
-  const rotation=doc.querySelector('.rotation');
-  const head=rotation?.querySelector('.rotation-head');
-  const reference=rotation?.querySelector('.rotation-reference');
-  const assignments=rotation?.querySelector('.rotation-assignments');
-  const priorityGrid=rotation?.querySelector('.priority-grid');
-  const notes=rotation?.querySelector('.notes-priority');
-  const encounters=rotation?.querySelector('.encounters-secondary');
+  const rotationEl=doc.querySelector('.rotation'),head=rotationEl?.querySelector('.rotation-head'),reference=rotationEl?.querySelector('.rotation-reference'),assignments=rotationEl?.querySelector('.rotation-assignments'),priorityGrid=rotationEl?.querySelector('.priority-grid'),notes=rotationEl?.querySelector('.notes-priority'),encounters=rotationEl?.querySelector('.encounters-secondary');
+  if(rotationEl&&head&&reference&&assignments&&priorityGrid&&notes&&encounters){const panels=[...priorityGrid.querySelectorAll('.priority-panel')],concepts=panels.find(p=>p.textContent.includes('Concepts to Review')),resources=panels.find(p=>p.textContent.includes('Helpful Resources'));if(concepts)concepts.classList.add('concepts-panel');if(resources)resources.classList.add('resources-panel');let headerWrap=rotationEl.querySelector('.rotation-header-wrap');if(!headerWrap){headerWrap=doc.createElement('div');headerWrap.className='rotation-header-wrap';rotationEl.insertBefore(headerWrap,head);headerWrap.appendChild(head)}const collapseBtn=head.querySelector('.expand')||rotationEl.querySelector('.rotation-header-collapse');if(collapseBtn){collapseBtn.classList.add('rotation-header-collapse');if(collapseBtn.parentElement!==headerWrap)headerWrap.appendChild(collapseBtn)}let meta=headerWrap.querySelector('.rotation-header-meta');const location=reference.querySelector('.reference-location #rotationLocation');if(!meta){meta=doc.createElement('div');meta.className='rotation-header-meta';headerWrap.appendChild(meta)}if(location&&!meta.contains(location))meta.appendChild(location);let contactsWrap=headerWrap.querySelector('.rotation-header-contacts');const sourceContacts=reference.querySelector('.reference-contacts');if(!contactsWrap){contactsWrap=doc.createElement('div');contactsWrap.className='rotation-header-contacts';headerWrap.appendChild(contactsWrap)}if(sourceContacts){[...sourceContacts.querySelectorAll('.contact')].forEach(contact=>{[...contact.querySelectorAll('br')].forEach(br=>br.remove());contactsWrap.appendChild(contact)})}const syllabus=reference.querySelector('.reference-syllabus,.syllabus');if(syllabus)syllabus.remove();rotationEl.insertBefore(assignments,headerWrap.nextSibling);priorityGrid.innerHTML='';if(resources)priorityGrid.appendChild(resources);if(concepts)priorityGrid.appendChild(concepts);rotationEl.insertBefore(priorityGrid,assignments.nextSibling);rotationEl.insertBefore(notes,priorityGrid.nextSibling);rotationEl.insertBefore(encounters,notes.nextSibling)}
 
-  if(rotation&&head&&reference&&assignments&&priorityGrid&&notes&&encounters){
-    const panels=[...priorityGrid.querySelectorAll('.priority-panel')];
-    const concepts=panels.find(p=>p.textContent.includes('Concepts to Review'));
-    const resources=panels.find(p=>p.textContent.includes('Helpful Resources'));
-    if(concepts)concepts.classList.add('concepts-panel');
-    if(resources)resources.classList.add('resources-panel');
+  /* Full rotation lifecycle + saved per-rotation details. */
+  const rotationDefinitions=[
+    {id:'peds-ai',name:'Peds AI',start:'2026-06-22',end:'2026-07-19'},
+    {id:'fm-ai',name:'Family Medicine AI',start:'2026-07-20',end:'2026-08-16'},
+    {id:'peds-heme-onc',name:'Pediatrics Hematology / Oncology',start:'2026-08-17',end:'2026-09-13'},
+    {id:'geri-pal',name:'Geri Pal',start:'2026-09-28',end:'2026-10-11'},
+    {id:'picu',name:'PICU',start:'2026-10-12',end:'2026-11-08'},
+    {id:'interview',name:'Interview Block',start:'2026-11-09',end:'2026-12-06'},
+    {id:'mfm',name:'Outpatient MFM',start:'2026-12-07',end:'2027-01-17'},
+    {id:'child-protection',name:'Child Protection',start:'2027-01-19',end:'2027-02-14'},
+    {id:'global-health',name:'Global Health Spain',start:'2027-02-15',end:'2027-03-14'}
+  ];
+  const DETAILS_KEY='fourthYearRotationDetailsV1';
+  const loadDetails=()=>{try{return JSON.parse(frame.contentWindow.localStorage.getItem(DETAILS_KEY)||'{}')}catch(e){return{}}};
+  const saveDetails=d=>frame.contentWindow.localStorage.setItem(DETAILS_KEY,JSON.stringify(d));
+  const blankDetails=r=>({name:r.name,location:'',director:{name:'',email:''},coordinator:{name:'',email:'',phone:''},assignments:'',resources:'',concepts:'',notes:'',encounters:''});
+  let detailStore=loadDetails();
+  if(!detailStore['peds-heme-onc'])detailStore['peds-heme-onc']={name:'Pediatrics Hematology / Oncology',location:'Medical Center Plaza',director:{name:'Dr. David Gass',email:'david.gass@advocatehealth.org'},coordinator:{name:'Alexis Miller',email:'alexis.miller@advocatehealth.org',phone:'336-580-2500'},assignments:'Mid-Rotation Feedback Form\n15-minute Journal Article Presentation\nEnd of Course Evaluation',resources:'',concepts:'',notes:'',encounters:''};
+  rotationDefinitions.forEach(r=>{if(!detailStore[r.id])detailStore[r.id]=blankDetails(r)});saveDetails(detailStore);
+  const fmtDate=s=>new Date(s+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  const fmtRange=r=>`${fmtDate(r.start)} – ${fmtDate(r.end)}`;
+  const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+  const currentIndex=()=>{const t=todayKey();const ix=rotationDefinitions.findIndex(r=>r.end>=t);return ix<0?rotationDefinitions.length-1:ix};
 
-    let headerWrap=rotation.querySelector('.rotation-header-wrap');
-    if(!headerWrap){headerWrap=doc.createElement('div');headerWrap.className='rotation-header-wrap';rotation.insertBefore(headerWrap,head);headerWrap.appendChild(head)}
+  function detailCard(r){const d=detailStore[r.id]||blankDetails(r),a=doc.createElement('article');a.className='rotation-mini';a.dataset.rotationId=r.id;a.innerHTML=`<button type="button"><div><div class="rname">${r.name}</div><div class="rmeta">${fmtRange(r)}</div></div></button><div class="body"><div class="rotation-detail-grid"><div><div class="rotation-detail-label">Location</div><input class="rotation-detail-input" data-path="location" value="${esc(d.location)}"></div><div><div class="rotation-detail-label">Contacts</div><div class="rotation-contact-grid"><div class="rotation-contact-stack"><input class="rotation-detail-input" data-path="director.name" placeholder="Course director" value="${esc(d.director?.name||'')}"><input class="rotation-detail-input" data-path="director.email" placeholder="Director email" value="${esc(d.director?.email||'')}"></div><div class="rotation-contact-stack"><input class="rotation-detail-input" data-path="coordinator.name" placeholder="Course coordinator" value="${esc(d.coordinator?.name||'')}"><input class="rotation-detail-input" data-path="coordinator.email" placeholder="Coordinator email" value="${esc(d.coordinator?.email||'')}"><input class="rotation-detail-input" data-path="coordinator.phone" placeholder="Coordinator phone" value="${esc(d.coordinator?.phone||'')}"></div></div></div><div><div class="rotation-detail-label">Assignments</div><textarea class="rotation-detail-area" data-path="assignments" placeholder="One assignment per line">${esc(d.assignments)}</textarea></div><div><div class="rotation-detail-label">Helpful Resources</div><textarea class="rotation-detail-area" data-path="resources" placeholder="Resource titles / links">${esc(d.resources)}</textarea></div><div><div class="rotation-detail-label">Concepts to Review</div><textarea class="rotation-detail-area" data-path="concepts">${esc(d.concepts)}</textarea></div><div><div class="rotation-detail-label">Notes</div><textarea class="rotation-detail-area" data-path="notes">${esc(d.notes)}</textarea></div><div class="rotation-detail-span"><div class="rotation-detail-label">Meaningful Encounters</div><textarea class="rotation-detail-area" data-path="encounters" placeholder="Brief note · attending">${esc(d.encounters)}</textarea><div class="rotation-detail-help">Saved automatically for this rotation.</div></div></div></div>`;a.querySelector('button').onclick=()=>a.classList.toggle('open');a.querySelectorAll('[data-path]').forEach(el=>el.addEventListener('input',()=>{setPath(detailStore[r.id],el.dataset.path,el.value);saveDetails(detailStore)}));return a}
+  function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  function setPath(obj,path,value){const p=path.split('.');let x=obj;while(p.length>1){const k=p.shift();x[k]=x[k]||{};x=x[k]}x[p[0]]=value}
+  function renderLifecycleLists(){const ix=currentIndex(),up=doc.getElementById('upcoming'),past=doc.getElementById('past');if(!up||!past)return;up.innerHTML='';past.innerHTML='';rotationDefinitions.forEach((r,i)=>{if(i<ix)past.appendChild(detailCard(r));else if(i>ix)up.appendChild(detailCard(r))});const current=rotationDefinitions[ix];if(current)applyCurrentRotation(current);}
+  function applyCurrentRotation(r){const d=detailStore[r.id]||blankDetails(r),title=doc.getElementById('rotationName'),dates=doc.getElementById('rotationDates'),loc=doc.getElementById('rotationLocation');if(title)title.textContent=r.name;if(dates)dates.textContent=fmtRange(r);if(loc)loc.textContent=d.location||'';const ids={gassName:d.director?.name||'',gassEmail:d.director?.email||'',alexisName:d.coordinator?.name||'',alexisEmail:d.coordinator?.email||'',alexisPhone:d.coordinator?.phone||''};Object.entries(ids).forEach(([id,v])=>{const el=doc.getElementById(id);if(el)el.textContent=v});}
+  renderLifecycleLists();
+  const nextMidnight=()=>{const n=new Date();n.setHours(24,0,1,0);return n-Date.now()};
+  setTimeout(function rollover(){renderLifecycleLists();setTimeout(rollover,nextMidnight())},nextMidnight());
 
-    const collapseBtn=head.querySelector('.expand')||rotation.querySelector('.rotation-header-collapse');
-    if(collapseBtn){collapseBtn.classList.add('rotation-header-collapse');if(collapseBtn.parentElement!==headerWrap)headerWrap.appendChild(collapseBtn)}
-
-    let meta=headerWrap.querySelector('.rotation-header-meta');
-    const location=reference.querySelector('.reference-location #rotationLocation');
-    if(!meta){meta=doc.createElement('div');meta.className='rotation-header-meta';headerWrap.appendChild(meta)}
-    if(location&&!meta.contains(location))meta.appendChild(location);
-
-    let contactsWrap=headerWrap.querySelector('.rotation-header-contacts');
-    const sourceContacts=reference.querySelector('.reference-contacts');
-    if(!contactsWrap){contactsWrap=doc.createElement('div');contactsWrap.className='rotation-header-contacts';headerWrap.appendChild(contactsWrap)}
-    if(sourceContacts){[...sourceContacts.querySelectorAll('.contact')].forEach(contact=>{[...contact.querySelectorAll('br')].forEach(br=>br.remove());contactsWrap.appendChild(contact)})}
-
-    const syllabus=reference.querySelector('.reference-syllabus,.syllabus');
-    if(syllabus)syllabus.remove();
-
-    rotation.insertBefore(assignments,headerWrap.nextSibling);
-    priorityGrid.innerHTML='';
-    if(resources)priorityGrid.appendChild(resources);
-    if(concepts)priorityGrid.appendChild(concepts);
-    rotation.insertBefore(priorityGrid,assignments.nextSibling);
-    rotation.insertBefore(notes,priorityGrid.nextSibling);
-    rotation.insertBefore(encounters,notes.nextSibling);
-  }
-
-  const notesBox=doc.getElementById('notes');
-  if(notesBox){notesBox.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&['b','i','u'].includes(e.key.toLowerCase())){e.preventDefault();doc.execCommand({b:'bold',i:'italic',u:'underline'}[e.key.toLowerCase()],false,null);notesBox.dispatchEvent(new Event('input',{bubbles:true}))}})}
-
-  const fixFeedbackLink=()=>{[...doc.querySelectorAll('#assignments .row')].forEach(row=>{const input=row.querySelector('input[type="text"]');if(input&&input.value.trim()==='Mid-Rotation Feedback Form'){input.style.cursor='pointer';input.title='Click to open Mid-Rotation Feedback Form';input.onclick=e=>{e.preventDefault();e.stopPropagation();window.open('MS4%20-%20Common%20Mid-Rotation%20Feedback%20Form%20%281%29.pdf','_blank')}}})};
-  fixFeedbackLink();setTimeout(fixFeedbackLink,300);
+  const notesBox=doc.getElementById('notes');if(notesBox){notesBox.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&['b','i','u'].includes(e.key.toLowerCase())){e.preventDefault();doc.execCommand({b:'bold',i:'italic',u:'underline'}[e.key.toLowerCase()],false,null);notesBox.dispatchEvent(new Event('input',{bubbles:true}))}})}
+  const fixFeedbackLink=()=>{[...doc.querySelectorAll('#assignments .row')].forEach(row=>{const input=row.querySelector('input[type="text"]');if(input&&input.value.trim()==='Mid-Rotation Feedback Form'){input.style.cursor='pointer';input.title='Click to open Mid-Rotation Feedback Form';input.onclick=e=>{e.preventDefault();e.stopPropagation();window.open('MS4%20-%20Common%20Mid-Rotation%20Feedback%20Form%20%281%29.pdf','_blank')}}})};fixFeedbackLink();setTimeout(fixFeedbackLink,300);
 });
 </script>
 </body>
