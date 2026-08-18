@@ -19,6 +19,43 @@ frame.addEventListener('load',()=>{
 
   const style=doc.createElement('style');
   style.textContent=`
+    /* Navigation — visually match the rest of the dashboard */
+    .nav{
+      width:88px!important;
+      padding:28px 18px!important;
+      background:var(--bg)!important;
+      transition:width .22s ease!important;
+    }
+    .nav.open{width:245px!important}
+    .menu{
+      width:42px!important;
+      height:42px!important;
+      display:flex!important;
+      align-items:center!important;
+      justify-content:center!important;
+      padding:0!important;
+      border:0!important;
+      border-radius:9px!important;
+      background:transparent!important;
+      color:var(--text)!important;
+      cursor:pointer!important;
+      font-size:24px!important;
+      line-height:1!important;
+    }
+    .menu:hover{background:#F5F2EC!important;color:var(--terracotta)!important}
+    .links{margin-top:27px!important}
+    .links a{
+      padding:7px 0!important;
+      color:var(--sage)!important;
+      font-size:13px!important;
+      font-weight:500!important;
+      letter-spacing:.15em!important;
+      text-transform:uppercase!important;
+    }
+    .links a.active,.links a:hover{color:var(--terracotta)!important}
+    .links a.active{font-weight:600!important}
+    .page{margin-left:92px!important}
+
     /* Stable layout layer for Current Rotation */
     .grid:not(.expanded){grid-template-columns:420px minmax(0,1fr)!important;gap:26px!important}
     .rotation{position:relative!important;padding:21px 23px!important}
@@ -28,6 +65,7 @@ frame.addEventListener('load',()=>{
     .rotation .label,.rotation .priority-panel>.label,.rotation .notes-priority>.label,.rotation .encounters-secondary>.label{color:var(--sage)!important;font-size:11.5px!important;font-weight:600!important;letter-spacing:.14em!important;text-transform:uppercase!important}
     .rotation-reference{display:none!important}
     .rotation-assignments{margin-top:23px!important;padding-top:0!important;border:0!important}
+    #addAssignment{display:none!important}
     .priority-panel,.notes-priority,.encounters-secondary{border:0!important}
     .priority-grid{display:block!important}
     .priority-panel{margin-top:24px!important}
@@ -52,6 +90,10 @@ frame.addEventListener('load',()=>{
     .rotation-header-contacts a{display:block!important;margin:0!important;padding:0!important;font-size:11px!important;line-height:1.28!important;text-decoration:none!important}
     .rotation-header-contacts br{display:none!important}
     .rotation-header-contacts #alexisPhone{margin:1px 0 0!important;padding:0!important;line-height:1.18!important}
+
+    /* Make Calendars easier to spot without making it visually heavy */
+    .manage{font-size:12px!important;font-weight:650!important;letter-spacing:.01em!important}
+    .grid.expanded .manage{font-size:12px!important}
 
     .grid.expanded{grid-template-columns:minmax(0,1fr) 300px!important;gap:24px!important;align-items:start!important}
     .grid.expanded .rotation{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,.9fr)!important;column-gap:42px!important;row-gap:0!important;padding:30px 30px 32px!important}
