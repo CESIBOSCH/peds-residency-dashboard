@@ -42,7 +42,7 @@ frame.addEventListener('load',()=>{
       flex-shrink:0!important;
       padding:0!important;
       border:0!important;
-      border-radius:9px!important;
+      border-radius:0!important;
       outline:none!important;
       box-shadow:none!important;
       background:transparent!important;
@@ -50,10 +50,11 @@ frame.addEventListener('load',()=>{
       cursor:pointer!important;
       font-size:24px!important;
       line-height:1!important;
+      appearance:none!important;
+      -webkit-appearance:none!important;
     }
-    .menu:hover{background:#F5F2EC!important;color:var(--terracotta)!important}
-    .menu:focus,.menu:focus-visible{outline:none!important;box-shadow:none!important}
-    .nav.open .menu{color:var(--text)!important}
+    .menu:hover,.menu:active,.menu:focus,.menu:focus-visible{background:transparent!important;outline:none!important;box-shadow:none!important}
+    .nav.open .menu{color:var(--text)!important;background:transparent!important}
     .nav-brand{
       opacity:0!important;
       pointer-events:none!important;
@@ -157,7 +158,6 @@ frame.addEventListener('load',()=>{
   `;
   doc.head.appendChild(style);
 
-  /* Rebuild the schedule navigation header so it matches the homepage component. */
   const nav=doc.querySelector('.nav');
   const menu=nav?.querySelector('.menu');
   if(nav&&menu){
