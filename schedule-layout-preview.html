@@ -19,25 +19,14 @@ frame.addEventListener('load',()=>{
 
   const style=doc.createElement('style');
   style.textContent=`
-    /* Shared polish */
+    /* ---------- LOCKED SHARED/COLLAPSED STYLING ---------- */
     .grid:not(.expanded){grid-template-columns:420px minmax(0,1fr)!important;gap:26px!important}
     .rotation{position:relative!important;padding:21px 23px!important}
     .rotation-title{font-size:22px!important;line-height:1.28!important}
     .rotation-dates{font-size:13px!important;line-height:1.45!important}
     .expand{width:auto!important;min-width:0!important;height:30px!important;padding:0 11px!important;border:1px solid var(--border)!important;border-radius:7px!important;background:#fff!important;color:var(--muted)!important;font-size:11px!important;font-weight:500!important;line-height:28px!important;box-shadow:none!important}
     .rotation .label,.rotation .priority-panel>.label,.rotation .notes-priority>.label,.rotation .encounters-secondary>.label{color:var(--sage)!important;font-size:11.5px!important;font-weight:600!important;letter-spacing:.14em!important;text-transform:uppercase!important}
-    .rotation-reference{margin-top:18px!important;padding:0!important;border:0!important}
-    .reference-location .label{display:none!important}
-    .reference-location .editable{margin:0!important;padding:0!important;font-size:12.5px!important}
-    .reference-contacts{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:18px!important;margin:0!important}
-    .reference-contacts .contact{display:flex!important;flex-direction:column!important;align-items:flex-start!important;min-width:0!important;margin:0!important}
-    .reference-contacts .role{font-size:9px!important;margin:0 0 4px!important;padding:0!important}
-    .reference-contacts .name{font-size:12px!important;margin:0 0 3px!important;padding:0!important}
-    .reference-contacts a{display:block!important;margin:0!important;padding:0!important;font-size:11px!important;line-height:1.32!important;text-decoration:none!important}
-    #alexisPhone{margin:1px 0 0!important;padding:0!important;line-height:1.22!important}
-    .reference-syllabus{margin-top:13px!important;display:flex!important;align-items:center!important;gap:0!important}
-    .reference-syllabus a{font-size:11.5px!important}
-    #editSyllabus{display:none!important}
+    .rotation-reference{display:none!important}
     .rotation-assignments{margin-top:23px!important;padding-top:0!important;border:0!important}
     .priority-panel,.notes-priority,.encounters-secondary{border:0!important}
     .priority-grid{display:block!important}
@@ -51,88 +40,62 @@ frame.addEventListener('load',()=>{
     .row input[type=text],.resource-item a{font-size:12.5px!important;line-height:1.4!important}
     .add{font-size:11.5px!important;margin-top:8px!important}
     .rotation hr{display:none!important}
+    #editSyllabus,.reference-syllabus{display:none!important}
 
-    /* DOM wrappers are transparent until expanded. */
-    .expanded-top,.meta-row{display:contents}
+    /* New stable header structure */
+    .rotation-header-wrap{margin:0!important;padding:0!important;border:0!important}
+    .rotation-header-meta{margin-top:14px!important;padding:0!important;border:0!important}
+    .rotation-header-meta .editable{margin:0!important;padding:0!important;font-size:12.5px!important;font-weight:500!important}
+    .rotation-header-contacts{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:18px!important;margin-top:14px!important}
+    .rotation-header-contacts .contact{display:flex!important;flex-direction:column!important;align-items:flex-start!important;min-width:0!important;margin:0!important;padding:0!important}
+    .rotation-header-contacts .role{font-size:9px!important;margin:0 0 4px!important;padding:0!important}
+    .rotation-header-contacts .name{font-size:12px!important;margin:0 0 3px!important;padding:0!important}
+    .rotation-header-contacts a{display:block!important;margin:0!important;padding:0!important;font-size:11px!important;line-height:1.28!important;text-decoration:none!important}
+    .rotation-header-contacts br{display:none!important}
+    .rotation-header-contacts #alexisPhone{margin:1px 0 0!important;padding:0!important;line-height:1.18!important}
 
-    /* Expanded state: match approved reference. */
+    /* ---------- EXPANDED CURRENT ROTATION ONLY ---------- */
     .grid.expanded{grid-template-columns:minmax(0,1fr) 300px!important;gap:24px!important;align-items:start!important}
-    .grid.expanded .rotation{
-      display:grid!important;
-      grid-template-columns:minmax(0,1fr) minmax(0,.92fr)!important;
-      column-gap:42px!important;
-      row-gap:0!important;
-      padding:30px 30px 32px!important;
-      overflow:visible!important;
-    }
-    .grid.expanded .expanded-top{
+    .grid.expanded .rotation{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,.9fr)!important;column-gap:42px!important;row-gap:0!important;padding:30px 30px 32px!important}
+
+    .grid.expanded .rotation-header-wrap{
       grid-column:1/-1!important;
       display:grid!important;
-      grid-template-columns:minmax(360px,.98fr) minmax(570px,1.12fr)!important;
+      grid-template-columns:minmax(390px,1.12fr) minmax(520px,1fr)!important;
       column-gap:44px!important;
       align-items:start!important;
       position:relative!important;
-      margin:0!important;
-      padding:0 0 24px!important;
-      border:0!important;
-    }
-
-    /* Left header stack */
-    .grid.expanded .rotation-head{
-      grid-column:1!important;
-      grid-row:1!important;
-      display:block!important;
-      min-width:0!important;
-      margin:0!important;
+      margin:0 0 26px!important;
       padding:0!important;
       border:0!important;
-      box-shadow:none!important;
-      text-align:left!important;
     }
+    .grid.expanded .rotation-head{grid-column:1!important;grid-row:1!important;display:block!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;text-align:left!important}
     .grid.expanded .rotation-head>div{margin:0!important;padding:0!important;text-align:left!important}
     .grid.expanded .rotation-head .label,.grid.expanded .rotation-title,.grid.expanded .rotation-dates{margin-left:0!important;padding-left:0!important;text-align:left!important}
     .grid.expanded .rotation-title{margin-top:10px!important;font-size:24px!important;line-height:1.22!important}
     .grid.expanded .rotation-dates{margin:12px 0 0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;font-size:13px!important}
     .grid.expanded .rotation-head .expand{position:absolute!important;top:0!important;right:0!important;z-index:3!important}
 
-    .grid.expanded .rotation-reference{display:contents!important;margin:0!important;padding:0!important;border:0!important}
-    .grid.expanded .meta-row{
-      grid-column:1!important;
-      grid-row:2!important;
-      display:flex!important;
-      align-items:center!important;
-      flex-wrap:nowrap!important;
-      gap:0!important;
-      margin-top:12px!important;
-      min-width:0!important;
-    }
-    .grid.expanded .reference-location{margin:0!important;padding:0!important;min-width:0!important}
-    .grid.expanded .reference-location .editable{margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;font-size:13px!important;font-weight:500!important;white-space:nowrap!important;text-align:left!important}
-    .grid.expanded .reference-syllabus{margin:0 0 0 18px!important;padding:0 0 0 18px!important;border-left:1px solid #D9DED7!important;display:flex!important;align-items:center!important;gap:0!important;white-space:nowrap!important}
-    .grid.expanded .reference-syllabus::before{content:none!important}
-    .grid.expanded .reference-syllabus a{font-size:11.5px!important;letter-spacing:.11em!important;white-space:nowrap!important}
-    .grid.expanded #editSyllabus{display:none!important}
+    .grid.expanded .rotation-header-meta{grid-column:1!important;grid-row:2!important;margin-top:12px!important;padding:0!important;border:0!important}
+    .grid.expanded .rotation-header-meta .editable{margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;font-size:13px!important;font-weight:500!important;white-space:nowrap!important;text-align:left!important}
 
-    /* Contacts: deliberately wide columns; nothing overlaps or wraps unnecessarily. */
-    .grid.expanded .reference-contacts{
+    .grid.expanded .rotation-header-contacts{
       grid-column:2!important;
       grid-row:1 / span 2!important;
       display:grid!important;
-      grid-template-columns:minmax(250px,1fr) minmax(285px,1.08fr)!important;
-      gap:34px!important;
-      width:auto!important;
+      grid-template-columns:minmax(245px,1fr) minmax(275px,1.08fr)!important;
+      gap:30px!important;
       min-width:0!important;
       margin:4px 108px 0 0!important;
       padding:0!important;
       align-self:start!important;
     }
-    .grid.expanded .reference-contacts .contact{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:0!important;min-width:0!important;margin:0!important;padding:0!important}
-    .grid.expanded .reference-contacts .role{margin:0 0 7px!important;padding:0!important;font-size:9px!important;white-space:nowrap!important}
-    .grid.expanded .reference-contacts .name{margin:0 0 4px!important;padding:0!important;font-size:12.5px!important;line-height:1.28!important;white-space:nowrap!important}
-    .grid.expanded .reference-contacts a{margin:0!important;padding:0!important;font-size:11px!important;line-height:1.25!important;white-space:nowrap!important;overflow:visible!important;max-width:none!important;word-break:normal!important;overflow-wrap:normal!important}
-    .grid.expanded #alexisPhone{margin:2px 0 0!important;padding:0!important;line-height:1.18!important;white-space:nowrap!important}
+    .grid.expanded .rotation-header-contacts .contact{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:0!important;min-width:0!important;margin:0!important;padding:0!important}
+    .grid.expanded .rotation-header-contacts .role{margin:0 0 7px!important;padding:0!important;font-size:9px!important;white-space:nowrap!important}
+    .grid.expanded .rotation-header-contacts .name{margin:0 0 4px!important;padding:0!important;font-size:12.5px!important;line-height:1.28!important;white-space:nowrap!important}
+    .grid.expanded .rotation-header-contacts a{margin:0!important;padding:0!important;font-size:11px!important;line-height:1.24!important;white-space:nowrap!important;overflow:visible!important;max-width:none!important;word-break:normal!important;overflow-wrap:normal!important}
+    .grid.expanded .rotation-header-contacts #alexisPhone{margin:1px 0 0!important;padding:0!important;line-height:1.15!important;white-space:nowrap!important}
 
-    /* Working area */
     .grid.expanded .rotation-assignments{grid-column:1!important;grid-row:2!important;margin:0!important;padding:0!important;border:0!important}
     .grid.expanded .priority-grid{display:contents!important}
     .grid.expanded .resources-panel{grid-column:2!important;grid-row:2!important;margin:0!important;padding:0!important;border:0!important}
@@ -158,32 +121,45 @@ frame.addEventListener('load',()=>{
     if(concepts) concepts.classList.add('concepts-panel');
     if(resources) resources.classList.add('resources-panel');
 
-    /* Keep Alexis phone physically inside her contact block. */
-    const contacts=[...reference.querySelectorAll('.contact')];
-    const phone=doc.getElementById('alexisPhone');
-    if(phone&&contacts[1]&&!contacts[1].contains(phone)) contacts[1].appendChild(phone);
+    /* Build one stable header and stop relying on the old reference grid. */
+    let headerWrap=rotation.querySelector('.rotation-header-wrap');
+    if(!headerWrap){
+      headerWrap=doc.createElement('div');
+      headerWrap.className='rotation-header-wrap';
+      rotation.insertBefore(headerWrap,head);
+      headerWrap.appendChild(head);
+    }
 
-    /* Location and syllabus live together beneath the date. */
-    const location=reference.querySelector('.reference-location');
-    const syllabus=reference.querySelector('.reference-syllabus');
-    let meta=reference.querySelector('.meta-row');
-    if(location&&syllabus&&!meta){
+    let meta=headerWrap.querySelector('.rotation-header-meta');
+    const location=reference.querySelector('.reference-location #rotationLocation');
+    if(!meta){
       meta=doc.createElement('div');
-      meta.className='meta-row';
-      reference.insertBefore(meta,location);
-      meta.append(location,syllabus);
+      meta.className='rotation-header-meta';
+      headerWrap.appendChild(meta);
+    }
+    if(location&&!meta.contains(location)) meta.appendChild(location);
+
+    let contactsWrap=headerWrap.querySelector('.rotation-header-contacts');
+    const sourceContacts=reference.querySelector('.reference-contacts');
+    if(!contactsWrap){
+      contactsWrap=doc.createElement('div');
+      contactsWrap.className='rotation-header-contacts';
+      headerWrap.appendChild(contactsWrap);
+    }
+    if(sourceContacts){
+      [...sourceContacts.querySelectorAll('.contact')].forEach(contact=>{
+        const br=contact.querySelector('br');
+        if(br) br.remove();
+        contactsWrap.appendChild(contact);
+      });
     }
 
-    /* Isolate the entire header region from the working content below. */
-    let top=rotation.querySelector('.expanded-top');
-    if(!top){
-      top=doc.createElement('div');
-      top.className='expanded-top';
-      rotation.insertBefore(top,head);
-      top.append(head,reference);
-    }
+    /* Syllabus is intentionally removed from this pass. */
+    const syllabus=reference.querySelector('.reference-syllabus');
+    if(syllabus) syllabus.remove();
 
-    rotation.insertBefore(assignments,top.nextSibling);
+    /* Keep the functional work sections in a predictable order. */
+    rotation.insertBefore(assignments,headerWrap.nextSibling);
     priorityGrid.innerHTML='';
     if(resources) priorityGrid.appendChild(resources);
     if(concepts) priorityGrid.appendChild(concepts);
@@ -192,7 +168,7 @@ frame.addEventListener('load',()=>{
     rotation.insertBefore(encounters,notes.nextSibling);
   }
 
-  /* Keyboard shortcuts remain available in Notes. */
+  /* Notes formatting remains keyboard-only. */
   const notesBox=doc.getElementById('notes');
   if(notesBox){
     notesBox.addEventListener('keydown',e=>{
