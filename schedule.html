@@ -19,42 +19,78 @@ frame.addEventListener('load',()=>{
 
   const style=doc.createElement('style');
   style.textContent=`
-    /* Navigation — visually match the rest of the dashboard */
+    /* Navigation — match the rest of the dashboard in both appearance and behavior */
     .nav{
+      position:fixed!important;
+      inset:0 auto 0 0!important;
       width:88px!important;
+      height:100vh!important;
+      z-index:50!important;
       padding:28px 18px!important;
       background:var(--bg)!important;
       transition:width .22s ease!important;
+      overflow:hidden!important;
     }
     .nav.open{width:245px!important}
+    .nav-top{display:flex!important;align-items:center!important;gap:15px!important;white-space:nowrap!important}
     .menu{
       width:42px!important;
       height:42px!important;
       display:flex!important;
       align-items:center!important;
       justify-content:center!important;
+      flex-shrink:0!important;
       padding:0!important;
       border:0!important;
       border-radius:9px!important;
+      outline:none!important;
+      box-shadow:none!important;
       background:transparent!important;
-      color:var(--text)!important;
+      color:var(--terracotta)!important;
       cursor:pointer!important;
       font-size:24px!important;
       line-height:1!important;
     }
     .menu:hover{background:#F5F2EC!important;color:var(--terracotta)!important}
-    .links{margin-top:27px!important}
+    .menu:focus,.menu:focus-visible{outline:none!important;box-shadow:none!important}
+    .nav.open .menu{color:var(--text)!important}
+    .nav-brand{
+      opacity:0!important;
+      pointer-events:none!important;
+      color:var(--sage)!important;
+      font-size:14px!important;
+      font-weight:600!important;
+      letter-spacing:.2em!important;
+      text-transform:uppercase!important;
+      text-decoration:none!important;
+      transition:opacity .15s ease!important;
+    }
+    .nav.open .nav-brand{opacity:1!important;pointer-events:auto!important}
+    .links{
+      display:block!important;
+      margin-top:27px!important;
+      opacity:0!important;
+      pointer-events:none!important;
+      transform:translateX(-5px)!important;
+      transition:opacity .18s ease,transform .18s ease!important;
+    }
+    .nav.open .links{opacity:1!important;pointer-events:auto!important;transform:none!important}
     .links a{
+      display:block!important;
+      width:max-content!important;
       padding:7px 0!important;
       color:var(--sage)!important;
       font-size:13px!important;
       font-weight:500!important;
       letter-spacing:.15em!important;
       text-transform:uppercase!important;
+      text-decoration:none!important;
+      white-space:nowrap!important;
     }
     .links a.active,.links a:hover{color:var(--terracotta)!important}
     .links a.active{font-weight:600!important}
-    .page{margin-left:92px!important}
+    .page{margin-left:92px!important;transition:margin-left .22s ease!important}
+    body.nav-open .page{margin-left:249px!important}
 
     /* Stable layout layer for Current Rotation */
     .grid:not(.expanded){grid-template-columns:420px minmax(0,1fr)!important;gap:26px!important}
@@ -91,7 +127,6 @@ frame.addEventListener('load',()=>{
     .rotation-header-contacts br{display:none!important}
     .rotation-header-contacts #alexisPhone{margin:1px 0 0!important;padding:0!important;line-height:1.18!important}
 
-    /* Make Calendars easier to spot without making it visually heavy */
     .manage{font-size:12px!important;font-weight:650!important;letter-spacing:.01em!important}
     .grid.expanded .manage{font-size:12px!important}
 
@@ -121,6 +156,42 @@ frame.addEventListener('load',()=>{
     .grid.expanded .encounters-secondary{grid-column:1/-1!important;grid-row:4!important;margin:30px 0 0!important;padding:0!important;border:0!important}
   `;
   doc.head.appendChild(style);
+
+  /* Rebuild the schedule navigation header so it matches the homepage component. */
+  const nav=doc.querySelector('.nav');
+  const menu=nav?.querySelector('.menu');
+  if(nav&&menu){
+    let navTop=nav.querySelector('.nav-top');
+    if(!navTop){
+      navTop=doc.createElement('div');
+      navTop.className='nav-top';
+      nav.insertBefore(navTop,nav.firstChild);
+      navTop.appendChild(menu);
+    }
+    let brand=navTop.querySelector('.nav-brand');
+    if(!brand){
+      brand=doc.createElement('a');
+      brand.className='nav-brand';
+      brand.href='index.html';
+      brand.textContent='Fourth Year';
+      navTop.appendChild(brand);
+    }
+
+    const links=[...nav.querySelectorAll('.links a')];
+    links.forEach(link=>{
+      const href=(link.getAttribute('href')||'').split('/').pop();
+      link.classList.toggle('active',href==='schedule.html');
+    });
+
+    const syncNav=()=>{
+      const isOpen=nav.classList.contains('open');
+      doc.body.classList.toggle('nav-open',isOpen);
+      menu.textContent=isOpen?'×':'☰';
+      menu.setAttribute('aria-label',isOpen?'Close menu':'Open menu');
+    };
+    syncNav();
+    new MutationObserver(syncNav).observe(nav,{attributes:true,attributeFilter:['class']});
+  }
 
   const rotation=doc.querySelector('.rotation');
   const head=rotation?.querySelector('.rotation-head');
